@@ -23,16 +23,16 @@ ext.geServer = System.getProperty('geServer')
 buildScan {
     // Publish a build scan for each build.
     publishAlways()
-    
+
     // Specify your Gradle Enterprise server, if you have one.
     server = geServer
-    
+
     // If you're not using Gradle Enterprise, agree to the terms of service for use of the public scans server.
     if (geServer == null) {
         termsOfServiceUrl = 'https://gradle.com/terms-of-service'
         termsOfServiceAgree = 'yes'
     }
-    
+
     // With Gradle Enterprise, the build scan plugin v2.1+, and Gradle 5.0+, we can capture hashes of task inputs for
     // use with build comparisons. See https://docs.gradle.com/enterprise/tutorials/task-inputs-comparison/ for more
     // information.
@@ -40,15 +40,18 @@ buildScan {
 
     // Tagging builds is a great way to provide additional context on a build scan.
     // If your CI server has an appropriate environment variable exported, you can easily differentiate your CI vs LOCAL
-    // builds.
+    // builds. Other CI-related tags might include the build number or ID, or a link to the job.
     tag(System.getenv('CI') ? 'CI' : 'LOCAL')
-    
+
+    // Tagging the operating system is easy.
+    tag System.getProperty('os.name')
+
     // For Android developers, it can be useful to know whether a build was invoked from Android Studio or from the CLI.
     tag(project.hasProperty('android.injected.invoked.from.ide') ? 'Android Studio' : 'CLI')
-    
+
     // You can also tag your builds based on the build's start parameters.
     tag(gradle.startParameter.buildCacheEnabled ? 'CACHED' : 'NOT_CACHED')
-    
+
     // With build can plugin v1.15+, you can easily add expensive data inside the background {} block. Everything inside
     // here is executed in a separate thread, and guaranteed to complete before finishing the build and publishing the
     // scan.
@@ -57,34 +60,36 @@ buildScan {
         def gitCommitId = execAndGetStdout('git', 'rev-parse', '--verify', 'HEAD')
         def branchName = execAndGetStdout('git', 'rev-parse', '--abbrev-ref', 'HEAD')
         def status = execAndGetStdout('git', 'status', '--porcelain')
-        
+
         // We can add the branch name as either a custom value or a tag, or both.
         if (branchName != null && !branchName.isEmpty() && branchName != 'HEAD') {
             tag branchName
             value 'Git branch name', branchName
         }
-        
-        // Tracking whether a build is 'dirty' (that is, has uncommitted changes) can be useful when diagnosing 
+
+        // Tracking whether a build is 'dirty' (that is, has uncommitted changes) can be useful when diagnosing
         // failures.
         if (status != null && !status.isEmpty()) {
             tag 'dirty'
             value 'Git status', status
         }
-        
+
         def commitIdLabel = 'Git Commit ID'
-        
+
         // We can track the commit ID as a custom value
         value commitIdLabel, gitCommitId
-        
-        // We can also use the git commit ID for generating a custom link, useful in Gradle Enterprise for filtering for 
+
+        // We can also use the git commit ID for generating a custom link, useful in Gradle Enterprise for filtering for
         // all scans built from the same git commit. This will create a URL that looks like:
         // https://«geServer»/scans?search.names=Git%20Commit%20ID&search.values=«gitCommitId»
         // This pattern can be used for creating custom links for arbitrary key-value pairs that you track with built
         // scan custom values.
         link 'Git commit scans', customValueSearchUrl([(commitIdLabel): gitCommitId])
-        
+
         // Another use for the git commit ID is for generating a custom link to the source in your git repository.
         link 'Source', "https://github.com/gradle/buildscan-snippets/tree/$gitCommitId"
+
+        publishGist()
     }
 }
 
@@ -107,3 +112,58 @@ def execAndGetStdout(String... args) {
 
 // An extension method on String
 String.metaClass.urlEncode = { -> URLEncoder.encode(delegate as String, 'UTF-8') }
+
+//region gist
+import groovy.json.JsonBuilder
+import groovy.json.JsonSlurper
+
+void publishGist() {
+    def hasGistCredentials = gradle.rootProject.hasProperty('gistUsername') && gradle.rootProject.hasProperty('gistToken')
+    if (!hasGistCredentials) {
+        gradle.rootProject.logger.warn("User has not set 'gistUsername' or 'gistToken'. Cannot publish gist.")
+        return 
+    }
+    
+    def diff = execAndGetStdout('git', 'diff')
+    if (diff) {
+        try {
+            def baseUrl = new URL('https://api.github.com/gists')
+            def credentials = "${gradle.rootProject.findProperty('gistUsername')}:${gradle.rootProject.findProperty('gistToken')}"
+            def basicAuth = "Basic ${credentials.bytes.encodeBase64()}"
+            
+            HttpURLConnection connection = (HttpURLConnection) baseUrl.openConnection()
+            connection.with {
+                setRequestProperty('Authorization', basicAuth)
+                doOutput = true
+                requestMethod = 'POST'
+                outputStream.withWriter { writer ->
+                    jsonRequest(writer, gradle.rootProject, diff)
+                }
+                createLink(content)
+            }
+        } catch (ex) {
+            gradle.rootProject.logger.warn('Unable to publish diff to Gist', ex)
+        }
+    }
+}
+
+static def jsonRequest(Writer out, Project project, String diff) {
+    def builder = new JsonBuilder()
+    builder {
+        description "Git diff for $project.name"
+        'public' false
+        files {
+            "${project.name}.diff" {
+                content diff
+            }
+        }
+    }
+    builder.writeTo(out)
+}
+
+def createLink(def content) {
+    def parser = new JsonSlurper()
+    def url = parser.parse(content.text.bytes).html_url
+    buildScan.link('Git diff', url)
+}
+//endregion gist
