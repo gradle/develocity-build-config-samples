@@ -1,0 +1,68 @@
+import groovy.json.JsonBuilder
+import groovy.json.JsonSlurper
+
+buildScan.background {
+    publishGist()
+}
+
+void publishGist() {
+    // For this to work, you need must specify these two properties in ~/.gradle/gradle.properties
+    // TODO add a property for enabling/disabling this, as it takes a while
+    def hasGistCredentials = gradle.rootProject.hasProperty('gistUsername') && gradle.rootProject.hasProperty('gistToken')
+    if (!hasGistCredentials) {
+        gradle.rootProject.logger.warn("User has not set 'gistUsername' or 'gistToken'. Cannot publish gist.")
+        return
+    }
+
+    def diff = execAndGetStdout('git', 'diff')
+    if (diff) {
+        try {
+            def baseUrl = new URL('https://api.github.com/gists')
+            def credentials = "${gradle.rootProject.findProperty('gistUsername')}:${gradle.rootProject.findProperty('gistToken')}"
+            def basicAuth = "Basic ${credentials.bytes.encodeBase64()}"
+
+            HttpURLConnection connection = (HttpURLConnection) baseUrl.openConnection()
+            connection.with {
+                setRequestProperty('Authorization', basicAuth)
+                doOutput = true
+                requestMethod = 'POST'
+                outputStream.withWriter { writer ->
+                    jsonRequest(writer, gradle.rootProject, diff)
+                }
+                createLink(content)
+            }
+        } catch (ex) {
+            gradle.rootProject.logger.warn('Unable to publish diff to Gist', ex)
+        }
+    }
+}
+
+def execAndGetStdout(String... args) {
+    def stdout = new ByteArrayOutputStream()
+    exec {
+        commandLine(args)
+        standardOutput = stdout
+    }
+    return stdout.toString().trim()
+}
+
+// This must be static! Else Gradle will interpret `files` as Project.files() and this won't work.
+static def jsonRequest(Writer out, Project project, String diff) {
+    def builder = new JsonBuilder()
+    builder {
+        description "Git diff for $project.name"
+        'public' false
+        files {
+            "${project.name}.diff" {
+                content diff
+            }
+        }
+    }
+    builder.writeTo(out)
+}
+
+def createLink(def content) {
+    def parser = new JsonSlurper()
+    def url = parser.parse(content.text.bytes).html_url
+    buildScan.link('Git diff', url)
+}

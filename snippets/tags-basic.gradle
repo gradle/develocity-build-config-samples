@@ -1,0 +1,10 @@
+// Tagging builds is a great way to provide additional context on a build scan.
+// If your CI server has an appropriate environment variable exported, you can easily differentiate your CI vs LOCAL
+// builds. Other CI-related tags might include the build number or ID, or a link to the job.
+buildScan.tag(System.getenv('CI') ? 'CI' : 'LOCAL')
+
+// Tagging the operating system is easy.
+buildScan.tag System.getProperty('os.name')
+
+// You can also tag your builds based on the build's start parameters.
+buildScan.tag(gradle.startParameter.buildCacheEnabled ? 'CACHED' : 'NOT_CACHED')
