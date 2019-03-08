@@ -1,6 +1,8 @@
 plugins {
     id 'java'
     id 'com.gradle.build-scan' version '2.2.1'
+    id 'java-gradle-plugin'
+    id 'groovy'
 }
 
 group 'org.gradle'
@@ -13,7 +15,10 @@ repositories {
 }
 
 dependencies {
-    testCompile 'junit:junit:4.12'
+    testImplementation 'junit:junit:4.12'
+    testImplementation('org.spockframework:spock-core:1.3-groovy-2.5') {
+        exclude module: 'groovy-all'
+    }
 }
 
 apply from: 'snippets/basic-publishing.gradle'

@@ -7,7 +7,9 @@ buildScan {
     publishAlways()
 
     // Specify your Gradle Enterprise server, if you have one.
-    server = geServer
+    if (geServer != null) {
+        server = geServer
+    }
 
     // If you're not using Gradle Enterprise, agree to the terms of service for use of the public scans server.
     if (geServer == null) {
