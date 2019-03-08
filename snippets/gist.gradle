@@ -29,7 +29,7 @@ void publishGist() {
                 outputStream.withWriter { writer ->
                     jsonRequest(writer, gradle.rootProject, diff)
                 }
-                createLink(content)
+                createLink(content, buildScan)
             }
         } catch (ex) {
             gradle.rootProject.logger.warn('Unable to publish diff to Gist', ex)
@@ -61,7 +61,7 @@ static def jsonRequest(Writer out, Project project, String diff) {
     builder.writeTo(out)
 }
 
-def createLink(def content) {
+static def createLink(def content, def buildScan) {
     def parser = new JsonSlurper()
     def url = parser.parse(content.text.bytes).html_url
     buildScan.link('Git diff', url)
