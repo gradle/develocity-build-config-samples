@@ -27,7 +27,7 @@ class FunctionalTest extends Specification {
     }
 
     @Unroll
-    def "snippet can be configured"() {
+    def "snippet #snippetTitle can be configured"() {
         given:
         settingsFile << "rootProject.name = 'scan-snippets-test'"
         buildFile << """
@@ -44,15 +44,39 @@ class FunctionalTest extends Specification {
         then:
         result.task(':help').outcome == SUCCESS
 
+        // TODO: basic-publishing actually does publish a build scan. Is that a problem?
         where:
-        snippet << [
-            scriptSnippet('basic-publishing.gradle'),
-            scriptSnippet('capture-task-input-files.gradle'),
-            scriptSnippet('git.gradle'),
-            scriptSnippet('gist.gradle'),
-            scriptSnippet('tags-android.gradle'),
-            scriptSnippet('tags-basic.gradle')
-        ]
+        snippetTitle               | snippet
+        'basic-publishing'         | scriptSnippet('basic-publishing.gradle')
+        'capture-task-input-files' | scriptSnippet('capture-task-input-files.gradle')
+        'tags-android'             | scriptSnippet('tags-android.gradle')
+        'tags-basic'               | scriptSnippet('tags-basic.gradle')
+    }
+
+    @Unroll
+    def "snippet #snippetTitle, which does background work, can be configured"() {
+        given:
+        settingsFile << "rootProject.name = 'scan-snippets-test'"
+        buildFile << """
+        plugins {
+            id 'com.gradle.build-scan' version '2.2.1'
+        }
+        
+        apply from: '$snippet'
+    """
+
+        when:
+        def result = build('help')
+
+        then:
+        result.task(':help').outcome == SUCCESS
+        !result.output.contains('Build scan background action failed')
+
+        // TODO: git and gist have issues. git needs SSL credentials (or maybe the temp dir isn't a git repo?), and gist just does nothing because it has a credentials check
+        where:
+        snippetTitle | snippet
+        'git'        | scriptSnippet('git.gradle')
+        'gist'       | scriptSnippet('gist.gradle')
     }
 
     private def scriptSnippet(String snippetName) {
@@ -71,5 +95,6 @@ class FunctionalTest extends Specification {
         return GradleRunner.create()
             .withProjectDir(testProjectDir.root)
             .withArguments(*args + '--stacktrace')
+            .forwardOutput()
     }
 }
