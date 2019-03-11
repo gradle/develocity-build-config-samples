@@ -52,19 +52,32 @@ class FunctionalTest extends Specification {
         given:
         settingsFile()
         buildFileWithAppliedSnippet(snippet)
+        initGitRepo()
+
+        when:
+        def result = build('help', '-DgeServer=https://scans.gradle.com')
+
+        then:
+        result.task(':help').outcome == SUCCESS
+        !result.output.contains('Build scan background action failed')
+
+        where:
+        snippetTitle | snippet
+        'git'        | scriptSnippet('git.gradle')
+        'gist'       | scriptSnippet('gist.gradle')
+    }
+
+    def "gists can be published"() {
+        given:
+        settingsFile()
+        buildFileWithAppliedSnippet(scriptSnippet('gist.gradle'))
 
         when:
         def result = build('help')
 
         then:
         result.task(':help').outcome == SUCCESS
-        !result.output.contains('Build scan background action failed')
-
-        // TODO: git and gist have issues. git needs SSL credentials (or maybe the temp dir isn't a git repo?), and gist just does nothing because it has a credentials check
-        where:
-        snippetTitle | snippet
-        'git'        | scriptSnippet('git.gradle')
-        'gist'       | scriptSnippet('gist.gradle')
+        !result.output.contains("User has not set 'gistUsername' or 'gistToken'. Cannot publish gist.")
     }
 
     private File settingsFile() {
@@ -83,6 +96,22 @@ class FunctionalTest extends Specification {
 
     private def scriptSnippet(String snippetName) {
         return new File(snippetsDir, snippetName).toString()
+    }
+
+    private initGitRepo() {
+        executeCommandInTempDir("git init")
+        executeCommandInTempDir("git config user.email 'dev-null@gradle.com'")
+        executeCommandInTempDir("git config user.name 'Dev Null'")
+        executeCommandInTempDir("touch temp")
+        executeCommandInTempDir("git add .")
+        executeCommandInTempDir("git commit -m 'Hello'")
+        executeCommandInTempDir("git status")
+    }
+
+    private void executeCommandInTempDir(String command) {
+        def p = command.execute([], testProjectDir.root)
+        p.waitFor()
+        println "$command exit value: ${p.exitValue()}"
     }
 
     private BuildResult build(String... args) {
