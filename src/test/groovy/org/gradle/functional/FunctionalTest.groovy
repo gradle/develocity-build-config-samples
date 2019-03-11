@@ -29,14 +29,8 @@ class FunctionalTest extends Specification {
     @Unroll
     def "snippet #snippetTitle can be configured"() {
         given:
-        settingsFile << "rootProject.name = 'scan-snippets-test'"
-        buildFile << """
-        plugins {
-            id 'com.gradle.build-scan' version '2.2.1'
-        }
-        
-        apply from: '$snippet'
-    """
+        settingsFile()
+        buildFileWithAppliedSnippet(snippet)
 
         when:
         def result = build('help')
@@ -56,14 +50,8 @@ class FunctionalTest extends Specification {
     @Unroll
     def "snippet #snippetTitle, which does background work, can be configured"() {
         given:
-        settingsFile << "rootProject.name = 'scan-snippets-test'"
-        buildFile << """
-        plugins {
-            id 'com.gradle.build-scan' version '2.2.1'
-        }
-        
-        apply from: '$snippet'
-    """
+        settingsFile()
+        buildFileWithAppliedSnippet(snippet)
 
         when:
         def result = build('help')
@@ -77,6 +65,20 @@ class FunctionalTest extends Specification {
         snippetTitle | snippet
         'git'        | scriptSnippet('git.gradle')
         'gist'       | scriptSnippet('gist.gradle')
+    }
+
+    private File settingsFile() {
+        settingsFile << "rootProject.name = 'scan-snippets-test'"
+    }
+
+    private File buildFileWithAppliedSnippet(def snippet) {
+        buildFile << """
+        plugins {
+            id 'com.gradle.build-scan' version '2.2.1'
+        }
+        
+        apply from: '$snippet'
+        """
     }
 
     private def scriptSnippet(String snippetName) {
