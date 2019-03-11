@@ -71,13 +71,18 @@ class FunctionalTest extends Specification {
         given:
         settingsFile()
         buildFileWithAppliedSnippet(scriptSnippet('gist.gradle'))
+        initGitRepo()
+
+        and: 'A modified file so there is a diff when generating a gist'
+        buildFile << "\n\n"
 
         when:
         def result = build('help')
 
         then:
         result.task(':help').outcome == SUCCESS
-        !result.output.contains("User has not set 'gistUsername' or 'gistToken'. Cannot publish gist.")
+        !result.output.contains("User has not set 'gistToken'. Cannot publish gist.")
+        !result.output.contains("Unable to publish diff to Gist")
     }
 
     private File settingsFile() {
@@ -98,20 +103,19 @@ class FunctionalTest extends Specification {
         return new File(snippetsDir, snippetName).toString()
     }
 
-    private initGitRepo() {
+    private void initGitRepo() {
         executeCommandInTempDir("git init")
         executeCommandInTempDir("git config user.email 'dev-null@gradle.com'")
         executeCommandInTempDir("git config user.name 'Dev Null'")
-        executeCommandInTempDir("touch temp")
         executeCommandInTempDir("git add .")
         executeCommandInTempDir("git commit -m 'Hello'")
-        executeCommandInTempDir("git status")
     }
 
     private void executeCommandInTempDir(String command) {
-        def p = command.execute([], testProjectDir.root)
-        p.waitFor()
-        println "$command exit value: ${p.exitValue()}"
+        command.execute([], testProjectDir.root).with {
+            waitFor()
+            println "$command exit value: ${exitValue()}"
+        }
     }
 
     private BuildResult build(String... args) {

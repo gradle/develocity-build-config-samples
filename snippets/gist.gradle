@@ -6,11 +6,11 @@ buildScan.background {
 }
 
 void publishGist() {
-    // For this to work, you need must specify these two properties in ~/.gradle/gradle.properties
+    // For this to work, you need must specify this property in ~/.gradle/gradle.properties
     // TODO add a property for enabling/disabling this, as it takes a while
-    def hasGistCredentials = gradle.rootProject.hasProperty('gistUsername') && gradle.rootProject.hasProperty('gistToken')
+    def hasGistCredentials = gradle.rootProject.hasProperty('gistToken')
     if (!hasGistCredentials) {
-        gradle.rootProject.logger.warn("User has not set 'gistUsername' or 'gistToken'. Cannot publish gist.")
+        gradle.rootProject.logger.warn("User has not set 'gistToken'. Cannot publish gist.")
         return
     }
 
@@ -18,7 +18,7 @@ void publishGist() {
     if (diff) {
         try {
             def baseUrl = new URL('https://api.github.com/gists')
-            def credentials = "${gradle.rootProject.findProperty('gistUsername')}:${gradle.rootProject.findProperty('gistToken')}"
+            def credentials = "${gradle.rootProject.findProperty('gistToken')}"
             def basicAuth = "Basic ${credentials.bytes.encodeBase64()}"
 
             HttpURLConnection connection = (HttpURLConnection) baseUrl.openConnection()
