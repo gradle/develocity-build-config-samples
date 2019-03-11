@@ -34,12 +34,11 @@ class FunctionalTest extends Specification {
         buildFileWithAppliedSnippet(snippet)
 
         when:
-        def result = build('help')
+        def result = build('help', '--no-scan')
 
         then:
         result.task(':help').outcome == SUCCESS
 
-        // TODO: basic-publishing actually does publish a build scan. Is that a problem?
         where:
         snippetTitle               | snippet
         'basic-publishing'         | scriptSnippet('basic-publishing.gradle')
