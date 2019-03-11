@@ -27,3 +27,7 @@ apply from: 'snippets/tags-basic.gradle'
 apply from: 'snippets/tags-android.gradle'
 apply from: 'snippets/git.gradle'
 apply from: 'snippets/gist.gradle'
+
+tasks.named('test', Test).configure {
+    systemProperty 'gistToken', findProperty('gistToken')
+}

@@ -4,6 +4,7 @@ import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
+import spock.lang.Requires
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
@@ -67,6 +68,7 @@ class FunctionalTest extends Specification {
         'gist'       | scriptSnippet('gist.gradle')
     }
 
+    @Requires({ !System.getProperty('gistToken').isEmpty() })
     def "gists can be published"() {
         given:
         settingsFile()
@@ -77,7 +79,7 @@ class FunctionalTest extends Specification {
         buildFile << "\n\n"
 
         when:
-        def result = build('help')
+        def result = build('help', "-PgistToken=${System.getProperty('gistToken')}")
 
         then:
         result.task(':help').outcome == SUCCESS
@@ -120,10 +122,6 @@ class FunctionalTest extends Specification {
 
     private BuildResult build(String... args) {
         return gradleRunnerFor(*args).build()
-    }
-
-    private BuildResult buildAndFail(String... args) {
-        return gradleRunnerFor(*args).buildAndFail()
     }
 
     private GradleRunner gradleRunnerFor(String... args) {
