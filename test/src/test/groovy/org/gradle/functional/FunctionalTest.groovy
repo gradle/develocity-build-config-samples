@@ -20,7 +20,7 @@ class FunctionalTest extends Specification {
     private File buildFile
 
     @Shared
-    private String snippetsDir = new File('snippets').absolutePath
+    private String snippetsDir = new File('..').absolutePath
 
     def setup() {
         settingsFile = testProjectDir.newFile('settings.gradle')

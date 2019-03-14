@@ -21,12 +21,12 @@ dependencies {
     }
 }
 
-apply from: 'snippets/basic-publishing.gradle'
-apply from: 'snippets/capture-task-input-files.gradle'
-apply from: 'snippets/tags-basic.gradle'
-apply from: 'snippets/tags-android.gradle'
-apply from: 'snippets/git.gradle'
-apply from: 'snippets/gist.gradle'
+apply from: '../basic-publishing.gradle'
+apply from: '../capture-task-input-files.gradle'
+apply from: '../tags-basic.gradle'
+apply from: '../tags-android.gradle'
+apply from: '../git.gradle'
+apply from: '../gist.gradle'
 
 tasks.named('test', Test).configure {
     systemProperty 'gistToken', findProperty('gistToken')
