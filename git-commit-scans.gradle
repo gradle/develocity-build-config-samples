@@ -13,10 +13,15 @@ buildScan.background {
     // It's simple to capture values from git
     // `execAndGetStdout` is a custom method defined below.
     def gitCommitId = execAndGetStdout('git', 'rev-parse', '--verify', 'HEAD')
+
+    // In order to be able to create this custom link, we need a custom value with the expected key name.
+    value 'Git Commit ID', gitCommitId
     link 'Git commit scans', customValueSearchUrl(['Git Commit ID': gitCommitId])
 }
 
-// 
+// Build scans can be extended with custom values, which are just key-value pairs. This method builds
+// a url that includes a search for a specific key-value pair. Because every aspect of the Gradle
+// Enterprise UI is specified by the URL, this enables some pretty clever things.
 def customValueSearchUrl(Map<String, String> search) {
     def query = search.collect { name, value ->
         "search.names=${name.urlEncode()}&search.values=${value.urlEncode()}"

@@ -28,6 +28,8 @@ apply from: '../tags-android.gradle'
 apply from: '../git.gradle'
 apply from: '../gist.gradle'
 
+// Put your gistToken, if you have one, in ~/.gradle/gradle.properties, and this will ensure that value gets into
+// the test as a System property.
 tasks.named('test', Test).configure {
     systemProperty 'gistToken', findProperty('gistToken')
 }

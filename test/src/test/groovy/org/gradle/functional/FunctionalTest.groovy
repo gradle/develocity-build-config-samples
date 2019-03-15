@@ -45,6 +45,8 @@ class FunctionalTest extends Specification {
         'capture-task-input-files' | scriptSnippet('capture-task-input-files.gradle')
         'tags-android'             | scriptSnippet('tags-android.gradle')
         'tags-basic'               | scriptSnippet('tags-basic.gradle')
+        'ci-jenkins'               | scriptSnippet('ci-jenkins.gradle')
+        'ci-teamcity'              | scriptSnippet('ci-teamcity.gradle')
     }
 
     @Unroll
@@ -62,9 +64,14 @@ class FunctionalTest extends Specification {
         !result.output.contains('Build scan background action failed')
 
         where:
-        snippetTitle | snippet
-        'git'        | scriptSnippet('git.gradle')
-        'gist'       | scriptSnippet('gist.gradle')
+        snippetTitle       | snippet
+        'git-commit-id'    | scriptSnippet('git-commit-id.gradle')
+        'git-branch-name'  | scriptSnippet('git-branch-name.gradle')
+        'git-status'       | scriptSnippet('git-status.gradle')
+        'git-source'       | scriptSnippet('git-source.gradle')
+        'git-commit-scans' | scriptSnippet('git-commit-scans.gradle')
+        'git-all'          | scriptSnippet('git-all.gradle')
+        'gist'             | scriptSnippet('gist.gradle')
     }
 
     @Requires({ !System.getProperty('gistToken').isEmpty() })
@@ -78,12 +85,32 @@ class FunctionalTest extends Specification {
         buildFile << "\n\n"
 
         when:
-        def result = build('help', "-PgistToken=${System.getProperty('gistToken')}")
+        def result = build('help', "-PgistToken=${System.getProperty('gistToken')}", '--info')
 
         then:
         result.task(':help').outcome == SUCCESS
-        !result.output.contains("User has not set 'gistToken'. Cannot publish gist.")
-        !result.output.contains("Unable to publish diff to Gist")
+        result.output.contains('Successfully published gist.')
+    }
+
+    @Unroll
+    def "gists won't be published if #startParameter"() {
+        given:
+        settingsFile()
+        buildFileWithAppliedSnippet(scriptSnippet('gist.gradle'))
+        initGitRepo()
+
+        and: 'A modified file so there is a diff when generating a gist'
+        buildFile << "\n\n"
+
+        when:
+        def result = build('help', startParameter)
+
+        then:
+        result.task(':help').outcome == SUCCESS
+        result.output.contains("Build is offline or continuous. Not publishing gist.")
+
+        where:
+        startParameter << ['--offline', '--continuous']
     }
 
     private File settingsFile() {
