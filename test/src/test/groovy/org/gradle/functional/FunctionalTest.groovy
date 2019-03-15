@@ -43,8 +43,9 @@ class FunctionalTest extends Specification {
         snippetTitle               | snippet
         'basic-publishing'         | scriptSnippet('basic-publishing.gradle')
         'capture-task-input-files' | scriptSnippet('capture-task-input-files.gradle')
-        'tags-android'             | scriptSnippet('tags-android.gradle')
         'tags-basic'               | scriptSnippet('tags-basic.gradle')
+        'tags-android'             | scriptSnippet('tags-android.gradle')
+        'tags-slow-tasks'          | scriptSnippet('tags-slow-tasks.gradle')
         'ci-jenkins'               | scriptSnippet('ci-jenkins.gradle')
         'ci-teamcity'              | scriptSnippet('ci-teamcity.gradle')
     }
