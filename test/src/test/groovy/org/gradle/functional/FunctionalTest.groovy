@@ -41,7 +41,8 @@ class FunctionalTest extends Specification {
 
         where:
         snippetTitle               | snippet
-        'basic-publishing'         | scriptSnippet('basic-publishing.gradle')
+        'publishing-basic'         | scriptSnippet('publishing-basic.gradle')
+        'publishing-ge'            | scriptSnippet('publishing-ge.gradle')
         'capture-task-input-files' | scriptSnippet('capture-task-input-files.gradle')
         'tags-basic'               | scriptSnippet('tags-basic.gradle')
         'tags-android'             | scriptSnippet('tags-android.gradle')

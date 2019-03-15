@@ -10,10 +10,4 @@ buildScan {
     if (geServer != null) {
         server = geServer
     }
-
-    // If you're not using Gradle Enterprise, agree to the terms of service for use of the public scans server.
-    if (geServer == null) {
-        termsOfServiceUrl = 'https://gradle.com/terms-of-service'
-        termsOfServiceAgree = 'yes'
-    }
 }

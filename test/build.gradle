@@ -21,7 +21,7 @@ dependencies {
     }
 }
 
-apply from: '../basic-publishing.gradle'
+apply from: '../publishing-ge.gradle'
 apply from: '../capture-task-input-files.gradle'
 apply from: '../tags-basic.gradle'
 apply from: '../tags-android.gradle'
