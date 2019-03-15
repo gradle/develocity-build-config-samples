@@ -58,7 +58,7 @@ class FunctionalTest extends Specification {
         initGitRepo()
 
         when:
-        def result = build('help', '-DgeServer=https://scans.gradle.com')
+        def result = build('help', '-Dcom.gradle.scan.server=https://scans.gradle.com')
 
         then:
         result.task(':help').outcome == SUCCESS

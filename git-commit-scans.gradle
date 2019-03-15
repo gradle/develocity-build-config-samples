@@ -1,6 +1,3 @@
-// TODO: temporary
-ext.geServer = System.getProperty('geServer')
-
 // With build can plugin v1.15+, you can easily add expensive data inside the background {} block. Everything inside
 // here is executed in a separate thread, and guaranteed to complete before finishing the build and publishing the
 // scan.
@@ -26,6 +23,10 @@ def customValueSearchUrl(Map<String, String> search) {
     def query = search.collect { name, value ->
         "search.names=${name.urlEncode()}&search.values=${value.urlEncode()}"
     }.join('&')
+
+    // Useful for the script to inject a custom value, but in your case, replace System.getProperty
+    // with a direct reference to your GE server. For example, "https://gradle.yourcompany.com"
+    def geServer = System.getProperty('com.gradle.scan.server')
     return "$geServer/scans?$query"
 }
 
