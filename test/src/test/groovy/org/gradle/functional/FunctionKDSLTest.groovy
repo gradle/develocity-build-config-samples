@@ -1,5 +1,6 @@
 package org.gradle.functional
 
+import spock.lang.Requires
 import spock.lang.Unroll
 
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
@@ -36,7 +37,7 @@ class FunctionKDSLTest extends AbstractFunctionalTest {
     }
 
     @Unroll
-    def "snippet #snippetTitle, which does background work, can be configured"() {
+    def "kotlin snippet #snippetTitle, which does background work, can be configured"() {
         given:
         settingsFile()
         buildFileWithInlinedSnippet(snippet)
@@ -60,23 +61,44 @@ class FunctionKDSLTest extends AbstractFunctionalTest {
         'gist'             | scriptSnippet('gist.gradle.kts')
     }
 
-//    @Requires({ !System.getProperty('gistToken').isEmpty() })
-//    def "kotlin DSL gists can be published"() {
-//        given:
-//        settingsFile()
-//        kotlinDSBbuildFileWithAppliedSnippet(scriptSnippet('gist.gradle.kts'))
-//        initGitRepo()
-//
-//        and: 'A modified file so there is a diff when generating a gist'
-//        kotlinBuildFile << "\n\n"
-//
-//        when:
-//        def result = build('help', "-PgistToken=${System.getProperty('gistToken')}", '--info')
-//
-//        then:
-//        result.task(':help').outcome == SUCCESS
-//        result.output.contains('Successfully published gist.')
-//    }
+    @Requires({ !System.getProperty('gistToken').isEmpty() })
+    def "kotlin DSL gists can be published"() {
+        given:
+        settingsFile()
+        buildFileWithInlinedSnippet(scriptSnippet('gist.gradle.kts'))
+        initGitRepo()
+
+        and: 'A modified file so there is a diff when generating a gist'
+        buildFile << "\n\n"
+
+        when:
+        def result = build('help', "-PgistToken=${System.getProperty('gistToken')}", '--info')
+
+        then:
+        result.task(':help').outcome == SUCCESS
+        result.output.contains('Successfully published gist.')
+    }
+
+    @Unroll
+    def "kotlin DSL gists won't be published if #startParameter"() {
+        given:
+        settingsFile()
+        buildFileWithInlinedSnippet(scriptSnippet('gist.gradle.kts'))
+        initGitRepo()
+
+        and: 'A modified file so there is a diff when generating a gist'
+        buildFile << "\n\n"
+
+        when:
+        def result = build('help', startParameter)
+
+        then:
+        result.task(':help').outcome == SUCCESS
+        result.output.contains("Build is offline or continuous. Not publishing gist.")
+
+        where:
+        startParameter << ['--offline', '--continuous']
+    }
 
     private File buildFileWithInlinedSnippet(def snippet) {
         buildFile << """

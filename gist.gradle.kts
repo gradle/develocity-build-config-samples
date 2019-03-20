@@ -56,16 +56,17 @@ fun execAndGetStdout(vararg args: String): String {
 
 fun jsonRequest(out: java.io.Writer, project: Project, diff: String) {
     val builder = groovy.json.JsonBuilder()
-    builder.withGroovyBuilder {
-        "description" to "Git diff for $project.name" // TODO doesn't work
-        "public" to false // TODO doesn't work
-        "files" { // TODO from here down works perfectly. Weird.
-            "${project.name}.diff" {
-                "content"(diff)
+    builder.call(delegateClosureOf<Any> {
+        withGroovyBuilder {
+            "description"("Git diff for $project.name")
+            "public"(false)
+            "files" {
+                "${project.name}.diff" {
+                    "content"(diff)
+                }
             }
         }
-    }
-//    println("json =\n$builder") // TODO remove this line
+    })
     builder.writeTo(out)
 }
 
