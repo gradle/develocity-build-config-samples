@@ -13,10 +13,10 @@ class FunctionKDSLTest extends AbstractFunctionalTest {
     }
 
     @Unroll
-    def "kotlin DSL snippet #snippetTitle can be configured"() {
+    def "kotlin DSL snippet #snippet can be configured"() {
         given:
         settingsFile()
-        buildFileWithInlinedSnippet(snippet)
+        buildFileWithInlinedSnippet(scriptSnippet("${snippet}.gradle.kts"))
 
         when:
         def result = build('help', '--no-scan')
@@ -25,22 +25,23 @@ class FunctionKDSLTest extends AbstractFunctionalTest {
         result.task(':help').outcome == SUCCESS
 
         where:
-        snippetTitle               | snippet
-        'publishing-basic'         | scriptSnippet('publishing-basic.gradle.kts')
-        'publishing-ge'            | scriptSnippet('publishing-ge.gradle.kts')
-        'capture-task-input-files' | scriptSnippet('capture-task-input-files.gradle.kts')
-        'tags-basic'               | scriptSnippet('tags-basic.gradle.kts')
-        'tags-android'             | scriptSnippet('tags-android.gradle.kts')
-        'tags-slow-tasks'          | scriptSnippet('tags-slow-tasks.gradle.kts')
-        'ci-jenkins'               | scriptSnippet('ci-jenkins.gradle.kts')
-        'ci-teamcity'              | scriptSnippet('ci-teamcity.gradle.kts')
+        snippet << [
+            'publishing-basic',
+            'publishing-ge',
+            'capture-task-input-files',
+            'tags-basic',
+            'tags-android',
+            'tags-slow-tasks',
+            'ci-jenkins',
+            'ci-teamcity'
+        ]
     }
 
     @Unroll
-    def "kotlin snippet #snippetTitle, which does background work, can be configured"() {
+    def "kotlin snippet #snippet, which does background work, can be configured"() {
         given:
         settingsFile()
-        buildFileWithInlinedSnippet(snippet)
+        buildFileWithInlinedSnippet(scriptSnippet("${snippet}.gradle.kts"))
         initGitRepo()
 
         when:
@@ -51,14 +52,15 @@ class FunctionKDSLTest extends AbstractFunctionalTest {
         !result.output.contains('Build scan background action failed')
 
         where:
-        snippetTitle       | snippet
-        'git-commit-id'    | scriptSnippet('git-commit-id.gradle.kts')
-        'git-branch-name'  | scriptSnippet('git-branch-name.gradle.kts')
-        'git-status'       | scriptSnippet('git-status.gradle.kts')
-        'git-source'       | scriptSnippet('git-source.gradle.kts')
-        'git-commit-scans' | scriptSnippet('git-commit-scans.gradle.kts')
-        'git-all'          | scriptSnippet('git-all.gradle.kts')
-        'gist'             | scriptSnippet('gist.gradle.kts')
+        snippet << [
+            'git-commit-id',
+            'git-branch-name',
+            'git-status',
+            'git-source',
+            'git-commit-scans',
+            'git-all',
+            'gist'
+        ]
     }
 
     @Requires({ !System.getProperty('gistToken').isEmpty() })
