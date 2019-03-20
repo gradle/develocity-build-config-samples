@@ -26,9 +26,7 @@ dependencies {
 apply(from = "../publishing-ge.gradle")
 apply(from = "../capture-task-input-files.gradle")
 apply(from = "../tags-basic.gradle")
-apply(from = "../tags-android.gradle")
-//apply(from = "../git-all.gradle")
-//apply(from = "../gist.gradle")
+apply(from = "../git-all.gradle")
 
 // Put your gistToken, if you have one, in ~/.gradle/gradle.properties, and this will ensure that value gets into
 // the test as a System property.

@@ -13,10 +13,10 @@ class FunctionalGDSLTest extends AbstractFunctionalTest {
     }
 
     @Unroll
-    def "snippet #snippetTitle can be configured"() {
+    def "snippet #snippet can be configured"() {
         given:
         settingsFile()
-        buildFileWithAppliedSnippet(scriptSnippet2(snippet))
+        buildFileWithInlinedSnippet(scriptSnippet("${snippet}.gradle"))
 
         when:
         def result = build('help', '--no-scan')
@@ -25,22 +25,23 @@ class FunctionalGDSLTest extends AbstractFunctionalTest {
         result.task(':help').outcome == SUCCESS
 
         where:
-        snippetTitle               | snippet
-        'publishing-basic'         | 'publishing-basic.gradle'
-        'publishing-ge'            | 'publishing-ge.gradle'
-        'capture-task-input-files' | 'capture-task-input-files.gradle'
-        'tags-basic'               | 'tags-basic.gradle'
-        'tags-android'             | 'tags-android.gradle'
-        'tags-slow-tasks'          | 'tags-slow-tasks.gradle'
-        'ci-jenkins'               | 'ci-jenkins.gradle'
-        'ci-teamcity'              | 'ci-teamcity.gradle'
+        snippet << [
+            'publishing-basic',
+            'publishing-ge',
+            'capture-task-input-files',
+            'tags-basic',
+            'tags-android',
+            'tags-slow-tasks',
+            'ci-jenkins',
+            'ci-teamcity',
+        ]
     }
 
     @Unroll
-    def "snippet #snippetTitle, which does background work, can be configured"() {
+    def "snippet #snippet, which does background work, can be configured"() {
         given:
         settingsFile()
-        buildFileWithAppliedSnippet(scriptSnippet2(snippet))
+        buildFileWithInlinedSnippet(scriptSnippet("${snippet}.gradle"))
         initGitRepo()
 
         when:
@@ -51,21 +52,22 @@ class FunctionalGDSLTest extends AbstractFunctionalTest {
         !result.output.contains('Build scan background action failed')
 
         where:
-        snippetTitle       | snippet
-        'git-commit-id'    | 'git-commit-id.gradle'
-        'git-branch-name'  | 'git-branch-name.gradle'
-        'git-status'       | 'git-status.gradle'
-        'git-source'       | 'git-source.gradle'
-        'git-commit-scans' | 'git-commit-scans.gradle'
-        'git-all'          | 'git-all.gradle'
-        'gist'             | 'gist.gradle'
+        snippet << [
+            'git-commit-id',
+            'git-branch-name',
+            'git-status',
+            'git-source',
+            'git-commit-scans',
+            'git-all',
+            'gist',
+        ]
     }
 
     @Requires({ !System.getProperty('gistToken').isEmpty() })
     def "gists can be published"() {
         given:
         settingsFile()
-        buildFileWithAppliedSnippet(scriptSnippet2('gist.gradle'))
+        buildFileWithInlinedSnippet(scriptSnippet('gist.gradle'))
         initGitRepo()
 
         and: 'A modified file so there is a diff when generating a gist'
@@ -83,7 +85,7 @@ class FunctionalGDSLTest extends AbstractFunctionalTest {
     def "gists won't be published if #startParameter"() {
         given:
         settingsFile()
-        buildFileWithAppliedSnippet(scriptSnippet2('gist.gradle'))
+        buildFileWithInlinedSnippet(scriptSnippet('gist.gradle'))
         initGitRepo()
 
         and: 'A modified file so there is a diff when generating a gist'
@@ -100,17 +102,14 @@ class FunctionalGDSLTest extends AbstractFunctionalTest {
         startParameter << ['--offline', '--continuous']
     }
 
-    private File buildFileWithAppliedSnippet(def snippet) {
+    private File buildFileWithInlinedSnippet(def snippet) {
         buildFile << """
         plugins {
             id 'com.gradle.build-scan' version '2.2.1'
         }
         
-        apply from: '$snippet'
+        $snippet
         """
     }
 
-    private def scriptSnippet2(String snippetName) {
-        return new File(snippetsDir, snippetName).toString()
-    }
 }
