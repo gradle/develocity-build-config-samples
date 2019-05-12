@@ -52,6 +52,8 @@ class FunctionalTest extends Specification {
         'tags-basic'               | 'kotlin'
         'tags-android'             | 'groovy'
         'tags-android'             | 'kotlin'
+	'tags-idea'                | 'groovy'
+        'tags-idea'                | 'kotlin'
         'tags-slow-tasks'          | 'groovy'
         'tags-slow-tasks'          | 'kotlin'
         'ci-jenkins'               | 'groovy'
