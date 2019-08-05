@@ -2,7 +2,7 @@
 // build on your Jenkins CI server. If you're using the Gradle plugin for Jenkins, then there will
 // also be a link to the build scan from Jenkins, in which case you will now have a two-way connection
 // between your build scan and your CI server.
-val buildUrl = System.getenv("CI_BUILD_URL")
+val buildUrl = System.getenv("BUILD_URL")
 if (buildUrl != null) {
     buildScan {
         link("CI Build", buildUrl)
