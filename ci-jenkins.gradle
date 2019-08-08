@@ -5,4 +5,7 @@
 def buildUrl = System.getenv('BUILD_URL')
 if (buildUrl != null) {   
     buildScan.link 'CI Build', buildUrl
+    buildScan.tag 'CI'
+} else {
+    buildScan.tag 'LOCAL'
 }
