@@ -1,0 +1,122 @@
+buildScan {
+    captureTaskInputFiles = true
+    
+    tagCiOrLocal()
+    tagOs()
+    tagIde()
+    addGitMetadata()
+    addCiMetadata()
+}
+
+void tagCiOrLocal() {
+    buildScan.tag(isOnCi() ? 'CI' : 'LOCAL')
+}
+
+void tagOs() {
+    def os = System.getProperty('os.name')
+    if (os) {
+        buildScan.tag os
+    }
+}
+
+void tagIde() {
+    if (project.hasProperty('android.injected.invoked.from.ide')) {
+        buildScan.tag 'Android Studio'
+    } else if (project.hasProperty("idea.executable")) {
+        buildScan.tag 'IDEA'
+    } // TODO Eclipse?
+}
+
+void addGitMetadata() {
+    buildScan.background {
+        def gitCommitId = execAndGetStdout('git', 'rev-parse', '--short=8', '--verify', 'HEAD')
+        def gitBranchName = execAndGetStdout('git', 'rev-parse', '--abbrev-ref', 'HEAD')
+        def gitStatus = execAndGetStdout('git', 'status', '--porcelain')
+
+        if (gitBranchName && !gitBranchName.isEmpty() && gitBranchName != 'HEAD') {
+            tag gitBranchName
+            value 'Git branch', gitBranchName
+        }
+        if (gitStatus && !gitStatus.isEmpty()) {
+            tag 'dirty'
+            value 'Git status', gitStatus
+        }
+
+        def commitIdLabel = 'Git Commit ID'
+        value commitIdLabel, gitCommitId
+        link 'Git commit scans', customValueSearchUrl([(commitIdLabel): gitCommitId])
+    }
+}
+
+void addCiMetadata() {
+    def ciBuild = 'CI BUILD'
+
+    // Jenkins
+    if (System.getenv('BUILD_NUMBER')) {
+        value 'Build number', System.getenv('BUILD_NUMBER')
+    }
+    if (System.getenv('JOB_NAME')) {
+        value 'Job name', System.getenv('JOB_NAME')
+    }
+    if (System.getenv('BUILD_URL')) {
+        link ciBuild, System.getenv('BUILD_URL')
+    }
+
+    // Team City
+    if (System.getenv('CI_BUILD_URL')) {
+        link ciBuild, System.getenv('CI_BUILD_URL')
+    }
+
+    // Circle CI
+    if (System.getenv('CIRCLE_BUILD_URL')) {
+        link ciBuild, System.getenv('CIRCLE_BUILD_URL')
+    }
+
+    // Bamboo
+    if (System.getenv('bamboo.resultsUrl')) {
+        link ciBuild, System.getenv('bamboo.resultsUrl')
+    }
+
+    // Concourse
+    // https://concourse-ci.org/implementing-resource-types.html#resource-metadata
+    // https://stackoverflow.com/a/45037360/2740621
+    // Issue filed on Concourse docs github issue tracker: https://github.com/concourse/docs/issues/240
+    def concourseAtcExternalUrl = System.getenv('ATC_EXTERNAL_URL')
+    def concourseBuildTeamName = System.getenv('BUILD_TEAM_NAME')
+    def concourseBuildPipelineName = System.getenv('BUILD_PIPELINE_NAME')
+    def concourseBuildJobName = System.getenv('BUILD_JOB_NAME')
+    def concourseBuildName = System.getenv('BUILD_NAME')
+    if (concourseAtcExternalUrl && concourseBuildTeamName && concourseBuildPipelineName && concourseBuildJobName && concourseBuildName) {
+        def url = "$concourseAtcExternalUrl/teams/$concourseBuildTeamName/pipelines/$concourseBuildPipelineName/jobs/$concourseBuildJobName/builds/$concourseBuildName"
+        try {
+            link ciBuild, url
+        } catch (Exception ignored) {
+            // Because I don't trust this URL to be correct and I don't want to throw an exception when trying to add it
+            project.logger.warn("Cannot add link to Concourse CI job. $url is not a valid url.")
+        }
+    }
+}
+
+static boolean isOnCi() {
+    return 'true' == System.getenv('CI')
+}
+
+String execAndGetStdout(String... args) {
+    def stdout = new ByteArrayOutputStream()
+    exec {
+        commandLine(args)
+        standardOutput = stdout
+    }
+    return stdout.toString().trim()
+}
+
+String customValueSearchUrl(Map<String, String> search) {
+    def query = search.collect { name, value ->
+        "search.names=${name.urlEncode()}&search.values=${value.urlEncode()}"
+    }.join('&')
+
+    return "$buildScan.server/scans?$query"
+}
+
+// An extension method on String
+String.metaClass.urlEncode = { -> URLEncoder.encode(delegate as String, 'UTF-8') }
