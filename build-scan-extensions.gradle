@@ -1,15 +1,10 @@
 buildScan {
     captureTaskInputFiles = true
-    
-    tagCiOrLocal()
+
     tagOs()
     tagIde()
     addGitMetadata()
     addCiMetadata()
-}
-
-void tagCiOrLocal() {
-    buildScan.tag(isOnCi() ? 'CI' : 'LOCAL')
 }
 
 void tagOs() {
@@ -53,30 +48,37 @@ void addGitMetadata() {
 
 void addCiMetadata() {
     def ciBuild = 'CI BUILD'
+    def isCi = false
 
     // Jenkins
     if (System.getenv('BUILD_NUMBER')) {
+        isCi = true
         value 'Build number', System.getenv('BUILD_NUMBER')
     }
     if (System.getenv('JOB_NAME')) {
+        isCi = true
         value 'Job name', System.getenv('JOB_NAME')
     }
     if (System.getenv('BUILD_URL')) {
+        isCi = true
         link ciBuild, System.getenv('BUILD_URL')
     }
 
     // Team City
     if (System.getenv('CI_BUILD_URL')) {
+        isCi = true
         link ciBuild, System.getenv('CI_BUILD_URL')
     }
 
     // Circle CI
     if (System.getenv('CIRCLE_BUILD_URL')) {
+        isCi = true
         link ciBuild, System.getenv('CIRCLE_BUILD_URL')
     }
 
     // Bamboo
     if (System.getenv('bamboo.resultsUrl')) {
+        isCi = true
         link ciBuild, System.getenv('bamboo.resultsUrl')
     }
 
@@ -90,6 +92,8 @@ void addCiMetadata() {
     def concourseBuildJobName = System.getenv('BUILD_JOB_NAME')
     def concourseBuildName = System.getenv('BUILD_NAME')
     if (concourseAtcExternalUrl && concourseBuildTeamName && concourseBuildPipelineName && concourseBuildJobName && concourseBuildName) {
+        isCi = true
+
         def url = "$concourseAtcExternalUrl/teams/$concourseBuildTeamName/pipelines/$concourseBuildPipelineName/jobs/$concourseBuildJobName/builds/$concourseBuildName"
         try {
             link ciBuild, url
@@ -98,10 +102,12 @@ void addCiMetadata() {
             project.logger.warn("Cannot add link to Concourse CI job. $url is not a valid url.")
         }
     }
-}
 
-static boolean isOnCi() {
-    return 'true' == System.getenv('CI')
+    if (isCi) {
+        buildScan.tag('CI')
+    } else {
+        buildScan.tag('LOCAL')
+    }
 }
 
 String execAndGetStdout(String... args) {

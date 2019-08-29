@@ -2,8 +2,6 @@ import org.apache.commons.lang3.StringUtils
 
 def buildScan = session.lookup('com.gradle.maven.extension.api.scan.BuildScanApi')
 
-buildScan.tag(isOnCi() ? 'CI' : 'LOCAL')
-
 def os = System.getProperty('os.name')
 if (os) {
     buildScan.tag os
@@ -17,7 +15,6 @@ if (project.hasProperty('android.injected.invoked.from.ide')) {
     // TODO replace with project property when available https://github.com/eclipse/buildship/issues/911
     buildScan.tag 'Eclipse'
 }
-
 
 buildScan.background {
     def gitCommitId = StringUtils.chomp('git rev-parse --short=8 --verify HEAD'.execute().text)
@@ -39,30 +36,37 @@ buildScan.background {
 }
 
 def ciBuild = 'CI BUILD'
+def isCi = false
 
 // Jenkins
 if (System.getenv('BUILD_NUMBER')) {
+    isCi = true
     buildScan.value 'Build number', System.getenv('BUILD_NUMBER')
 }
 if (System.getenv('JOB_NAME')) {
+    isCi = true
     buildScan.value 'Job name', System.getenv('JOB_NAME')
 }
 if (System.getenv('BUILD_URL')) {
+    isCi = true
     buildScan.link ciBuild, System.getenv('BUILD_URL')
 }
 
 // Team City
 if (System.getenv('CI_BUILD_URL')) {
+    isCi = true
     buildScan.link ciBuild, System.getenv('CI_BUILD_URL')
 }
 
 // Circle CI
 if (System.getenv('CIRCLE_BUILD_URL')) {
+    isCi = true
     buildScan.link ciBuild, System.getenv('CIRCLE_BUILD_URL')
 }
 
 // Bamboo
 if (System.getenv('bamboo.resultsUrl')) {
+    isCi = true
     buildScan.link ciBuild, System.getenv('bamboo.resultsUrl')
 }
 
@@ -76,6 +80,8 @@ def concourseBuildPipelineName = System.getenv('BUILD_PIPELINE_NAME')
 def concourseBuildJobName = System.getenv('BUILD_JOB_NAME')
 def concourseBuildName = System.getenv('BUILD_NAME')
 if (concourseAtcExternalUrl && concourseBuildTeamName && concourseBuildPipelineName && concourseBuildJobName && concourseBuildName) {
+    isCi = true
+
     String url = "$concourseAtcExternalUrl/teams/$concourseBuildTeamName/pipelines/$concourseBuildPipelineName/jobs/$concourseBuildJobName/builds/$concourseBuildName"
     try {
         buildScan.link ciBuild, url
@@ -85,8 +91,10 @@ if (concourseAtcExternalUrl && concourseBuildTeamName && concourseBuildPipelineN
     }
 }
 
-static boolean isOnCi() {
-    return 'true' == System.getenv('CI')
+if (isCi) {
+    buildScan.tag('CI')
+} else {
+    buildScan.tag('LOCAL')
 }
 
 String customValueSearchUrl(buildScan, Map<String, String> search) {
