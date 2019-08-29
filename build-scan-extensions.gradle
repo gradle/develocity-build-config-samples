@@ -24,7 +24,10 @@ void tagIde() {
         buildScan.tag 'Android Studio'
     } else if (project.hasProperty("idea.executable")) {
         buildScan.tag 'IDEA'
-    } // TODO Eclipse?
+    } else if (System.getenv('eclipse.buildId')) {
+        // TODO replace with project property when available https://github.com/eclipse/buildship/issues/911
+        buildScan.tag 'Eclipse'
+    }
 }
 
 void addGitMetadata() {
