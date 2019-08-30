@@ -1,20 +1,13 @@
 buildScan {
-    tagCiOrLocal()
     tagOs()
     tagIde()
-    addGitMetadata()
+    tagCiOrLocal()
     addCiMetadata()
-}
-
-void tagCiOrLocal() {
-	// cover Jenkins, TeamCity, CircleCI, and Bamboo
-	def isCi = System.getenv('BUILD_URL') || System.getenv('CI_BUILD_URL') || System.getenv('CIRCLE_BUILD_URL') || System.getenv('bamboo.resultsUrl') 
-    buildScan.tag(isCi ? 'CI' : 'LOCAL')
+    addGitMetadata()
 }
 
 void tagOs() {
-	// always set by the JVM
-	buildScan.tag System.getProperty('os.name')
+    buildScan.tag System.getProperty('os.name')
 }
 
 void tagIde() {
@@ -27,24 +20,30 @@ void tagIde() {
     } 
 }
 
+void tagCiOrLocal() {
+    buildScan.tag(isCi() ? 'CI' : 'LOCAL')
+}
+
 void addGitMetadata() {
     buildScan.background {
         def gitCommitId = execAndGetStdout('git', 'rev-parse', '--short=8', '--verify', 'HEAD')
         def gitBranchName = execAndGetStdout('git', 'rev-parse', '--abbrev-ref', 'HEAD')
         def gitStatus = execAndGetStdout('git', 'status', '--porcelain')
 
-        if (gitBranchName && !gitBranchName.isEmpty() && gitBranchName != 'HEAD') {
+        if(gitCommitId) {
+            def commitIdLabel = 'Git Commit ID'
+            value commitIdLabel, gitCommitId
+            link 'Git commit build scans', customValueSearchUrl([(commitIdLabel): gitCommitId])
+        }
+
+        if (gitBranchName) {
             tag gitBranchName
             value 'Git branch', gitBranchName
         }
-        if (gitStatus && !gitStatus.isEmpty()) {
+        if (gitStatus) {
             tag 'dirty'
             value 'Git status', gitStatus
         }
-
-        def commitIdLabel = 'Git Commit ID'
-        value commitIdLabel, gitCommitId
-        link 'Git commit scans', customValueSearchUrl([(commitIdLabel): gitCommitId])
     }
 }
 
@@ -97,8 +96,11 @@ void addCiMetadata() {
     }
 }
 
-static boolean isOnCi() {
-    return 'true' == System.getenv('CI')
+boolean isCi() {
+    System.getenv('BUILD_URL') ||        // Jenkins
+    System.getenv('CI_BUILD_URL') ||     // TeamCity
+    System.getenv('CIRCLE_BUILD_URL') || // CircleCI
+    System.getenv('bamboo.resultsUrl')   // Bamboo
 }
 
 String execAndGetStdout(String... args) {
