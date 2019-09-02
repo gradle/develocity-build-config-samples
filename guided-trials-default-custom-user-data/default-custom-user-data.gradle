@@ -15,7 +15,7 @@ void tagIde() {
         buildScan.tag 'Android Studio'
     } else if (project.hasProperty('idea.executable')) {
         buildScan.tag 'IntelliJ IDEA'
-    } else if (project.hasProperty('idea.executable')) {
+    } else if (project.hasProperty('eclipse.buildId')) {
         buildScan.tag 'Eclipse'
     } 
 }
@@ -35,7 +35,6 @@ void addGitMetadata() {
             value commitIdLabel, gitCommitId
             link 'Git commit build scans', customValueSearchUrl([(commitIdLabel): gitCommitId])
         }
-
         if (gitBranchName) {
             tag gitBranchName
             value 'Git branch', gitBranchName
