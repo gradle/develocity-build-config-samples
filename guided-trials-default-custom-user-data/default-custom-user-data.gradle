@@ -15,7 +15,7 @@ void tagIde() {
         buildScan.tag 'Android Studio'
     } else if (project.hasProperty('idea.executable')) {
         buildScan.tag 'IntelliJ IDEA'
-    } else if (project.hasProperty('eclipse.buildId')) {
+    } else if (System.getProperty('eclipse.buildId')) {
         buildScan.tag 'Eclipse'
     } 
 }
