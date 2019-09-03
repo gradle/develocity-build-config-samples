@@ -33,7 +33,7 @@ void addGitMetadata() {
         if(gitCommitId) {
             def commitIdLabel = 'Git commit id'
             value commitIdLabel, gitCommitId
-            link 'Git commit build scans', customValueSearchUrl([(commitIdLabel): gitCommitId])
+            link 'Git commit id build scans', customValueSearchUrl([(commitIdLabel): gitCommitId])
         }
         if (gitBranchName) {
             tag gitBranchName
@@ -55,10 +55,16 @@ void addCiMetadata() {
         value 'CI build number', System.getenv('BUILD_NUMBER')
     }
     if (System.getenv('JOB_NAME')) {
-        value 'CI job name', System.getenv('JOB_NAME')
+        def jobNameLabel = 'CI job'
+        def jobName = System.getenv('JOB_NAME')
+        value jobNameLabel, jobName
+        link 'CI job build scans', customValueSearchUrl([(jobNameLabel): jobName])
     }
     if (System.getenv('STAGE_NAME')) {
-        value 'CI stage name', System.getenv('STAGE_NAME')
+        def stageNameLabel = 'CI stage'
+        def stageName = System.getenv('STAGE_NAME')
+        value stageNameLabel, stageName
+        link 'CI stage build scans', customValueSearchUrl([(stageNameLabel): stageName])
     }
     
     // Team City
