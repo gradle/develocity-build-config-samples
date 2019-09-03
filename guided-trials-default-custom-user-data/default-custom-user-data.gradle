@@ -112,11 +112,8 @@ String execAndGetStdout(String... args) {
 
 String customValueSearchUrl(Map<String, String> search) {
     def query = search.collect { name, value ->
-        "search.names=${name.urlEncode()}&search.values=${value.urlEncode()}"
+        "search.names=${URLEncoder.encode(name, 'UTF-8')}&search.values=${URLEncoder.encode(value, 'UTF-8')}"
     }.join('&')
 
     return "$buildScan.server/scans?$query"
 }
-
-// An extension method on String
-String.metaClass.urlEncode = { -> URLEncoder.encode(delegate as String, 'UTF-8') }
