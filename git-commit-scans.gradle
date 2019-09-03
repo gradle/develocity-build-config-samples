@@ -21,7 +21,7 @@ buildScan.background {
 // Enterprise UI is specified by the URL, this enables some pretty clever things.
 def customValueSearchUrl(Map<String, String> search) {
     def query = search.collect { name, value ->
-        "search.names=${name.urlEncode()}&search.values=${value.urlEncode()}"
+        "search.names=${URLEncoder.encode(name, 'UTF-8')}&search.values=${URLEncoder.encode(value, 'UTF-8')}"
     }.join('&')
 
     // Useful for the script to inject a custom value, but in your case, replace System.getProperty
@@ -39,6 +39,3 @@ def execAndGetStdout(String... args) {
     }
     return stdout.toString().trim()
 }
-
-// An extension method on String
-String.metaClass.urlEncode = { -> URLEncoder.encode(delegate as String, 'UTF-8') }
