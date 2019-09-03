@@ -60,37 +60,37 @@ void addGitMetadata() {
 void addCiMetadata() {
     // Jenkins
     if (System.getenv('BUILD_URL')) {
-        link 'Jenkins build', System.getenv('BUILD_URL')
+        buildScan.link 'Jenkins build', System.getenv('BUILD_URL')
     }
     if (System.getenv('BUILD_NUMBER')) {
-        value 'CI build number', System.getenv('BUILD_NUMBER')
+        buildScan.value 'CI build number', System.getenv('BUILD_NUMBER')
     }
     if (System.getenv('JOB_NAME')) {
         def jobNameLabel = 'CI job'
         def jobName = System.getenv('JOB_NAME')
-        value jobNameLabel, jobName
-        link 'CI job build scans', customValueSearchUrl([(jobNameLabel): jobName])
+        buildScan.value jobNameLabel, jobName
+        buildScan.link 'CI job build scans', customValueSearchUrl([(jobNameLabel): jobName])
     }
     if (System.getenv('STAGE_NAME')) {
         def stageNameLabel = 'CI stage'
         def stageName = System.getenv('STAGE_NAME')
-        value stageNameLabel, stageName
-        link 'CI stage build scans', customValueSearchUrl([(stageNameLabel): stageName])
+        buildScan.value stageNameLabel, stageName
+        buildScan.link 'CI stage build scans', customValueSearchUrl([(stageNameLabel): stageName])
     }
     
     // Team City
     if (System.getenv('CI_BUILD_URL')) {
-        link 'TeamCity build', System.getenv('CI_BUILD_URL')
+        buildScan.link 'TeamCity build', System.getenv('CI_BUILD_URL')
     }
 
     // Circle CI
     if (System.getenv('CIRCLE_BUILD_URL')) {
-        link 'CircleCI build', System.getenv('CIRCLE_BUILD_URL')
+        buildScan.link 'CircleCI build', System.getenv('CIRCLE_BUILD_URL')
     }
 
     // Bamboo
     if (System.getenv('bamboo.resultsUrl')) {
-        link 'Bamboo build', System.getenv('bamboo.resultsUrl')
+        buildScan.link 'Bamboo build', System.getenv('bamboo.resultsUrl')
     }
 }
 

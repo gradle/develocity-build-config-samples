@@ -53,33 +53,33 @@ void addCiMetadata() {
     // Jenkins
     if (System.getenv('BUILD_NUMBER')) {
         isCi = true
-        value 'Build number', System.getenv('BUILD_NUMBER')
+        buildScan.value 'Build number', System.getenv('BUILD_NUMBER')
     }
     if (System.getenv('JOB_NAME')) {
         isCi = true
-        value 'Job name', System.getenv('JOB_NAME')
+        buildScan.value 'Job name', System.getenv('JOB_NAME')
     }
     if (System.getenv('BUILD_URL')) {
         isCi = true
-        link ciBuild, System.getenv('BUILD_URL')
+        buildScan.link ciBuild, System.getenv('BUILD_URL')
     }
 
     // Team City
     if (System.getenv('CI_BUILD_URL')) {
         isCi = true
-        link ciBuild, System.getenv('CI_BUILD_URL')
+        buildScan.link ciBuild, System.getenv('CI_BUILD_URL')
     }
 
     // Circle CI
     if (System.getenv('CIRCLE_BUILD_URL')) {
         isCi = true
-        link ciBuild, System.getenv('CIRCLE_BUILD_URL')
+        buildScan.link ciBuild, System.getenv('CIRCLE_BUILD_URL')
     }
 
     // Bamboo
     if (System.getenv('bamboo.resultsUrl')) {
         isCi = true
-        link ciBuild, System.getenv('bamboo.resultsUrl')
+        buildScan.link ciBuild, System.getenv('bamboo.resultsUrl')
     }
 
     // Concourse
@@ -96,7 +96,7 @@ void addCiMetadata() {
 
         def url = "$concourseAtcExternalUrl/teams/$concourseBuildTeamName/pipelines/$concourseBuildPipelineName/jobs/$concourseBuildJobName/builds/$concourseBuildName"
         try {
-            link ciBuild, url
+            buildScan.link ciBuild, url
         } catch (Exception ignored) {
             // Because I don't trust this URL to be correct and I don't want to throw an exception when trying to add it
             project.logger.warn("Cannot add link to Concourse CI job. $url is not a valid url.")
