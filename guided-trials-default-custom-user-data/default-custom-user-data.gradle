@@ -31,7 +31,7 @@ void addGitMetadata() {
         def gitStatus = execAndGetStdout('git', 'status', '--porcelain')
 
         if(gitCommitId) {
-            def commitIdLabel = 'Git Commit ID'
+            def commitIdLabel = 'Git commit id'
             value commitIdLabel, gitCommitId
             link 'Git commit build scans', customValueSearchUrl([(commitIdLabel): gitCommitId])
         }
@@ -40,58 +40,40 @@ void addGitMetadata() {
             value 'Git branch', gitBranchName
         }
         if (gitStatus) {
-            tag 'dirty'
+            tag 'Dirty'
             value 'Git status', gitStatus
         }
     }
 }
 
 void addCiMetadata() {
-    def ciBuild = 'CI BUILD'
-
     // Jenkins
+    if (System.getenv('BUILD_URL')) {
+        link 'Jenkins build', System.getenv('BUILD_URL')
+    }
     if (System.getenv('BUILD_NUMBER')) {
-        value 'Build number', System.getenv('BUILD_NUMBER')
+        value 'CI build number', System.getenv('BUILD_NUMBER')
     }
     if (System.getenv('JOB_NAME')) {
-        value 'Job name', System.getenv('JOB_NAME')
+        value 'CI job name', System.getenv('JOB_NAME')
     }
-    if (System.getenv('BUILD_URL')) {
-        link ciBuild, System.getenv('BUILD_URL')
+    if (System.getenv('STAGE_NAME')) {
+        value 'CI stage name', System.getenv('STAGE_NAME')
     }
-
+    
     // Team City
     if (System.getenv('CI_BUILD_URL')) {
-        link ciBuild, System.getenv('CI_BUILD_URL')
+        link 'TeamCity build', System.getenv('CI_BUILD_URL')
     }
 
     // Circle CI
     if (System.getenv('CIRCLE_BUILD_URL')) {
-        link ciBuild, System.getenv('CIRCLE_BUILD_URL')
+        link 'CircleCI build', System.getenv('CIRCLE_BUILD_URL')
     }
 
     // Bamboo
     if (System.getenv('bamboo.resultsUrl')) {
-        link ciBuild, System.getenv('bamboo.resultsUrl')
-    }
-
-    // Concourse
-    // https://concourse-ci.org/implementing-resource-types.html#resource-metadata
-    // https://stackoverflow.com/a/45037360/2740621
-    // Issue filed on Concourse docs github issue tracker: https://github.com/concourse/docs/issues/240
-    def concourseAtcExternalUrl = System.getenv('ATC_EXTERNAL_URL')
-    def concourseBuildTeamName = System.getenv('BUILD_TEAM_NAME')
-    def concourseBuildPipelineName = System.getenv('BUILD_PIPELINE_NAME')
-    def concourseBuildJobName = System.getenv('BUILD_JOB_NAME')
-    def concourseBuildName = System.getenv('BUILD_NAME')
-    if (concourseAtcExternalUrl && concourseBuildTeamName && concourseBuildPipelineName && concourseBuildJobName && concourseBuildName) {
-        def url = "$concourseAtcExternalUrl/teams/$concourseBuildTeamName/pipelines/$concourseBuildPipelineName/jobs/$concourseBuildJobName/builds/$concourseBuildName"
-        try {
-            link ciBuild, url
-        } catch (Exception ignored) {
-            // Because I don't trust this URL to be correct and I don't want to throw an exception when trying to add it
-            project.logger.warn("Cannot add link to Concourse CI job. $url is not a valid url.")
-        }
+        link 'Bamboo build', System.getenv('bamboo.resultsUrl')
     }
 }
 
