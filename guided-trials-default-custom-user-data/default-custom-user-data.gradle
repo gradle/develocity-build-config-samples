@@ -1,3 +1,14 @@
+/**
+ * This Gradle script captures data about the OS, IDE, CI, and Git and stores it in build scans via custom tags, custom links, and custom values.
+ *
+ * Proceed as following to benefit from this script in your Gradle build:
+ *
+ * - Copy this script to the root folder of your Gradle project
+ * - Apply the Gradle build scan plugin in the root project's build.gradle(.kts) file
+ * - Include this script in the root project's build.gradle(.kts) file via `apply from: 'build-scan-user-data.gradle'`
+ * - Further customize this script to your needs
+ */
+
 buildScan {
     tagOs()
     tagIde()
@@ -33,7 +44,7 @@ void addGitMetadata() {
         if(gitCommitId) {
             def commitIdLabel = 'Git commit id'
             value commitIdLabel, gitCommitId
-            link 'Git commit build scans', customValueSearchUrl([(commitIdLabel): gitCommitId])
+            link 'Git commit id build scans', customValueSearchUrl([(commitIdLabel): gitCommitId])
         }
         if (gitBranchName) {
             tag gitBranchName
@@ -55,10 +66,16 @@ void addCiMetadata() {
         value 'CI build number', System.getenv('BUILD_NUMBER')
     }
     if (System.getenv('JOB_NAME')) {
-        value 'CI job name', System.getenv('JOB_NAME')
+        def jobNameLabel = 'CI job'
+        def jobName = System.getenv('JOB_NAME')
+        value jobNameLabel, jobName
+        link 'CI job build scans', customValueSearchUrl([(jobNameLabel): jobName])
     }
     if (System.getenv('STAGE_NAME')) {
-        value 'CI stage name', System.getenv('STAGE_NAME')
+        def stageNameLabel = 'CI stage'
+        def stageName = System.getenv('STAGE_NAME')
+        value stageNameLabel, stageName
+        link 'CI stage build scans', customValueSearchUrl([(stageNameLabel): stageName])
     }
     
     // Team City
