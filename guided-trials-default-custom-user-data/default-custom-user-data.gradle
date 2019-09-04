@@ -10,13 +10,11 @@
  * - Further customize this script to your needs
  */
 
-buildScan {
-    tagOs()
-    tagIde()
-    tagCiOrLocal()
-    addCiMetadata()
-    addGitMetadata()
-}
+tagOs()
+tagIde()
+tagCiOrLocal()
+addCiMetadata()
+addGitMetadata()
 
 void tagOs() {
     buildScan.tag System.getProperty('os.name')
@@ -29,7 +27,7 @@ void tagIde() {
         buildScan.tag 'IntelliJ IDEA'
     } else if (System.getProperty('eclipse.buildId')) {
         buildScan.tag 'Eclipse'
-    } 
+    }
 }
 
 void tagCiOrLocal() {
@@ -78,7 +76,7 @@ void addCiMetadata() {
         buildScan.value stageNameLabel, stageName
         buildScan.link 'CI stage build scans', customValueSearchUrl([(stageNameLabel): stageName])
     }
-    
+
     // Team City
     if (System.getenv('CI_BUILD_URL')) {
         buildScan.link 'TeamCity build', System.getenv('CI_BUILD_URL')
@@ -108,13 +106,17 @@ String execAndGetStdout(String... args) {
         commandLine(args)
         standardOutput = stdout
     }
-    return stdout.toString().trim()
+    stdout.toString().trim()
 }
 
 String customValueSearchUrl(Map<String, String> search) {
     def query = search.collect { name, value ->
-        "search.names=${URLEncoder.encode(name, 'UTF-8')}&search.values=${URLEncoder.encode(value, 'UTF-8')}"
+        "search.names=${encodeURL(name)}&search.values=${encodeURL(value)}"
     }.join('&')
 
-    return "$buildScan.server/scans?$query"
+    "$buildScan.server/scans?$query"
+}
+
+String encodeURL(String url){
+    URLEncoder.encode(url, 'UTF-8')
 }

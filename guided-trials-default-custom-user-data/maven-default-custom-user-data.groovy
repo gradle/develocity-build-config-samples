@@ -31,7 +31,7 @@ void tagIde(def api) {
         api.tag 'IntelliJ IDEA'
     } else if (System.getProperty('eclipse.buildId')) {
         api.tag 'Eclipse'
-    } 
+    }
 }
 
 void tagCiOrLocal(def api) {
@@ -80,7 +80,7 @@ void addCiMetadata(def api) {
         api.value stageNameLabel, stageName
         api.link 'CI stage build scans', customValueSearchUrl(api, [(stageNameLabel): stageName])
     }
-    
+
     // Team City
     if (System.getenv('CI_BUILD_URL')) {
         api.link 'TeamCity build', System.getenv('CI_BUILD_URL')
@@ -104,16 +104,20 @@ boolean isCi() {
     System.getenv('bamboo.resultsUrl')   // Bamboo
 }
 
-String execAndGetStdout(String... args) {
+static String execAndGetStdout(String... args) {
     def exec = args.toList().execute()
     exec.waitFor()
-    return exec.text.trim()
+    exec.text.trim()
 }
 
 String customValueSearchUrl(def api, Map<String, String> search) {
     def query = search.collect { name, value ->
-        "search.names=${URLEncoder.encode(name, 'UTF-8')}&search.values=${URLEncoder.encode(value, 'UTF-8')}"
+        "search.names=${encodeURL(name)}&search.values=${encodeURL(value)}"
     }.join('&')
 
-    return "${api.server}/scans?$query"
+    "${api.server}/scans?$query"
+}
+
+String encodeURL(String url){
+    URLEncoder.encode(url, 'UTF-8')
 }
