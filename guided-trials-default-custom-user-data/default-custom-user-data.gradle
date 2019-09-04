@@ -3,8 +3,9 @@
  *
  * Proceed as following to benefit from this script in your Gradle build:
  *
- * - Copy this script to the root folder of your Gradle project
+ * - Copy this script to the root folder of your Gradle project, renaming it to 'build-scan-user-data.gradle'
  * - Apply the Gradle build scan plugin in the root project's build.gradle(.kts) file
+ * - Make sure the build scan server is specified in the buildScan extension block
  * - Include this script in the root project's build.gradle(.kts) file via `apply from: 'build-scan-user-data.gradle'`
  * - Further customize this script to your needs
  */
@@ -24,7 +25,7 @@ void tagOs() {
 void tagIde() {
     if (project.hasProperty('android.injected.invoked.from.ide')) {
         buildScan.tag 'Android Studio'
-    } else if (project.hasProperty('idea.executable')) {
+    } else if (System.getProperty('idea.version')) {
         buildScan.tag 'IntelliJ IDEA'
     } else if (System.getProperty('eclipse.buildId')) {
         buildScan.tag 'Eclipse'
