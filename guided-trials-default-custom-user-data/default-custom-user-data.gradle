@@ -4,8 +4,8 @@
  * Proceed as following to benefit from this script in your Gradle build:
  *
  * - Copy this script to the root folder of your Gradle project, renaming it to 'build-scan-user-data.gradle'
- * - Apply the Gradle build scan plugin in the root project's build.gradle(.kts) file
- * - Make sure the build scan server is specified in the buildScan extension block
+ * - Apply the Gradle Build Scan plugin
+ * - Point to your Gradle Enterprise server
  * - Include this script in the root project's build.gradle(.kts) file via `apply from: 'build-scan-user-data.gradle'`
  * - Further customize this script to your needs
  */

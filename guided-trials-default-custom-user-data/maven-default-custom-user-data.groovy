@@ -4,9 +4,9 @@
  * Proceed as following to benefit from this script in your Maven build:
  *
  * - Copy this script to the root folder of your Maven project, renaming it to 'build-scan-user-data.groovy'
- * - Apply the Gradle Enterprise Maven extension, following https://docs.gradle.com/enterprise/maven-extension/#getting_set_up_with_the_gradle_enterprise_maven_extension
- * - Ensure the Gradle Enteprise server is correctly configured, following https://docs.gradle.com/enterprise/maven-extension/#set_the_location_of_your_gradle_enterprise_instance
- * - Use the Groovy Maven plugin to execute this script, following https://docs.gradle.com/enterprise/maven-extension/#using_the_build_scan_api_in_a_groovy_script
+ * - Apply the Gradle Enterprise Maven extension
+ * - Point to your Gradle Enterprise server
+ * - Include this script in your parent pom following https://docs.gradle.com/enterprise/maven-extension/#using_the_build_scan_api_in_a_groovy_script
  * - Further customize this script to your needs
  */
 
