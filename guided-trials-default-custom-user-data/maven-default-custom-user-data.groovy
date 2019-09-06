@@ -92,8 +92,23 @@ void addCiMetadata(def api) {
     }
 
     // Bamboo
-    if (System.getenv('bamboo.resultsUrl')) {
-        api.link 'Bamboo build', System.getenv('bamboo.resultsUrl')
+    if (System.getenv('bamboo_resultsUrl')) {
+        api.link 'Bamboo build', System.getenv('bamboo_resultsUrl')
+    }
+    if (System.getenv('bamboo_buildNumber')) {
+        api.value 'CI build number', System.getenv('bamboo_buildNumber')
+    }
+    if (System.getenv('bamboo_planName')) {
+        def jobNameLabel = 'CI job'
+        def jobName = System.getenv('bamboo_planName')
+        api.value jobNameLabel, jobName
+        api.link 'CI job build scans', customValueSearchUrl([(jobNameLabel): jobName])
+    }
+    if (System.getenv('bamboo_buildPlanName')) {
+        def stageNameLabel = 'CI stage'
+        def stageName = System.getenv('bamboo_buildPlanName')
+        api.value stageNameLabel, stageName
+        api.link 'CI stage build scans', customValueSearchUrl([(stageNameLabel): stageName])
     }
 }
 
@@ -101,7 +116,7 @@ boolean isCi() {
     System.getenv('BUILD_URL') ||        // Jenkins
     System.getenv('CI_BUILD_URL') ||     // TeamCity
     System.getenv('CIRCLE_BUILD_URL') || // CircleCI
-    System.getenv('bamboo.resultsUrl')   // Bamboo
+    System.getenv('bamboo_resultsUrl')   // Bamboo
 }
 
 static String execAndGetStdout(String... args) {
