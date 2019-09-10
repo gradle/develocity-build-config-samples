@@ -99,16 +99,16 @@ void addCiMetadata(def api) {
         api.value 'CI build number', System.getenv('bamboo_buildNumber')
     }
     if (System.getenv('bamboo_planName')) {
-        def jobNameLabel = 'CI job'
-        def jobName = System.getenv('bamboo_planName')
-        api.value jobNameLabel, jobName
-        api.link 'CI job build scans', customValueSearchUrl([(jobNameLabel): jobName])
+        def planNameLabel = 'CI plan'
+        def planName = System.getenv('bamboo_planName')
+        buildScan.value planNameLabel, planName
+        buildScan.link 'CI plan build scans', customValueSearchUrl([(planNameLabel): planName])
     }
     if (System.getenv('bamboo_buildPlanName')) {
-        def stageNameLabel = 'CI stage'
-        def stageName = System.getenv('bamboo_buildPlanName')
-        api.value stageNameLabel, stageName
-        api.link 'CI stage build scans', customValueSearchUrl([(stageNameLabel): stageName])
+        def jobNameLabel = 'CI job'
+        def jobName = System.getenv('bamboo_buildPlanName')
+        buildScan.value jobNameLabel, jobName
+        buildScan.link 'CI job build scans', customValueSearchUrl([(jobNameLabel): jobName])
     }
 }
 
