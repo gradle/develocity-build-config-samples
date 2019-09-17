@@ -51,7 +51,7 @@ void addGitMetadata(def api) {
             def originUrl = execAndGetStdout('git', 'config', '--get', 'remote.origin.url')
             if(originUrl.contains('github.com')) { // only for GitHub
                 def repoPath = (originUrl =~ /(.*)github\.com[\/|:](.*).git/)[0][2]
-                bck.link 'Source', "https://github.com/$repoPath/tree/" + gitCommitId
+                bck.link 'Github Source', "https://github.com/$repoPath/tree/" + gitCommitId
             }
         }
         if (gitBranchName) {
