@@ -48,6 +48,11 @@ void addGitMetadata(def api) {
             def commitIdLabel = 'Git commit id'
             bck.value commitIdLabel, gitCommitId
             bck.link 'Git commit id build scans', customValueSearchUrl(api, [(commitIdLabel): gitCommitId])
+            def originUrl = execAndGetStdout('git', 'config', '--get', 'remote.origin.url')
+            if(originUrl.contains('github.com')) { // only for GitHub
+                def repoPath = (originUrl =~ /(.*)github\.com[\/|:](.*).git/)[0][2]
+                bck.link 'Source', "https://github.com/$repoPath/tree/" + gitCommitId
+            }
         }
         if (gitBranchName) {
             bck.tag gitBranchName
