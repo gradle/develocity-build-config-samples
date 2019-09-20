@@ -15,6 +15,7 @@ tagIde()
 tagCiOrLocal()
 addCiMetadata()
 addGitMetadata()
+addTestParallelization()
 
 void tagOs() {
     buildScan.tag System.getProperty('os.name')
@@ -110,6 +111,12 @@ void addCiMetadata() {
         def jobName = System.getenv('bamboo_buildPlanName')
         buildScan.value jobNameLabel, jobName
         buildScan.link 'CI job build scans', customValueSearchUrl([(jobNameLabel): jobName])
+    }
+}
+
+void addTestParallelization() {
+    allprojects { p ->
+        p.tasks.withType(Test) { t -> doFirst { buildScan.value "Test#maxParallelForks[${t.path}]", t.maxParallelForks.toString() } }
     }
 }
 
