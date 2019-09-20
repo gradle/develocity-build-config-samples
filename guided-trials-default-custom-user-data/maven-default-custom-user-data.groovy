@@ -38,33 +38,6 @@ void tagCiOrLocal(def api) {
     api.tag(isCi() ? 'CI' : 'LOCAL')
 }
 
-void addGitMetadata(def api) {
-    api.background { bck ->
-        def gitCommitId = execAndGetStdout('git', 'rev-parse', '--short=8', '--verify', 'HEAD')
-        def gitBranchName = execAndGetStdout('git', 'rev-parse', '--abbrev-ref', 'HEAD')
-        def gitStatus = execAndGetStdout('git', 'status', '--porcelain')
-
-        if(gitCommitId) {
-            def commitIdLabel = 'Git commit id'
-            bck.value commitIdLabel, gitCommitId
-            bck.link 'Git commit id build scans', customValueSearchUrl(api, [(commitIdLabel): gitCommitId])
-            def originUrl = execAndGetStdout('git', 'config', '--get', 'remote.origin.url')
-            if(originUrl.contains('github.com')) { // only for GitHub
-                def repoPath = (originUrl =~ /(.*)github\.com[\/|:](.*).git/)[0][2]
-                bck.link 'Github Source', "https://github.com/$repoPath/tree/" + gitCommitId
-            }
-        }
-        if (gitBranchName) {
-            bck.tag gitBranchName
-            bck.value 'Git branch', gitBranchName
-        }
-        if (gitStatus) {
-            bck.tag 'Dirty'
-            bck.value 'Git status', gitStatus
-        }
-    }
-}
-
 void addCiMetadata(def api) {
     // Jenkins
     if (System.getenv('BUILD_URL')) {
@@ -114,6 +87,39 @@ void addCiMetadata(def api) {
         def jobName = System.getenv('bamboo_buildPlanName')
         api.value jobNameLabel, jobName
         api.link 'CI job build scans', customValueSearchUrl([(jobNameLabel): jobName])
+    }
+}
+
+void addGitMetadata(def api) {
+    api.background { bck ->
+        def gitCommitId = execAndGetStdout('git', 'rev-parse', '--short=8', '--verify', 'HEAD')
+        def gitBranchName = execAndGetStdout('git', 'rev-parse', '--abbrev-ref', 'HEAD')
+        def gitStatus = execAndGetStdout('git', 'status', '--porcelain')
+
+        if(gitCommitId) {
+            def commitIdLabel = 'Git commit id'
+            bck.value commitIdLabel, gitCommitId
+            bck.link 'Git commit id build scans', customValueSearchUrl(api, [(commitIdLabel): gitCommitId])
+            def originUrl = execAndGetStdout('git', 'config', '--get', 'remote.origin.url')
+            if(originUrl.contains('github.com')) { // only for GitHub
+                def repoPath = (originUrl =~ /(.*)github\.com[\/|:](.*).git/)[0][2]
+                bck.link 'Github Source', "https://github.com/$repoPath/tree/" + gitCommitId
+            }
+        }
+        if (gitBranchName) {
+            bck.tag gitBranchName
+            bck.value 'Git branch', gitBranchName
+        }
+        if (gitStatus) {
+            bck.tag 'Dirty'
+            bck.value 'Git status', gitStatus
+        }
+    }
+}
+
+void addTestParallelization() {
+    allprojects { p ->
+        p.tasks.withType(Test) { t -> doFirst { buildScan.value "Test#maxParallelForks[${t.path}]", t.maxParallelForks.toString() } }
     }
 }
 

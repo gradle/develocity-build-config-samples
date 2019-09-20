@@ -35,33 +35,6 @@ void tagCiOrLocal() {
     buildScan.tag(isCi() ? 'CI' : 'LOCAL')
 }
 
-void addGitMetadata() {
-    buildScan.background {
-        def gitCommitId = execAndGetStdout('git', 'rev-parse', '--short=8', '--verify', 'HEAD')
-        def gitBranchName = execAndGetStdout('git', 'rev-parse', '--abbrev-ref', 'HEAD')
-        def gitStatus = execAndGetStdout('git', 'status', '--porcelain')
-
-        if(gitCommitId) {
-            def commitIdLabel = 'Git commit id'
-            value commitIdLabel, gitCommitId
-            link 'Git commit id build scans', customValueSearchUrl([(commitIdLabel): gitCommitId])
-            def originUrl = execAndGetStdout('git', 'config', '--get', 'remote.origin.url')
-            if(originUrl.contains('github.com')) { // only for GitHub
-                def repoPath = (originUrl =~ /(.*)github\.com[\/|:](.*).git/)[0][2]
-                link 'Github Source', "https://github.com/$repoPath/tree/" + gitCommitId
-            }
-        }
-        if (gitBranchName) {
-            tag gitBranchName
-            value 'Git branch', gitBranchName
-        }
-        if (gitStatus) {
-            tag 'Dirty'
-            value 'Git status', gitStatus
-        }
-    }
-}
-
 void addCiMetadata() {
     // Jenkins
     if (System.getenv('BUILD_URL')) {
@@ -111,6 +84,33 @@ void addCiMetadata() {
         def jobName = System.getenv('bamboo_buildPlanName')
         buildScan.value jobNameLabel, jobName
         buildScan.link 'CI job build scans', customValueSearchUrl([(jobNameLabel): jobName])
+    }
+}
+
+void addGitMetadata() {
+    buildScan.background {
+        def gitCommitId = execAndGetStdout('git', 'rev-parse', '--short=8', '--verify', 'HEAD')
+        def gitBranchName = execAndGetStdout('git', 'rev-parse', '--abbrev-ref', 'HEAD')
+        def gitStatus = execAndGetStdout('git', 'status', '--porcelain')
+
+        if(gitCommitId) {
+            def commitIdLabel = 'Git commit id'
+            value commitIdLabel, gitCommitId
+            link 'Git commit id build scans', customValueSearchUrl([(commitIdLabel): gitCommitId])
+            def originUrl = execAndGetStdout('git', 'config', '--get', 'remote.origin.url')
+            if(originUrl.contains('github.com')) { // only for GitHub
+                def repoPath = (originUrl =~ /(.*)github\.com[\/|:](.*).git/)[0][2]
+                link 'Github Source', "https://github.com/$repoPath/tree/" + gitCommitId
+            }
+        }
+        if (gitBranchName) {
+            tag gitBranchName
+            value 'Git branch', gitBranchName
+        }
+        if (gitStatus) {
+            tag 'Dirty'
+            value 'Git status', gitStatus
+        }
     }
 }
 
