@@ -25,7 +25,7 @@ void tagOs(def api) {
 }
 
 void tagIde(def api) {
-    if (project.hasProperty('android.injected.invoked.from.ide')) {
+    if (project.getProperties().contains('android.injected.invoked.from.ide')) {
         api.tag 'Android Studio'
     } else if (System.getProperty('idea.version')) {
         api.tag 'IntelliJ IDEA'
@@ -106,14 +106,14 @@ void addCiMetadata(def api) {
     if (System.getenv('bamboo_planName')) {
         def planNameLabel = 'CI plan'
         def planName = System.getenv('bamboo_planName')
-        buildScan.value planNameLabel, planName
-        buildScan.link 'CI plan build scans', customValueSearchUrl([(planNameLabel): planName])
+        api.value planNameLabel, planName
+        api.link 'CI plan build scans', customValueSearchUrl([(planNameLabel): planName])
     }
     if (System.getenv('bamboo_buildPlanName')) {
         def jobNameLabel = 'CI job'
         def jobName = System.getenv('bamboo_buildPlanName')
-        buildScan.value jobNameLabel, jobName
-        buildScan.link 'CI job build scans', customValueSearchUrl([(jobNameLabel): jobName])
+        api.value jobNameLabel, jobName
+        api.link 'CI job build scans', customValueSearchUrl([(jobNameLabel): jobName])
     }
 }
 
