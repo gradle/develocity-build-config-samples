@@ -141,9 +141,13 @@ String customValueSearchUrl(Map<String, String> search) {
         "search.names=${encodeURL(name)}&search.values=${encodeURL(value)}"
     }.join('&')
 
-    "$buildScan.server/scans?$query"
+    "${appendIfMissing(buildScan.server, "/")}scans?$query"
 }
 
 String encodeURL(String url){
     URLEncoder.encode(url, 'UTF-8')
+}
+
+String appendIfMissing(String str, String suffix) {
+    str.endsWith(suffix) ? str : str + suffix
 }
