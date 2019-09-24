@@ -141,9 +141,7 @@ String customValueSearchUrl(def api, Map<String, String> search) {
         "search.names=${encodeURL(name)}&search.values=${encodeURL(value)}"
     }.join('&')
 
-    def serverUrl = appendIfMissing(api.server, "/");
-
-    "${serverUrl}scans?$query"
+    "${appendIfMissing(api.server, "/")}scans?$query"
 }
 
 String encodeURL(String url){
@@ -151,9 +149,5 @@ String encodeURL(String url){
 }
 
 String appendIfMissing(String str, String suffix) {
-    if (str.endsWith(suffix)) {
-        return str
-    } else {
-        return str + suffix
-    }
+    str.endsWith(suffix) ? str : str + suffix
 }
