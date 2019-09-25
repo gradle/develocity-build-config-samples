@@ -50,13 +50,13 @@ void addCiMetadata(def api) {
         def jobNameLabel = 'CI job'
         def jobName = System.getenv('JOB_NAME')
         api.value jobNameLabel, jobName
-        api.link 'CI job build scans', customValueSearchUrl(api, [(jobNameLabel): jobName])
+        addCustomValueSearchLink api, 'CI job build scans', [(jobNameLabel): jobName]
     }
     if (System.getenv('STAGE_NAME')) {
         def stageNameLabel = 'CI stage'
         def stageName = System.getenv('STAGE_NAME')
         api.value stageNameLabel, stageName
-        api.link 'CI stage build scans', customValueSearchUrl(api, [(stageNameLabel): stageName])
+        addCustomValueSearchLink api, 'CI stage build scans', [(stageNameLabel): stageName]
     }
 
     // Team City
@@ -80,13 +80,13 @@ void addCiMetadata(def api) {
         def planNameLabel = 'CI plan'
         def planName = System.getenv('bamboo_planName')
         api.value planNameLabel, planName
-        api.link 'CI plan build scans', customValueSearchUrl([(planNameLabel): planName])
+        addCustomValueSearchLink api, 'CI plan build scans', [(planNameLabel): planName]
     }
     if (System.getenv('bamboo_buildPlanName')) {
         def jobNameLabel = 'CI job'
         def jobName = System.getenv('bamboo_buildPlanName')
         api.value jobNameLabel, jobName
-        api.link 'CI job build scans', customValueSearchUrl([(jobNameLabel): jobName])
+        addCustomValueSearchLink api, 'CI job build scans', [(jobNameLabel): jobName]
     }
 }
 
@@ -99,7 +99,7 @@ void addGitMetadata(def api) {
         if(gitCommitId) {
             def commitIdLabel = 'Git commit id'
             bck.value commitIdLabel, gitCommitId
-            bck.link 'Git commit id build scans', customValueSearchUrl(api, [(commitIdLabel): gitCommitId])
+            addCustomValueSearchLink bck, 'Git commit id build scans', [(commitIdLabel): gitCommitId]
             def originUrl = execAndGetStdout('git', 'config', '--get', 'remote.origin.url')
             if(originUrl.contains('github.com')) { // only for GitHub
                 def repoPath = (originUrl =~ /(.*)github\.com[\/|:](.*).git/)[0][2]
@@ -134,6 +134,12 @@ static String execAndGetStdout(String... args) {
     def exec = args.toList().execute()
     exec.waitFor()
     exec.text.trim()
+}
+
+void addCustomValueSearchLink(def api, String title, Map<String, String> search) {
+    if (api.server) {
+        api.link title, customValueSearchUrl(api, search)
+    }
 }
 
 String customValueSearchUrl(def api, Map<String, String> search) {
