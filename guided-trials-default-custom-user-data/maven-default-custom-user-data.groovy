@@ -44,6 +44,11 @@ static void addCiMetadata(def api) {
         if (System.getenv('BUILD_NUMBER')) {
             api.value 'CI build number', System.getenv('BUILD_NUMBER')
         }
+        if (System.getenv('NODE_NAME')) {
+            def agentName = System.getenv('NODE_NAME') == 'master' ? 'master-node' : System.getenv('NODE_NAME')
+            api.tag agentName
+            api.value 'CI node name', agentName
+        }
         if (System.getenv('JOB_NAME')) {
             def jobNameLabel = 'CI job'
             def jobName = System.getenv('JOB_NAME')
