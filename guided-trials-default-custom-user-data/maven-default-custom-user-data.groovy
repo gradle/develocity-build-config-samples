@@ -119,12 +119,6 @@ void addGitMetadata(def api) {
     }
 }
 
-void addTestParallelization() {
-    allprojects { p ->
-        p.tasks.withType(Test) { t -> doFirst { buildScan.value "Test#maxParallelForks[${t.path}]", t.maxParallelForks.toString() } }
-    }
-}
-
 boolean isCi() {
     System.getenv('BUILD_URL') ||        // Jenkins
     System.getenv('TEAMCITY_VERSION') || // TeamCity
