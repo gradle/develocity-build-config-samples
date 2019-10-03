@@ -36,7 +36,7 @@ void tagCiOrLocal() {
 }
 
 void addCiMetadata() {
-    if(isJenkins()) {
+    if (isJenkins()) {
         if (System.getenv('BUILD_URL')) {
             buildScan.link 'Jenkins build', System.getenv('BUILD_URL')
         }
@@ -57,7 +57,7 @@ void addCiMetadata() {
         }
     }
 
-    if(isTeamCity()) {
+    if (isTeamCity()) {
         if (System.getenv('SERVER_URL') && project.hasProperty('teamcity.agent.dotnet.build_id')) {
             def teamCityServerUrl = System.getenv('SERVER_URL')
             def teamCityBuildId = project.property('teamcity.agent.dotnet.build_id')
@@ -66,15 +66,20 @@ void addCiMetadata() {
         if (System.getenv('BUILD_NUMBER')) {
             buildScan.value 'CI build number', System.getenv('BUILD_NUMBER')
         }
+        if (project.hasProperty('agent.name')) {
+            def agentName = project.property('agent.name')
+            buildScan.tag agentName
+            buildScan.value 'CI agent name', agentName
+        }
     }
 
-    if(isCircleCI()) {
-        if(System.getenv('CIRCLE_BUILD_URL')) {
+    if (isCircleCI()) {
+        if (System.getenv('CIRCLE_BUILD_URL')) {
             buildScan.link 'CircleCI build', System.getenv('CIRCLE_BUILD_URL')
         }
     }
 
-    if(isBamboo()) {
+    if (isBamboo()) {
         if (System.getenv('bamboo_resultsUrl')) {
             buildScan.link 'Bamboo build', System.getenv('bamboo_resultsUrl')
         }
@@ -174,7 +179,7 @@ String customValueSearchUrl(Map<String, String> search) {
     "${appendIfMissing(buildScan.server, "/")}scans?$query"
 }
 
-static String encodeURL(String url){
+static String encodeURL(String url) {
     URLEncoder.encode(url, 'UTF-8')
 }
 
@@ -182,7 +187,7 @@ static String appendIfMissing(String str, String suffix) {
     str.endsWith(suffix) ? str : str + suffix
 }
 
-static boolean isGitInstalled(){
+static boolean isGitInstalled() {
     try {
         "git --version".execute().waitFor() == 0
     } catch (IOException ignored) {

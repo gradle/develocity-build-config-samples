@@ -38,8 +38,8 @@ static void tagCiOrLocal(def api) {
     api.tag(isCi() ? 'CI' : 'LOCAL')
 }
 
-void addCiMetadata(def api) {
-    if(isJenkins()) {
+static void addCiMetadata(def api) {
+    if (isJenkins()) {
         if (System.getenv('BUILD_URL')) {
             api.link 'Jenkins build', System.getenv('BUILD_URL')
         }
@@ -60,7 +60,7 @@ void addCiMetadata(def api) {
         }
     }
 
-    if(isTeamCity()) {
+    if (isTeamCity()) {
         if (System.getenv('SERVER_URL') && project.hasProperty('teamcity.agent.dotnet.build_id')) {
             def teamCityServerUrl = System.getenv('SERVER_URL')
             def teamCityBuildId = project.property('teamcity.agent.dotnet.build_id')
@@ -69,15 +69,20 @@ void addCiMetadata(def api) {
         if (System.getenv('BUILD_NUMBER')) {
             api.value 'CI build number', System.getenv('BUILD_NUMBER')
         }
+        if (project.hasProperty('agent.name')) {
+            def agentName = project.property('agent.name')
+            api.tag agentName
+            api.value 'CI agent name', agentName
+        }
     }
 
-    if(isCircleCI()) {
+    if (isCircleCI()) {
         if (System.getenv('CIRCLE_BUILD_URL')) {
             api.link 'CircleCI build', System.getenv('CIRCLE_BUILD_URL')
         }
     }
 
-    if(isBamboo()) {
+    if (isBamboo()) {
         if (System.getenv('bamboo_resultsUrl')) {
             api.link 'Bamboo build', System.getenv('bamboo_resultsUrl')
         }
@@ -168,7 +173,7 @@ static String customValueSearchUrl(def api, Map<String, String> search) {
     "${appendIfMissing(api.server, "/")}scans?$query"
 }
 
-static String encodeURL(String url){
+static String encodeURL(String url) {
     URLEncoder.encode(url, 'UTF-8')
 }
 
@@ -176,10 +181,10 @@ static String appendIfMissing(String str, String suffix) {
     str.endsWith(suffix) ? str : str + suffix
 }
 
-static boolean isGitInstalled(){
+static boolean isGitInstalled() {
     try {
         "git --version".execute().waitFor() == 0
-    } catch(IOException ignored) {
+    } catch (IOException ignored) {
         false
     }
 }
