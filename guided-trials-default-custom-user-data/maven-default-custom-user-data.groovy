@@ -60,8 +60,10 @@ void addCiMetadata(def api) {
     }
 
     // Team City
-    if (System.getenv('CI_BUILD_URL')) {
-        api.link 'TeamCity build', System.getenv('CI_BUILD_URL')
+    if (System.getenv('TEAMCITY_VERSION')) {
+        def teamCityServerUrl = System.getenv('SERVER_URL')
+        def teamCityBuildNumber = System.getenv('BUILD_NUMBER')
+        buildScan.link 'TeamCity build', "${appendIfMissing(teamCityServerUrl, "/")}viewLog.html?buildId=${teamCityBuildNumber}"
     }
 
     // Circle CI
@@ -117,15 +119,9 @@ void addGitMetadata(def api) {
     }
 }
 
-void addTestParallelization() {
-    allprojects { p ->
-        p.tasks.withType(Test) { t -> doFirst { buildScan.value "Test#maxParallelForks[${t.path}]", t.maxParallelForks.toString() } }
-    }
-}
-
 boolean isCi() {
     System.getenv('BUILD_URL') ||        // Jenkins
-    System.getenv('CI_BUILD_URL') ||     // TeamCity
+    System.getenv('TEAMCITY_VERSION') || // TeamCity
     System.getenv('CIRCLE_BUILD_URL') || // CircleCI
     System.getenv('bamboo_resultsUrl')   // Bamboo
 }
