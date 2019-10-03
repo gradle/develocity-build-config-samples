@@ -24,10 +24,8 @@ static void tagOs(def api) {
     api.tag System.getProperty('os.name')
 }
 
-void tagIde(def api) {
-    if (project.getProperties().contains('android.injected.invoked.from.ide')) {
-        api.tag 'Android Studio'
-    } else if (System.getProperty('idea.version')) {
+static void tagIde(def api) {
+    if (System.getProperty('idea.version')) {
         api.tag 'IntelliJ IDEA'
     } else if (System.getProperty('eclipse.buildId')) {
         api.tag 'Eclipse'
