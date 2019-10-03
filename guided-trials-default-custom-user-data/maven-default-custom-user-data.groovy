@@ -20,7 +20,7 @@ buildScan.executeOnce('custom-data') { api ->
     addGitMetadata(api)
 }
 
-void tagOs(def api) {
+static void tagOs(def api) {
     api.tag System.getProperty('os.name')
 }
 
@@ -34,65 +34,72 @@ void tagIde(def api) {
     }
 }
 
-void tagCiOrLocal(def api) {
+static void tagCiOrLocal(def api) {
     api.tag(isCi() ? 'CI' : 'LOCAL')
 }
 
 void addCiMetadata(def api) {
-    // Jenkins
-    if (System.getenv('BUILD_URL')) {
-        api.link 'Jenkins build', System.getenv('BUILD_URL')
-    }
-    if (System.getenv('BUILD_NUMBER')) {
-        api.value 'CI build number', System.getenv('BUILD_NUMBER')
-    }
-    if (System.getenv('JOB_NAME')) {
-        def jobNameLabel = 'CI job'
-        def jobName = System.getenv('JOB_NAME')
-        api.value jobNameLabel, jobName
-        addCustomValueSearchLink api, 'CI job build scans', [(jobNameLabel): jobName]
-    }
-    if (System.getenv('STAGE_NAME')) {
-        def stageNameLabel = 'CI stage'
-        def stageName = System.getenv('STAGE_NAME')
-        api.value stageNameLabel, stageName
-        addCustomValueSearchLink api, 'CI stage build scans', [(stageNameLabel): stageName]
-    }
-
-    // Team City
-    if (System.getenv('TEAMCITY_VERSION')) {
-        def teamCityServerUrl = System.getenv('SERVER_URL')
-        def teamCityBuildNumber = System.getenv('BUILD_NUMBER')
-        buildScan.link 'TeamCity build', "${appendIfMissing(teamCityServerUrl, "/")}viewLog.html?buildId=${teamCityBuildNumber}"
+    if(isJenkins()) {
+        if (System.getenv('BUILD_URL')) {
+            api.link 'Jenkins build', System.getenv('BUILD_URL')
+        }
+        if (System.getenv('BUILD_NUMBER')) {
+            api.value 'CI build number', System.getenv('BUILD_NUMBER')
+        }
+        if (System.getenv('JOB_NAME')) {
+            def jobNameLabel = 'CI job'
+            def jobName = System.getenv('JOB_NAME')
+            api.value jobNameLabel, jobName
+            addCustomValueSearchLink api, 'CI job build scans', [(jobNameLabel): jobName]
+        }
+        if (System.getenv('STAGE_NAME')) {
+            def stageNameLabel = 'CI stage'
+            def stageName = System.getenv('STAGE_NAME')
+            api.value stageNameLabel, stageName
+            addCustomValueSearchLink api, 'CI stage build scans', [(stageNameLabel): stageName]
+        }
     }
 
-    // Circle CI
-    if (System.getenv('CIRCLE_BUILD_URL')) {
-        api.link 'CircleCI build', System.getenv('CIRCLE_BUILD_URL')
+    if(isTeamCity()) {
+        if (System.getenv('SERVER_URL') && project.hasProperty('teamcity.agent.dotnet.build_id')) {
+            def teamCityServerUrl = System.getenv('SERVER_URL')
+            def teamCityBuildId = project.property('teamcity.agent.dotnet.build_id')
+            api.link 'TeamCity build', "${appendIfMissing(teamCityServerUrl, "/")}viewLog.html?buildId=${teamCityBuildId}"
+        }
+        if (System.getenv('BUILD_NUMBER')) {
+            api.value 'CI build number', System.getenv('BUILD_NUMBER')
+        }
     }
 
-    // Bamboo
-    if (System.getenv('bamboo_resultsUrl')) {
-        api.link 'Bamboo build', System.getenv('bamboo_resultsUrl')
+    if(isCircleCI()) {
+        if (System.getenv('CIRCLE_BUILD_URL')) {
+            api.link 'CircleCI build', System.getenv('CIRCLE_BUILD_URL')
+        }
     }
-    if (System.getenv('bamboo_buildNumber')) {
-        api.value 'CI build number', System.getenv('bamboo_buildNumber')
-    }
-    if (System.getenv('bamboo_planName')) {
-        def planNameLabel = 'CI plan'
-        def planName = System.getenv('bamboo_planName')
-        api.value planNameLabel, planName
-        addCustomValueSearchLink api, 'CI plan build scans', [(planNameLabel): planName]
-    }
-    if (System.getenv('bamboo_buildPlanName')) {
-        def jobNameLabel = 'CI job'
-        def jobName = System.getenv('bamboo_buildPlanName')
-        api.value jobNameLabel, jobName
-        addCustomValueSearchLink api, 'CI job build scans', [(jobNameLabel): jobName]
+
+    if(isBamboo()) {
+        if (System.getenv('bamboo_resultsUrl')) {
+            api.link 'Bamboo build', System.getenv('bamboo_resultsUrl')
+        }
+        if (System.getenv('bamboo_buildNumber')) {
+            api.value 'CI build number', System.getenv('bamboo_buildNumber')
+        }
+        if (System.getenv('bamboo_planName')) {
+            def planNameLabel = 'CI plan'
+            def planName = System.getenv('bamboo_planName')
+            api.value planNameLabel, planName
+            addCustomValueSearchLink api, 'CI plan build scans', [(planNameLabel): planName]
+        }
+        if (System.getenv('bamboo_buildPlanName')) {
+            def jobNameLabel = 'CI job'
+            def jobName = System.getenv('bamboo_buildPlanName')
+            api.value jobNameLabel, jobName
+            addCustomValueSearchLink api, 'CI job build scans', [(jobNameLabel): jobName]
+        }
     }
 }
 
-void addGitMetadata(def api) {
+static void addGitMetadata(def api) {
     api.background { bck ->
         def gitCommitId = execAndGetStdout('git', 'rev-parse', '--short=8', '--verify', 'HEAD')
         def gitBranchName = execAndGetStdout('git', 'rev-parse', '--abbrev-ref', 'HEAD')
@@ -119,11 +126,24 @@ void addGitMetadata(def api) {
     }
 }
 
-boolean isCi() {
-    System.getenv('BUILD_URL') ||        // Jenkins
-    System.getenv('TEAMCITY_VERSION') || // TeamCity
-    System.getenv('CIRCLE_BUILD_URL') || // CircleCI
-    System.getenv('bamboo_resultsUrl')   // Bamboo
+static boolean isCi() {
+    isJenkins() || isTeamCity() || isCircleCI() || isBamboo()
+}
+
+static boolean isJenkins() {
+    System.getenv('BUILD_URL')
+}
+
+static boolean isTeamCity() {
+    System.getenv('TEAMCITY_VERSION')
+}
+
+static boolean isCircleCI() {
+    System.getenv('CIRCLE_BUILD_URL')
+}
+
+static boolean isBamboo() {
+    System.getenv('bamboo_resultsUrl')
 }
 
 static String execAndGetStdout(String... args) {
@@ -132,24 +152,23 @@ static String execAndGetStdout(String... args) {
     exec.text.trim()
 }
 
-void addCustomValueSearchLink(def api, String title, Map<String, String> search) {
+static void addCustomValueSearchLink(def api, String title, Map<String, String> search) {
     if (api.server) {
         api.link title, customValueSearchUrl(api, search)
     }
 }
 
-String customValueSearchUrl(def api, Map<String, String> search) {
+static String customValueSearchUrl(def api, Map<String, String> search) {
     def query = search.collect { name, value ->
         "search.names=${encodeURL(name)}&search.values=${encodeURL(value)}"
     }.join('&')
-
     "${appendIfMissing(api.server, "/")}scans?$query"
 }
 
-String encodeURL(String url){
+static String encodeURL(String url){
     URLEncoder.encode(url, 'UTF-8')
 }
 
-String appendIfMissing(String str, String suffix) {
+static String appendIfMissing(String str, String suffix) {
     str.endsWith(suffix) ? str : str + suffix
 }
