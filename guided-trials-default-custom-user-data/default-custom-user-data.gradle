@@ -142,7 +142,7 @@ static boolean isCi() {
 }
 
 static boolean isJenkins() {
-    System.getenv('BUILD_URL')
+    System.getenv('JENKINS_URL')
 }
 
 static boolean isTeamCity() {
