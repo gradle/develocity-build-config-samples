@@ -83,6 +83,21 @@ static void addCiMetadata(def api) {
         if (System.getenv('CIRCLE_BUILD_URL')) {
             api.link 'CircleCI build', System.getenv('CIRCLE_BUILD_URL')
         }
+        if (System.getenv('CIRCLE_BUILD_NUM')) {
+            api.value 'CI build number', System.getenv('CIRCLE_BUILD_NUM')
+        }
+        if (System.getenv('CIRCLE_JOB')) {
+            def jobLabel = 'CI job'
+            def job = System.getenv('CIRCLE_JOB')
+            api.value jobLabel, job
+            addCustomValueSearchLink api, 'CI job build scans', [(jobLabel): job]
+        }
+        if (System.getenv('CIRCLE_WORKFLOW_ID')) {
+            def workflowIdLabel = 'CI workflow'
+            def workflowId = System.getenv('CIRCLE_WORKFLOW_ID')
+            api.value workflowIdLabel, workflowId
+            addCustomValueSearchLink api, 'CI workflow build scans', [(workflowIdLabel): workflowId]
+        }
     }
 
     if (isBamboo()) {

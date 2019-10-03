@@ -82,6 +82,21 @@ void addCiMetadata() {
         if (System.getenv('CIRCLE_BUILD_URL')) {
             buildScan.link 'CircleCI build', System.getenv('CIRCLE_BUILD_URL')
         }
+        if (System.getenv('CIRCLE_BUILD_NUM')) {
+            buildScan.value 'CI build number', System.getenv('CIRCLE_BUILD_NUM')
+        }
+        if (System.getenv('CIRCLE_JOB')) {
+            def jobLabel = 'CI job'
+            def job = System.getenv('CIRCLE_JOB')
+            buildScan.value jobLabel, job
+            addCustomValueSearchLink 'CI job build scans', [(jobLabel): job]
+        }
+        if (System.getenv('CIRCLE_WORKFLOW_ID')) {
+            def workflowIdLabel = 'CI workflow'
+            def workflowId = System.getenv('CIRCLE_WORKFLOW_ID')
+            buildScan.value workflowIdLabel, workflowId
+            addCustomValueSearchLink 'CI workflow build scans', [(workflowIdLabel): workflowId]
+        }
     }
 
     if (isBamboo()) {
@@ -155,7 +170,7 @@ static boolean isTeamCity() {
 }
 
 static boolean isCircleCI() {
-    System.getenv('CIRCLE_BUILD_URL')
+    System.getenv('CIRCLECI')
 }
 
 static boolean isBamboo() {
