@@ -101,16 +101,19 @@ void addCiMetadata(def api) {
 
 static void addGitMetadata(def api) {
     api.background { bck ->
+        if (!isGitInstalled()) {
+            return
+        }
         def gitCommitId = execAndGetStdout('git', 'rev-parse', '--short=8', '--verify', 'HEAD')
         def gitBranchName = execAndGetStdout('git', 'rev-parse', '--abbrev-ref', 'HEAD')
         def gitStatus = execAndGetStdout('git', 'status', '--porcelain')
 
-        if(gitCommitId) {
+        if (gitCommitId) {
             def commitIdLabel = 'Git commit id'
             bck.value commitIdLabel, gitCommitId
             addCustomValueSearchLink bck, 'Git commit id build scans', [(commitIdLabel): gitCommitId]
             def originUrl = execAndGetStdout('git', 'config', '--get', 'remote.origin.url')
-            if(originUrl.contains('github.com')) { // only for GitHub
+            if (originUrl.contains('github.com')) { // only for GitHub
                 def repoPath = (originUrl =~ /(.*)github\.com[\/|:](.*).git/)[0][2]
                 bck.link 'Github Source', "https://github.com/$repoPath/tree/" + gitCommitId
             }
@@ -171,4 +174,12 @@ static String encodeURL(String url){
 
 static String appendIfMissing(String str, String suffix) {
     str.endsWith(suffix) ? str : str + suffix
+}
+
+static boolean isGitInstalled(){
+    try {
+        "git --version".execute().waitFor() == 0
+    } catch(IOException ignored) {
+        false
+    }
 }
