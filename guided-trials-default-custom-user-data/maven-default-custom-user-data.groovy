@@ -119,6 +119,11 @@ static void addCiMetadata(def api) {
             api.value jobNameLabel, jobName
             addCustomValueSearchLink api, 'CI job build scans', [(jobNameLabel): jobName]
         }
+        if (System.getenv('bamboo_agentId')) {
+            def agentId = System.getenv('bamboo_agentId')
+            api.tag agentId
+            api.value 'CI agent ID', agentId
+        }
     }
 }
 

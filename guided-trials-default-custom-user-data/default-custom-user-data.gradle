@@ -118,6 +118,11 @@ void addCiMetadata() {
             buildScan.value jobNameLabel, jobName
             addCustomValueSearchLink 'CI job build scans', [(jobNameLabel): jobName]
         }
+        if (System.getenv('bamboo_agentId')) {
+            def agentId = System.getenv('bamboo_agentId')
+            buildScan.tag agentId
+            buildScan.value 'CI agent ID', agentId
+        }
     }
 }
 
