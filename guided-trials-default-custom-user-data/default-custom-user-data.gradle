@@ -158,7 +158,7 @@ void addGitMetadata() {
 
 void addTestParallelization() {
     allprojects { p ->
-        p.tasks.withType(Test).configureEach { t -> doFirst { buildScan.value "[${t.identityPath}]#maxParallelForks", t.maxParallelForks.toString() } }
+        p.tasks.withType(Test).configureEach { t -> doFirst { buildScan.value "${t.identityPath}#maxParallelForks", t.maxParallelForks.toString() } }
     }
 }
 
