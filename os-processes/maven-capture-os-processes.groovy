@@ -4,6 +4,8 @@
 
 def buildScan = session.lookup("com.gradle.maven.extension.api.scan.BuildScanApi")
 
+addStringMethods()
+
 buildScan.executeOnce('os-processes') { api ->
     addPsMetadata(api)
 }
@@ -18,5 +20,13 @@ static void addPsMetadata(api){
 static String execAndGetStdout(String... args) {
     def exec = args.toList().execute()
     exec.waitFor()
-    exec.text.replaceAll('\\s+\$', '')
+    exec.text.trimAtEnd()
+}
+
+static void addStringMethods() {
+    if (!String.metaClass.respondsTo('', 'trimAtEnd')) {
+        String.metaClass.trimAtEnd = {
+            ('x' + delegate).trim().substring(1)
+        }
+    }
 }

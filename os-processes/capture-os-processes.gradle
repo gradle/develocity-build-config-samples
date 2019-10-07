@@ -2,6 +2,8 @@
  * This Gradle script captures OS processes as reported by the OS 'ps' command, as custom value.
  */
 
+addStringMethods()
+
 buildScan.background {
     def psOutput = execAndGetStdout('ps', '-o pid,ppid,time,command')
     buildScan.value 'OS processes', psOutput
@@ -10,5 +12,13 @@ buildScan.background {
 static String execAndGetStdout(String... args) {
     def exec = args.toList().execute()
     exec.waitFor()
-    exec.text.replaceAll('\\s+\$', '')
+    exec.text.trimAtEnd()
+}
+
+static void addStringMethods() {
+    if (!String.metaClass.respondsTo('', 'trimAtEnd')) {
+        String.metaClass.trimAtEnd = {
+            ('x' + delegate).trim().substring(1)
+        }
+    }
 }
