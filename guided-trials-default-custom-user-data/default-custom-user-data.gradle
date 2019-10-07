@@ -250,7 +250,7 @@ String execAndGetStdout(String... args) {
         commandLine(args)
         standardOutput = stdout
     }
-    stdout.toString().trimAtEnd()
+    stdout.toString().replaceAll('\\s+\$', '')
 }
 
 void addCustomValueSearchLink(String title, Map<String, String> search) {
@@ -306,8 +306,4 @@ enum ReportingTask {
 
 static boolean isCapturedReportingTask(task) {
     ReportingTask.values().toList().any { it.isTask(task) }
-}
-
-String.metaClass.trimAtEnd {
-    ('x' + delegate).trim().substring(1)
 }

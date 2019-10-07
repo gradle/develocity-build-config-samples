@@ -23,6 +23,9 @@ buildScan.executeOnce('custom-data') { api ->
     addReportingGoalIssues(api)
 }
 
+// Add here other scripts, if needed
+//evaluate(new File("${session.request.multiModuleProjectDirectory}/<<other-script.groovy>>"))
+
 static void tagOs(def api) {
     api.tag System.getProperty('os.name')
 }
@@ -287,7 +290,7 @@ static boolean isBamboo() {
 static String execAndGetStdout(String... args) {
     def exec = args.toList().execute()
     exec.waitFor()
-    exec.text.trimAtEnd()
+    exec.text.replaceAll('\\s+\$', '')
 }
 
 static void addCustomValueSearchLink(def api, String title, Map<String, String> search) {
@@ -365,8 +368,4 @@ static def reportingMojo(def session, def mojoExecution, def mojoInterface, def 
     configurator.configureComponent(mojo, configuration, expressionEvaluator, pluginRealm)
     session.container.release(configurator)
     [mojo, oldLookupRealm, oldClassLoader]
-}
-
-String.metaClass.trimAtEnd {
-    ('x' + delegate).trim().substring(1)
 }
