@@ -16,6 +16,7 @@ tagCiOrLocal()
 addCiMetadata()
 addGitMetadata()
 addTestParallelization()
+addReportingTaskIssues()
 
 void tagOs() {
     buildScan.tag System.getProperty('os.name')
@@ -36,72 +37,112 @@ void tagCiOrLocal() {
 }
 
 void addCiMetadata() {
-    // Jenkins
-    if (System.getenv('BUILD_URL')) {
-        buildScan.link 'Jenkins build', System.getenv('BUILD_URL')
-    }
-    if (System.getenv('BUILD_NUMBER')) {
-        buildScan.value 'CI build number', System.getenv('BUILD_NUMBER')
-    }
-    if (System.getenv('JOB_NAME')) {
-        def jobNameLabel = 'CI job'
-        def jobName = System.getenv('JOB_NAME')
-        buildScan.value jobNameLabel, jobName
-        addCustomValueSearchLink 'CI job build scans', [(jobNameLabel): jobName]
-    }
-    if (System.getenv('STAGE_NAME')) {
-        def stageNameLabel = 'CI stage'
-        def stageName = System.getenv('STAGE_NAME')
-        buildScan.value stageNameLabel, stageName
-        addCustomValueSearchLink 'CI stage build scans', [(stageNameLabel): stageName]
-    }
-
-    // Team City
-    if (System.getenv('TEAMCITY_VERSION')) {
-        def teamCityServerUrl = System.getenv('SERVER_URL')
-        def teamCityBuildNumber = System.getenv('BUILD_NUMBER')
-        buildScan.link 'TeamCity build', "${appendIfMissing(teamCityServerUrl, "/")}viewLog.html?buildId=${teamCityBuildNumber}"
-    }
-
-    // Circle CI
-    if (System.getenv('CIRCLE_BUILD_URL')) {
-        buildScan.link 'CircleCI build', System.getenv('CIRCLE_BUILD_URL')
+    if (isJenkins()) {
+        if (System.getenv('BUILD_URL')) {
+            buildScan.link 'Jenkins build', System.getenv('BUILD_URL')
+        }
+        if (System.getenv('BUILD_NUMBER')) {
+            buildScan.value 'CI build number', System.getenv('BUILD_NUMBER')
+        }
+        if (System.getenv('NODE_NAME')) {
+            def agentName = System.getenv('NODE_NAME') == 'master' ? 'master-node' : System.getenv('NODE_NAME')
+            buildScan.tag agentName
+            buildScan.value 'CI node name', agentName
+        }
+        if (System.getenv('JOB_NAME')) {
+            def jobNameLabel = 'CI job'
+            def jobName = System.getenv('JOB_NAME')
+            buildScan.value jobNameLabel, jobName
+            addCustomValueSearchLink 'CI job build scans', [(jobNameLabel): jobName]
+        }
+        if (System.getenv('STAGE_NAME')) {
+            def stageNameLabel = 'CI stage'
+            def stageName = System.getenv('STAGE_NAME')
+            buildScan.value stageNameLabel, stageName
+            addCustomValueSearchLink 'CI stage build scans', [(stageNameLabel): stageName]
+        }
     }
 
-    // Bamboo
-    if (System.getenv('bamboo_resultsUrl')) {
-        buildScan.link 'Bamboo build', System.getenv('bamboo_resultsUrl')
+    if (isTeamCity()) {
+        if (System.getenv('SERVER_URL') && project.hasProperty('teamcity.agent.dotnet.build_id')) {
+            def teamCityServerUrl = System.getenv('SERVER_URL')
+            def teamCityBuildId = project.property('teamcity.agent.dotnet.build_id')
+            buildScan.link 'TeamCity build', "${appendIfMissing(teamCityServerUrl, "/")}viewLog.html?buildId=${teamCityBuildId}"
+        }
+        if (System.getenv('BUILD_NUMBER')) {
+            buildScan.value 'CI build number', System.getenv('BUILD_NUMBER')
+        }
+        if (project.hasProperty('agent.name')) {
+            def agentName = project.property('agent.name')
+            buildScan.tag agentName
+            buildScan.value 'CI agent name', agentName
+        }
     }
-    if (System.getenv('bamboo_buildNumber')) {
-        buildScan.value 'CI build number', System.getenv('bamboo_buildNumber')
+
+    if (isCircleCI()) {
+        if (System.getenv('CIRCLE_BUILD_URL')) {
+            buildScan.link 'CircleCI build', System.getenv('CIRCLE_BUILD_URL')
+        }
+        if (System.getenv('CIRCLE_BUILD_NUM')) {
+            buildScan.value 'CI build number', System.getenv('CIRCLE_BUILD_NUM')
+        }
+        if (System.getenv('CIRCLE_JOB')) {
+            def jobLabel = 'CI job'
+            def job = System.getenv('CIRCLE_JOB')
+            buildScan.value jobLabel, job
+            addCustomValueSearchLink 'CI job build scans', [(jobLabel): job]
+        }
+        if (System.getenv('CIRCLE_WORKFLOW_ID')) {
+            def workflowIdLabel = 'CI workflow'
+            def workflowId = System.getenv('CIRCLE_WORKFLOW_ID')
+            buildScan.value workflowIdLabel, workflowId
+            addCustomValueSearchLink 'CI workflow build scans', [(workflowIdLabel): workflowId]
+        }
     }
-    if (System.getenv('bamboo_planName')) {
-        def planNameLabel = 'CI plan'
-        def planName = System.getenv('bamboo_planName')
-        buildScan.value planNameLabel, planName
-        addCustomValueSearchLink 'CI plan build scans', [(planNameLabel): planName]
-    }
-    if (System.getenv('bamboo_buildPlanName')) {
-        def jobNameLabel = 'CI job'
-        def jobName = System.getenv('bamboo_buildPlanName')
-        buildScan.value jobNameLabel, jobName
-        addCustomValueSearchLink 'CI job build scans', [(jobNameLabel): jobName]
+
+    if (isBamboo()) {
+        if (System.getenv('bamboo_resultsUrl')) {
+            buildScan.link 'Bamboo build', System.getenv('bamboo_resultsUrl')
+        }
+        if (System.getenv('bamboo_buildNumber')) {
+            buildScan.value 'CI build number', System.getenv('bamboo_buildNumber')
+        }
+        if (System.getenv('bamboo_planName')) {
+            def planNameLabel = 'CI plan'
+            def planName = System.getenv('bamboo_planName')
+            buildScan.value planNameLabel, planName
+            addCustomValueSearchLink 'CI plan build scans', [(planNameLabel): planName]
+        }
+        if (System.getenv('bamboo_buildPlanName')) {
+            def jobNameLabel = 'CI job'
+            def jobName = System.getenv('bamboo_buildPlanName')
+            buildScan.value jobNameLabel, jobName
+            addCustomValueSearchLink 'CI job build scans', [(jobNameLabel): jobName]
+        }
+        if (System.getenv('bamboo_agentId')) {
+            def agentId = System.getenv('bamboo_agentId')
+            buildScan.tag agentId
+            buildScan.value 'CI agent ID', agentId
+        }
     }
 }
 
 void addGitMetadata() {
     buildScan.background {
+        if (!isGitInstalled()) {
+            return
+        }
         def gitCommitId = execAndGetStdout('git', 'rev-parse', '--short=8', '--verify', 'HEAD')
         def gitBranchName = execAndGetStdout('git', 'rev-parse', '--abbrev-ref', 'HEAD')
         def gitStatus = execAndGetStdout('git', 'status', '--porcelain')
 
-        if(gitCommitId) {
+        if (gitCommitId) {
             def commitIdLabel = 'Git commit id'
             value commitIdLabel, gitCommitId
             addCustomValueSearchLink 'Git commit id build scans', [(commitIdLabel): gitCommitId]
             def originUrl = execAndGetStdout('git', 'config', '--get', 'remote.origin.url')
-            if(originUrl.contains('github.com')) { // only for GitHub
-                def repoPath = (originUrl =~ /(.*)github\.com[\/|:](.*).git/)[0][2]
+            if (originUrl.contains('github.com')) { // only for GitHub
+                def repoPath = (originUrl =~ /(.*)github\.com[\/|:](.*)(.git)?/)[0][2]
                 link 'Github Source', "https://github.com/$repoPath/tree/" + gitCommitId
             }
         }
@@ -118,15 +159,89 @@ void addGitMetadata() {
 
 void addTestParallelization() {
     allprojects { p ->
-        p.tasks.withType(Test).configureEach { t -> doFirst { buildScan.value "Test[${t.path}]#maxParallelForks", t.maxParallelForks.toString() } }
+        p.tasks.withType(Test).configureEach { t -> doFirst { buildScan.value "${t.identityPath}#maxParallelForks", t.maxParallelForks.toString() } }
     }
 }
 
-boolean isCi() {
-    System.getenv('BUILD_URL') ||        // Jenkins
-    System.getenv('TEAMCITY_VERSION') || // TeamCity
-    System.getenv('CIRCLE_BUILD_URL') || // CircleCI
-    System.getenv('bamboo_resultsUrl')   // Bamboo
+void addReportingTaskIssues() {
+    gradle.taskGraph.beforeTask { task ->
+        if (isCapturedReportingTask(task)) {
+            task.configure { t -> t.reports.xml.enabled = true }
+        }
+    }
+    gradle.taskGraph.afterTask { task, TaskState state ->
+        if (!isCapturedReportingTask(task)) {
+            return
+        }
+        def reportFile = task.reports.xml.destination as File
+        if (!reportFile.exists()) {
+            return
+        }
+        def report = new XmlSlurper().parse(reportFile)
+        def valueName = '' as String
+        def errors = [] as List<String>
+        if (ReportingTask.CHECKSTYLE.isTask(task)) {
+            valueName = 'Verification Checkstyle'
+            errors = report.file.collect {
+                String filePath = task.project.rootProject.relativePath(it.@name.text())
+                it.error.collect { "${filePath}:${it.@line}:${it.@column} \u2192 ${it.@message}" }
+            }.flatten() as List<String>
+        } else if (ReportingTask.CODENARC.isTask(task)) {
+            valueName = 'Verification CodeNarc'
+            errors = report.Package.collect {
+                def sourceDirectory = appendIfMissing(it.parent().Project.SourceDirectory.text() as String, '/')
+                it.File.collect {
+                    String filePath = task.project.rootProject.relativePath(sourceDirectory + (it.@name.text() as String))
+                    it.Violation.collect { "${filePath}:${it.@lineNumber} \u2192 ${it.Message.text()}" }
+                }.flatten()
+            }.flatten() as List<String>
+        } else if (ReportingTask.FINDBUGS.isTask(task)) {
+            valueName = 'Verification FindBugs'
+            errors = report.BugInstance.collect { bugInstance ->
+                String type = bugInstance.@type.text()
+                def error = bugInstance.breadthFirst().findAll { it.name() == 'SourceLine' }.sort(false) { it.parent().name() as SpotBugsParent }.first()
+                String startLine = error.@start.text()
+                String endLine = error.@end.text()
+                String lineNumber = endLine == startLine ? startLine : "$startLine-$endLine"
+                def absoluteFilePath = bugInstance.parent().Project.SrcDir.collect { it.text() }.find { it.endsWith(error.@sourcepath.text()) }
+                String relativePath = task.project.rootProject.relativePath(absoluteFilePath)
+                "${relativePath}:${lineNumber} \u2192 ${type}"
+            }.flatten() as List<String>
+        } else if (ReportingTask.SPOTBUGS.isTask(task)) {
+            valueName = 'Verification SpotBugs'
+            errors = report.BugInstance.collect { bugInstance ->
+                String type = bugInstance.@type.text()
+                def error = bugInstance.breadthFirst().findAll { it.name() == 'SourceLine' }.sort(false) { it.parent().name() as SpotBugsParent }.first()
+                String startLine = error.@start.text()
+                String endLine = error.@end.text()
+                String lineNumber = endLine == startLine ? startLine : "$startLine-$endLine"
+                def absoluteFilePath = bugInstance.parent().Project.SrcDir.collect { it.text() }.find { it.endsWith(error.@sourcepath.text()) }
+                String relativePath = task.project.rootProject.relativePath(absoluteFilePath)
+                "${relativePath}:${lineNumber} \u2192 ${type}"
+            }.flatten() as List<String>
+        }
+        errors.each { buildScan.value valueName, it }
+    }
+}
+
+static boolean isCi() {
+    isJenkins() || isTeamCity() || isCircleCI() || isBamboo()
+}
+
+static boolean isJenkins() {
+    System.getenv('JENKINS_URL')
+}
+
+static boolean isTeamCity() {
+    System.getenv('TEAMCITY_VERSION')
+}
+
+static boolean isCircleCI() {
+    System.getenv('CIRCLECI')
+}
+
+static boolean isBamboo() {
+    System.getenv('bamboo_resultsUrl')
 }
 
 String execAndGetStdout(String... args) {
@@ -148,14 +263,47 @@ String customValueSearchUrl(Map<String, String> search) {
     def query = search.collect { name, value ->
         "search.names=${encodeURL(name)}&search.values=${encodeURL(value)}"
     }.join('&')
-
-    "${appendIfMissing(buildScan.server, "/")}scans?$query"
+    "${appendIfMissing(buildScan.server as String, "/")}scans?$query"
 }
 
-String encodeURL(String url){
+static String encodeURL(String url) {
     URLEncoder.encode(url, 'UTF-8')
 }
 
-String appendIfMissing(String str, String suffix) {
+static String appendIfMissing(String str, String suffix) {
     str.endsWith(suffix) ? str : str + suffix
+}
+
+static boolean isGitInstalled() {
+    try {
+        "git --version".execute().waitFor() == 0
+    } catch (IOException ignored) {
+        false
+    }
+}
+
+enum SpotBugsParent {
+    BugInstance, Method, Class
+}
+
+enum ReportingTask {
+
+    CHECKSTYLE('org.gradle.api.plugins.quality.Checkstyle'),
+    CODENARC('org.gradle.api.plugins.quality.CodeNarc'),
+    FINDBUGS('org.gradle.api.plugins.quality.FindBugs'),
+    SPOTBUGS('com.github.spotbugs.SpotBugsTask')
+
+    String className
+
+    private ReportingTask(String className) {
+        this.className = className
+    }
+
+    ReportingTask isTask(task) {
+        task.class.name.contains(className) ? this : null
+    }
+}
+
+static boolean isCapturedReportingTask(task) {
+    ReportingTask.values().toList().any { it.isTask(task) }
 }
