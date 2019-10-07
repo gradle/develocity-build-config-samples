@@ -287,7 +287,7 @@ static boolean isBamboo() {
 static String execAndGetStdout(String... args) {
     def exec = args.toList().execute()
     exec.waitFor()
-    exec.text.trim()
+    exec.text.trimAtEnd()
 }
 
 static void addCustomValueSearchLink(def api, String title, Map<String, String> search) {
@@ -365,4 +365,8 @@ static def reportingMojo(def session, def mojoExecution, def mojoInterface, def 
     configurator.configureComponent(mojo, configuration, expressionEvaluator, pluginRealm)
     session.container.release(configurator)
     [mojo, oldLookupRealm, oldClassLoader]
+}
+
+String.metaClass.trimAtEnd {
+    ('x' + delegate).trim().substring(1)
 }
