@@ -10,9 +10,7 @@
  * - Further customize this script to your needs
  */
 
-def buildScan = session.lookup("com.gradle.maven.extension.api.scan.BuildScanApi")
-
-addStringMethods()
+def buildScan = session.lookup('com.gradle.maven.extension.api.scan.BuildScanApi')
 
 buildScan.executeOnce('custom-data') { api ->
     tagOs(api)
@@ -74,7 +72,7 @@ static void addCiMetadata(def api) {
         if (System.getenv('SERVER_URL') && System.getProperty('teamcity.agent.dotnet.build_id')) {
             def teamCityServerUrl = System.getenv('SERVER_URL')
             def teamCityBuildId = System.getProperty('teamcity.agent.dotnet.build_id')
-            api.link 'TeamCity build', "${teamCityServerUrl.appendIfMissing('/')}viewLog.html?buildId=${teamCityBuildId}"
+            api.link 'TeamCity build', "${appendIfMissing(teamCityServerUrl, '/')}viewLog.html?buildId=${teamCityBuildId}"
         }
         if (System.getenv('BUILD_NUMBER')) {
             api.value 'CI build number', System.getenv('BUILD_NUMBER')
@@ -187,7 +185,7 @@ static boolean isBamboo() {
 static String execAndGetStdout(String... args) {
     def exec = args.toList().execute()
     exec.waitFor()
-    exec.text.trimAtEnd()
+    trimAtEnd(exec.text)
 }
 
 static void addCustomValueSearchLink(def api, String title, Map<String, String> search) {
@@ -200,7 +198,7 @@ static String customValueSearchUrl(def api, Map<String, String> search) {
     def query = search.collect { name, value ->
         "search.names=${encodeURL(name)}&search.values=${encodeURL(value)}"
     }.join('&')
-    "${api.server.appendIfMissing('/')}scans?$query"
+    "${appendIfMissing(api.server, '/')}scans?$query"
 }
 
 static String encodeURL(String url) {
@@ -209,21 +207,16 @@ static String encodeURL(String url) {
 
 static boolean isGitInstalled() {
     try {
-        "git --version".execute().waitFor() == 0
+        'git --version'.execute().waitFor() == 0
     } catch (IOException ignored) {
         false
     }
 }
 
-static void addStringMethods() {
-    if (!String.metaClass.respondsTo('', 'appendIfMissing')) {
-        String.metaClass.appendIfMissing = { String suffix ->
-            delegate.endsWith(suffix) ? delegate : delegate + suffix
-        }
-    }
-    if (!String.metaClass.respondsTo('', 'trimAtEnd')) {
-        String.metaClass.trimAtEnd = {
-            ('x' + delegate).trim().substring(1)
-        }
-    }
+static String appendIfMissing(String str, String suffix) {
+    str.endsWith(suffix) ? str : str + suffix
+}
+
+static String trimAtEnd(String str) {
+    ('x' + str).trim().substring(1)
 }

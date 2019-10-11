@@ -4,9 +4,7 @@ import java.nio.file.Paths
  * This Groovy script captures issues found by reporting goals, as custom value.
  */
 
-def buildScan = session.lookup("com.gradle.maven.extension.api.scan.BuildScanApi")
-
-addStringMethods()
+def buildScan = session.lookup('com.gradle.maven.extension.api.scan.BuildScanApi')
 
 buildScan.executeOnce('reporting-goals') { api ->
     addReportingGoalIssues(api)
@@ -164,10 +162,6 @@ static def reportingMojo(def session, def mojoExecution, def mojoInterface, def 
     [mojo, oldLookupRealm, oldClassLoader]
 }
 
-static void addStringMethods() {
-    if (!String.metaClass.respondsTo('', 'appendIfMissing')) {
-        String.metaClass.appendIfMissing = { String suffix ->
-            delegate.endsWith(suffix) ? delegate : delegate + suffix
-        }
-    }
+static String appendIfMissing(String str, String suffix) {
+    str.endsWith(suffix) ? str : str + suffix
 }

@@ -2,8 +2,6 @@
  * This Gradle script captures issues found by reporting tasks, as custom value.
  */
 
-addStringMethods()
-
 gradle.taskGraph.beforeTask { task ->
     if (isCapturedReportingTask(task)) {
         task.configure { t -> t.reports.xml.enabled = true }
@@ -90,10 +88,6 @@ static boolean isCapturedReportingTask(task) {
     ReportingTask.values().toList().any { it.isTask(task) }
 }
 
-static void addStringMethods() {
-    if (!String.metaClass.respondsTo('', 'appendIfMissing')) {
-        String.metaClass.appendIfMissing = { String suffix ->
-            delegate.endsWith(suffix) ? delegate : delegate + suffix
-        }
-    }
+static String appendIfMissing(String str, String suffix) {
+    str.endsWith(suffix) ? str : str + suffix
 }

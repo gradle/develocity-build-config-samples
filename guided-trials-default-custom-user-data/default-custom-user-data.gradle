@@ -10,8 +10,6 @@
  * - Further customize this script to your needs
  */
 
-addStringMethods()
-
 tagOs()
 tagIde()
 tagCiOrLocal()
@@ -73,7 +71,7 @@ void addCiMetadata() {
         if (System.getenv('SERVER_URL') && project.hasProperty('teamcity.agent.dotnet.build_id')) {
             def teamCityServerUrl = System.getenv('SERVER_URL')
             def teamCityBuildId = project.property('teamcity.agent.dotnet.build_id')
-            buildScan.link 'TeamCity build', "${teamCityServerUrl.appendIfMissing('/')}viewLog.html?buildId=${teamCityBuildId}"
+            buildScan.link 'TeamCity build', "${appendIfMissing(teamCityServerUrl, '/')}viewLog.html?buildId=${teamCityBuildId}"
         }
         if (System.getenv('BUILD_NUMBER')) {
             buildScan.value 'CI build number', System.getenv('BUILD_NUMBER')
@@ -195,7 +193,7 @@ String execAndGetStdout(String... args) {
         commandLine(args)
         standardOutput = stdout
     }
-    stdout.toString().trimAtEnd()
+    trimAtEnd(stdout.toString())
 }
 
 void addCustomValueSearchLink(String title, Map<String, String> search) {
@@ -208,7 +206,7 @@ String customValueSearchUrl(Map<String, String> search) {
     def query = search.collect { name, value ->
         "search.names=${encodeURL(name)}&search.values=${encodeURL(value)}"
     }.join('&')
-    "${buildScan.server.appendIfMissing('/')}scans?$query"
+    "${appendIfMissing(buildScan.server, '/')}scans?$query"
 }
 
 static String encodeURL(String url) {
@@ -223,15 +221,10 @@ static boolean isGitInstalled() {
     }
 }
 
-static void addStringMethods() {
-    if (!String.metaClass.respondsTo('', 'appendIfMissing')) {
-        String.metaClass.appendIfMissing = { String suffix ->
-            delegate.endsWith(suffix) ? delegate : delegate + suffix
-        }
-    }
-    if (!String.metaClass.respondsTo('', 'trimAtEnd')) {
-        String.metaClass.trimAtEnd = {
-            ('x' + delegate).trim().substring(1)
-        }
-    }
+static String appendIfMissing(String str, String suffix) {
+    str.endsWith(suffix) ? str : str + suffix
+}
+
+static String trimAtEnd(String str) {
+    ('x' + str).trim().substring(1)
 }
