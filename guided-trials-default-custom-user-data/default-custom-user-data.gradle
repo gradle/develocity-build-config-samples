@@ -152,7 +152,10 @@ void addGitMetadata() {
             addCustomValueSearchLink 'Git commit id build scans', [(commitIdLabel): gitCommitId]
             def originUrl = execAndGetStdout('git', 'config', '--get', 'remote.origin.url')
             if (originUrl.contains('github.com')) { // only for GitHub
-                def repoPath = (originUrl =~ /(.*)github\.com[\/|:](.*)(.git)?/)[0][2]
+                def repoPath = (originUrl =~ /(.*)github\.com[\/|:](.*)/)[0][2]
+                if (repoPath.endsWith('.git')) {
+                    repoPath = repoPath.substring(0, repoPath.length() - 4)
+                }
                 link 'Github Source', "https://github.com/$repoPath/tree/" + gitCommitId
             }
         }
