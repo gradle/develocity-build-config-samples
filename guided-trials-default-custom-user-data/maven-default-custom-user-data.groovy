@@ -32,7 +32,7 @@ static void tagIde(def api) {
         api.tag 'IntelliJ IDEA'
     } else if (System.getProperty('eclipse.buildId')) {
         api.tag 'Eclipse'
-    } else {
+    } else if (!isCi()) {
         api.tag 'Cmd Line'
     }
 }
@@ -69,13 +69,19 @@ static void addCiMetadata(def api) {
     }
 
     if (isTeamCity()) {
-        if (System.getenv('SERVER_URL') && System.getProperty('teamcity.agent.dotnet.build_id')) {
-            def teamCityServerUrl = System.getenv('SERVER_URL')
-            def teamCityBuildId = System.getProperty('teamcity.agent.dotnet.build_id')
-            api.link 'TeamCity build', "${appendIfMissing(teamCityServerUrl, '/')}viewLog.html?buildId=${teamCityBuildId}"
+        def teamCityConfigurationFileProp = 'teamcity.configuration.properties.file'
+        if (System.getProperty(teamCityConfigurationFileProp)) {
+            def properties = new Properties()
+            properties.load(new FileInputStream(System.getProperty(teamCityConfigurationFileProp)))
+            def teamCityServerUrl = properties.getProperty("teamcity.serverUrl")
+            if (teamCityServerUrl && System.getProperty('build.number') && System.getProperty('teamcity.buildType.id')) {
+                def teamCityBuildNumber = System.getProperty('build.number')
+                def teamCityBuildTypeId = System.getProperty('teamcity.buildType.id')
+                api.link 'TeamCity build', "${appendIfMissing(teamCityServerUrl, '/')}viewLog.html?buildNumber=${teamCityBuildNumber}&buildTypeId=${teamCityBuildTypeId}"
+            }
         }
-        if (System.getenv('BUILD_NUMBER')) {
-            api.value 'CI build number', System.getenv('BUILD_NUMBER')
+        if (System.getProperty('build.number')) {
+            api.value 'CI build number', System.getProperty('build.number')
         }
         if (System.getProperty('agent.name')) {
             def agentName = System.getProperty('agent.name')
