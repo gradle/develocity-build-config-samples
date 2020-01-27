@@ -215,7 +215,7 @@ String customValueSearchUrl(Map<String, String> search) {
     def query = search.collect { name, value ->
         "search.names=${encodeURL(name)}&search.values=${encodeURL(value)}"
     }.join('&')
-    "${appendIfMissing(buildScan.server, '/')}scans?$query"
+    "${appendIfMissing(buildScan.server, '/')}scans?$query#selection.buildScanB=%7BSCAN_ID%7D"
 }
 
 static String encodeURL(String url) {
