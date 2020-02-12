@@ -11,6 +11,9 @@
  */
 
 def buildScan = session.lookup('com.gradle.maven.extension.api.scan.BuildScanApi')
+if(!buildScan) {
+    return
+}
 
 buildScan.executeOnce('custom-data') { api ->
     tagOs(api)
