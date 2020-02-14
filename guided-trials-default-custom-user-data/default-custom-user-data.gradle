@@ -140,7 +140,13 @@ void addCiMetadata() {
         def repo = System.getenv('GITHUB_REPOSITORY')
         def runId = System.getenv('GITHUB_RUN_ID')
         if (repo && runId) {
-            buildScan.link 'CI job', "https://github.com/$repo/actions/runs/$runId"
+            buildScan.link 'GitHub Actions run', "https://github.com/$repo/actions/runs/$runId"
+        }
+        if (System.getenv('GITHUB_HEAD_REF')) {
+            def ghActionWorkflowLabel = 'GitHub workflow'
+            def ghActionWorkflowName = System.getenv('GITHUB_WORKFLOW')
+            buildScan.value ghActionWorkflowLabel, ghActionWorkflowName
+            addCustomValueSearchLink 'GitHub action build scans', [(ghActionWorkflowLabel): ghActionWorkflowName]
         }
         if (System.getenv('GITHUB_HEAD_REF')) {
             buildScan.tag 'Fork'
