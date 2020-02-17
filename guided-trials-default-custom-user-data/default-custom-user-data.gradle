@@ -135,6 +135,20 @@ void addCiMetadata() {
             buildScan.value 'CI agent ID', agentId
         }
     }
+
+    if (isGitHubActions()) {
+        def repo = System.getenv('GITHUB_REPOSITORY')
+        def runId = System.getenv('GITHUB_RUN_ID')
+        if (repo && runId) {
+            buildScan.link 'GitHub Actions run', "https://github.com/$repo/actions/runs/$runId"
+        }
+        if (System.getenv('GITHUB_WORKFLOW')) {
+            def ghActionWorkflowLabel = 'GitHub workflow'
+            def ghActionWorkflowName = System.getenv('GITHUB_WORKFLOW')
+            buildScan.value ghActionWorkflowLabel, ghActionWorkflowName
+            addCustomValueSearchLink 'GitHub workflow build scans', [(ghActionWorkflowLabel): ghActionWorkflowName]
+        }
+    }
 }
 
 void addGitMetadata() {
@@ -177,7 +191,7 @@ void addTestParallelization() {
 }
 
 static boolean isCi() {
-    isJenkins() || isTeamCity() || isCircleCI() || isBamboo()
+    isJenkins() || isTeamCity() || isCircleCI() || isBamboo() || isGitHubActions()
 }
 
 static boolean isJenkins() {
@@ -194,6 +208,10 @@ static boolean isCircleCI() {
 
 static boolean isBamboo() {
     System.getenv('bamboo_resultsUrl')
+}
+
+static boolean isGitHubActions() {
+    System.getenv('GITHUB_ACTIONS')
 }
 
 String execAndGetStdout(String... args) {
