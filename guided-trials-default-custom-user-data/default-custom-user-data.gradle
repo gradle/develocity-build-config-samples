@@ -192,7 +192,7 @@ void addGitMetadata() {
                     repoPath = repoPath.substring(0, repoPath.length() - 4)
                 }
                 link 'GitHub Source', "https://github.com/$repoPath/tree/$gitCommitId"
-            } else if (originUrl.contains('gitlab.com')) { // only for GitHub
+            } else if (originUrl.contains('gitlab.com')) { // only for GitLab
                 def repoPath = (originUrl =~ /(.*)gitlab\.com[\/|:](.*)/)[0][2]
                 if (repoPath.endsWith('.git')) {
                     repoPath = repoPath.substring(0, repoPath.length() - 4)
