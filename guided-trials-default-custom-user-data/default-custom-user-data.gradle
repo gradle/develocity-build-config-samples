@@ -149,6 +149,27 @@ void addCiMetadata() {
             addCustomValueSearchLink 'GitHub workflow build scans', [(ghActionWorkflowLabel): ghActionWorkflowName]
         }
     }
+
+    if (isGitLab()) {
+        if (System.getenv('CI_PIPELINE_URL')) {
+            buildScan.link 'GitLab pipeline', System.getenv('CI_PIPELINE_URL')
+        }
+        if (System.getenv('CI_JOB_URL')) {
+            buildScan.link 'GitLab job', System.getenv('CI_JOB_URL')
+        }
+        if (System.getenv('CI_JOB_NAME')) {
+            def jobLabel = 'CI job'
+            def job = System.getenv('CI_JOB_NAME')
+            buildScan.value jobLabel, job
+            addCustomValueSearchLink 'CI job build scans', [(jobLabel): job]
+        }
+        if (System.getenv('CI_JOB_STAGE')) {
+            def stageNameLabel = 'CI stage'
+            def stageName = System.getenv('CI_JOB_STAGE')
+            buildScan.value stageNameLabel, stageName
+            addCustomValueSearchLink 'CI stage build scans', [(stageNameLabel): stageName]
+        }
+    }
 }
 
 void addGitMetadata() {
@@ -170,7 +191,13 @@ void addGitMetadata() {
                 if (repoPath.endsWith('.git')) {
                     repoPath = repoPath.substring(0, repoPath.length() - 4)
                 }
-                link 'Github Source', "https://github.com/$repoPath/tree/" + gitCommitId
+                link 'GitHub Source', "https://github.com/$repoPath/tree/$gitCommitId"
+            } else if (originUrl.contains('gitlab.com')) { // only for GitLab
+                def repoPath = (originUrl =~ /(.*)gitlab\.com[\/|:](.*)/)[0][2]
+                if (repoPath.endsWith('.git')) {
+                    repoPath = repoPath.substring(0, repoPath.length() - 4)
+                }
+                link 'GitLab Source', "https://gitlab.com/$repoPath/-/commit/$gitCommitId"
             }
         }
         if (gitBranchName) {
@@ -191,7 +218,7 @@ void addTestParallelization() {
 }
 
 static boolean isCi() {
-    isJenkins() || isTeamCity() || isCircleCI() || isBamboo() || isGitHubActions()
+    isJenkins() || isTeamCity() || isCircleCI() || isBamboo() || isGitHubActions() || isGitLab()
 }
 
 static boolean isJenkins() {
@@ -212,6 +239,10 @@ static boolean isBamboo() {
 
 static boolean isGitHubActions() {
     System.getenv('GITHUB_ACTIONS')
+}
+
+static boolean isGitLab() {
+    System.getenv('GITLAB_CI')
 }
 
 String execAndGetStdout(String... args) {
