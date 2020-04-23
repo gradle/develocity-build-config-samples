@@ -146,6 +146,18 @@ static void addCiMetadata(def buildScan) {
             addCustomValueSearchLink buildScan, 'CI agent build scans', [(agentIdLabel): agentId]
         }
     }
+
+    if (isGitHubActions()) {
+        if (System.getenv('GITHUB_REPOSITORY') && System.getenv('GITHUB_RUN_ID')) {
+            buildScan.link 'GitHub Actions build', "https://github.com/${System.getenv('GITHUB_REPOSITORY')}/actions/runs/${System.getenv('GITHUB_RUN_ID')}"
+        }
+        if (System.getenv('GITHUB_WORKFLOW')) {
+            def workflowNameLabel = 'GitHub workflow'
+            def workflowName = System.getenv('GITHUB_WORKFLOW')
+            buildScan.value workflowNameLabel, workflowName
+            addCustomValueSearchLink buildScan, 'GitHub workflow build scans', [(workflowNameLabel): workflowName]
+        }
+    }
 }
 
 static void addGitMetadata(def buildScan) {
