@@ -153,17 +153,17 @@ void addCiMetadata() {
     }
 
     if (isGitLab()) {
+        if (System.getenv('CI_JOB_URL')) {
+            buildScan.link 'GitLab build', System.getenv('CI_JOB_URL')
+        }
         if (System.getenv('CI_PIPELINE_URL')) {
             buildScan.link 'GitLab pipeline', System.getenv('CI_PIPELINE_URL')
         }
-        if (System.getenv('CI_JOB_URL')) {
-            buildScan.link 'GitLab job', System.getenv('CI_JOB_URL')
-        }
         if (System.getenv('CI_JOB_NAME')) {
-            def jobLabel = 'CI job'
-            def job = System.getenv('CI_JOB_NAME')
-            buildScan.value jobLabel, job
-            addCustomValueSearchLink buildScan, 'CI job build scans', [(jobLabel): job]
+            def jobNameLabel = 'CI job'
+            def jobName = System.getenv('CI_JOB_NAME')
+            buildScan.value jobNameLabel, jobName
+            addCustomValueSearchLink buildScan, 'CI job build scans', [(jobNameLabel): jobName]
         }
         if (System.getenv('CI_JOB_STAGE')) {
             def stageNameLabel = 'CI stage'

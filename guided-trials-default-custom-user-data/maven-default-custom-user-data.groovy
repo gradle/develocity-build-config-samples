@@ -158,6 +158,28 @@ static void addCiMetadata(def buildScan) {
             addCustomValueSearchLink buildScan, 'GitHub workflow build scans', [(workflowNameLabel): workflowName]
         }
     }
+
+    if (isGitLab()) {
+        if (System.getenv('CI_JOB_URL')) {
+            buildScan.link 'GitLab build', System.getenv('CI_JOB_URL')
+        }
+        if (System.getenv('CI_PIPELINE_URL')) {
+            buildScan.link 'GitLab pipeline', System.getenv('CI_PIPELINE_URL')
+        }
+        if (System.getenv('CI_JOB_NAME')) {
+            def jobNameLabel = 'CI job'
+            def jobName = System.getenv('CI_JOB_NAME')
+            buildScan.value jobNameLabel, jobName
+            addCustomValueSearchLink buildScan, 'CI job build scans', [(jobNameLabel): jobName]
+        }
+        if (System.getenv('CI_JOB_STAGE')) {
+            def stageNameLabel = 'CI stage'
+            def stageName = System.getenv('CI_JOB_STAGE')
+            buildScan.value stageNameLabel, stageName
+            addCustomValueSearchLink buildScan, 'CI stage build scans', [(stageNameLabel): stageName]
+        }
+    }
+
 }
 
 static void addGitMetadata(def buildScan) {
