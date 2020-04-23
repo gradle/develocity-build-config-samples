@@ -62,19 +62,19 @@ static void addCiMetadata(def buildScan) {
             def nodeNameLabel = 'CI node'
             def nodeName = System.getenv('JOB_NAME')
             buildScan.value nodeNameLabel, nodeName
-            addCustomValueSearchLink buildScan, 'CI node build scans', [(nodeNameLabel): nodeName]
+            addCustomLinkWithSearchTerms buildScan, 'CI node build scans', [(nodeNameLabel): nodeName]
         }
         if (System.getenv('JOB_NAME')) {
             def jobNameLabel = 'CI job'
             def jobName = System.getenv('JOB_NAME')
             buildScan.value jobNameLabel, jobName
-            addCustomValueSearchLink buildScan, 'CI job build scans', [(jobNameLabel): jobName]
+            addCustomLinkWithSearchTerms buildScan, 'CI job build scans', [(jobNameLabel): jobName]
         }
         if (System.getenv('STAGE_NAME')) {
             def stageNameLabel = 'CI stage'
             def stageName = System.getenv('STAGE_NAME')
             buildScan.value stageNameLabel, stageName
-            addCustomValueSearchLink buildScan, 'CI stage build scans', [(stageNameLabel): stageName]
+            addCustomLinkWithSearchTerms buildScan, 'CI stage build scans', [(stageNameLabel): stageName]
         }
     }
 
@@ -95,7 +95,7 @@ static void addCiMetadata(def buildScan) {
             def agentNameLabel = 'CI agent'
             def agentName = System.getProperty('agent.name')
             buildScan.value agentNameLabel, agentName
-            addCustomValueSearchLink buildScan, 'CI agent build scans', [(agentNameLabel): agentName]
+            addCustomLinkWithSearchTerms buildScan, 'CI agent build scans', [(agentNameLabel): agentName]
         }
     }
 
@@ -110,13 +110,13 @@ static void addCiMetadata(def buildScan) {
             def jobNameLabel = 'CI job'
             def jobName = System.getenv('CIRCLE_JOB')
             buildScan.value jobNameLabel, jobName
-            addCustomValueSearchLink buildScan, 'CI job build scans', [(jobNameLabel): jobName]
+            addCustomLinkWithSearchTerms buildScan, 'CI job build scans', [(jobNameLabel): jobName]
         }
         if (System.getenv('CIRCLE_WORKFLOW_ID')) {
             def workflowIdLabel = 'CI workflow'
             def workflowId = System.getenv('CIRCLE_WORKFLOW_ID')
             buildScan.value workflowIdLabel, workflowId
-            addCustomValueSearchLink buildScan, 'CI workflow build scans', [(workflowIdLabel): workflowId]
+            addCustomLinkWithSearchTerms buildScan, 'CI workflow build scans', [(workflowIdLabel): workflowId]
         }
     }
 
@@ -131,19 +131,19 @@ static void addCiMetadata(def buildScan) {
             def planNameLabel = 'CI plan'
             def planName = System.getenv('bamboo_planName')
             buildScan.value planNameLabel, planName
-            addCustomValueSearchLink buildScan, 'CI plan build scans', [(planNameLabel): planName]
+            addCustomLinkWithSearchTerms buildScan, 'CI plan build scans', [(planNameLabel): planName]
         }
         if (System.getenv('bamboo_buildPlanName')) {
             def buildPlanNameLabel = 'CI build plan'
             def buildPlanName = System.getenv('bamboo_buildPlanName')
             buildScan.value buildPlanNameLabel, buildPlanName
-            addCustomValueSearchLink buildScan, 'CI build plan build scans', [(buildPlanNameLabel): buildPlanName]
+            addCustomLinkWithSearchTerms buildScan, 'CI build plan build scans', [(buildPlanNameLabel): buildPlanName]
         }
         if (System.getenv('bamboo_agentId')) {
             def agentIdLabel = 'CI agent';
             def agentId = System.getenv('bamboo_agentId')
             buildScan.value agentIdLabel, agentId
-            addCustomValueSearchLink buildScan, 'CI agent build scans', [(agentIdLabel): agentId]
+            addCustomLinkWithSearchTerms buildScan, 'CI agent build scans', [(agentIdLabel): agentId]
         }
     }
 
@@ -155,7 +155,7 @@ static void addCiMetadata(def buildScan) {
             def workflowNameLabel = 'GitHub workflow'
             def workflowName = System.getenv('GITHUB_WORKFLOW')
             buildScan.value workflowNameLabel, workflowName
-            addCustomValueSearchLink buildScan, 'GitHub workflow build scans', [(workflowNameLabel): workflowName]
+            addCustomLinkWithSearchTerms buildScan, 'GitHub workflow build scans', [(workflowNameLabel): workflowName]
         }
     }
 
@@ -170,16 +170,15 @@ static void addCiMetadata(def buildScan) {
             def jobNameLabel = 'CI job'
             def jobName = System.getenv('CI_JOB_NAME')
             buildScan.value jobNameLabel, jobName
-            addCustomValueSearchLink buildScan, 'CI job build scans', [(jobNameLabel): jobName]
+            addCustomLinkWithSearchTerms buildScan, 'CI job build scans', [(jobNameLabel): jobName]
         }
         if (System.getenv('CI_JOB_STAGE')) {
             def stageNameLabel = 'CI stage'
             def stageName = System.getenv('CI_JOB_STAGE')
             buildScan.value stageNameLabel, stageName
-            addCustomValueSearchLink buildScan, 'CI stage build scans', [(stageNameLabel): stageName]
+            addCustomLinkWithSearchTerms buildScan, 'CI stage build scans', [(stageNameLabel): stageName]
         }
     }
-
 }
 
 static void addGitMetadata(def buildScan) {
@@ -195,7 +194,7 @@ static void addGitMetadata(def buildScan) {
         if (gitCommitId) {
             def gitCommitIdLabel = 'Git commit id'
             api.value gitCommitIdLabel, gitCommitId
-            addCustomValueSearchLink api, 'Git commit id build scans', [(gitCommitIdLabel): gitCommitId]
+            addCustomLinkWithSearchTerms api, 'Git commit id build scans', [(gitCommitIdLabel): gitCommitId]
 
             def originUrl = execAndGetStdout('git', 'config', '--get', 'remote.origin.url')
             if (originUrl) {
@@ -277,7 +276,7 @@ static String execAndGetStdout(String... args) {
     }
 }
 
-static void addCustomValueSearchLink(def buildScan, String title, Map<String, String> search) {
+static void addCustomLinkWithSearchTerms(def buildScan, String title, Map<String, String> search) {
     def server = buildScan.server
     if (server) {
         String searchParams = customValueSearchParams(search);
