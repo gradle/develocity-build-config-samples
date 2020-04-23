@@ -1,3 +1,9 @@
+import com.google.common.io.CharStreams
+import com.gradle.maven.extension.api.scan.BuildScanApi
+
+import java.nio.charset.Charset
+import java.util.concurrent.TimeUnit
+
 /**
  * This Groovy script captures data about the OS, IDE, CI, and Git and stores it in build scans via custom tags, custom links, and custom values.
  *
@@ -10,12 +16,12 @@
  * - Further customize this script to your needs
  */
 
-def buildScan = session.lookup('com.gradle.maven.extension.api.scan.BuildScanApi')
-if(!buildScan) {
+BuildScanApi buildScan = session.lookup('com.gradle.maven.extension.api.scan.BuildScanApi')
+if (!buildScan) {
     return
 }
 
-buildScan.executeOnce('custom-data') { api ->
+buildScan.executeOnce('custom-data') { BuildScanApi api ->
     tagOs(api)
     tagIde(api)
     tagCiOrLocal(api)
@@ -24,158 +30,165 @@ buildScan.executeOnce('custom-data') { api ->
 }
 
 // Add here other scripts, if needed
-//evaluate(new File("${session.request.multiModuleProjectDirectory}/<<other-script.groovy>>"))
+// evaluate(new File("${session.request.multiModuleProjectDirectory}/<<other-script.groovy>>"))
 
-static void tagOs(def api) {
-    api.tag System.getProperty('os.name')
+static void tagOs(def buildScan) {
+    buildScan.tag System.getProperty('os.name')
 }
 
-static void tagIde(def api) {
+static void tagIde(def buildScan) {
     if (System.getProperty('idea.version')) {
-        api.tag 'IntelliJ IDEA'
+        buildScan.tag 'IntelliJ IDEA'
     } else if (System.getProperty('eclipse.buildId')) {
-        api.tag 'Eclipse'
+        buildScan.tag 'Eclipse'
     } else if (!isCi()) {
-        api.tag 'Cmd Line'
+        buildScan.tag 'Cmd Line'
     }
 }
 
-static void tagCiOrLocal(def api) {
-    api.tag(isCi() ? 'CI' : 'LOCAL')
+static void tagCiOrLocal(def buildScan) {
+    buildScan.tag isCi() ? 'CI' : 'LOCAL'
 }
 
-static void addCiMetadata(def api) {
+static void addCiMetadata(def buildScan) {
     if (isJenkins()) {
         if (System.getenv('BUILD_URL')) {
-            api.link 'Jenkins build', System.getenv('BUILD_URL')
+            buildScan.link 'Jenkins build', System.getenv('BUILD_URL')
         }
         if (System.getenv('BUILD_NUMBER')) {
-            api.value 'CI build number', System.getenv('BUILD_NUMBER')
+            buildScan.value 'CI build number', System.getenv('BUILD_NUMBER')
         }
         if (System.getenv('NODE_NAME')) {
-            def agentName = System.getenv('NODE_NAME') == 'master' ? 'master-node' : System.getenv('NODE_NAME')
-            api.tag agentName
-            api.value 'CI node name', agentName
+            def nodeNameLabel = 'CI node'
+            def nodeName = System.getenv('JOB_NAME')
+            buildScan.value nodeNameLabel, nodeName
+            addCustomValueSearchLink buildScan, 'CI node build scans', [(nodeNameLabel): nodeName]
         }
         if (System.getenv('JOB_NAME')) {
             def jobNameLabel = 'CI job'
             def jobName = System.getenv('JOB_NAME')
-            api.value jobNameLabel, jobName
-            addCustomValueSearchLink api, 'CI job build scans', [(jobNameLabel): jobName]
+            buildScan.value jobNameLabel, jobName
+            addCustomValueSearchLink buildScan, 'CI job build scans', [(jobNameLabel): jobName]
         }
         if (System.getenv('STAGE_NAME')) {
             def stageNameLabel = 'CI stage'
             def stageName = System.getenv('STAGE_NAME')
-            api.value stageNameLabel, stageName
-            addCustomValueSearchLink api, 'CI stage build scans', [(stageNameLabel): stageName]
+            buildScan.value stageNameLabel, stageName
+            addCustomValueSearchLink buildScan, 'CI stage build scans', [(stageNameLabel): stageName]
         }
     }
 
     if (isTeamCity()) {
-        def teamCityConfigurationFileProp = 'teamcity.configuration.properties.file'
-        if (System.getProperty(teamCityConfigurationFileProp)) {
-            def properties = new Properties()
-            properties.load(new FileInputStream(System.getProperty(teamCityConfigurationFileProp)))
-            def teamCityServerUrl = properties.getProperty("teamcity.serverUrl")
+        if (System.getProperty('teamcity.configuration.properties.file')) {
+            def properties = readPropertiesFile(System.getProperty('teamcity.configuration.properties.file'))
+            def teamCityServerUrl = properties.getProperty('teamcity.serverUrl')
             if (teamCityServerUrl && System.getProperty('build.number') && System.getProperty('teamcity.buildType.id')) {
-                def teamCityBuildNumber = System.getProperty('build.number')
-                def teamCityBuildTypeId = System.getProperty('teamcity.buildType.id')
-                api.link 'TeamCity build', "${appendIfMissing(teamCityServerUrl, '/')}viewLog.html?buildNumber=${teamCityBuildNumber}&buildTypeId=${teamCityBuildTypeId}"
+                def buildNumber = System.getProperty('build.number')
+                def buildTypeId = System.getProperty('teamcity.buildType.id')
+                buildScan.link 'TeamCity build', "${appendIfMissing(teamCityServerUrl, '/')}viewLog.html?buildNumber=${buildNumber}&buildTypeId=${buildTypeId}"
             }
         }
         if (System.getProperty('build.number')) {
-            api.value 'CI build number', System.getProperty('build.number')
+            buildScan.value 'CI build number', System.getProperty('build.number')
         }
         if (System.getProperty('agent.name')) {
+            def agentNameLabel = 'CI agent'
             def agentName = System.getProperty('agent.name')
-            api.tag agentName
-            api.value 'CI agent name', agentName
+            buildScan.value agentNameLabel, agentName
+            addCustomValueSearchLink buildScan, 'CI agent build scans', [(agentNameLabel): agentName]
         }
     }
 
     if (isCircleCI()) {
         if (System.getenv('CIRCLE_BUILD_URL')) {
-            api.link 'CircleCI build', System.getenv('CIRCLE_BUILD_URL')
+            buildScan.link 'CircleCI build', System.getenv('CIRCLE_BUILD_URL')
         }
         if (System.getenv('CIRCLE_BUILD_NUM')) {
-            api.value 'CI build number', System.getenv('CIRCLE_BUILD_NUM')
+            buildScan.value 'CI build number', System.getenv('CIRCLE_BUILD_NUM')
         }
         if (System.getenv('CIRCLE_JOB')) {
-            def jobLabel = 'CI job'
-            def job = System.getenv('CIRCLE_JOB')
-            api.value jobLabel, job
-            addCustomValueSearchLink api, 'CI job build scans', [(jobLabel): job]
+            def jobNameLabel = 'CI job'
+            def jobName = System.getenv('CIRCLE_JOB')
+            buildScan.value jobNameLabel, jobName
+            addCustomValueSearchLink buildScan, 'CI job build scans', [(jobNameLabel): jobName]
         }
         if (System.getenv('CIRCLE_WORKFLOW_ID')) {
             def workflowIdLabel = 'CI workflow'
             def workflowId = System.getenv('CIRCLE_WORKFLOW_ID')
-            api.value workflowIdLabel, workflowId
-            addCustomValueSearchLink api, 'CI workflow build scans', [(workflowIdLabel): workflowId]
+            buildScan.value workflowIdLabel, workflowId
+            addCustomValueSearchLink buildScan, 'CI workflow build scans', [(workflowIdLabel): workflowId]
         }
     }
 
     if (isBamboo()) {
         if (System.getenv('bamboo_resultsUrl')) {
-            api.link 'Bamboo build', System.getenv('bamboo_resultsUrl')
+            buildScan.link 'Bamboo build', System.getenv('bamboo_resultsUrl')
         }
         if (System.getenv('bamboo_buildNumber')) {
-            api.value 'CI build number', System.getenv('bamboo_buildNumber')
+            buildScan.value 'CI build number', System.getenv('bamboo_buildNumber')
         }
         if (System.getenv('bamboo_planName')) {
             def planNameLabel = 'CI plan'
             def planName = System.getenv('bamboo_planName')
-            api.value planNameLabel, planName
-            addCustomValueSearchLink api, 'CI plan build scans', [(planNameLabel): planName]
+            buildScan.value planNameLabel, planName
+            addCustomValueSearchLink buildScan, 'CI plan build scans', [(planNameLabel): planName]
         }
         if (System.getenv('bamboo_buildPlanName')) {
-            def jobNameLabel = 'CI job'
-            def jobName = System.getenv('bamboo_buildPlanName')
-            api.value jobNameLabel, jobName
-            addCustomValueSearchLink api, 'CI job build scans', [(jobNameLabel): jobName]
+            def buildPlanNameLabel = 'CI build plan'
+            def buildPlanName = System.getenv('bamboo_buildPlanName')
+            buildScan.value buildPlanNameLabel, buildPlanName
+            addCustomValueSearchLink buildScan, 'CI build plan build scans', [(buildPlanNameLabel): buildPlanName]
         }
         if (System.getenv('bamboo_agentId')) {
+            def agentIdLabel = 'CI agent';
             def agentId = System.getenv('bamboo_agentId')
-            api.tag agentId
-            api.value 'CI agent ID', agentId
+            buildScan.value agentIdLabel, agentId
+            addCustomValueSearchLink buildScan, 'CI agent build scans', [(agentIdLabel): agentId]
         }
     }
 }
 
-static void addGitMetadata(def api) {
-    api.background { bck ->
+static void addGitMetadata(def buildScan) {
+    buildScan.background { BuildScanApi api ->
         if (!isGitInstalled()) {
             return
         }
+
         def gitCommitId = execAndGetStdout('git', 'rev-parse', '--short=8', '--verify', 'HEAD')
         def gitBranchName = execAndGetStdout('git', 'rev-parse', '--abbrev-ref', 'HEAD')
         def gitStatus = execAndGetStdout('git', 'status', '--porcelain')
 
         if (gitCommitId) {
-            def commitIdLabel = 'Git commit id'
-            bck.value commitIdLabel, gitCommitId
-            addCustomValueSearchLink bck, 'Git commit id build scans', [(commitIdLabel): gitCommitId]
+            def gitCommitIdLabel = 'Git commit id'
+            api.value gitCommitIdLabel, gitCommitId
+            addCustomValueSearchLink api, 'Git commit id build scans', [(gitCommitIdLabel): gitCommitId]
+
             def originUrl = execAndGetStdout('git', 'config', '--get', 'remote.origin.url')
-            if (originUrl.contains('github.com')) { // only for GitHub
-                def repoPath = (originUrl =~ /(.*)github\.com[\/|:](.*)/)[0][2]
-                if (repoPath.endsWith('.git')) {
-                    repoPath = repoPath.substring(0, repoPath.length() - 4)
+            if (originUrl) {
+                if (originUrl.contains('github.com/') || originUrl.contains('github.com:')) {
+                    def rawRepoPath = (originUrl =~ /(.*)github\.com[\/|:](.*)/)[0][2]
+                    def repoPath = rawRepoPath.endsWith('.git') ? rawRepoPath.substring(0, rawRepoPath.length() - 4) : rawRepoPath
+                    api.link 'Github Source', "https://github.com/$repoPath/tree/$gitCommitId"
+                } else if (originUrl.contains('gitlab.com/') || originUrl.contains('gitlab.com:')) {
+                    def rawRepoPath = (originUrl =~ /(.*)gitlab\.com[\/|:](.*)/)[0][2]
+                    def repoPath = rawRepoPath.endsWith('.git') ? rawRepoPath.substring(0, rawRepoPath.length() - 4) : rawRepoPath
+                    api.link 'GitLab Source', "https://gitlab.com/$repoPath/-/commit/$gitCommitId"
                 }
-                bck.link 'Github Source', "https://github.com/$repoPath/tree/" + gitCommitId
             }
         }
         if (gitBranchName) {
-            bck.tag gitBranchName
-            bck.value 'Git branch', gitBranchName
+            api.tag gitBranchName
+            api.value 'Git branch', gitBranchName
         }
         if (gitStatus) {
-            bck.tag 'Dirty'
-            bck.value 'Git status', gitStatus
+            api.tag 'Dirty'
+            api.value 'Git status', gitStatus
         }
     }
 }
 
 static boolean isCi() {
-    isJenkins() || isTeamCity() || isCircleCI() || isBamboo()
+    isJenkins() || isTeamCity() || isCircleCI() || isBamboo() || isGitHubActions() || isGitLab()
 }
 
 static boolean isJenkins() {
@@ -194,35 +207,55 @@ static boolean isBamboo() {
     System.getenv('bamboo_resultsUrl')
 }
 
-static String execAndGetStdout(String... args) {
-    def exec = args.toList().execute()
-    exec.waitFor()
-    trimAtEnd(exec.text)
+static boolean isGitHubActions() {
+    System.getenv('GITHUB_ACTIONS')
 }
 
-static void addCustomValueSearchLink(def api, String title, Map<String, String> search) {
-    if (api.server) {
-        api.link title, customValueSearchUrl(api, search)
-    }
-}
-
-static String customValueSearchUrl(def api, Map<String, String> search) {
-    def query = search.collect { name, value ->
-        "search.names=${encodeURL(name)}&search.values=${encodeURL(value)}"
-    }.join('&')
-    "${appendIfMissing(api.server, '/')}scans?$query#selection.buildScanB=%7BSCAN_ID%7D"
-}
-
-static String encodeURL(String url) {
-    URLEncoder.encode(url, 'UTF-8')
+static boolean isGitLab() {
+    System.getenv('GITLAB_CI')
 }
 
 static boolean isGitInstalled() {
+    Process process
     try {
-        'git --version'.execute().waitFor() == 0
+        process = 'git --version'.execute()
+        def finished = process.waitFor(10, TimeUnit.SECONDS)
+        finished && process.exitValue() == 0;
     } catch (IOException ignored) {
         false
+    } finally {
+        if (process) {
+            process.destroyForcibly()
+        }
     }
+}
+
+static String execAndGetStdout(String... args) {
+    Process process = args.toList().execute()
+    try {
+        def standardText = process.getInputStream().getText(Charset.defaultCharset().name())
+        def ignore = process.getErrorStream().getText(Charset.defaultCharset().name())
+
+        def finished = process.waitFor(10, TimeUnit.SECONDS);
+        finished && process.exitValue() == 0 ? trimAtEnd(standardText) : null;
+    } finally {
+        process.destroyForcibly();
+    }
+}
+
+static void addCustomValueSearchLink(def buildScan, String title, Map<String, String> search) {
+    def server = buildScan.server
+    if (server) {
+        String searchParams = customValueSearchParams(search);
+        String url = "${appendIfMissing(server, '/')}scans?$searchParams#selection.buildScanB=${urlEncode('{SCAN_ID}')}"
+        buildScan.link title, url
+    }
+}
+
+static String customValueSearchParams(Map<String, String> search) {
+    search.collect { name, value ->
+        "search.names=${urlEncode(name)}&search.values=${urlEncode(value)}"
+    }.join('&')
 }
 
 static String appendIfMissing(String str, String suffix) {
@@ -231,4 +264,17 @@ static String appendIfMissing(String str, String suffix) {
 
 static String trimAtEnd(String str) {
     ('x' + str).trim().substring(1)
+}
+
+static String urlEncode(String url) {
+    URLEncoder.encode(url, 'UTF-8')
+}
+
+static Properties readPropertiesFile(String name) {
+    Properties properties = new Properties()
+    File file = new File(name)
+    file.withInputStream {
+        properties.load it
+    }
+    properties
 }
