@@ -13,6 +13,11 @@ import java.util.concurrent.TimeUnit
  * - Further customize this script to your needs
  */
 
+def buildScanApi = project.extensions.findByName('buildScan')
+if (!buildScanApi) {
+    return
+}
+
 tagOs()
 tagIde()
 tagCiOrLocal()
