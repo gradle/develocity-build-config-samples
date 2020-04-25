@@ -27,6 +27,7 @@ addGradleVersion()
 addCiMetadata()
 addGitMetadata()
 addTestParallelization()
+addTestSystemProperties()
 
 // Add here other scripts, if needed
 // apply from:"${rootProject.projectDir}/<<other-script.gradle>>"
@@ -231,35 +232,43 @@ void addTestParallelization() {
     }
 }
 
-static boolean isCi() {
+void addTestSystemProperties() {
+    allprojects { p ->
+        p.tasks.withType(Test).configureEach { t ->
+            doFirst { t.systemProperties.each { key, val -> buildScan.value "${t.identityPath}#sysProps-$key", hash(val) } }
+        }
+    }
+}
+
+boolean isCi() {
     isJenkins() || isTeamCity() || isCircleCI() || isBamboo() || isGitHubActions() || isGitLab()
 }
 
-static boolean isJenkins() {
+boolean isJenkins() {
     System.getenv('JENKINS_URL')
 }
 
-static boolean isTeamCity() {
+boolean isTeamCity() {
     System.getenv('TEAMCITY_VERSION')
 }
 
-static boolean isCircleCI() {
+boolean isCircleCI() {
     System.getenv('CIRCLE_BUILD_URL')
 }
 
-static boolean isBamboo() {
+boolean isBamboo() {
     System.getenv('bamboo_resultsUrl')
 }
 
-static boolean isGitHubActions() {
+boolean isGitHubActions() {
     System.getenv('GITHUB_ACTIONS')
 }
 
-static boolean isGitLab() {
+boolean isGitLab() {
     System.getenv('GITLAB_CI')
 }
 
-static boolean isGitInstalled() {
+boolean isGitInstalled() {
     Process process
     try {
         process = 'git --version'.execute()
@@ -274,7 +283,7 @@ static boolean isGitInstalled() {
     }
 }
 
-static String execAndGetStdout(String... args) {
+String execAndGetStdout(String... args) {
     Process process = args.toList().execute()
     try {
         def standardText = process.getInputStream().getText(Charset.defaultCharset().name())
@@ -287,7 +296,7 @@ static String execAndGetStdout(String... args) {
     }
 }
 
-static void addCustomLinkWithSearchTerms(def buildScan, String title, Map<String, String> search) {
+void addCustomLinkWithSearchTerms(def buildScan, String title, Map<String, String> search) {
     def server = buildScan.server
     if (server) {
         String searchParams = customValueSearchParams(search);
@@ -296,29 +305,48 @@ static void addCustomLinkWithSearchTerms(def buildScan, String title, Map<String
     }
 }
 
-static String customValueSearchParams(Map<String, String> search) {
+String customValueSearchParams(Map<String, String> search) {
     search.collect { name, value ->
         "search.names=${urlEncode(name)}&search.values=${urlEncode(value)}"
     }.join('&')
 }
 
-static String appendIfMissing(String str, String suffix) {
+String appendIfMissing(String str, String suffix) {
     str.endsWith(suffix) ? str : str + suffix
 }
 
-static String trimAtEnd(String str) {
+String trimAtEnd(String str) {
     ('x' + str).trim().substring(1)
 }
 
-static String urlEncode(String url) {
+String urlEncode(String url) {
     URLEncoder.encode(url, 'UTF-8')
 }
 
-static Properties readPropertiesFile(String name) {
+Properties readPropertiesFile(String name) {
     Properties properties = new Properties()
     File file = new File(name)
     file.withInputStream {
         properties.load it
     }
     properties
+}
+
+ext.MESSAGE_DIGEST = MessageDigest.getInstance('SHA-256')
+String hash(Object value) {
+    if (value == null) {
+        null
+    } else {
+        String string = String.valueOf(value)
+        byte[] encodedHash = MESSAGE_DIGEST.digest(string.getBytes(StandardCharsets.UTF_8))
+        StringBuilder hexString = new StringBuilder()
+        for (int i = 0; i < encodedHash.length; i++) {
+            String hex = Integer.toHexString(0xff & encodedHash[i])
+            if (hex.length() == 1) {
+                hexString.append('0')
+            }
+            hexString.append(hex)
+        }
+        hexString.toString()
+    }
 }
