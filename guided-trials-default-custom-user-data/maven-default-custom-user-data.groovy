@@ -1,5 +1,5 @@
-import com.google.common.io.CharStreams
 import com.gradle.maven.extension.api.scan.BuildScanApi
+import org.apache.maven.Maven
 
 import java.nio.charset.Charset
 import java.util.concurrent.TimeUnit
@@ -48,6 +48,11 @@ static void tagIde(def buildScan) {
 
 static void tagCiOrLocal(def buildScan) {
     buildScan.tag isCi() ? 'CI' : 'LOCAL'
+}
+
+static void addMavenVersion(def buildScan) {
+    Properties buildProperties = readBuildPropertiesFile();
+    buildScan.value 'Maven version', buildProperties.getProperty('version');
 }
 
 static void addCiMetadata(def buildScan) {
@@ -310,4 +315,12 @@ static Properties readPropertiesFile(String name) {
         properties.load it
     }
     properties
+}
+
+static Properties readBuildPropertiesFile() {
+    Properties properties = new Properties();
+    InputStream input = Maven.class.getResourceAsStream("/org/apache/maven/messages/build.properties")
+    input.withInputStream {
+        properties.load it
+    }
 }
