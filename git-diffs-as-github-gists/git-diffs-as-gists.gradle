@@ -1,18 +1,29 @@
 import groovy.json.JsonBuilder
 import groovy.json.JsonSlurper
 
+import java.nio.charset.Charset
+import java.util.concurrent.TimeUnit
+
+/**
+ * This Gradle script captures the <i>Git diff</i> in a GitHub gist and references the gist via a custom link.
+ */
+
+def buildScanApi = project.extensions.findByName('buildScan')
+if (!buildScanApi) {
+    return
+}
+
 buildScan.background {
     publishGist()
 }
 
 void publishGist() {
-    // TODO add a property for enabling/disabling this, as it takes a while
     def isCapturingScan = !gradle.startParameter.offline && !gradle.startParameter.continuous
     if (!isCapturingScan) {
-        gradle.rootProject.logger.warn("Build is offline or continuous. Not publishing gist.")
+        gradle.rootProject.logger.warn("Build is offline or continuous. Will not publish gist.")
+        return
     }
 
-    // For this to work, you need must specify this property in ~/.gradle/gradle.properties
     def hasGistCredentials = gradle.rootProject.hasProperty('gistToken')
     if (!hasGistCredentials) {
         gradle.rootProject.logger.warn("User has not set 'gistToken'. Cannot publish gist.")
@@ -43,17 +54,8 @@ void publishGist() {
     }
 }
 
-def execAndGetStdout(String... args) {
-    def stdout = new ByteArrayOutputStream()
-    exec {
-        commandLine(args)
-        standardOutput = stdout
-    }
-    return stdout.toString().trim()
-}
-
 // This must be static! Else Gradle will interpret `files` as Project.files() and this won't work.
-static def jsonRequest(Writer out, Project project, String diff) {
+def jsonRequest(Writer out, Project project, String diff) {
     def builder = new JsonBuilder()
     builder {
         description "Git diff for $project.name"
@@ -67,8 +69,25 @@ static def jsonRequest(Writer out, Project project, String diff) {
     builder.writeTo(out)
 }
 
-static def createLink(def content, def buildScan) {
+def createLink(def content, def buildScan) {
     def parser = new JsonSlurper()
     def url = parser.parse(content.text.bytes).html_url
     buildScan.link('Git diff', url)
+}
+
+String execAndGetStdout(String... args) {
+    Process process = args.toList().execute()
+    try {
+        def standardText = process.getInputStream().getText(Charset.defaultCharset().name())
+        def ignore = process.getErrorStream().getText(Charset.defaultCharset().name())
+
+        def finished = process.waitFor(10, TimeUnit.SECONDS);
+        finished && process.exitValue() == 0 ? trimAtEnd(standardText) : null;
+    } finally {
+        process.destroyForcibly()
+    }
+}
+
+String trimAtEnd(String str) {
+    ('x' + str).trim().substring(1)
 }

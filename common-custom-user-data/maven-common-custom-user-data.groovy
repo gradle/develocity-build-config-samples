@@ -21,7 +21,7 @@ if (!buildScan) {
     return
 }
 
-buildScan.executeOnce('custom-data') { BuildScanApi api ->
+buildScan.executeOnce('common-custom-user-data') { BuildScanApi api ->
     tagOs(api)
     tagIde(api)
     tagCiOrLocal(api)
@@ -274,10 +274,10 @@ static String execAndGetStdout(String... args) {
         def standardText = process.getInputStream().getText(Charset.defaultCharset().name())
         def ignore = process.getErrorStream().getText(Charset.defaultCharset().name())
 
-        def finished = process.waitFor(10, TimeUnit.SECONDS);
-        finished && process.exitValue() == 0 ? trimAtEnd(standardText) : null;
+        def finished = process.waitFor(10, TimeUnit.SECONDS)
+        finished && process.exitValue() == 0 ? trimAtEnd(standardText) : null
     } finally {
-        process.destroyForcibly();
+        process.destroyForcibly()
     }
 }
 

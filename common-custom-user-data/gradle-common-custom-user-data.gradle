@@ -9,7 +9,7 @@ import java.util.concurrent.TimeUnit
  * Proceed as following to benefit from this script in your Gradle build:
  *
  * - Copy this script to the root folder of your Gradle project, renaming it to 'build-scan-user-data.gradle'
- * - Apply the Gradle Build Scan plugin
+ * - Apply the Build Scan Gradle plugin or the Gradle Enterprise Gradle plugin
  * - Point to your Gradle Enterprise server
  * - Include this script in the root project's build.gradle(.kts) file via `apply from: 'build-scan-user-data.gradle'`
  * - Further customize this script to your needs
@@ -289,10 +289,10 @@ String execAndGetStdout(String... args) {
         def standardText = process.getInputStream().getText(Charset.defaultCharset().name())
         def ignore = process.getErrorStream().getText(Charset.defaultCharset().name())
 
-        def finished = process.waitFor(10, TimeUnit.SECONDS);
-        finished && process.exitValue() == 0 ? trimAtEnd(standardText) : null;
+        def finished = process.waitFor(10, TimeUnit.SECONDS)
+        finished && process.exitValue() == 0 ? trimAtEnd(standardText) : null
     } finally {
-        process.destroyForcibly();
+        process.destroyForcibly()
     }
 }
 

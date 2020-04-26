@@ -1,6 +1,11 @@
 /**
- * This Gradle script captures issues found by reporting tasks, as custom value.
+ * This Gradle script captures issues found by reporting tasks and stores them in build scans via custom values.
  */
+
+def buildScanApi = project.extensions.findByName('buildScan')
+if (!buildScanApi) {
+    return
+}
 
 gradle.taskGraph.beforeTask { task ->
     if (isCapturedReportingTask(task)) {

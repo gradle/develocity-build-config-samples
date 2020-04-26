@@ -1,10 +1,13 @@
 import java.nio.file.Paths
 
 /**
- * This Groovy script captures issues found by reporting goals, as custom value.
+ * This Groovy script captures issues found by reporting goals and stores them in build scans via custom values.
  */
 
-def buildScan = session.lookup('com.gradle.maven.extension.api.scan.BuildScanApi')
+BuildScanApi buildScan = session.lookup('com.gradle.maven.extension.api.scan.BuildScanApi')
+if (!buildScan) {
+    return
+}
 
 buildScan.executeOnce('reporting-goals') { api ->
     addReportingGoalIssues(api)
