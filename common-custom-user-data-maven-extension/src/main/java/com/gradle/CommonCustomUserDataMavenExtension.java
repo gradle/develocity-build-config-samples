@@ -31,7 +31,7 @@ import java.util.regex.Pattern;
 import static java.util.stream.Collectors.joining;
 
 @Component(role = AbstractMavenLifecycleParticipant.class)
-public final class CommonCustomUserDataExtension extends AbstractMavenLifecycleParticipant {
+public final class CommonCustomUserDataMavenExtension extends AbstractMavenLifecycleParticipant {
 
     private static final String BUILD_SCAN_API_SESSION_OBJECT = "com.gradle.maven.extension.api.scan.BuildScanApi";
 
