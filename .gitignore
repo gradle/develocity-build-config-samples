@@ -1,3 +1,4 @@
-.idea
-.gradle
+.idea/
+.gradle/
+target/
 *.DS_Store
