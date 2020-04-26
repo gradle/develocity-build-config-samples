@@ -1,12 +1,12 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.example</groupId>
+    <groupId>com.gradle</groupId>
     <artifactId>common-customer-user-data-extension</artifactId>
     <packaging>jar</packaging>
     <version>1.0</version>
     <name>Maven extension to capture common custom user data</name>
-    <url>https://gradle.com/enterprise</url>
+    <url>https://github.com/gradle/gradle-build-scan-snippets/tree/master/common-custom-user-data-extension</url>
     <dependencies>
         <dependency>
             <groupId>org.apache.maven</groupId>
