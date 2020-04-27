@@ -1,8 +1,11 @@
-# Build Scan Snippets
-Copy-pastable snippets for extending your Gradle/Maven build scans
+# Gradle Enterprise build configuration samples
 
-## How to use this repo
-Find a build script snippet that matches your needs and copy-paste it into your build script!
+<img src="http://bit.ly/2kZWwg8" align="right" width="280" />
 
-## Looking for something but can't find it?
-File an [issue](https://github.com/gradle/gradle-build-scan-snippets/issues/new) or create a [PR](https://github.com/gradle/gradle-build-scan-snippets/pulls) to add it!
+This is a repository of samples that demonstrate how to customize your Gradle Enterprise configuration on the build side.
+
+## Learn more
+
+Visit the website to learn more about [Gradle Enterprise][gradle-enterprise].
+
+[gradle-enterprise]: https://gradle.com/enterprise
