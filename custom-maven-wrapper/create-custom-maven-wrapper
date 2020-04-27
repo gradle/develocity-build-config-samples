@@ -1,0 +1,18 @@
+#!/bin/bash
+
+current_dir=$PWD
+
+if [ -n "$1" ]
+then
+  cd $1
+fi  
+
+echo "Installing Maven wrapper"
+mvn -N io.takari:maven:0.7.7:wrapper -Dmaven=3.6.3
+
+echo "Customizing Maven wrapper script by adding a custom 'Wrapper' tag"
+grep -q 'scan.tag.Wrapper' mvnw || sed -i '' $'s/^MAVEN_OPTS/&="-Dscan.tag.Wrapper $&"\\\n&/' mvnw
+
+cd $current_dir
+
+exit 0
