@@ -1,4 +1,5 @@
 .idea/
 .gradle/
+.tmp/
 target/
 *.DS_Store

@@ -8,14 +8,18 @@ maven_zip=${maven_dir}-bin.zip
 maven_lib_ext=${maven_dir}/lib/ext
 maven_conf=${maven_dir}/conf
 
+custom_maven_version=1.0.0
+custom_maven_zip=${maven_dir}-sample-${custom_maven_version}-bin.zip
+
 ge_ext_version=1.4.1
 ge_ext_jar=gradle-enterprise-maven-extension-${ge_ext_version}.jar
 
 ge_sample_ext_version=1.0
 ge_sample_ext_jar=common-customer-user-data-maven-extension-${ge_sample_ext_version}.jar
 
-custom_maven_version=1.0.0
-custom_maven_zip=${maven_dir}-sample-${custom_maven_version}-bin.zip
+ge_sample_ext_xml=gradle-enterprise.xml
+
+tmp_dir=.tmp
 
 yellow='\033[1;33m'
 nc='\033[0m'
@@ -25,44 +29,52 @@ then
   cd $1
 fi  
 
+mkdir $tmp_dir
+
 ### Downloading and extracting Maven distribution
 
-if [ ! -f "$maven_zip" ]; then
+if [ ! -f "$tmp_dir/$maven_zip" ]; then
   echo -e "${yellow}Downloading Maven distribution $maven_version${nc}"
   maven_download_url=https://repo.maven.apache.org/maven2/org/apache/maven/apache-maven/${maven_version}/${maven_zip}
-  wget $maven_download_url -P .
+  wget $maven_download_url -P $tmp_dir
 fi
 
 echo -e "${yellow}Extracting Maven distribution${nc}"
 rm -rf $maven_dir
-unzip -q $maven_zip -d .
+unzip -q $tmp_dir/$maven_zip -d .
 
 ### Downloading and embedding Gradle Enterprise Maven extension
 
-if [ ! -f "$ge_ext_jar" ]; then
+if [ ! -f "$tmp_dir/$ge_ext_jar" ]; then
   echo -e "${yellow}Downloading Gradle Enterprise Maven extension $ge_ext_version${nc}"
   ge_ext_download_url=https://repo1.maven.org/maven2/com/gradle/gradle-enterprise-maven-extension/${ge_ext_version}/${ge_ext_jar}
-  wget $ge_ext_download_url  -P .
+  wget $ge_ext_download_url  -P $tmp_dir
 fi
 
 echo -e "${yellow}Copying Gradle Enterprise Maven extension into Maven distribution${nc}"
-cp $ge_ext_jar $maven_lib_ext
+cp $tmp_dir/$ge_ext_jar $maven_lib_ext
 
 ### Downloading and embedding common custom user data Maven extension
 
-if [ ! -f "$ge_sample_ext_jar" ]; then
+if [ ! -f "$tmp_dir/$ge_sample_ext_jar" ]; then
   echo -e "${yellow}Downloading common custom user data capturing Maven extension $ge_sample_ext_version${nc}"
   ge_sample_ext_download_url=https://github.com/gradle/gradle-enterprise-build-config-samples/raw/master/common-custom-user-data-maven-extension/${ge_sample_ext_jar}
-  wget $ge_sample_ext_download_url  -P .
+  wget $ge_sample_ext_download_url  -P $tmp_dir
 fi
 
 echo -e "${yellow}Copying common custom user data capturing Maven extension into Maven distribution${nc}"
-cp $ge_sample_ext_jar $maven_lib_ext
+cp $tmp_dir/$ge_sample_ext_jar $maven_lib_ext
 
-### Downloading and embedding common custom user data Maven extension
+### Downloading and embedding common gradle-enterprise.xml configuration for developers building locally
 
-echo -e "${yellow}Copying common gradle-enterprise.xml for local builds into Maven distribution${nc}"
-cp ../common-gradle-enterprise-xml-maven-configuration/gradle-enterprise.xml $maven_conf
+if [ ! -f "$tmp_dir/$ge_sample_ext_xml" ]; then
+  echo -e "${yellow}Downloading common gradle-enterprise.xml configuration for developers building locally${nc}"
+  ge_sample_ext_xml_download_url=https://raw.githubusercontent.com/gradle/gradle-enterprise-build-config-samples/master/common-gradle-enterprise-xml-maven-configuration/${ge_sample_ext_xml}
+  wget $ge_sample_ext_xml_download_url  -P $tmp_dir
+fi
+
+echo -e "${yellow}Copying common gradle-enterprise.xml for developers building locally into Maven distribution${nc}"
+cp $tmp_dir/$ge_sample_ext_xml $maven_conf
 
 ### Packing the customized Maven distribution
 
