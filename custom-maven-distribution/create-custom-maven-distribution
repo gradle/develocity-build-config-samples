@@ -80,7 +80,7 @@ cp $tmp_dir/$ge_sample_ext_xml $out_dir/$maven_conf
 ### Packing the customized Maven distribution
 
 echo -e "${yellow}Packaging custom Maven distribution${nc}"
-zip -qrX $out_dir/$custom_maven_zip $out_dir/$maven_dir
+(cd $out_dir && zip -qrX $custom_maven_zip $maven_dir)
 
 cd $current_dir
 exit 0
