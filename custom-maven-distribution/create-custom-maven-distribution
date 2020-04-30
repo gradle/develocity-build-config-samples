@@ -64,7 +64,7 @@ cp $ge_sample_ext_jar $maven_lib_ext
 echo -e "${yellow}Copying common gradle-enterprise.xml for local builds into Maven distribution${nc}"
 cp ../common-gradle-enterprise-xml-maven-configuration/gradle-enterprise.xml $maven_conf
 
-### Packing the cusomtized Maven distribution
+### Packing the customized Maven distribution
 
 echo -e "${yellow}Packaging custom Maven distribution${nc}"
 zip -qrX $custom_maven_zip $maven_dir
