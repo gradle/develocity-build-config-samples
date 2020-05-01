@@ -1,6 +1,18 @@
 #!/bin/bash
 
-current_dir=$PWD
+# Script that demonstrates how to build a custom Maven distribution that bundles
+#
+#  - Gradle Enterprise Maven extension
+#  - Maven extension which adds common custom user data to build scans
+#  - gradle-enterprise.xml with typical configuration for developers building locally
+#
+# Ideally, the custom Maven distribution is then
+#
+#  - deployed to a repository like Artifactory, Nexus, etc.
+#  - applied when building a Maven project via Maven Wrapper
+#
+# Having such a custom Maven distribution allows to scale the Gradle Enterprise configuration of
+# multiple Maven projects without any duplication.
 
 maven_version=3.6.3
 maven_dir=apache-maven-${maven_version}
@@ -19,6 +31,8 @@ ge_sample_ext_jar=common-customer-user-data-maven-extension-${ge_sample_ext_vers
 
 ge_sample_ext_xml=gradle-enterprise.xml
 
+server_url=
+
 tmp_dir=.tmp
 out_dir=out
 
@@ -27,7 +41,7 @@ nc='\033[0m'
 
 if [ -n "$1" ]
 then
-  cd $1
+  server_url=$1
 fi  
 
 mkdir -p $tmp_dir
@@ -77,10 +91,16 @@ fi
 echo -e "${yellow}Copying common gradle-enterprise.xml for developers building locally into Maven distribution${nc}"
 cp $tmp_dir/$ge_sample_ext_xml $out_dir/$maven_conf
 
+### If present, replace the default urls in the gradle-enterprise.xml file with the url passed on the command line
+
+if [ -n "$server_url" ]; then
+  echo -e "${yellow}Replacing the urls in gradle-enterprise.xml with ${server_url}${nc}"
+  sed -i '' -e 's+https://enterprise-samples.gradle.com+'"$server_url"'+g' $out_dir/$maven_conf/$ge_sample_ext_xml
+fi
+
 ### Packing the customized Maven distribution
 
 echo -e "${yellow}Packaging custom Maven distribution${nc}"
 (cd $out_dir && zip -qrX $custom_maven_zip $maven_dir)
 
-cd $current_dir
 exit 0
