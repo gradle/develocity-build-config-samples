@@ -13,6 +13,12 @@
 #
 # Having such a custom Maven distribution allows to scale the Gradle Enterprise configuration of
 # multiple Maven projects without any duplication.
+#
+# You can build a Maven distribution that connects to _your_ Gradle Enterprise instance by running
+# this script and passing the root URL of your Gradle Enterprise server as the first argument, e.g.:
+#
+# ./create-custom-maven-distribution https://gradle-enterprise.mycompany.com
+#
 
 maven_version=3.6.3
 maven_dir=apache-maven-${maven_version}
