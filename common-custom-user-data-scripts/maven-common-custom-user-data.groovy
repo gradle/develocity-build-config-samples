@@ -25,6 +25,7 @@ buildScan.executeOnce('common-custom-user-data') { BuildScanApi api ->
     tagOs(api)
     tagIde(api)
     tagCiOrLocal(api)
+    addMavenVersion(api)
     addCiMetadata(api)
     addGitMetadata(api)
 }
