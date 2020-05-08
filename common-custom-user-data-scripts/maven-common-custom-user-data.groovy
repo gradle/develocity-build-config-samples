@@ -66,7 +66,7 @@ static void addCiMetadata(def buildScan) {
         }
         if (System.getenv('NODE_NAME')) {
             def nodeNameLabel = 'CI node'
-            def nodeName = System.getenv('JOB_NAME')
+            def nodeName = System.getenv('NODE_NAME')
             buildScan.value nodeNameLabel, nodeName
             addCustomLinkWithSearchTerms buildScan, 'CI node build scans', [(nodeNameLabel): nodeName]
         }
