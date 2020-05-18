@@ -2,7 +2,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.gradle</groupId>
-    <artifactId>common-customer-user-data-maven-extension</artifactId>
+    <artifactId>common-custom-user-data-maven-extension</artifactId>
     <packaging>jar</packaging>
     <version>1.0</version>
     <name>Maven extension to capture common custom user data</name>
