@@ -206,14 +206,14 @@ final class CustomUserData {
                 String originUrl = execAndGetStdOut("git", "config", "--get", "remote.origin.url");
                 if (!Strings.isNullOrEmpty(originUrl)) {
                     if (originUrl.contains("github.com/") || originUrl.contains("github.com:")) {
-                        Matcher matcher = Pattern.compile("(.*)github\\.com[\\/|:](.*)").matcher(originUrl);
+                        Matcher matcher = Pattern.compile("(.*)github\\.com[/|:](.*)").matcher(originUrl);
                         if (matcher.matches()) {
                             String rawRepoPath = matcher.group(2);
                             String repoPath = rawRepoPath.endsWith(".git") ? rawRepoPath.substring(0, rawRepoPath.length() - 4) : rawRepoPath;
                             api.link("Github source", "https://github.com/" + repoPath + "/tree/" + gitCommitId);
                         }
                     } else if (originUrl.contains("gitlab.com/") || originUrl.contains("gitlab.com:")) {
-                        Matcher matcher = Pattern.compile("(.*)gitlab\\.com[\\/|:](.*)").matcher(originUrl);
+                        Matcher matcher = Pattern.compile("(.*)gitlab\\.com[/|:](.*)").matcher(originUrl);
                         if (matcher.matches()) {
                             String rawRepoPath = matcher.group(2);
                             String repoPath = rawRepoPath.endsWith(".git") ? rawRepoPath.substring(0, rawRepoPath.length() - 4) : rawRepoPath;
