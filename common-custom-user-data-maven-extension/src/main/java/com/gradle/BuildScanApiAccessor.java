@@ -6,6 +6,8 @@ import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.classworlds.realm.ClassRealm;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 
+import java.util.Optional;
+
 import static java.util.Comparator.comparing;
 
 final class BuildScanApiAccessor {
@@ -25,21 +27,22 @@ final class BuildScanApiAccessor {
     /**
      * Workaround for https://issues.apache.org/jira/browse/MNG-6906
      */
-    private static void ensureBuildScanApiIsAccessible(Class<?> extensionClass) {
+    private static void ensureBuildScanApiIsAccessible(Class<?> extensionClass) throws MavenExecutionException {
         ClassLoader classLoader = extensionClass.getClassLoader();
         if (classLoader instanceof ClassRealm) {
             ClassRealm extensionRealm = (ClassRealm) classLoader;
             if (!"maven.ext".equals(extensionRealm.getId())) {
-                extensionRealm.getWorld().getRealms().stream()
-                        .filter(realm -> realm.getId().contains("com.gradle:gradle-enterprise-maven-extension") || realm.getId().equals("maven.ext"))
-                        .max(comparing((ClassRealm realm) -> realm.getId().length()))
-                        .ifPresent(realm -> {
-                            try {
-                                extensionRealm.importFrom(realm.getId(), PACKAGE);
-                            } catch (Exception e) {
-                                throw new RuntimeException("Could not import package from realm with id " + realm.getId(), e);
-                            }
-                        });
+                Optional<ClassRealm> sourceRealm = extensionRealm.getWorld().getRealms().stream()
+                    .filter(realm -> realm.getId().contains("com.gradle:gradle-enterprise-maven-extension") || realm.getId().equals("maven.ext"))
+                    .max(comparing((ClassRealm realm) -> realm.getId().length()));
+                if (sourceRealm.isPresent()) {
+                    String sourceRealmId = sourceRealm.get().getId();
+                    try {
+                        extensionRealm.importFrom(sourceRealmId, PACKAGE);
+                    } catch (Exception e) {
+                        throw new MavenExecutionException("Could not import package from realm with id " + sourceRealmId, e);
+                    }
+                }
             }
         }
     }
