@@ -23,9 +23,9 @@ import java.util.regex.Pattern;
 
 import static java.util.stream.Collectors.joining;
 
-class CustomUserData {
+final class CustomUserData {
 
-    public static void addToBuildScan(BuildScanApi buildScan) {
+    static void addToBuildScan(BuildScanApi buildScan) {
         tagOs(buildScan);
         tagIde(buildScan);
         tagCiOrLocal(buildScan);
@@ -288,8 +288,8 @@ class CustomUserData {
         }
 
         try (
-                Reader standard = new InputStreamReader(process.getInputStream(), Charset.defaultCharset());
-                Reader error = new InputStreamReader(process.getErrorStream(), Charset.defaultCharset())
+            Reader standard = new InputStreamReader(process.getInputStream(), Charset.defaultCharset());
+            Reader error = new InputStreamReader(process.getErrorStream(), Charset.defaultCharset())
         ) {
             String standardText = CharStreams.toString(standard);
             String ignore = CharStreams.toString(error);
@@ -314,8 +314,8 @@ class CustomUserData {
 
     private static String customValueSearchParams(Map<String, String> search) {
         return search.entrySet().stream()
-                .map(e -> "search.names=" + urlEncode(e.getKey()) + "&search.values=" + urlEncode(e.getValue()))
-                .collect(joining("&"));
+            .map(e -> "search.names=" + urlEncode(e.getKey()) + "&search.values=" + urlEncode(e.getValue()))
+            .collect(joining("&"));
     }
 
     private static String sysProperty(String name) {
@@ -371,4 +371,8 @@ class CustomUserData {
             throw new RuntimeException(e);
         }
     }
+
+    private CustomUserData() {
+    }
+
 }
