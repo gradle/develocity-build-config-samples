@@ -15,7 +15,7 @@ public final class CommonCustomUserDataMavenExtension extends AbstractMavenLifec
 
     @Override
     public void afterProjectsRead(MavenSession session) throws MavenExecutionException {
-        LOG.info("Executing extension: {}", getClass().getSimpleName());
+        LOG.debug("Executing extension: {}", getClass().getSimpleName());
         BuildScanApi buildScan = BuildScanApiAccessor.lookup(session, getClass());
         if (buildScan != null) {
             LOG.debug("Capturing custom user data in build scan");
