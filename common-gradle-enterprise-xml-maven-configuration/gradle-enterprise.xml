@@ -1,8 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 
-<!-- Common gradle-enterprise.xml configuration for developers building locally 
+<!-- Common gradle-enterprise.xml configuration for CI builds and for developers building locally 
 
-     Note: in the XML configuration below, you need to adjust the server url to your Gradle Enterprise server. -->
+     Here, cache credentials required for CI build to write to the remote build cache are read from environment variables.
+     Possibly, the credentials are configured in Jenkins via Credentials plugin (https://plugins.jenkins.io/credentials/) and
+     Credentials Binding plugin (https://plugins.jenkins.io/credentials-binding/). 
+
+     Note: In the XML configuration below, you need to adjust the server url to your Gradle Enterprise server and 
+           the environment variables for the cache credentials to your CI server settings. -->
 
 <gradleEnterprise
     xmlns="https://www.gradle.com/gradle-enterprise-maven" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -12,14 +17,21 @@
   </server>
   <buildScan>
     <captureGoalInputFiles>true</captureGoalInputFiles>
+    <backgroundBuildScanUpload>#{isFalse(env['CI'])}</backgroundBuildScanUpload>
   </buildScan>
   <buildCache>
     <local>
       <enabled>true</enabled>
     </local>
     <remote>
+      <server>
+        <credentials>
+          <username>${env.GRADLE_ENTERPRISE_CACHE_USERNAME}</username>
+          <password>${env.GRADLE_ENTERPRISE_CACHE_PASSWORD}</password>
+        </credentials>
+      </server>
       <enabled>true</enabled>
-      <storeEnabled>false</storeEnabled>
+      <storeEnabled>#{isTrue(env['CI'])}</storeEnabled>
     </remote>
   </buildCache>
 </gradleEnterprise>
