@@ -33,7 +33,7 @@ ge_ext_version=1.5.1
 ge_ext_jar=gradle-enterprise-maven-extension-${ge_ext_version}.jar
 
 ge_sample_ext_version=1.0
-ge_sample_ext_jar=common-customer-user-data-maven-extension-${ge_sample_ext_version}.jar
+ge_sample_ext_jar=common-custom-user-data-maven-extension-${ge_sample_ext_version}.jar
 
 ge_sample_ext_xml=gradle-enterprise.xml
 
@@ -86,10 +86,10 @@ fi
 echo -e "${yellow}Copying common custom user data capturing Maven extension into Maven distribution${nc}"
 cp $tmp_dir/$ge_sample_ext_jar $out_dir/$maven_lib_ext
 
-### Downloading and embedding common gradle-enterprise.xml configuration for developers building locally
+### Downloading and embedding common gradle-enterprise.xml configuration for CI builds and developers building locally
 
 if [ ! -f "$tmp_dir/$ge_sample_ext_xml" ]; then
-  echo -e "${yellow}Downloading common gradle-enterprise.xml configuration for developers building locally${nc}"
+  echo -e "${yellow}Downloading common gradle-enterprise.xml configuration for CI builds and developers building locally${nc}"
   ge_sample_ext_xml_download_url=https://raw.githubusercontent.com/gradle/gradle-enterprise-build-config-samples/master/common-gradle-enterprise-xml-maven-configuration/${ge_sample_ext_xml}
   wget $ge_sample_ext_xml_download_url  -P $tmp_dir
 fi
