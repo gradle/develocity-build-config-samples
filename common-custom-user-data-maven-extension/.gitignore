@@ -1,0 +1,17 @@
+# IDEA
+# ----
+.idea
+.shelf
+/*.iml
+/*.ipr
+/*.iws
+/out
+
+# MAVEN
+# -----
+/target
+.mvn/.gradle-enterprise/gradle-enterprise-workspace-id
+
+# OS X
+# ----
+.DS_Store
