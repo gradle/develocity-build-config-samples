@@ -59,6 +59,10 @@ project {
             param("env.MAVEN_CENTRAL_STAGING_REPO_USER", "%mavenCentralStagingRepoUser%")
             param("env.MAVEN_CENTRAL_STAGING_REPO_PASSWORD", "%mavenCentralStagingRepoPassword%")
         }
+        vcs {
+            root(DslContext.settingsRootId)
+            cleanCheckout = true
+        }
         steps {
             script {
                 name = "Import signing key"
