@@ -45,14 +45,16 @@ project {
                 "",
                 label = "Release Version",
                 display = PROMPT,
-                allowEmpty = false
+                regex = "\\d+\\.\\d+(\\.\\d+)?",
+                validationMessage = "The version needs to be of the form <major>.<minor>(.<patch>)"
             )
             text(
                 "env.MAVEN_DEVELOPMENT_VERSION",
                 "",
                 label = "The next development version (should end with '-SNAPSHOT')",
                 display = PROMPT,
-                allowEmpty = false
+                regex = "\\d+\\.\\d+(\\.\\d+)?-SNAPSHOT",
+                validationMessage = "The version needs to be of the form <major>.<minor>(.<patch>)-SNAPSHOT"
             )
             param("env.MAVEN_CENTRAL_STAGING_REPO_USER", "%mavenCentralStagingRepoUser%")
             param("env.MAVEN_CENTRAL_STAGING_REPO_PASSWORD", "%mavenCentralStagingRepoPassword%")
