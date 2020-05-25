@@ -61,8 +61,8 @@ project {
         }
         steps {
             script {
-                name = "Setup GPG"
-                scriptContent = "echo %env.PGP_SIGNING_KEY% | base64 --decode | gpg --import"
+                name = "Import signing key"
+                scriptContent = "echo %env.PGP_SIGNING_KEY% | gpg --import"
             }
             maven {
                 pomLocation = "common-custom-user-data-maven-extension/pom.xml"
@@ -91,6 +91,11 @@ project {
                 localRepoScope = MavenBuildStep.RepositoryScope.BUILD_CONFIGURATION
                 userSettingsSelection = "settings.xml"
                 jdkHome = "%linux.java8.oracle.64bit%"
+            }
+            script {
+                name = "Remove signing key"
+                scriptContent = "gpg --delete-keys 5208812E1E4A6DB0"
+                executionMode = BuildStep.ExecutionMode.ALWAYS
             }
         }
         requirements {
