@@ -54,13 +54,7 @@ changeBuildType(AbsoluteId("null_")) {
     }
     steps {
         update<ScriptBuildStep>(0) {
-            scriptContent = """
-                export SIGNING_KEY=${'$'}(cat <<EOF
-                %env.PGP_SIGNING_KEY%
-                EOF
-                )
-                echo ${'$'}SIGNING_KEY | gpg --import
-            """.trimIndent()
+            scriptContent = """echo "${'$'}PGP_SIGNING_KEY" | gpg --import --batch"""
         }
     }
 }
