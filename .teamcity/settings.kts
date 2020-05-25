@@ -75,6 +75,7 @@ project {
                     path = "%teamcity.tool.maven.3.6.3%"
                 }
                 localRepoScope = MavenBuildStep.RepositoryScope.BUILD_CONFIGURATION
+                userSettingsSelection = "settings.xml"
                 jdkHome = "%linux.java8.oracle.64bit%"
             }
             maven {
@@ -84,6 +85,7 @@ project {
                     path = "%teamcity.tool.maven.3.6.3%"
                 }
                 localRepoScope = MavenBuildStep.RepositoryScope.BUILD_CONFIGURATION
+                userSettingsSelection = "settings.xml"
                 jdkHome = "%linux.java8.oracle.64bit%"
             }
         }
