@@ -56,6 +56,14 @@ project {
                 regex = "\\d+\\.\\d+(\\.\\d+)?-SNAPSHOT",
                 validationMessage = "The version needs to be of the form <major>.<minor>(.<patch>)-SNAPSHOT"
             )
+            text(
+                "env.GITHUB_USER",
+                "",
+                label = "GitHub Username",
+                display = PROMPT,
+                allowEmpty = false
+            )
+            password("env.GITHUB_ACCESS_TOKEN", "", label = "GitHub Access Token", display = PROMPT)
             param("env.MAVEN_CENTRAL_STAGING_REPO_USER", "%mavenCentralStagingRepoUser%")
             param("env.MAVEN_CENTRAL_STAGING_REPO_PASSWORD", "%mavenCentralStagingRepoPassword%")
         }

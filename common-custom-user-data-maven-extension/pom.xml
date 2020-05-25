@@ -8,6 +8,10 @@
     <name>Maven extension to capture common custom user data</name>
     <url>https://github.com/gradle/gradle-build-scan-snippets/tree/master/common-custom-user-data-maven-extension</url>
 
+    <properties>
+        <project.scm.id>github</project.scm.id>
+    </properties>
+
     <scm>
         <developerConnection>scm:git:https://github.com/gradle/gradle-enterprise-build-config-samples.git</developerConnection>
         <url>https://github.com/gradle/gradle-enterprise-build-config-samples</url>
