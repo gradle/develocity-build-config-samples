@@ -9,8 +9,8 @@
     <url>https://github.com/gradle/gradle-build-scan-snippets/tree/master/common-custom-user-data-maven-extension</url>
 
     <scm>
-        <developerConnection>scm:git:https://github.com:gradle/gradle-enterprise-build-config-samples.git</developerConnection>
-        <url>https://github.com:gradle/gradle-enterprise-build-config-samples</url>
+        <developerConnection>scm:git:https://github.com/gradle/gradle-enterprise-build-config-samples.git</developerConnection>
+        <url>https://github.com/gradle/gradle-enterprise-build-config-samples</url>
     </scm>
 
     <licenses>
