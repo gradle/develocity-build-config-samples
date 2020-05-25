@@ -62,7 +62,7 @@ project {
         steps {
             script {
                 name = "Import signing key"
-                scriptContent = "echo \$PGP_SIGNING_KEY | gpg --import"
+                scriptContent = "echo \"\$PGP_SIGNING_KEY\" | gpg --import --batch"
             }
             maven {
                 pomLocation = "common-custom-user-data-maven-extension/pom.xml"
@@ -94,7 +94,7 @@ project {
             }
             script {
                 name = "Remove signing key"
-                scriptContent = "gpg --delete-keys 5208812E1E4A6DB0"
+                scriptContent = "gpg --delete-secret-and-public-key --batch --yes 314FE82E5A4C5377BCA2EDEC5208812E1E4A6DB0"
                 executionMode = BuildStep.ExecutionMode.ALWAYS
             }
         }
