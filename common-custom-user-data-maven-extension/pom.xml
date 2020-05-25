@@ -142,6 +142,9 @@
                                 </goals>
                             </execution>
                         </executions>
+                        <configuration>
+                            <keyname>5208812E1E4A6DB0</keyname>
+                        </configuration>
                     </plugin>
                 </plugins>
             </build>
