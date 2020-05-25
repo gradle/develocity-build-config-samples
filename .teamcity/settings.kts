@@ -75,7 +75,7 @@ project {
                     path = "%teamcity.tool.maven.3.6.3%"
                 }
                 localRepoScope = MavenBuildStep.RepositoryScope.BUILD_CONFIGURATION
-                jdkHome = "%linux.java11.openjdk.64bit%"
+                jdkHome = "%linux.java8.oracle.64bit%"
             }
             maven {
                 goals = "release:perform"
@@ -84,7 +84,7 @@ project {
                     path = "%teamcity.tool.maven.3.6.3%"
                 }
                 localRepoScope = MavenBuildStep.RepositoryScope.BUILD_CONFIGURATION
-                jdkHome = "%linux.java11.openjdk.64bit%"
+                jdkHome = "%linux.java8.oracle.64bit%"
             }
         }
         triggers {
