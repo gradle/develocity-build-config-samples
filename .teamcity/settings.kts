@@ -62,6 +62,7 @@ project {
                     -DreleaseVersion=%env.MAVEN_RELEASE_VERSION%
                     -DdevelopmentVersion=%env.MAVEN_DEVELOPMENT_VERSION%
                     -Dtag=common-custom-user-data-maven-extension-%env.MAVEN_RELEASE_VERSION%
+                    -Prelease
                 """.trimIndent()
                 mavenVersion = custom {
                     path = "%teamcity.tool.maven.3.6.3%"
@@ -71,7 +72,7 @@ project {
             }
             maven {
                 goals = "release:perform"
-                runnerArgs = "-Dscan=false"
+                runnerArgs = "-Dscan=false -Prelease"
                 mavenVersion = custom {
                     path = "%teamcity.tool.maven.3.6.3%"
                 }
