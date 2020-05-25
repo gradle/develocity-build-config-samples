@@ -89,11 +89,6 @@ project {
                 jdkHome = "%linux.java8.oracle.64bit%"
             }
         }
-        triggers {
-            vcs {
-                id = "vcsTrigger"
-            }
-        }
         requirements {
             contains("teamcity.agent.jvm.os.name", "Linux")
         }
