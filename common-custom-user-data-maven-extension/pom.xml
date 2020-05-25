@@ -4,7 +4,8 @@
     <artifactId>common-custom-user-data-maven-extension</artifactId>
     <packaging>jar</packaging>
     <version>1.0-SNAPSHOT</version>
-    <name>Maven extension to capture common custom user data</name>
+    <name>Gradle Enterprise Common Custom User Data Maven Extension</name>
+    <description>A Maven extension to capture common custom user data used for Maven Build Scans in Gradle Enterprise</description>
     <url>https://github.com/gradle/gradle-build-scan-snippets/tree/master/common-custom-user-data-maven-extension</url>
 
     <properties>
