@@ -62,7 +62,7 @@ project {
         steps {
             script {
                 name = "Import signing key"
-                scriptContent = "echo %env.PGP_SIGNING_KEY% | gpg --import"
+                scriptContent = "echo \$PGP_SIGNING_KEY | gpg --import"
             }
             maven {
                 pomLocation = "common-custom-user-data-maven-extension/pom.xml"
