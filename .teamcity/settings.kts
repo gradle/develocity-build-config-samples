@@ -63,6 +63,7 @@ project {
                 scriptContent = "echo %env.PGP_SIGNING_KEY% | base64 --decode | gpg --import"
             }
             maven {
+                pomLocation = "common-custom-user-data-maven-extension/pom.xml"
                 goals = "release:prepare"
                 runnerArgs = """
                     -Dscan=false
@@ -79,6 +80,7 @@ project {
                 jdkHome = "%linux.java8.oracle.64bit%"
             }
             maven {
+                pomLocation = "common-custom-user-data-maven-extension/pom.xml"
                 goals = "release:perform"
                 runnerArgs = "-Dscan=false -Prelease"
                 mavenVersion = custom {
