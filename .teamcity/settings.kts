@@ -32,13 +32,24 @@ version = "2019.2"
 
 project {
     buildType {
+        name = "Verify"
+        id = RelativeId(name.toId())
+        vcs {
+            root(DslContext.settingsRootId)
+            cleanCheckout = true
+        }
+        triggers {
+            vcs {
+                branchFilter = "+:<default>"
+            }
+        }
+        steps {
+            maven("verify")
+        }
+    }
+    buildType {
         name = "Deploy to Maven Central"
-        val camelCaseId = this@project.name
-                .replace(" ", "-")
-                .replace(Regex("""[^A-Za-z0-9-]"""), "")
-                .split('-')
-                .joinToString("", transform = String::capitalize)
-        id = AbsoluteId(camelCaseId.toId(this@project.id.toString()))
+        id = RelativeId(name.toId())
         params {
             text(
                 "env.MAVEN_RELEASE_VERSION",
@@ -76,34 +87,13 @@ project {
                 name = "Import signing key"
                 scriptContent = "echo \"\$PGP_SIGNING_KEY\" | gpg --import --batch"
             }
-            maven {
-                pomLocation = "common-custom-user-data-maven-extension/pom.xml"
-                goals = "release:prepare"
-                runnerArgs = """
-                    -Dscan=false
+            maven("release:prepare", """
                     -DreleaseVersion=%env.MAVEN_RELEASE_VERSION%
                     -DdevelopmentVersion=%env.MAVEN_DEVELOPMENT_VERSION%
                     -Dtag=common-custom-user-data-maven-extension-%env.MAVEN_RELEASE_VERSION%
                     -Prelease
-                """.trimIndent()
-                mavenVersion = custom {
-                    path = "%teamcity.tool.maven.3.6.3%"
-                }
-                localRepoScope = MavenBuildStep.RepositoryScope.BUILD_CONFIGURATION
-                userSettingsSelection = "settings.xml"
-                jdkHome = "%linux.java8.oracle.64bit%"
-            }
-            maven {
-                pomLocation = "common-custom-user-data-maven-extension/pom.xml"
-                goals = "release:perform"
-                runnerArgs = "-Dscan=false -Prelease"
-                mavenVersion = custom {
-                    path = "%teamcity.tool.maven.3.6.3%"
-                }
-                localRepoScope = MavenBuildStep.RepositoryScope.BUILD_CONFIGURATION
-                userSettingsSelection = "settings.xml"
-                jdkHome = "%linux.java8.oracle.64bit%"
-            }
+                """.trimIndent())
+            maven("release:perform", "-Prelease")
             script {
                 name = "Remove signing key"
                 scriptContent = "gpg --delete-secret-and-public-key --batch --yes 314FE82E5A4C5377BCA2EDEC5208812E1E4A6DB0"
@@ -114,5 +104,22 @@ project {
             contains("teamcity.agent.jvm.os.name", "Linux")
         }
     }
+}
 
+fun BuildSteps.maven(goal: String) {
+    this.maven(goal, null)
+}
+
+fun BuildSteps.maven(goal: String, args: String?) {
+    this.maven {
+        pomLocation = "common-custom-user-data-maven-extension/pom.xml"
+        goals = goal
+        runnerArgs = "-Dgradle.enterprise.url=https://e.grdev.net" + (args?.let { " $it" } ?: "")
+        mavenVersion = custom {
+            path = "%teamcity.tool.maven.3.6.3%"
+        }
+        localRepoScope = MavenBuildStep.RepositoryScope.BUILD_CONFIGURATION
+        userSettingsSelection = "settings.xml"
+        jdkHome = "%linux.java8.oracle.64bit%"
+    }
 }
