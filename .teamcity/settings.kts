@@ -36,6 +36,7 @@ project {
         id = RelativeId(name.toId())
         vcs {
             root(DslContext.settingsRootId)
+            // prevent stale files from a failed release build
             cleanCheckout = true
         }
         triggers {
