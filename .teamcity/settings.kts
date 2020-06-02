@@ -3,6 +3,8 @@ import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.MavenBuildStep
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.maven
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.script
 import jetbrains.buildServer.configs.kotlin.v2019_2.ParameterDisplay.PROMPT
+import jetbrains.buildServer.configs.kotlin.v2019_2.Requirement
+import jetbrains.buildServer.configs.kotlin.v2019_2.RequirementType
 import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.vcs
 import jetbrains.buildServer.configs.kotlin.v2019_2.vcs.GitVcsRoot
 
@@ -46,6 +48,9 @@ project {
             vcs {
                 branchFilter = "+:<default>"
             }
+        }
+        requirements {
+            requirement(Requirement(RequirementType.CONTAINS, "teamcity.agent.jvm.os.name", "Linux"))
         }
         steps {
             maven("verify")
