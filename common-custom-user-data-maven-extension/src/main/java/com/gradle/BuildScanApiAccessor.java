@@ -17,11 +17,7 @@ final class BuildScanApiAccessor {
 
     static BuildScanApi lookup(PlexusContainer container, Class<?> extensionClass) throws MavenExecutionException {
         ensureBuildScanApiIsAccessible(extensionClass);
-        try {
-            return (BuildScanApi) container.lookup(BUILD_SCAN_API_CONTAINER_OBJECT);
-        } catch (ComponentLookupException e) {
-            throw new MavenExecutionException(String.format("Cannot look up object in container: %s", BUILD_SCAN_API_CONTAINER_OBJECT), e);
-        }
+        return lookupBuildScanApi(container);
     }
 
     /**
@@ -43,6 +39,18 @@ final class BuildScanApiAccessor {
                         throw new MavenExecutionException("Could not import package from realm with id " + sourceRealmId, e);
                     }
                 }
+            }
+        }
+    }
+
+    private static BuildScanApi lookupBuildScanApi(PlexusContainer container) throws MavenExecutionException {
+        if (!container.hasComponent(BUILD_SCAN_API_CONTAINER_OBJECT)) {
+            return null;
+        } else {
+            try {
+                return (BuildScanApi) container.lookup(BUILD_SCAN_API_CONTAINER_OBJECT);
+            } catch (ComponentLookupException e) {
+                throw new MavenExecutionException(String.format("Cannot look up object in container: %s", BUILD_SCAN_API_CONTAINER_OBJECT), e);
             }
         }
     }
