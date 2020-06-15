@@ -120,7 +120,7 @@ fun BuildSteps.maven(goal: String, args: String?) {
     this.maven {
         pomLocation = "common-custom-user-data-maven-extension/pom.xml"
         goals = goal
-        runnerArgs = "-Dgradle.enterprise.url=https://e.grdev.net -Dgradle.enterprise.storage.directory=%teamcity.build.tempDir%/.gradle-enterprise" + (args?.let { " $it" } ?: "")
+        runnerArgs = "-Dgradle.enterprise.url=https://e.grdev.net -Dgradle.enterprise.storage.directory=%system.teamcity.build.tempDir%/.gradle-enterprise" + (args?.let { " $it" } ?: "")
         mavenVersion = custom {
             path = "%teamcity.tool.maven.3.6.3%"
         }
