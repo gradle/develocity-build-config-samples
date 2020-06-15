@@ -29,6 +29,7 @@ public final class CommonCustomUserDataMavenExtension extends AbstractMavenLifec
         if (buildScan != null) {
             logger.debug("Capturing custom user data in build scan");
             CustomUserData.addToBuildScan(buildScan);
+            GroovyScriptUserData.addToBuildScan(session, buildScan, logger);
             logger.debug("Finished capturing custom user data in build scans");
         }
     }
