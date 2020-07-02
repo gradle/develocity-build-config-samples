@@ -9,7 +9,7 @@ import java.util.concurrent.TimeUnit
  *
  * Proceed as following to benefit from this script in your Maven build:
  *
- * - Copy this script to the root folder of your Maven project, renaming it to 'build-scan-user-data.groovy'
+ * - Copy this script to the .mvn folder of your Maven project, renaming it to 'gradle-enterprise-custom-user-data.groovy'
  * - Apply the Gradle Enterprise Maven extension
  * - Point to your Gradle Enterprise server
  * - Include this script in your parent pom following https://docs.gradle.com/enterprise/maven-extension/#using_the_build_scan_api_in_a_groovy_script
