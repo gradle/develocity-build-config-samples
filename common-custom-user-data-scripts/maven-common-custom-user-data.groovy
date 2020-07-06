@@ -248,7 +248,7 @@ static void addGitMetadata(def buildScan) {
 }
 
 static boolean isCi() {
-    isJenkins() || isTeamCity() || isCircleCI() || isBamboo() || isGitHubActions() || isGitLab() || isTravis
+    isJenkins() || isTeamCity() || isCircleCI() || isBamboo() || isGitHubActions() || isGitLab() || isTravis()
 }
 
 static boolean isJenkins() {
