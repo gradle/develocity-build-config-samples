@@ -276,7 +276,7 @@ static boolean isGitLab() {
 }
 
 static boolean isTravis() {
-    System.getenv('GITLAB_CI')
+    System.getenv('TRAVIS_JOB_ID')
 }
 
 static boolean isGitInstalled() {
