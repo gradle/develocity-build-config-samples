@@ -194,7 +194,7 @@ void addCiMetadata() {
             buildScan.value 'TRAVIS build number', System.getenv('TRAVIS_BUILD_NUMBER')
         }
         if (System.getenv('TRAVIS_EVENT_TYPE')) {
-            buildScan.value 'TRAVIS event type', System.getenv('TRAVIS_EVENT_TYPE')
+            buildScan.tag System.getenv('TRAVIS_EVENT_TYPE')
         }
         if (System.getenv('TRAVIS_TAG')) {
             buildScan.value 'TRAVIS tag', System.getenv('TRAVIS_TAG')
