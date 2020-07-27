@@ -7,7 +7,7 @@ extensions_xml=$basedir/extensions.xml
 checkout_area=`mktemp -d`
 
 function process_repositories() {
-  num=`wc -l $repositories | awk '{ print $1 }'`
+  num=`wc -l "$repositories" | awk '{ print $1 }'`
   i=1
   while read line; do
   echo "($i/$num) Updating $line..."
@@ -19,17 +19,17 @@ function process_repositories() {
 function process_repository() {
   repository_name="${1##*/}"
   # clone the repository without actually downloading files or history
-  git clone -n $1 $checkout_area/$repository_name --depth 1 >& /dev/null
-  pushd $checkout_area/$repository_name >& /dev/null
+  git clone -n "$1" "$checkout_area/$repository_name" --depth 1 >& /dev/null
+  pushd "$checkout_area/$repository_name" >& /dev/null
   git reset HEAD . >& /dev/null
   git checkout .mvn/extensions.xml >& /dev/null
   if [ $? -eq 0 ]; then
     echo ".mvn/extensions.xml already exists in $1, skipping..." >&2
   else
     mkdir -p .mvn
-    cp $extensions_xml .mvn
+    cp "$extensions_xml" .mvn
     git add .mvn/extensions.xml >& /dev/null
-    git ci -m $commit_msg >& /dev/null
+    git ci -m "$commit_msg" >& /dev/null
     git push >& /dev/null
   fi
   popd >& /dev/null
