@@ -29,7 +29,7 @@ function process_repository() {
     mkdir -p .mvn
     cp "$extensions_xml" .mvn
     git add .mvn/extensions.xml >& /dev/null
-    git ci -m "$commit_msg" >& /dev/null
+    git commit -m "$commit_msg" >& /dev/null
     git push >& /dev/null
   fi
   popd >& /dev/null
