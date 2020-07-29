@@ -2,9 +2,17 @@
 
 commit_msg="Apply Gradle Enterprise Maven Extension"
 basedir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-repositories=$basedir/repositories.txt
-extensions_xml=$basedir/extensions.xml
 checkout_area=`mktemp -d`
+repositories=$basedir/repositories.txt
+
+# process arguments "$1", "$2", ... (i.e. "$@")
+while getopts "pf" opt; do
+    case $opt in
+    p) push=true ;; 
+    f) force=true ;;
+    \?) ;; # Handle error: unknown option or missing required argument.
+    esac
+done
 
 function process_repositories() {
   num=`wc -l "$repositories" | awk '{ print $1 }'`
@@ -22,37 +30,35 @@ function process_repository() {
   git clone -n "$1" "$checkout_area/$repository_name" --depth 1 >& /dev/null
   pushd "$checkout_area/$repository_name" >& /dev/null
   git reset HEAD . >& /dev/null
-  git checkout .mvn/extensions.xml >& /dev/null
-  if [ $? -eq 0 ]; then
-    echo ".mvn/extensions.xml already exists in $1, skipping..." >&2
+  if [ ! -z  "$(git ls-tree -r HEAD --name-only | grep '^.mvn')" ] && [ -z "$force" ]; then
+    echo ".mvn directory already exists in $1, skipping..." >&2
   else
     # Only process maven projects
     if [ -z "$(git ls-tree -r HEAD --name-only | grep pom.xml)" ]; then  
       echo "$1 is not a mvn project, skipping..." >&2
     else 
-      mkdir -p .mvn
-      cp "$extensions_xml" .mvn
-      git add .mvn/extensions.xml >& /dev/null
-      git checkout .gitignore >& /dev/null
-      echo ".mvn/.gradle-enterprise/" >> .gitignore
-      git add .gitignore
+      cp -R $basedir/.mvn/ .mvn
+      git add .mvn/. >& /dev/null
       git commit -m "$commit_msg" >& /dev/null
 
-      git push >& /dev/null
+      if [ ! -z "$push" ]; then
+        git push >& /dev/null
+      fi
     fi
   fi
   popd >& /dev/null
 }
 
 function cleanup() {
-  rm -rf $checkout_area
+  if [ ! -z "$push" ]; then
+    rm -rf $checkout_area
+  else
+    echo "Stored repos to " $checkout_area
+  fi
 }
 
-if [ ! -f "$repositories" ]; then
-  echo "File $repositories is missing" >&2
-  exit 1
-elif [ ! -f "$extensions_xml" ]; then
-  echo "File $extensions_xml is missing" >&2
+if [ ! -d ".mvn" ]; then
+  echo ".mvn directory is missing" >&2
   exit 1
 else
   process_repositories
