@@ -29,7 +29,7 @@ create(DslContext.projectId, BuildType({
             mavenVersion = custom {
                 path = "%teamcity.tool.maven.3.6.3%"
             }
-            userSettingsSelection = "settings.xml"
+            userSettingsSelection = "custom-settings.xml"
             localRepoScope = MavenBuildStep.RepositoryScope.BUILD_CONFIGURATION
             jdkHome = "%linux.java8.oracle.64bit%"
         }
