@@ -4,7 +4,6 @@ import jetbrains.buildServer.configs.kotlin.v2019_2.*
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildType
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.MavenBuildStep
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.maven
-import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.vcs
 import jetbrains.buildServer.configs.kotlin.v2019_2.ui.*
 
 /*
@@ -33,12 +32,6 @@ create(DslContext.projectId, BuildType({
             userSettingsSelection = "settings.xml"
             localRepoScope = MavenBuildStep.RepositoryScope.BUILD_CONFIGURATION
             jdkHome = "%linux.java8.oracle.64bit%"
-        }
-    }
-
-    triggers {
-        vcs {
-            branchFilter = "+:<default>"
         }
     }
 
