@@ -16,7 +16,7 @@ create(DslContext.projectId, BuildType({
     name = "Verify_test-francois"
 
     vcs {
-        root(DslContext.settingsRoot)
+        root(RelativeId("GradleEnterpriseBuildConfigSamplesTestFrancois"))
 
         cleanCheckout = true
     }
