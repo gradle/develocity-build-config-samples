@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gradleEnterprise>
+<buildCache>
+    <remote>
+        <enabled>true</enabled>
+    </remote>
+    <local>
+        <enabled>true</enabled>
+    </local>
+</buildCache>
+<buildScan>
+    <publish>ALWAYS</publish>
+    <captureGoalInputFiles>true</captureGoalInputFiles>
+</buildScan>
+<server>
+    <url>YOUR-GRADLE-URL</url>
+</server>
+</gradleEnterprise>
