@@ -33,8 +33,9 @@ function process_repository() {
       mkdir -p .mvn
       cp "$extensions_xml" .mvn
       git add .mvn/extensions.xml >& /dev/null
-      echo ".gradle-enterprise/" > .mvn/.gitignore
-      git add .mvn/.gitignore
+      git checkout .gitignore >& /dev/null
+      echo ".mvn/.gradle-enterprise/" >> .gitignore
+      git add .gitignore
       git commit -m "$commit_msg" >& /dev/null
 
       git push >& /dev/null
