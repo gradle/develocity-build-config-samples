@@ -186,6 +186,27 @@ final class CustomUserData {
                 addCustomLinkWithSearchTerms(buildScan, "CI stage build scans", ImmutableMap.of(stageNameLabel, stageName));
             }
         }
+
+        if (isTravis()) {
+            if (envVariablePresent("TRAVIS_BUILD_WEB_URL")) {
+                buildScan.link("TRAVIS build", envVariable("TRAVIS_BUILD_WEB_URL"));
+            }
+            if (envVariablePresent("TRAVIS_BUILD_NUMBER")) {
+                buildScan.value("TRAVIS build number", envVariable("TRAVIS_BUILD_NUMBER"));
+            }
+            if (envVariablePresent("TRAVIS_EVENT_TYPE")) {
+                buildScan.tag(envVariable("TRAVIS_EVENT_TYPE"));
+            }
+            if (envVariablePresent("TRAVIS_TAG")) {
+                buildScan.value("TRAVIS tag", envVariable("TRAVIS_TAG"));
+            }
+            if (envVariablePresent("TRAVIS_JOB_NAME")) {
+                String jobNameLabel = "TRAVIS job";
+                String jobName = envVariable("TRAVIS_JOB_NAME");
+                buildScan.value(jobNameLabel, jobName);
+                addCustomLinkWithSearchTerms(buildScan, "TRAVIS job build scans", ImmutableMap.of(jobNameLabel, jobName));
+            }
+        }
     }
 
     static void addGitMetadata(BuildScanApi buildScan) {
@@ -234,7 +255,7 @@ final class CustomUserData {
     }
 
     private static boolean isCi() {
-        return isJenkins() || isTeamCity() || isCircleCI() || isBamboo() || isGitHubActions() || isGitLab();
+        return isJenkins() || isTeamCity() || isCircleCI() || isBamboo() || isGitHubActions() || isGitLab() || isTravis();
     }
 
     private static boolean isJenkins() {
@@ -259,6 +280,10 @@ final class CustomUserData {
 
     private static boolean isGitLab() {
         return envVariablePresent("GITLAB_CI");
+    }
+
+    private static boolean isTravis() {
+        return envVariablePresent("TRAVIS_JOB_ID");
     }
 
     private static boolean isGitInstalled() {
