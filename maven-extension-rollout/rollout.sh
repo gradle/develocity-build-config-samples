@@ -26,11 +26,20 @@ function process_repository() {
   if [ $? -eq 0 ]; then
     echo ".mvn/extensions.xml already exists in $1, skipping..." >&2
   else
-    mkdir -p .mvn
-    cp "$extensions_xml" .mvn
-    git add .mvn/extensions.xml >& /dev/null
-    git commit -m "$commit_msg" >& /dev/null
-    git push >& /dev/null
+    # Only process maven projects
+    if [ -z "$(git ls-tree -r HEAD --name-only | grep pom.xml)" ]; then  
+      echo "$1 is not a mvn project, skipping..." >&2
+    else 
+      mkdir -p .mvn
+      cp "$extensions_xml" .mvn
+      git add .mvn/extensions.xml >& /dev/null
+      git checkout .gitignore >& /dev/null
+      echo ".mvn/.gradle-enterprise/" >> .gitignore
+      git add .gitignore
+      git commit -m "$commit_msg" >& /dev/null
+
+      git push >& /dev/null
+    fi
   fi
   popd >& /dev/null
 }
