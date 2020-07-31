@@ -185,6 +185,27 @@ static void addCiMetadata(def buildScan) {
             addCustomLinkWithSearchTerms buildScan, 'CI stage build scans', [(stageNameLabel): stageName]
         }
     }
+
+    if (isTravis()) {
+        if (System.getenv('TRAVIS_BUILD_WEB_URL')) {
+            buildScan.link 'TRAVIS build', System.getenv('TRAVIS_BUILD_WEB_URL')
+        }
+        if (System.getenv('TRAVIS_BUILD_NUMBER')) {
+            buildScan.value 'TRAVIS build number', System.getenv('TRAVIS_BUILD_NUMBER')
+        }
+        if (System.getenv('TRAVIS_EVENT_TYPE')) {
+            buildScan.tag System.getenv('TRAVIS_EVENT_TYPE')
+        }
+        if (System.getenv('TRAVIS_TAG')) {
+            buildScan.value 'TRAVIS tag', System.getenv('TRAVIS_TAG')
+        }
+        if (System.getenv('TRAVIS_JOB_NAME')) {
+            def jobNameLabel = 'TRAVIS job'
+            def jobName = System.getenv('TRAVIS_JOB_NAME')
+            buildScan.value jobNameLabel, jobName
+            addCustomLinkWithSearchTerms buildScan, 'TRAVIS job build scans', [(jobNameLabel): jobName]
+        }
+    }
 }
 
 static void addGitMetadata(def buildScan) {
@@ -227,7 +248,7 @@ static void addGitMetadata(def buildScan) {
 }
 
 static boolean isCi() {
-    isJenkins() || isTeamCity() || isCircleCI() || isBamboo() || isGitHubActions() || isGitLab()
+    isJenkins() || isTeamCity() || isCircleCI() || isBamboo() || isGitHubActions() || isGitLab() || isTravis()
 }
 
 static boolean isJenkins() {
@@ -252,6 +273,10 @@ static boolean isGitHubActions() {
 
 static boolean isGitLab() {
     System.getenv('GITLAB_CI')
+}
+
+static boolean isTravis() {
+    System.getenv('TRAVIS_JOB_ID')
 }
 
 static boolean isGitInstalled() {
