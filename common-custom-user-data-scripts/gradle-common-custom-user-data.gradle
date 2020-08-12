@@ -23,7 +23,6 @@ if (!buildScanApi) {
 tagOs()
 tagIde()
 tagCiOrLocal()
-addGradleVersion()
 addCiMetadata()
 addGitMetadata()
 addTestParallelization()
@@ -50,10 +49,6 @@ void tagIde() {
 
 void tagCiOrLocal() {
     buildScan.tag isCi() ? 'CI' : 'LOCAL'
-}
-
-void addGradleVersion() {
-    buildScan.value 'Gradle version', org.gradle.util.GradleVersion.current().version
 }
 
 void addCiMetadata() {
