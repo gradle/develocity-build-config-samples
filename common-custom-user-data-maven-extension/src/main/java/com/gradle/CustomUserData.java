@@ -29,7 +29,6 @@ final class CustomUserData {
         tagOs(buildScan);
         tagIde(buildScan);
         tagCiOrLocal(buildScan);
-        addMavenVersion(buildScan);
         addCiMetadata(buildScan);
         addGitMetadata(buildScan);
     }
@@ -50,11 +49,6 @@ final class CustomUserData {
 
     private static void tagCiOrLocal(BuildScanApi buildScan) {
         buildScan.tag(isCi() ? "CI" : "LOCAL");
-    }
-
-    private static void addMavenVersion(BuildScanApi buildScan) {
-        Properties buildProperties = readBuildPropertiesFile();
-        buildScan.value("Maven version", buildProperties.getProperty("version"));
     }
 
     private static void addCiMetadata(BuildScanApi buildScan) {
@@ -379,18 +373,6 @@ final class CustomUserData {
         try (InputStream input = new FileInputStream(name)) {
             Properties properties = new Properties();
             properties.load(input);
-            return properties;
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private static Properties readBuildPropertiesFile() {
-        try (InputStream input = Maven.class.getResourceAsStream("/org/apache/maven/messages/build.properties")) {
-            Properties properties = new Properties();
-            if (input != null) {
-                properties.load(input);
-            }
             return properties;
         } catch (IOException e) {
             throw new RuntimeException(e);
