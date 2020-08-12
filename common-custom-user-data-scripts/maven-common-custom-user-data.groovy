@@ -25,7 +25,6 @@ buildScan.executeOnce('common-custom-user-data') { BuildScanApi api ->
     tagOs(api)
     tagIde(api)
     tagCiOrLocal(api)
-    addMavenVersion(api)
     addCiMetadata(api)
     addGitMetadata(api)
 }
@@ -49,11 +48,6 @@ static void tagIde(def buildScan) {
 
 static void tagCiOrLocal(def buildScan) {
     buildScan.tag isCi() ? 'CI' : 'LOCAL'
-}
-
-static void addMavenVersion(def buildScan) {
-    Properties buildProperties = readBuildPropertiesFile();
-    buildScan.value 'Maven version', buildProperties.getProperty('version');
 }
 
 static void addCiMetadata(def buildScan) {
@@ -343,10 +337,3 @@ static Properties readPropertiesFile(String name) {
     properties
 }
 
-static Properties readBuildPropertiesFile() {
-    Properties properties = new Properties();
-    InputStream input = Maven.class.getResourceAsStream("/org/apache/maven/messages/build.properties")
-    input.withInputStream {
-        properties.load it
-    }
-}
