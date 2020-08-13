@@ -38,6 +38,9 @@ void tagOs() {
 void tagIde() {
     if (project.hasProperty('android.injected.invoked.from.ide')) {
         buildScan.tag 'Android Studio'
+        if (project.hasProperty('android.injected.studio.version')) {
+            buildScan.value 'Android Studio Version', project.getProperty('android.injected.studio.version')
+        } 
     } else if (System.getProperty('idea.version')) {
         buildScan.tag 'IntelliJ IDEA'
     } else if (System.getProperty('eclipse.buildId')) {
