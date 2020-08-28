@@ -38,7 +38,7 @@ final class CustomUserData {
     }
 
     private static void tagIde(BuildScanApi buildScan) {
-        if (sysPropertyPresent("idea.version")) {
+        if (sysPropertyPresent("idea.version") || sysPropertyKeyStartingWith("idea.version")) {
             buildScan.tag("IntelliJ IDEA");
         } else if (sysPropertyPresent("eclipse.buildId")) {
             buildScan.tag("Eclipse");
@@ -343,6 +343,18 @@ final class CustomUserData {
 
     private static boolean sysPropertyPresent(String name) {
         return !Strings.isNullOrEmpty(sysProperty(name));
+    }
+
+    private static boolean sysPropertyKeyStartingWith(String keyPrefix) {
+        for (Object key : System.getProperties().keySet()) {
+            if (key instanceof String) {
+                String stringKey = (String) key;
+                if (stringKey.startsWith(keyPrefix)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private static String envVariable(String name) {
