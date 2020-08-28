@@ -37,7 +37,7 @@ static void tagOs(def buildScan) {
 }
 
 static void tagIde(def buildScan) {
-    if (System.getProperty('idea.version')) {
+    if (System.getProperty('idea.version') || sysPropertyKeyStartingWith("idea.version")) {
         buildScan.tag 'IntelliJ IDEA'
     } else if (System.getProperty('eclipse.buildId')) {
         buildScan.tag 'Eclipse'
@@ -314,6 +314,18 @@ static String customValueSearchParams(Map<String, String> search) {
     search.collect { name, value ->
         "search.names=${urlEncode(name)}&search.values=${urlEncode(value)}"
     }.join('&')
+}
+
+static boolean sysPropertyKeyStartingWith(String keyPrefix) {
+    for (Object key : System.getProperties().keySet()) {
+        if (key instanceof String) {
+            String stringKey = (String) key
+            if (stringKey.startsWith(keyPrefix)) {
+                return true
+            }
+        }
+    }
+    return false
 }
 
 static String appendIfMissing(String str, String suffix) {
