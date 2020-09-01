@@ -232,7 +232,7 @@ final class CustomUserData {
                         if (matcher.matches()) {
                             String rawRepoPath = matcher.group(2);
                             String repoPath = rawRepoPath.endsWith(".git") ? rawRepoPath.substring(0, rawRepoPath.length() - 4) : rawRepoPath;
-                            api.link("GitLab Source", "https://gitlab.com/$repoPath/-/commit/$gitCommitId");
+                            api.link("GitLab Source", "https://gitlab.com/" + repoPath + "/-/commit/" + gitCommitId);
                         }
                     }
                 }
