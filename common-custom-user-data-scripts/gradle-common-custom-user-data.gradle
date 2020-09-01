@@ -39,8 +39,8 @@ void tagIde() {
     if (project.hasProperty('android.injected.invoked.from.ide')) {
         buildScan.tag 'Android Studio'
         if (project.hasProperty('android.injected.studio.version')) {
-            buildScan.value 'Android Studio Version', project.getProperty('android.injected.studio.version')
-        } 
+            buildScan.value 'Android Studio version', project.getProperty('android.injected.studio.version')
+        }
     } else if (System.getProperty('idea.version')) {
         buildScan.tag 'IntelliJ IDEA'
     } else if (System.getProperty('eclipse.buildId')) {
@@ -323,7 +323,7 @@ void addCustomLinkWithSearchTerms(def buildScan, String title, Map<String, Strin
     // This fails with Build Scan plugin v1.16.
     // As a workaround, you can specify the BuildScan server URL directly: e.g. `def server = "http://localhost"`
     def server = buildScan.server
-    
+
     if (server) {
         String searchParams = customValueSearchParams(search);
         String url = "${appendIfMissing(server, '/')}scans?$searchParams#selection.buildScanB=${urlEncode('{SCAN_ID}')}"
