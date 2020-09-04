@@ -65,7 +65,7 @@
         <dependency>
             <groupId>com.gradle</groupId>
             <artifactId>gradle-enterprise-maven-extension</artifactId>
-            <version>1.6.4</version>
+            <version>1.7-branch-francois_6769_maven_build_cache_api-prerelease</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
