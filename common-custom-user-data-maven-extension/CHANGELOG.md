@@ -2,6 +2,8 @@
 All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
+### Fixed
+- Fix _GitLab Source_ custom link
 
 ## [1.2] - 2020-08-31
 ### Added
@@ -9,7 +11,7 @@ All notable changes to this project will be documented in this file.
 - Add support for tagging IDEA based builds
 
 ### Removed
-- Remove build scan tag for Maven version
+- Remove build scan tag for Maven version since Gradle Enterprise `2020.3+` allows filtering by Maven version out-of-the-box
 
 ## [1.1.1] - 2020-07-22
 ### Fixed
@@ -17,7 +19,7 @@ All notable changes to this project will be documented in this file.
 
 ## [1.1] - 2020-06-18
 ### Added
-- Evaluate `gradle-enterprise-custom-user-data.groovy` custom user data Groovy script
+- Evaluate `.mvn/gradle-enterprise-custom-user-data.groovy` custom user data Groovy script if present
 
 ## [1.0.1] - 2020-06-12
 ### Fixed
