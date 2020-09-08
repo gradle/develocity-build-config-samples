@@ -7,8 +7,8 @@ All notable changes to this project will be documented in this file.
 
 ## [1.2] - 2020-08-31
 ### Added
-- Add support for TravisCI
-- Add support for tagging IDEA based builds
+- Tag builds run in TravisCI
+- Tag builds triggered by IntelliJ IDEA
 
 ### Removed
 - Remove build scan tag for Maven version since Gradle Enterprise `2020.3+` allows filtering by Maven version out-of-the-box
