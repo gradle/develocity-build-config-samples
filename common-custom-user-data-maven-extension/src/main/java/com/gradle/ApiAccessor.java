@@ -1,6 +1,5 @@
 package com.gradle;
 
-import com.gradle.maven.extension.api.cache.BuildCacheApi;
 import org.apache.maven.MavenExecutionException;
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.classworlds.realm.ClassRealm;
@@ -10,20 +9,17 @@ import java.util.Optional;
 
 import static java.util.Comparator.comparing;
 
-final class BuildCacheApiAccessor {
+final class ApiAccessor {
 
-    private static final String PACKAGE = "com.gradle.maven.extension.api.cache";
-    private static final String BUILD_CACHE_API_CONTAINER_OBJECT = PACKAGE + ".BuildCacheApi";
-
-    static BuildCacheApi lookup(PlexusContainer container, Class<?> extensionClass) throws MavenExecutionException {
-        ensureBuildCacheApiIsAccessible(extensionClass);
-        return lookupBuildCacheApi(container);
+    static <T> T lookup(Class<T> componentClass, String componentPackage, String componentRole, PlexusContainer container, Class<?> extensionClass) throws MavenExecutionException {
+        ensureClassIsAccessible(extensionClass, componentPackage);
+        return lookupClass(componentClass, componentRole, container);
     }
 
     /**
      * Workaround for https://issues.apache.org/jira/browse/MNG-6906
      */
-    private static void ensureBuildCacheApiIsAccessible(Class<?> extensionClass) throws MavenExecutionException {
+    private static void ensureClassIsAccessible(Class<?> extensionClass, String componentPackage) throws MavenExecutionException {
         ClassLoader classLoader = extensionClass.getClassLoader();
         if (classLoader instanceof ClassRealm) {
             ClassRealm extensionRealm = (ClassRealm) classLoader;
@@ -34,7 +30,7 @@ final class BuildCacheApiAccessor {
                 if (sourceRealm.isPresent()) {
                     String sourceRealmId = sourceRealm.get().getId();
                     try {
-                        extensionRealm.importFrom(sourceRealmId, PACKAGE);
+                        extensionRealm.importFrom(sourceRealmId, componentPackage);
                     } catch (Exception e) {
                         throw new MavenExecutionException("Could not import package from realm with id " + sourceRealmId, e);
                     }
@@ -43,19 +39,18 @@ final class BuildCacheApiAccessor {
         }
     }
 
-    private static BuildCacheApi lookupBuildCacheApi(PlexusContainer container) throws MavenExecutionException {
-        if (!container.hasComponent(BUILD_CACHE_API_CONTAINER_OBJECT)) {
+    private static <T> T lookupClass(Class<T> componentClass, String component, PlexusContainer container) throws MavenExecutionException {
+        if (!container.hasComponent(component)) {
             return null;
         } else {
             try {
-                return (BuildCacheApi) container.lookup(BUILD_CACHE_API_CONTAINER_OBJECT);
+                return componentClass.cast(container.lookup(component));
             } catch (ComponentLookupException e) {
-                throw new MavenExecutionException(String.format("Cannot look up object in container: %s", BUILD_CACHE_API_CONTAINER_OBJECT), e);
+                throw new MavenExecutionException(String.format("Cannot look up object in container: %s", component), e);
             }
         }
     }
 
-    private BuildCacheApiAccessor() {
-    }
+    private ApiAccessor(){}
 
 }
