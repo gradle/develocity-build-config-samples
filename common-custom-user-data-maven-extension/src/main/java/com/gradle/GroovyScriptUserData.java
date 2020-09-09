@@ -49,13 +49,9 @@ class GroovyScriptUserData {
         binding.setVariable("session", session);
         if (buildScan != null) {
             binding.setVariable("buildScan", buildScan);
-        } else {
-            logger.debug("Cannot bind buildScan API.");
         }
         if (buildCache != null) {
             binding.setVariable("buildCache", buildCache);
-        } else {
-            logger.debug("Cannot bind buildCache API.");
         }
         binding.setVariable("log", new DefaultLog(logger));
         return binding;
