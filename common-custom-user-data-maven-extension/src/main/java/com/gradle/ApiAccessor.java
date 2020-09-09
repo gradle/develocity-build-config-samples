@@ -14,19 +14,16 @@ import static java.util.Comparator.comparing;
 final class ApiAccessor {
 
     private static final String BUILD_CACHE_API_PACKAGE = "com.gradle.maven.extension.api.cache";
-    private static final String BUILD_CACHE_API_CONTAINER_OBJECT = BUILD_CACHE_API_PACKAGE + ".BuildCacheApi";
-
     private static final String BUILD_SCAN_API_PACKAGE = "com.gradle.maven.extension.api.scan";
-    private static final String BUILD_SCAN_API_CONTAINER_OBJECT = BUILD_SCAN_API_PACKAGE + ".BuildScanApi";
 
     static BuildScanApi lookupBuildScanApi(PlexusContainer container, Class<?> extensionClass) throws MavenExecutionException {
         ensureClassIsAccessible(extensionClass, BUILD_SCAN_API_PACKAGE);
-        return lookupClass(BuildScanApi.class, BUILD_SCAN_API_CONTAINER_OBJECT, container);
+        return lookupClass(BuildScanApi.class, container);
     }
 
     static BuildCacheApi lookupBuildCacheApi(PlexusContainer container, Class<?> extensionClass) throws MavenExecutionException {
         ensureClassIsAccessible(extensionClass, BUILD_CACHE_API_PACKAGE);
-        return lookupClass(BuildCacheApi.class, BUILD_CACHE_API_CONTAINER_OBJECT, container);
+        return lookupClass(BuildCacheApi.class, container);
     }
 
     /**
@@ -52,14 +49,14 @@ final class ApiAccessor {
         }
     }
 
-    private static <T> T lookupClass(Class<T> componentClass, String component, PlexusContainer container) throws MavenExecutionException {
-        if (!container.hasComponent(component)) {
+    private static <T> T lookupClass(Class<T> componentClass, PlexusContainer container) throws MavenExecutionException {
+        if (!container.hasComponent(componentClass)) {
             return null;
         } else {
             try {
-                return componentClass.cast(container.lookup(component));
+                return container.lookup(componentClass);
             } catch (ComponentLookupException e) {
-                throw new MavenExecutionException(String.format("Cannot look up object in container: %s", component), e);
+                throw new MavenExecutionException(String.format("Cannot look up object in container: %s", componentClass), e);
             }
         }
     }
