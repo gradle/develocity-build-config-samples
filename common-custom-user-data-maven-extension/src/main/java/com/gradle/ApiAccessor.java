@@ -44,7 +44,7 @@ final class ApiAccessor {
             return null;
         } else {
             try {
-                return componentClass.cast(container.lookup(componentClass));
+                return container.lookup(componentClass);
             } catch (ComponentLookupException e) {
                 throw new MavenExecutionException(String.format("Cannot look up object in container: %s", componentClass), e);
             }
