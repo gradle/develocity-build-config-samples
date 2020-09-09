@@ -1,5 +1,7 @@
 package com.gradle;
 
+import com.gradle.maven.extension.api.cache.BuildCacheApi;
+import com.gradle.maven.extension.api.scan.BuildScanApi;
 import org.apache.maven.MavenExecutionException;
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.classworlds.realm.ClassRealm;
@@ -11,9 +13,20 @@ import static java.util.Comparator.comparing;
 
 final class ApiAccessor {
 
-    static <T> T lookup(Class<T> componentClass, PlexusContainer container, Class<?> extensionClass) throws MavenExecutionException {
-        ensureClassIsAccessible(extensionClass, componentClass.getPackage().getName());
-        return lookupClass(componentClass, container);
+    private static final String BUILD_CACHE_API_PACKAGE = "com.gradle.maven.extension.api.cache";
+    private static final String BUILD_CACHE_API_CONTAINER_OBJECT = BUILD_CACHE_API_PACKAGE + ".BuildCacheApi";
+
+    private static final String BUILD_SCAN_API_PACKAGE = "com.gradle.maven.extension.api.scan";
+    private static final String BUILD_SCAN_API_CONTAINER_OBJECT = BUILD_SCAN_API_PACKAGE + ".BuildScanApi";
+
+    static BuildScanApi lookupBuildScanApi(PlexusContainer container, Class<?> extensionClass) throws MavenExecutionException {
+        ensureClassIsAccessible(extensionClass, BUILD_SCAN_API_PACKAGE);
+        return lookupClass(BuildScanApi.class, BUILD_SCAN_API_CONTAINER_OBJECT, container);
+    }
+
+    static BuildCacheApi lookupBuildCacheApi(PlexusContainer container, Class<?> extensionClass) throws MavenExecutionException {
+        ensureClassIsAccessible(extensionClass, BUILD_CACHE_API_PACKAGE);
+        return lookupClass(BuildCacheApi.class, BUILD_CACHE_API_CONTAINER_OBJECT, container);
     }
 
     /**
@@ -39,14 +52,14 @@ final class ApiAccessor {
         }
     }
 
-    private static <T> T lookupClass(Class<T> componentClass, PlexusContainer container) throws MavenExecutionException {
-        if (!container.hasComponent(componentClass)) {
+    private static <T> T lookupClass(Class<T> componentClass, String component, PlexusContainer container) throws MavenExecutionException {
+        if (!container.hasComponent(component)) {
             return null;
         } else {
             try {
-                return container.lookup(componentClass);
+                return componentClass.cast(container.lookup(component));
             } catch (ComponentLookupException e) {
-                throw new MavenExecutionException(String.format("Cannot look up object in container: %s", componentClass), e);
+                throw new MavenExecutionException(String.format("Cannot look up object in container: %s", component), e);
             }
         }
     }
