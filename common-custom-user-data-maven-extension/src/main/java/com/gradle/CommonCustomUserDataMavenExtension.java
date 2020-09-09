@@ -1,5 +1,7 @@
 package com.gradle;
 
+import com.gradle.maven.extension.api.cache.BuildCacheApi;
+import com.gradle.maven.extension.api.scan.BuildScanApi;
 import org.apache.maven.AbstractMavenLifecycleParticipant;
 import org.apache.maven.MavenExecutionException;
 import org.apache.maven.execution.MavenSession;
@@ -11,12 +13,6 @@ import javax.inject.Inject;
 
 @Component(role = AbstractMavenLifecycleParticipant.class, hint = "common-custom-user-data")
 public final class CommonCustomUserDataMavenExtension extends AbstractMavenLifecycleParticipant {
-
-    private static final String BUILD_CACHE_API_PACKAGE = "com.gradle.maven.extension.api.cache";
-    private static final String BUILD_CACHE_API_CONTAINER_OBJECT = BUILD_CACHE_API_PACKAGE + ".BuildCacheApi";
-
-    private static final String BUILD_SCAN_API_PACKAGE = "com.gradle.maven.extension.api.scan";
-    private static final String BUILD_SCAN_API_CONTAINER_OBJECT = BUILD_SCAN_API_PACKAGE + ".BuildScanApi";
 
     private final PlexusContainer container;
     private final Logger logger;
@@ -30,13 +26,13 @@ public final class CommonCustomUserDataMavenExtension extends AbstractMavenLifec
     @Override
     public void afterProjectsRead(MavenSession session) throws MavenExecutionException {
         logger.debug("Executing extension: " + getClass().getSimpleName());
-        BuildScanApi buildScan = ApiAccessor.lookup(BuildScanApi.class, BUILD_SCAN_API_PACKAGE, BUILD_SCAN_API_CONTAINER_OBJECT, container, getClass());
+        BuildScanApi buildScan = ApiAccessor.lookup(BuildScanApi.class, container, getClass());
         if (buildScan != null) {
             logger.debug("Capturing custom user data in build scan");
             CustomUserData.addToBuildScan(buildScan);
             logger.debug("Finished capturing custom user data in build scans");
         }
-        BuildCacheApi buildCache = ApiAccessor.lookup(BuildCacheApi.class, BUILD_CACHE_API_PACKAGE, BUILD_CACHE_API_CONTAINER_OBJECT, container, getClass());
+        BuildCacheApi buildCache = ApiAccessor.lookup(BuildCacheApi.class, container, getClass());
         GroovyScriptUserData.addToApis(session, buildScan, buildCache, logger);
     }
 

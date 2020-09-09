@@ -11,9 +11,9 @@ import static java.util.Comparator.comparing;
 
 final class ApiAccessor {
 
-    static <T> T lookup(Class<T> componentClass, String componentPackage, String componentRole, PlexusContainer container, Class<?> extensionClass) throws MavenExecutionException {
-        ensureClassIsAccessible(extensionClass, componentPackage);
-        return lookupClass(componentClass, componentRole, container);
+    static <T> T lookup(Class<T> componentClass, PlexusContainer container, Class<?> extensionClass) throws MavenExecutionException {
+        ensureClassIsAccessible(extensionClass, componentClass.getPackage().getName());
+        return lookupClass(componentClass, container);
     }
 
     /**
@@ -39,14 +39,14 @@ final class ApiAccessor {
         }
     }
 
-    private static <T> T lookupClass(Class<T> componentClass, String component, PlexusContainer container) throws MavenExecutionException {
-        if (!container.hasComponent(component)) {
+    private static <T> T lookupClass(Class<T> componentClass, PlexusContainer container) throws MavenExecutionException {
+        if (!container.hasComponent(componentClass)) {
             return null;
         } else {
             try {
-                return componentClass.cast(container.lookup(component));
+                return componentClass.cast(container.lookup(componentClass));
             } catch (ComponentLookupException e) {
-                throw new MavenExecutionException(String.format("Cannot look up object in container: %s", component), e);
+                throw new MavenExecutionException(String.format("Cannot look up object in container: %s", componentClass), e);
             }
         }
     }
