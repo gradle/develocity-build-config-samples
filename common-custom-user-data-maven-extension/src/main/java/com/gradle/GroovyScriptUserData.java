@@ -47,13 +47,10 @@ class GroovyScriptUserData {
         Binding binding = new Binding();
         binding.setVariable("project", session.getTopLevelProject());
         binding.setVariable("session", session);
-        if (buildScan != null) {
-            binding.setVariable("buildScan", buildScan);
-        }
-        if (buildCache != null) {
-            binding.setVariable("buildCache", buildCache);
-        }
+        binding.setVariable("buildScan", buildScan);
+        binding.setVariable("buildCache", buildCache);
         binding.setVariable("log", new DefaultLog(logger));
         return binding;
     }
+
 }
