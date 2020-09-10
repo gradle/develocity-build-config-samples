@@ -53,7 +53,7 @@ final class ApiAccessor {
     }
 
     private static boolean componentExists(String component, PlexusContainer container) {
-        return !container.hasComponent(component);
+        return container.hasComponent(component);
     }
 
     private static <T> T lookupClass(Class<T> componentClass, PlexusContainer container) throws MavenExecutionException {
