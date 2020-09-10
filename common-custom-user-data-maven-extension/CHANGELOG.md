@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 ### Fixed
 - Fix _GitLab Source_ custom link
+- Add access to the `BuildCacheApi` to configure the build cache
 
 ## [1.2] - 2020-08-31
 ### Added

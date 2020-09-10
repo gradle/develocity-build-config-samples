@@ -1,5 +1,6 @@
 package com.gradle;
 
+import com.gradle.maven.extension.api.cache.BuildCacheApi;
 import com.gradle.maven.extension.api.scan.BuildScanApi;
 import org.apache.maven.AbstractMavenLifecycleParticipant;
 import org.apache.maven.MavenExecutionException;
@@ -25,13 +26,22 @@ public final class CommonCustomUserDataMavenExtension extends AbstractMavenLifec
     @Override
     public void afterProjectsRead(MavenSession session) throws MavenExecutionException {
         logger.debug("Executing extension: " + getClass().getSimpleName());
-        BuildScanApi buildScan = BuildScanApiAccessor.lookup(container, getClass());
+
+        BuildScanApi buildScan = ApiAccessor.lookupBuildScanApi(container, getClass());
         if (buildScan != null) {
             logger.debug("Capturing custom user data in build scan");
             CustomUserData.addToBuildScan(buildScan);
-            GroovyScriptUserData.addToBuildScan(session, buildScan, logger);
             logger.debug("Finished capturing custom user data in build scans");
         }
+
+        BuildCacheApi buildCache = ApiAccessor.lookupBuildCacheApi(container, getClass());
+        if (buildCache != null) {
+            logger.debug("Configuring build cache");
+            CustomBuildCacheConfig.configureBuildCache(buildCache);
+            logger.debug("Finished configuring build cache");
+        }
+
+        GroovyScriptUserData.addToApis(session, buildScan, buildCache, logger);
     }
 
 }
