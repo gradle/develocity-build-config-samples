@@ -2,9 +2,13 @@
 All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
+
+## [1.3] - 2020-09-10
+### Added
+- Add access to the `BuildCacheApi` to configure the build cache
+
 ### Fixed
 - Fix _GitLab Source_ custom link
-- Add access to the `BuildCacheApi` to configure the build cache
 
 ## [1.2] - 2020-08-31
 ### Added
@@ -32,7 +36,8 @@ All notable changes to this project will be documented in this file.
 ## [1.0] - 2020-05-25
 Initial release.
 
-[Unreleased]: https://github.com/olivierlacan/keep-a-changelog/compare/common-custom-user-data-maven-extension-1.2...HEAD
+[Unreleased]: https://github.com/olivierlacan/keep-a-changelog/compare/common-custom-user-data-maven-extension-1.3...HEAD
+[1.3]: https://github.com/gradle/gradle-enterprise-build-config-samples/compare/common-custom-user-data-maven-extension-1.2...common-custom-user-data-maven-extension-1.3
 [1.2]: https://github.com/gradle/gradle-enterprise-build-config-samples/compare/common-custom-user-data-maven-extension-1.1.1...common-custom-user-data-maven-extension-1.2
 [1.1.1]: https://github.com/gradle/gradle-enterprise-build-config-samples/compare/common-custom-user-data-maven-extension-1.1...common-custom-user-data-maven-extension-1.1.1
 [1.1]: https://github.com/gradle/gradle-enterprise-build-config-samples/compare/common-custom-user-data-maven-extension-1.0.1...common-custom-user-data-maven-extension-1.1
