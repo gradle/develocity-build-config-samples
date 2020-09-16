@@ -16,16 +16,12 @@ import java.io.IOException;
 class GroovyScriptUserData {
 
     static void addToApis(MavenSession session, @Nullable BuildScanApi buildScan, @Nullable BuildCacheApi buildCache, Logger logger) throws MavenExecutionException {
-        if (buildScan != null || buildCache != null) {
-            File scriptFile = getScriptFile(session);
-            if (scriptFile.exists()) {
-                logger.debug("Evaluating custom user data Groovy script: " + scriptFile);
-                evaluateGroovyScript(session, buildScan, buildCache, logger, scriptFile);
-            } else {
-                logger.debug("Skipping evaluation of custom user data Groovy script because it does not exist: " + scriptFile);
-            }
+        File scriptFile = getScriptFile(session);
+        if (scriptFile.exists()) {
+            logger.debug("Evaluating custom user data Groovy script: " + scriptFile);
+            evaluateGroovyScript(session, buildScan, buildCache, logger, scriptFile);
         } else {
-            logger.debug("Skipping evaluation of custom user data Groovy script because Gradle Enterprise Maven extension APIs are not available");
+            logger.debug("Skipping evaluation of custom user data Groovy script because it does not exist: " + scriptFile);
         }
     }
 

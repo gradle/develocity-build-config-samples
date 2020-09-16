@@ -41,7 +41,11 @@ public final class CommonCustomUserDataMavenExtension extends AbstractMavenLifec
             logger.debug("Finished configuring build cache");
         }
 
-        GroovyScriptUserData.addToApis(session, buildScan, buildCache, logger);
+        if (buildScan != null || buildCache != null) {
+            GroovyScriptUserData.addToApis(session, buildScan, buildCache, logger);
+        } else {
+            logger.debug("Skipping evaluation of custom user data Groovy script because BuildScanApi and BuildCacheApi are both not available");
+        }
     }
 
 }
