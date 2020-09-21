@@ -219,7 +219,7 @@ void addGitMetadata() {
         if (gitCommitId) {
             def gitCommitIdLabel = 'Git commit id'
             api.value gitCommitIdLabel, gitCommitId
-            addCustomLinkWithSearchTerms buildScan, 'Git commit id build scans', [(gitCommitIdLabel): gitCommitId]
+            addCustomLinkWithSearchTerms api, 'Git commit id build scans', [(gitCommitIdLabel): gitCommitId]
 
             def originUrl = execAndGetStdout('git', 'config', '--get', 'remote.origin.url')
             if (originUrl) {
@@ -291,7 +291,7 @@ boolean isTravis() {
     System.getenv('TRAVIS_JOB_ID')
 }
 
-boolean isGitInstalled() {
+static boolean isGitInstalled() {
     Process process
     try {
         process = 'git --version'.execute()
@@ -306,7 +306,7 @@ boolean isGitInstalled() {
     }
 }
 
-String execAndGetStdout(String... args) {
+static String execAndGetStdout(String... args) {
     Process process = args.toList().execute()
     try {
         def standardText = process.getInputStream().getText(Charset.defaultCharset().name())
@@ -319,7 +319,7 @@ String execAndGetStdout(String... args) {
     }
 }
 
-void addCustomLinkWithSearchTerms(def buildScan, String title, Map<String, String> search) {
+static void addCustomLinkWithSearchTerms(def buildScan, String title, Map<String, String> search) {
     // This fails with Build Scan plugin v1.16.
     // As a workaround, you can specify the BuildScan server URL directly: e.g. `def server = "http://localhost"`
     def server = buildScan.server
@@ -341,7 +341,7 @@ String appendIfMissing(String str, String suffix) {
     str.endsWith(suffix) ? str : str + suffix
 }
 
-String trimAtEnd(String str) {
+static String trimAtEnd(String str) {
     ('x' + str).trim().substring(1)
 }
 
