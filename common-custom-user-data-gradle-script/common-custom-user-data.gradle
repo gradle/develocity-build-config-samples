@@ -259,35 +259,35 @@ void addTestSystemProperties() {
     }
 }
 
-boolean isCi() {
+static boolean isCi() {
     isJenkins() || isTeamCity() || isCircleCI() || isBamboo() || isGitHubActions() || isGitLab() || isTravis()
 }
 
-boolean isJenkins() {
+static boolean isJenkins() {
     System.getenv('JENKINS_URL')
 }
 
-boolean isTeamCity() {
+static boolean isTeamCity() {
     System.getenv('TEAMCITY_VERSION')
 }
 
-boolean isCircleCI() {
+static boolean isCircleCI() {
     System.getenv('CIRCLE_BUILD_URL')
 }
 
-boolean isBamboo() {
+static boolean isBamboo() {
     System.getenv('bamboo_resultsUrl')
 }
 
-boolean isGitHubActions() {
+static boolean isGitHubActions() {
     System.getenv('GITHUB_ACTIONS')
 }
 
-boolean isGitLab() {
+static boolean isGitLab() {
     System.getenv('GITLAB_CI')
 }
 
-boolean isTravis() {
+static boolean isTravis() {
     System.getenv('TRAVIS_JOB_ID')
 }
 
@@ -331,13 +331,13 @@ static void addCustomLinkWithSearchTerms(def buildScan, String title, Map<String
     }
 }
 
-String customValueSearchParams(Map<String, String> search) {
+static String customValueSearchParams(Map<String, String> search) {
     search.collect { name, value ->
         "search.names=${urlEncode(name)}&search.values=${urlEncode(value)}"
     }.join('&')
 }
 
-String appendIfMissing(String str, String suffix) {
+static String appendIfMissing(String str, String suffix) {
     str.endsWith(suffix) ? str : str + suffix
 }
 
@@ -345,11 +345,11 @@ static String trimAtEnd(String str) {
     ('x' + str).trim().substring(1)
 }
 
-String urlEncode(String url) {
+static String urlEncode(String url) {
     URLEncoder.encode(url, 'UTF-8')
 }
 
-Properties readPropertiesFile(String name) {
+static Properties readPropertiesFile(String name) {
     Properties properties = new Properties()
     File file = new File(name)
     file.withInputStream {
