@@ -216,7 +216,7 @@ void addGitMetadata() {
         if (gitCommitId) {
             def gitCommitIdLabel = 'Git commit id'
             api.value gitCommitIdLabel, gitCommitId
-            addCustomLinkWithSearchTerms buildScan, 'Git commit id build scans', [(gitCommitIdLabel): gitCommitId]
+            addCustomLinkWithSearchTerms api, 'Git commit id build scans', [(gitCommitIdLabel): gitCommitId]
 
             def originUrl = execAndGetStdout('git', 'config', '--get', 'remote.origin.url')
             if (originUrl) {
@@ -256,39 +256,39 @@ void addTestSystemProperties() {
     }
 }
 
-boolean isCi() {
+static boolean isCi() {
     isJenkins() || isTeamCity() || isCircleCI() || isBamboo() || isGitHubActions() || isGitLab() || isTravis()
 }
 
-boolean isJenkins() {
+static boolean isJenkins() {
     System.getenv('JENKINS_URL')
 }
 
-boolean isTeamCity() {
+static boolean isTeamCity() {
     System.getenv('TEAMCITY_VERSION')
 }
 
-boolean isCircleCI() {
+static boolean isCircleCI() {
     System.getenv('CIRCLE_BUILD_URL')
 }
 
-boolean isBamboo() {
+static boolean isBamboo() {
     System.getenv('bamboo_resultsUrl')
 }
 
-boolean isGitHubActions() {
+static boolean isGitHubActions() {
     System.getenv('GITHUB_ACTIONS')
 }
 
-boolean isGitLab() {
+static boolean isGitLab() {
     System.getenv('GITLAB_CI')
 }
 
-boolean isTravis() {
+static boolean isTravis() {
     System.getenv('TRAVIS_JOB_ID')
 }
 
-boolean isGitInstalled() {
+static boolean isGitInstalled() {
     Process process
     try {
         process = 'git --version'.execute()
@@ -303,7 +303,7 @@ boolean isGitInstalled() {
     }
 }
 
-String execAndGetStdout(String... args) {
+static String execAndGetStdout(String... args) {
     Process process = args.toList().execute()
     try {
         def standardText = process.getInputStream().getText(Charset.defaultCharset().name())
@@ -316,7 +316,7 @@ String execAndGetStdout(String... args) {
     }
 }
 
-void addCustomLinkWithSearchTerms(def buildScan, String title, Map<String, String> search) {
+static void addCustomLinkWithSearchTerms(def buildScan, String title, Map<String, String> search) {
     // This fails with Build Scan plugin v1.16.
     // As a workaround, you can specify the BuildScan server URL directly: e.g. `def server = "http://localhost"`
     def server = buildScan.server
@@ -328,25 +328,25 @@ void addCustomLinkWithSearchTerms(def buildScan, String title, Map<String, Strin
     }
 }
 
-String customValueSearchParams(Map<String, String> search) {
+static String customValueSearchParams(Map<String, String> search) {
     search.collect { name, value ->
         "search.names=${urlEncode(name)}&search.values=${urlEncode(value)}"
     }.join('&')
 }
 
-String appendIfMissing(String str, String suffix) {
+static String appendIfMissing(String str, String suffix) {
     str.endsWith(suffix) ? str : str + suffix
 }
 
-String trimAtEnd(String str) {
+static String trimAtEnd(String str) {
     ('x' + str).trim().substring(1)
 }
 
-String urlEncode(String url) {
+static String urlEncode(String url) {
     URLEncoder.encode(url, 'UTF-8')
 }
 
-Properties readPropertiesFile(String name) {
+static Properties readPropertiesFile(String name) {
     Properties properties = new Properties()
     File file = new File(name)
     file.withInputStream {
