@@ -183,22 +183,19 @@ final class CustomBuildScanConfig {
 
         if (isTravis()) {
             if (envVariablePresent("TRAVIS_BUILD_WEB_URL")) {
-                buildScan.link("TRAVIS build", envVariable("TRAVIS_BUILD_WEB_URL"));
+                buildScan.link("Travis build", envVariable("TRAVIS_BUILD_WEB_URL"));
             }
             if (envVariablePresent("TRAVIS_BUILD_NUMBER")) {
-                buildScan.value("TRAVIS build number", envVariable("TRAVIS_BUILD_NUMBER"));
+                buildScan.value("CI build number", envVariable("TRAVIS_BUILD_NUMBER"));
+            }
+            if (envVariablePresent("TRAVIS_JOB_NAME")) {
+                String jobNameLabel = "CI job";
+                String jobName = envVariable("TRAVIS_JOB_NAME");
+                buildScan.value(jobNameLabel, jobName);
+                addCustomLinkWithSearchTerms(buildScan, "CI job build scans", ImmutableMap.of(jobNameLabel, jobName));
             }
             if (envVariablePresent("TRAVIS_EVENT_TYPE")) {
                 buildScan.tag(envVariable("TRAVIS_EVENT_TYPE"));
-            }
-            if (envVariablePresent("TRAVIS_TAG")) {
-                buildScan.value("TRAVIS tag", envVariable("TRAVIS_TAG"));
-            }
-            if (envVariablePresent("TRAVIS_JOB_NAME")) {
-                String jobNameLabel = "TRAVIS job";
-                String jobName = envVariable("TRAVIS_JOB_NAME");
-                buildScan.value(jobNameLabel, jobName);
-                addCustomLinkWithSearchTerms(buildScan, "TRAVIS job build scans", ImmutableMap.of(jobNameLabel, jobName));
             }
         }
     }
