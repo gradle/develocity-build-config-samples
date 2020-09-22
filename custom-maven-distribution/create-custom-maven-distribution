@@ -29,7 +29,7 @@ maven_conf=${maven_dir}/conf
 custom_maven_version=1.0.0
 custom_maven_zip=${maven_dir}-sample-${custom_maven_version}-bin.zip
 
-ge_ext_version=1.6.6
+ge_ext_version=1.6.7
 ge_ext_jar=gradle-enterprise-maven-extension-${ge_ext_version}.jar
 
 ge_sample_ext_version=1.0
