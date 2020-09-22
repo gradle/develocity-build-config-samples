@@ -189,19 +189,19 @@ void addCiMetadata() {
             buildScan.link 'Travis build', System.getenv('TRAVIS_BUILD_WEB_URL')
         }
         if (System.getenv('TRAVIS_BUILD_NUMBER')) {
-            buildScan.value 'Travis build number', System.getenv('TRAVIS_BUILD_NUMBER')
+            buildScan.value 'CI build number', System.getenv('TRAVIS_BUILD_NUMBER')
         }
         if (System.getenv('TRAVIS_EVENT_TYPE')) {
             buildScan.tag System.getenv('TRAVIS_EVENT_TYPE')
         }
         if (System.getenv('TRAVIS_TAG')) {
-            buildScan.value 'Travis tag', System.getenv('TRAVIS_TAG')
+            buildScan.value 'CI tag', System.getenv('TRAVIS_TAG')
         }
         if (System.getenv('TRAVIS_JOB_NAME')) {
-            def jobNameLabel = 'Travis job'
+            def jobNameLabel = 'CI job'
             def jobName = System.getenv('TRAVIS_JOB_NAME')
             buildScan.value jobNameLabel, jobName
-            addCustomLinkWithSearchTerms buildScan, 'Travis job build scans', [(jobNameLabel): jobName]
+            addCustomLinkWithSearchTerms buildScan, 'CI job build scans', [(jobNameLabel): jobName]
         }
     }
 }
