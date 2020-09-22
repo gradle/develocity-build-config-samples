@@ -197,12 +197,6 @@ void addCiMetadata() {
             buildScan.value jobNameLabel, jobName
             addCustomLinkWithSearchTerms buildScan, 'CI job build scans', [(jobNameLabel): jobName]
         }
-        if (System.getenv('TRAVIS_TAG')) {
-            def tagLabel = 'CI tag'
-            def tagName = System.getenv('TRAVIS_TAG')
-            buildScan.value tagLabel, tagName
-            addCustomLinkWithSearchTerms buildScan, 'CI tag build scans', [(tagLabel): tagName]
-        }
         if (System.getenv('TRAVIS_EVENT_TYPE')) {
             buildScan.tag System.getenv('TRAVIS_EVENT_TYPE')
         }

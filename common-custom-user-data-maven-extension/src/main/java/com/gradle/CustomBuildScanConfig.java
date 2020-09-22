@@ -194,9 +194,6 @@ final class CustomBuildScanConfig {
                 buildScan.value(jobNameLabel, jobName);
                 addCustomLinkWithSearchTerms(buildScan, "CI job build scans", ImmutableMap.of(jobNameLabel, jobName));
             }
-            if (envVariablePresent("TRAVIS_TAG")) {
-                buildScan.value("CI tag", envVariable("TRAVIS_TAG"));
-            }
             if (envVariablePresent("TRAVIS_EVENT_TYPE")) {
                 buildScan.tag(envVariable("TRAVIS_EVENT_TYPE"));
             }
