@@ -49,4 +49,7 @@ class GroovyScriptUserData {
         return binding;
     }
 
+    private GroovyScriptUserData() {
+    }
+
 }
