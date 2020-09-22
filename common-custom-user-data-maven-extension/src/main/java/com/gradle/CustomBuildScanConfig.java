@@ -23,9 +23,9 @@ import java.util.regex.Pattern;
 
 import static java.util.stream.Collectors.joining;
 
-final class CustomUserData {
+final class CustomBuildScanConfig {
 
-    static void addToBuildScan(BuildScanApi buildScan) {
+    static void configureBuildScan(BuildScanApi buildScan) {
         tagOs(buildScan);
         tagIde(buildScan);
         tagCiOrLocal(buildScan);
@@ -391,7 +391,7 @@ final class CustomUserData {
         }
     }
 
-    private CustomUserData() {
+    private CustomBuildScanConfig() {
     }
 
 }
