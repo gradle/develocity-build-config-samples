@@ -71,7 +71,7 @@
         <dependency>
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy</artifactId>
-            <version>3.0.4</version>
+            <version>3.0.7</version>
         </dependency>
     </dependencies>
     <build>
