@@ -9,3 +9,7 @@ This is a repository of samples that demonstrate how to customize your Gradle En
 Visit the website to learn more about [Gradle Enterprise][gradle-enterprise].
 
 [gradle-enterprise]: https://gradle.com/enterprise
+
+== License
+Gradle Enterprise build configuration samples are Open Source software released under the https://www.apache.org/licenses/LICENSE-2.0.html[Apache 2.0 license].
+
