@@ -32,7 +32,7 @@ custom_maven_zip=${maven_dir}-sample-${custom_maven_version}-bin.zip
 ge_ext_version=1.8.1
 ge_ext_jar=gradle-enterprise-maven-extension-${ge_ext_version}.jar
 
-ge_sample_ext_version=1.0
+ge_sample_ext_version=1.3
 ge_sample_ext_jar=common-custom-user-data-maven-extension-${ge_sample_ext_version}.jar
 
 ge_sample_ext_xml=gradle-enterprise.xml
@@ -79,7 +79,7 @@ cp $tmp_dir/$ge_ext_jar $out_dir/$maven_lib_ext
 
 if [ ! -f "$tmp_dir/$ge_sample_ext_jar" ]; then
   echo -e "${yellow}Downloading common custom user data capturing Maven extension $ge_sample_ext_version${nc}"
-  ge_sample_ext_download_url=https://github.com/gradle/gradle-enterprise-build-config-samples/raw/master/common-custom-user-data-maven-extension/${ge_sample_ext_jar}
+  ge_sample_ext_download_url=https://repo1.maven.org/maven2/com/gradle/common-custom-user-data-maven-extension/${ge_sample_ext_version}/${ge_sample_ext_jar}
   wget $ge_sample_ext_download_url  -P $tmp_dir
 fi
 
