@@ -1,0 +1,25 @@
+plugins {
+    id 'java-gradle-plugin'
+    id 'maven-publish'
+}
+
+group = "com.gradle"
+version = "0.1"
+
+repositories {
+    jcenter()
+    gradlePluginPortal()
+}
+
+dependencies {
+    compileOnly "com.gradle:gradle-enterprise-gradle-plugin:3.5.1"
+}
+
+gradlePlugin {
+    plugins {
+        commonCustomUserData {
+            id = 'com.gradle.common-custom-user-data-gradle-plugin'
+            implementationClass = 'com.gradle.CommonCustomUserDataGradlePlugin'
+        }
+    }
+}
