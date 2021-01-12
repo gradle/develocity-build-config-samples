@@ -5,7 +5,13 @@ import java.nio.charset.Charset
 import java.util.concurrent.TimeUnit
 
 /**
- * This Gradle script captures the <i>Git diff</i> in a GitHub gist and references the gist via a custom link.
+ * This Gradle script captures the <i>Git diff</i> in a GitHub gist,
+ * and references the gist via a custom link.
+ *
+ * In order for the gist to be created successfully, you must specify the Gradle property `gistToken` where 
+ * the value is a Github access token that has gist permission on the given Github repo.
+ *
+ * See https://docs.github.com/en/free-pro-team@latest/rest/reference/gists#create-a-gist for reference.
  */
 
 def buildScanApi = project.extensions.findByName('buildScan')
@@ -34,18 +40,23 @@ void publishGist() {
     if (diff) {
         try {
             def baseUrl = new URL('https://api.github.com/gists')
-            def credentials = "${gradle.rootProject.findProperty('gistToken')}"
+            def credentials = gradle.rootProject.findProperty('gistToken')
             def basicAuth = "Basic ${credentials.bytes.encodeBase64()}"
 
             HttpURLConnection connection = (HttpURLConnection) baseUrl.openConnection()
             connection.with {
+                // request
                 setRequestProperty('Authorization', basicAuth)
-                doOutput = true
+                setRequestProperty('Accept', 'application/vnd.github.v3+json')
                 requestMethod = 'POST'
+                doOutput = true
                 outputStream.withWriter { writer ->
-                    jsonRequest(writer, gradle.rootProject, diff)
+                    jsonRequest(writer, diff, gradle.rootProject)
                 }
-                createLink(content, buildScan)
+
+                // response
+                def url = new JsonSlurper().parse(content.text.bytes).html_url
+                buildScan.link('Git diff', url)
             }
             gradle.rootProject.logger.info('Successfully published gist.')
         } catch (ex) {
@@ -54,8 +65,8 @@ void publishGist() {
     }
 }
 
-// This must be static! Else Gradle will interpret `files` as Project.files() and this won't work.
-def jsonRequest(Writer out, Project project, String diff) {
+// this method must be static, otherwise Gradle will interpret `files` as Project.files() and this won't work
+static void jsonRequest(Writer writer, String diff, Project project) {
     def builder = new JsonBuilder()
     builder {
         description "Git diff for $project.name"
@@ -66,20 +77,14 @@ def jsonRequest(Writer out, Project project, String diff) {
             }
         }
     }
-    builder.writeTo(out)
+    builder.writeTo(writer)
 }
 
-def createLink(def content, def buildScan) {
-    def parser = new JsonSlurper()
-    def url = parser.parse(content.text.bytes).html_url
-    buildScan.link('Git diff', url)
-}
-
-String execAndGetStdout(String... args) {
+static String execAndGetStdout(String... args) {
     Process process = args.toList().execute()
     try {
-        def standardText = process.getInputStream().getText(Charset.defaultCharset().name())
-        def ignore = process.getErrorStream().getText(Charset.defaultCharset().name())
+        def standardText = process.inputStream.withStream { s -> s.getText(Charset.defaultCharset().name()) }
+        def ignore = process.errorStream.withStream { s -> s.getText(Charset.defaultCharset().name()) }
 
         def finished = process.waitFor(10, TimeUnit.SECONDS);
         finished && process.exitValue() == 0 ? trimAtEnd(standardText) : null;
@@ -88,6 +93,6 @@ String execAndGetStdout(String... args) {
     }
 }
 
-String trimAtEnd(String str) {
+static String trimAtEnd(String str) {
     ('x' + str).trim().substring(1)
 }
