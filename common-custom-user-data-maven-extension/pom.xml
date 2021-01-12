@@ -15,8 +15,8 @@
     <scm>
         <developerConnection>scm:git:https://github.com/gradle/gradle-enterprise-build-config-samples.git</developerConnection>
         <url>https://github.com/gradle/gradle-enterprise-build-config-samples</url>
-      <tag>HEAD</tag>
-  </scm>
+        <tag>HEAD</tag>
+    </scm>
 
     <licenses>
         <license>
@@ -30,7 +30,6 @@
             <id>Documentation</id>
             <url>https://docs.gradle.com</url>
         </site>
-
         <snapshotRepository>
             <id>ossrh</id>
             <url>https://oss.sonatype.org/content/repositories/snapshots</url>
@@ -74,6 +73,7 @@
             <version>3.0.7</version>
         </dependency>
     </dependencies>
+
     <build>
         <plugins>
             <plugin>
@@ -167,4 +167,5 @@
             </build>
         </profile>
     </profiles>
+    
 </project>
