@@ -11,7 +11,6 @@ import org.codehaus.plexus.logging.Logger;
 
 import javax.annotation.Nullable;
 import java.io.File;
-import java.io.IOException;
 
 class GroovyScriptUserData {
 
@@ -34,7 +33,7 @@ class GroovyScriptUserData {
         try {
             Binding binding = prepareBinding(session, buildScan, buildCache, logger);
             new GroovyShell(GroovyScriptUserData.class.getClassLoader(), binding).evaluate(scriptFile);
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new MavenExecutionException("Failed to evaluate custom user data Groovy script: " + scriptFile, e);
         }
     }
