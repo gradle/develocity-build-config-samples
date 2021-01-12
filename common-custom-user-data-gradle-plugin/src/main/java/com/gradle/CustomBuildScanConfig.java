@@ -1,6 +1,8 @@
 package com.gradle;
 
 import com.gradle.scan.plugin.BuildScanExtension;
+import org.gradle.api.invocation.Gradle;
+import org.gradle.api.tasks.testing.Test;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -17,14 +19,17 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.gradle.Hasher.hashValue;
+
 final class CustomBuildScanConfig {
 
-    static void configureBuildScan(BuildScanExtension buildScan) {
+    static void configureBuildScan(BuildScanExtension buildScan, Gradle gradle) {
         tagOs(buildScan);
         tagIde(buildScan);
         tagCiOrLocal(buildScan);
         addCiMetadata(buildScan);
         addGitMetadata(buildScan);
+        captureTestProperties(buildScan, gradle);
     }
 
     private static void tagOs(BuildScanExtension buildScan) {
@@ -340,7 +345,20 @@ final class CustomBuildScanConfig {
         }
     }
 
-    static String readFully(Reader reader) throws IOException {
+    private static void captureTestProperties(BuildScanExtension buildScan, Gradle gradle) {
+        gradle.allprojects(p ->
+                p.getTasks().withType(Test.class).configureEach(test ->
+                        test.doFirst(t -> {
+                                    buildScan.value(test.getIdentityPath() + "#maxParallelForks", String.valueOf(test.getMaxParallelForks()));
+                                    test.getSystemProperties().forEach((key, val) ->
+                                            buildScan.value(test.getIdentityPath() + "#sysProps-" + key, hashValue(val)));
+                                }
+                        )
+                )
+        );
+    }
+
+    private static String readFully(Reader reader) throws IOException {
         StringBuilder sb = new StringBuilder();
         char[] buf = new char[1024];
         int nRead;
@@ -350,7 +368,7 @@ final class CustomBuildScanConfig {
         return sb.toString();
     }
 
-    static boolean isNullOrEmpty(String value) {
+    private static boolean isNullOrEmpty(String value) {
         return value == null || value.isEmpty();
     }
 

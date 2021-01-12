@@ -24,7 +24,7 @@ public class CommonCustomUserDataGradlePlugin implements Plugin<Object> {
     private void applySettingsPlugin(Settings settings) {
         settings.getPlugins().withType(GradleEnterprisePlugin.class, __ -> {
             BuildScanExtension buildScan = settings.getExtensions().getByType(GradleEnterpriseExtension.class).getBuildScan();
-            CustomBuildScanConfig.configureBuildScan(buildScan);
+            CustomBuildScanConfig.configureBuildScan(buildScan, settings.getGradle());
 
             BuildCacheConfiguration buildCache = settings.getBuildCache();
             CustomBuildCacheConfig.configureBuildCache(buildCache);
@@ -34,7 +34,7 @@ public class CommonCustomUserDataGradlePlugin implements Plugin<Object> {
     private void applyProjectPlugin(Project project) {
         project.getPlugins().withType(BuildScanPlugin.class, __ -> {
             BuildScanExtension buildScan = project.getExtensions().getByType(GradleEnterpriseExtension.class).getBuildScan();
-            CustomBuildScanConfig.configureBuildScan(buildScan);
+            CustomBuildScanConfig.configureBuildScan(buildScan, project.getGradle());
             // Build cache configuration cannot be accessed from a project plugin
         });
     }
