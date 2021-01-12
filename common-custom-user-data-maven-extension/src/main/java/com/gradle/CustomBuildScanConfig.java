@@ -57,22 +57,13 @@ final class CustomBuildScanConfig {
                 buildScan.value("CI build number", envVariable("BUILD_NUMBER"));
             }
             if (envVariablePresent("NODE_NAME")) {
-                String nodeNameLabel = "CI node";
-                String nodeName = envVariable("NODE_NAME");
-                buildScan.value(nodeNameLabel, nodeName);
-                addCustomLinkWithSearchTerms(buildScan, "CI node build scans", nodeNameLabel, nodeName);
+                addCustomValueAndSearchLink(buildScan, "CI node", envVariable("NODE_NAME"));
             }
             if (envVariablePresent("JOB_NAME")) {
-                String jobNameLabel = "CI job";
-                String jobName = envVariable("JOB_NAME");
-                buildScan.value(jobNameLabel, jobName);
-                addCustomLinkWithSearchTerms(buildScan, "CI job build scans", jobNameLabel, jobName);
+                addCustomValueAndSearchLink(buildScan, "CI job", envVariable("JOB_NAME"));
             }
             if (envVariablePresent("STAGE_NAME")) {
-                String stageNameLabel = "CI stage";
-                String stageName = envVariable("STAGE_NAME");
-                buildScan.value(stageNameLabel, stageName);
-                addCustomLinkWithSearchTerms(buildScan, "CI stage build scans", stageNameLabel, stageName);
+                addCustomValueAndSearchLink(buildScan, "CI stage", envVariable("STAGE_NAME"));
             }
         }
 
@@ -90,10 +81,7 @@ final class CustomBuildScanConfig {
                 buildScan.value("CI build number", sysProperty("build.number"));
             }
             if (sysPropertyPresent("agent.name")) {
-                String agentNameLabel = "CI agent";
-                String agentName = sysProperty("agent.name");
-                buildScan.value(agentNameLabel, agentName);
-                addCustomLinkWithSearchTerms(buildScan, "CI agent build scans", agentNameLabel, agentName);
+                addCustomValueAndSearchLink(buildScan, "CI agent", sysProperty("agent.name"));
             }
         }
 
@@ -105,16 +93,11 @@ final class CustomBuildScanConfig {
                 buildScan.value("CI build number", envVariable("CIRCLE_BUILD_NUM"));
             }
             if (envVariablePresent("CIRCLE_JOB")) {
-                String jobNameLabel = "CI job";
-                String jobName = envVariable("CIRCLE_JOB");
-                buildScan.value(jobNameLabel, jobName);
-                addCustomLinkWithSearchTerms(buildScan, "CI job build scans", jobNameLabel, jobName);
+                addCustomValueAndSearchLink(buildScan, "CI job", envVariable("CIRCLE_JOB"));
+
             }
             if (envVariablePresent("CIRCLE_WORKFLOW_ID")) {
-                String workflowIdLabel = "CI workflow";
-                String workflowId = envVariable("CIRCLE_WORKFLOW_ID");
-                buildScan.value(workflowIdLabel, workflowId);
-                addCustomLinkWithSearchTerms(buildScan, "CI workflow build scans", workflowIdLabel, workflowId);
+                addCustomValueAndSearchLink(buildScan, "CI workflow", envVariable("CIRCLE_WORKFLOW_ID"));
             }
         }
 
@@ -126,22 +109,13 @@ final class CustomBuildScanConfig {
                 buildScan.value("CI build number", envVariable("bamboo_buildNumber"));
             }
             if (envVariablePresent("bamboo_planName")) {
-                String planNameLabel = "CI plan";
-                String planName = envVariable("bamboo_planName");
-                buildScan.value(planNameLabel, planName);
-                addCustomLinkWithSearchTerms(buildScan, "CI plan build scans", planNameLabel, planName);
+                addCustomValueAndSearchLink(buildScan, "CI plan", envVariable("bamboo_planName"));
             }
             if (envVariablePresent("bamboo_buildPlanName")) {
-                String buildPlanNameLabel = "CI build plan";
-                String buildPlanName = envVariable("bamboo_buildPlanName");
-                buildScan.value(buildPlanNameLabel, buildPlanName);
-                addCustomLinkWithSearchTerms(buildScan, "CI build plan build scans", buildPlanNameLabel, buildPlanName);
+                addCustomValueAndSearchLink(buildScan, "CI build plan", envVariable("bamboo_buildPlanName"));
             }
             if (envVariablePresent("bamboo_agentId")) {
-                String agentIdLabel = "CI agent";
-                String agentId = envVariable("bamboo_agentId");
-                buildScan.value(agentIdLabel, agentId);
-                addCustomLinkWithSearchTerms(buildScan, "CI agent build scans", agentIdLabel, agentId);
+                addCustomValueAndSearchLink(buildScan, "CI agent", envVariable("bamboo_agentId"));
             }
         }
 
@@ -150,10 +124,7 @@ final class CustomBuildScanConfig {
                 buildScan.link("GitHub Actions build", "https://github.com/" + envVariable("GITHUB_REPOSITORY") + "/actions/runs/" + envVariable("GITHUB_RUN_ID"));
             }
             if (envVariablePresent("GITHUB_WORKFLOW")) {
-                String workflowNameLabel = "GitHub workflow";
-                String workflowName = envVariable("GITHUB_WORKFLOW");
-                buildScan.value(workflowNameLabel, workflowName);
-                addCustomLinkWithSearchTerms(buildScan, "GitHub workflow build scans", workflowNameLabel, workflowName);
+                addCustomValueAndSearchLink(buildScan, "GitHub workflow", envVariable("GITHUB_WORKFLOW"));
             }
         }
 
@@ -165,16 +136,10 @@ final class CustomBuildScanConfig {
                 buildScan.link("GitLab pipeline", envVariable("CI_PIPELINE_URL"));
             }
             if (envVariablePresent("CI_JOB_NAME")) {
-                String jobNameLabel = "CI job";
-                String jobName = envVariable("CI_JOB_NAME");
-                buildScan.value(jobNameLabel, jobName);
-                addCustomLinkWithSearchTerms(buildScan, "CI job build scans", jobNameLabel, jobName);
+                addCustomValueAndSearchLink(buildScan, "CI job", envVariable("CI_JOB_NAME"));
             }
             if (envVariablePresent("CI_JOB_STAGE")) {
-                String stageNameLabel = "CI stage";
-                String stageName = envVariable("CI_JOB_STAGE");
-                buildScan.value(stageNameLabel, stageName);
-                addCustomLinkWithSearchTerms(buildScan, "CI stage build scans", stageNameLabel, stageName);
+                addCustomValueAndSearchLink(buildScan, "CI stage", envVariable("CI_JOB_STAGE"));
             }
         }
 
@@ -186,10 +151,7 @@ final class CustomBuildScanConfig {
                 buildScan.value("CI build number", envVariable("TRAVIS_BUILD_NUMBER"));
             }
             if (envVariablePresent("TRAVIS_JOB_NAME")) {
-                String jobNameLabel = "CI job";
-                String jobName = envVariable("TRAVIS_JOB_NAME");
-                buildScan.value(jobNameLabel, jobName);
-                addCustomLinkWithSearchTerms(buildScan, "CI job build scans", jobNameLabel, jobName);
+                addCustomValueAndSearchLink(buildScan, "CI job", envVariable("TRAVIS_JOB_NAME"));
             }
             if (envVariablePresent("TRAVIS_EVENT_TYPE")) {
                 buildScan.tag(envVariable("TRAVIS_EVENT_TYPE"));
@@ -208,9 +170,7 @@ final class CustomBuildScanConfig {
             String gitStatus = execAndGetStdOut("git", "status", "--porcelain");
 
             if (gitCommitId != null) {
-                String gitCommitIdLabel = "Git commit id";
-                api.value(gitCommitIdLabel, gitCommitId);
-                addCustomLinkWithSearchTerms(api, "Git commit id build scans", gitCommitIdLabel, gitCommitId);
+                addCustomValueAndSearchLink(api, "Git commit id", gitCommitId);
 
                 String originUrl = execAndGetStdOut("git", "config", "--get", "remote.origin.url");
                 if (!isNullOrEmpty(originUrl)) {
@@ -313,6 +273,11 @@ final class CustomBuildScanConfig {
         } finally {
             process.destroyForcibly();
         }
+    }
+
+    private static void addCustomValueAndSearchLink(BuildScanApi buildScan, String label, String value) {
+        buildScan.value(label, value);
+        addCustomLinkWithSearchTerms(buildScan, label + " build scans", label, value);
     }
 
     private static void addCustomLinkWithSearchTerms(BuildScanApi buildScan, String title, String name, String value) {
