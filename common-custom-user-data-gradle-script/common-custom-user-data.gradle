@@ -5,14 +5,6 @@ import java.util.concurrent.TimeUnit
 
 /**
  * This Gradle script captures data about the OS, IDE, CI, and Git and stores it in build scans via custom tags, custom links, and custom values.
- *
- * Proceed as following to benefit from this script in your Gradle build:
- *
- * - Copy this script to the root folder of your Gradle project, renaming it to 'build-scan-user-data.gradle'
- * - Apply the Build Scan Gradle plugin or the Gradle Enterprise Gradle plugin
- * - Point to your Gradle Enterprise server
- * - Include this script in the root project's build.gradle(.kts) file via `apply from: 'build-scan-user-data.gradle'`
- * - Further customize this script to your needs
  */
 
 def buildScanApi = project.extensions.findByName('buildScan')
