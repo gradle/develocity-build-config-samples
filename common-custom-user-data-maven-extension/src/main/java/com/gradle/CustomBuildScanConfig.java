@@ -1,7 +1,5 @@
 package com.gradle;
 
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.io.CharStreams;
 import com.gradle.maven.extension.api.scan.BuildScanApi;
 
@@ -15,13 +13,12 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static java.util.stream.Collectors.joining;
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 final class CustomBuildScanConfig {
 
@@ -63,19 +60,19 @@ final class CustomBuildScanConfig {
                 String nodeNameLabel = "CI node";
                 String nodeName = envVariable("NODE_NAME");
                 buildScan.value(nodeNameLabel, nodeName);
-                addCustomLinkWithSearchTerms(buildScan, "CI node build scans", ImmutableMap.of(nodeNameLabel, nodeName));
+                addCustomLinkWithSearchTerms(buildScan, "CI node build scans", nodeNameLabel, nodeName);
             }
             if (envVariablePresent("JOB_NAME")) {
                 String jobNameLabel = "CI job";
                 String jobName = envVariable("JOB_NAME");
                 buildScan.value(jobNameLabel, jobName);
-                addCustomLinkWithSearchTerms(buildScan, "CI job build scans", ImmutableMap.of(jobNameLabel, jobName));
+                addCustomLinkWithSearchTerms(buildScan, "CI job build scans", jobNameLabel, jobName);
             }
             if (envVariablePresent("STAGE_NAME")) {
                 String stageNameLabel = "CI stage";
                 String stageName = envVariable("STAGE_NAME");
                 buildScan.value(stageNameLabel, stageName);
-                addCustomLinkWithSearchTerms(buildScan, "CI stage build scans", ImmutableMap.of(stageNameLabel, stageName));
+                addCustomLinkWithSearchTerms(buildScan, "CI stage build scans", stageNameLabel, stageName);
             }
         }
 
@@ -96,7 +93,7 @@ final class CustomBuildScanConfig {
                 String agentNameLabel = "CI agent";
                 String agentName = sysProperty("agent.name");
                 buildScan.value(agentNameLabel, agentName);
-                addCustomLinkWithSearchTerms(buildScan, "CI agent build scans", ImmutableMap.of(agentNameLabel, agentName));
+                addCustomLinkWithSearchTerms(buildScan, "CI agent build scans", agentNameLabel, agentName);
             }
         }
 
@@ -111,13 +108,13 @@ final class CustomBuildScanConfig {
                 String jobNameLabel = "CI job";
                 String jobName = envVariable("CIRCLE_JOB");
                 buildScan.value(jobNameLabel, jobName);
-                addCustomLinkWithSearchTerms(buildScan, "CI job build scans", ImmutableMap.of(jobNameLabel, jobName));
+                addCustomLinkWithSearchTerms(buildScan, "CI job build scans", jobNameLabel, jobName);
             }
             if (envVariablePresent("CIRCLE_WORKFLOW_ID")) {
                 String workflowIdLabel = "CI workflow";
                 String workflowId = envVariable("CIRCLE_WORKFLOW_ID");
                 buildScan.value(workflowIdLabel, workflowId);
-                addCustomLinkWithSearchTerms(buildScan, "CI workflow build scans", ImmutableMap.of(workflowIdLabel, workflowId));
+                addCustomLinkWithSearchTerms(buildScan, "CI workflow build scans", workflowIdLabel, workflowId);
             }
         }
 
@@ -132,19 +129,19 @@ final class CustomBuildScanConfig {
                 String planNameLabel = "CI plan";
                 String planName = envVariable("bamboo_planName");
                 buildScan.value(planNameLabel, planName);
-                addCustomLinkWithSearchTerms(buildScan, "CI plan build scans", ImmutableMap.of(planNameLabel, planName));
+                addCustomLinkWithSearchTerms(buildScan, "CI plan build scans", planNameLabel, planName);
             }
             if (envVariablePresent("bamboo_buildPlanName")) {
                 String buildPlanNameLabel = "CI build plan";
                 String buildPlanName = envVariable("bamboo_buildPlanName");
                 buildScan.value(buildPlanNameLabel, buildPlanName);
-                addCustomLinkWithSearchTerms(buildScan, "CI build plan build scans", ImmutableMap.of(buildPlanNameLabel, buildPlanName));
+                addCustomLinkWithSearchTerms(buildScan, "CI build plan build scans", buildPlanNameLabel, buildPlanName);
             }
             if (envVariablePresent("bamboo_agentId")) {
                 String agentIdLabel = "CI agent";
                 String agentId = envVariable("bamboo_agentId");
                 buildScan.value(agentIdLabel, agentId);
-                addCustomLinkWithSearchTerms(buildScan, "CI agent build scans", ImmutableMap.of(agentIdLabel, agentId));
+                addCustomLinkWithSearchTerms(buildScan, "CI agent build scans", agentIdLabel, agentId);
             }
         }
 
@@ -156,7 +153,7 @@ final class CustomBuildScanConfig {
                 String workflowNameLabel = "GitHub workflow";
                 String workflowName = envVariable("GITHUB_WORKFLOW");
                 buildScan.value(workflowNameLabel, workflowName);
-                addCustomLinkWithSearchTerms(buildScan, "GitHub workflow build scans", ImmutableMap.of(workflowNameLabel, workflowName));
+                addCustomLinkWithSearchTerms(buildScan, "GitHub workflow build scans", workflowNameLabel, workflowName);
             }
         }
 
@@ -171,13 +168,13 @@ final class CustomBuildScanConfig {
                 String jobNameLabel = "CI job";
                 String jobName = envVariable("CI_JOB_NAME");
                 buildScan.value(jobNameLabel, jobName);
-                addCustomLinkWithSearchTerms(buildScan, "CI job build scans", ImmutableMap.of(jobNameLabel, jobName));
+                addCustomLinkWithSearchTerms(buildScan, "CI job build scans", jobNameLabel, jobName);
             }
             if (envVariablePresent("CI_JOB_STAGE")) {
                 String stageNameLabel = "CI stage";
                 String stageName = envVariable("CI_JOB_STAGE");
                 buildScan.value(stageNameLabel, stageName);
-                addCustomLinkWithSearchTerms(buildScan, "CI stage build scans", ImmutableMap.of(stageNameLabel, stageName));
+                addCustomLinkWithSearchTerms(buildScan, "CI stage build scans", stageNameLabel, stageName);
             }
         }
 
@@ -192,7 +189,7 @@ final class CustomBuildScanConfig {
                 String jobNameLabel = "CI job";
                 String jobName = envVariable("TRAVIS_JOB_NAME");
                 buildScan.value(jobNameLabel, jobName);
-                addCustomLinkWithSearchTerms(buildScan, "CI job build scans", ImmutableMap.of(jobNameLabel, jobName));
+                addCustomLinkWithSearchTerms(buildScan, "CI job build scans", jobNameLabel, jobName);
             }
             if (envVariablePresent("TRAVIS_EVENT_TYPE")) {
                 buildScan.tag(envVariable("TRAVIS_EVENT_TYPE"));
@@ -213,10 +210,10 @@ final class CustomBuildScanConfig {
             if (gitCommitId != null) {
                 String gitCommitIdLabel = "Git commit id";
                 api.value(gitCommitIdLabel, gitCommitId);
-                addCustomLinkWithSearchTerms(api, "Git commit id build scans", ImmutableMap.of(gitCommitIdLabel, gitCommitId));
+                addCustomLinkWithSearchTerms(api, "Git commit id build scans", gitCommitIdLabel, gitCommitId);
 
                 String originUrl = execAndGetStdOut("git", "config", "--get", "remote.origin.url");
-                if (!Strings.isNullOrEmpty(originUrl)) {
+                if (!isNullOrEmpty(originUrl)) {
                     if (originUrl.contains("github.com/") || originUrl.contains("github.com:")) {
                         Matcher matcher = Pattern.compile("(.*)github\\.com[/|:](.*)").matcher(originUrl);
                         if (matcher.matches()) {
@@ -318,19 +315,13 @@ final class CustomBuildScanConfig {
         }
     }
 
-    private static void addCustomLinkWithSearchTerms(BuildScanApi buildScan, String title, Map<String, String> search) {
+    private static void addCustomLinkWithSearchTerms(BuildScanApi buildScan, String title, String name, String value) {
         String server = buildScan.getServer();
         if (server != null) {
-            String searchParams = customValueSearchParams(search);
+            String searchParams = "search.names=" + urlEncode(name) + "&search.values=" + urlEncode(value);
             String url = appendIfMissing(server, "/") + "scans?" + searchParams + "#selection.buildScanB=" + urlEncode("{SCAN_ID}");
             buildScan.link(title, url);
         }
-    }
-
-    private static String customValueSearchParams(Map<String, String> search) {
-        return search.entrySet().stream()
-            .map(e -> "search.names=" + urlEncode(e.getKey()) + "&search.values=" + urlEncode(e.getValue()))
-            .collect(joining("&"));
     }
 
     private static String sysProperty(String name) {
@@ -338,7 +329,7 @@ final class CustomBuildScanConfig {
     }
 
     private static boolean sysPropertyPresent(String name) {
-        return !Strings.isNullOrEmpty(sysProperty(name));
+        return !isNullOrEmpty(sysProperty(name));
     }
 
     private static boolean sysPropertyKeyStartingWith(String keyPrefix) {
@@ -358,7 +349,7 @@ final class CustomBuildScanConfig {
     }
 
     private static boolean envVariablePresent(String name) {
-        return !Strings.isNullOrEmpty(envVariable(name));
+        return !isNullOrEmpty(envVariable(name));
     }
 
     private static String appendIfMissing(String str, String suffix) {

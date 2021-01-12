@@ -7,13 +7,11 @@ group = "com.gradle"
 version = "0.1"
 
 repositories {
-    jcenter()
     gradlePluginPortal()
 }
 
 dependencies {
     compileOnly "com.gradle:gradle-enterprise-gradle-plugin:3.5.1"
-    implementation "com.google.guava:guava:28.0-jre"
 }
 
 gradlePlugin {
