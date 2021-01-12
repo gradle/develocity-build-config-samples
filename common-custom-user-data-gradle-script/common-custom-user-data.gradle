@@ -244,7 +244,9 @@ void addGitMetadata() {
 
 void addTestParallelization() {
     allprojects { p ->
-        p.tasks.withType(Test).configureEach { t -> doFirst { buildScan.value "${t.identityPath}#maxParallelForks", t.maxParallelForks.toString() } }
+        p.tasks.withType(Test).configureEach { t ->
+            doFirst { buildScan.value "${t.identityPath}#maxParallelForks", t.maxParallelForks.toString() }
+        }
     }
 }
 
@@ -306,8 +308,8 @@ static boolean isGitInstalled() {
 static String execAndGetStdout(String... args) {
     Process process = args.toList().execute()
     try {
-        def standardText = process.getInputStream().getText(Charset.defaultCharset().name())
-        def ignore = process.getErrorStream().getText(Charset.defaultCharset().name())
+        def standardText = process.inputStream.withStream { s -> s.getText(Charset.defaultCharset().name()) }
+        def ignore = process.errorStream.withStream { s -> s.getText(Charset.defaultCharset().name()) }
 
         def finished = process.waitFor(10, TimeUnit.SECONDS)
         finished && process.exitValue() == 0 ? trimAtEnd(standardText) : null
