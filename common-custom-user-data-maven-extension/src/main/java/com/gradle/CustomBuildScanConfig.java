@@ -4,8 +4,8 @@ import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.CharStreams;
 import com.gradle.maven.extension.api.scan.BuildScanApi;
-import org.apache.maven.Maven;
 
+import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -303,15 +303,14 @@ final class CustomBuildScanConfig {
             throw new RuntimeException(e);
         }
 
-        try (
-            Reader standard = new InputStreamReader(process.getInputStream(), Charset.defaultCharset());
-            Reader error = new InputStreamReader(process.getErrorStream(), Charset.defaultCharset())
-        ) {
-            String standardText = CharStreams.toString(standard);
-            String ignore = CharStreams.toString(error);
+        try (Reader standard = new BufferedReader(new InputStreamReader(process.getInputStream(), Charset.defaultCharset()))) {
+            try (Reader error = new BufferedReader(new InputStreamReader(process.getErrorStream(), Charset.defaultCharset()))) {
+                String standardText = CharStreams.toString(standard);
+                String ignore = CharStreams.toString(error);
 
-            boolean finished = process.waitFor(10, TimeUnit.SECONDS);
-            return finished && process.exitValue() == 0 ? trimAtEnd(standardText) : null;
+                boolean finished = process.waitFor(10, TimeUnit.SECONDS);
+                return finished && process.exitValue() == 0 ? trimAtEnd(standardText) : null;
+            }
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
         } finally {
