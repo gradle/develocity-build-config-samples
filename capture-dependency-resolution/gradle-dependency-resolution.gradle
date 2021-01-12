@@ -1,7 +1,7 @@
 
 /**
- * This Gradle script captures any dependency configurations that are resolved to build the task graph,
- * and adds these as a custom value.
+ * This Gradle script captures any dependency configurations that are resolved early to build the task graph,
+ * and adds these as custom values.
  */
 
 def buildScanApi = project.extensions.findByName('buildScan')
@@ -23,8 +23,8 @@ void addConfigurationsResolvedForTaskGraphCalculation() {
                 }
             }
 
-            if (!confs.empty) {
-                buildScan.value "Configurations resolved for task graph calculation", confs as String
+            confs.each { conf ->
+                buildScan.value "Configuration resolved for task graph calculation", conf as String
             }
         }
     }
