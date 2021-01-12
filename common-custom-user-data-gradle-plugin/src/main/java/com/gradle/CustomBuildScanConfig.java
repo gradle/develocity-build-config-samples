@@ -188,11 +188,11 @@ final class CustomBuildScanConfig {
                     }
                 }
             }
-            if (gitBranchName != null) {
+            if (!isNullOrEmpty(gitBranchName)) {
                 api.tag(gitBranchName);
                 api.value("Git branch", gitBranchName);
             }
-            if (gitStatus != null) {
+            if (!isNullOrEmpty(gitStatus)) {
                 api.tag("Dirty");
                 api.value("Git status", gitStatus);
             }
