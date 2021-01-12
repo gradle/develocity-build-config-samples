@@ -1,5 +1,17 @@
 #!/bin/bash
 
+#
+# Script that runs the Maven wrapper generation goal, and then modifies the mvnw wrapper shell script such that
+# a 'Wrapper' custom tag is added to all build scans.
+#
+# Having such a 'Wrapper' tag allows to query for all builds that have been invoked via Maven wrapper.
+#
+# Note: You can invoke the Maven wrapper generation tool in a custom directory by running
+#       this script and passing the working directory as the first argument, e.g.:
+#
+#       mkdir /tmp/custom-maven-wrapper && ./create-custom-maven-wrapper /tmp/custom-maven-wrapper
+#
+
 current_dir=$PWD
 maven_version=3.6.3
 
