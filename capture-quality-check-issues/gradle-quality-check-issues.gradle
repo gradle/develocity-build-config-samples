@@ -1,5 +1,6 @@
 /**
- * This Gradle script captures issues found by reporting tasks and stores them in build scans via custom values.
+ * This Gradle script captures issues found by reporting tasks,
+ * and adds these as custom values.
  */
 
 def buildScanApi = project.extensions.findByName('buildScan')
@@ -8,22 +9,27 @@ if (!buildScanApi) {
 }
 
 gradle.taskGraph.beforeTask { task ->
-    if (isCapturedReportingTask(task)) {
-        task.configure { t -> t.reports.xml.enabled = true }
+    if (!ReportingTask.isSupported(task)) {
+        return
     }
+
+    task.configure { t -> t.reports.xml.enabled = true }
 }
 
 gradle.taskGraph.afterTask { task, TaskState state ->
-    if (!isCapturedReportingTask(task)) {
+    if (!ReportingTask.isSupported(task)) {
         return
     }
+
     def reportFile = task.reports.xml.destination as File
     if (!reportFile.exists()) {
         return
     }
+
     def report = new XmlSlurper().parse(reportFile)
     def valueName = '' as String
     def errors = [] as List<String>
+
     if (ReportingTask.CHECKSTYLE.isTask(task)) {
         valueName = 'Verification Checkstyle'
         errors = report.file.collect {
@@ -64,10 +70,16 @@ gradle.taskGraph.afterTask { task, TaskState state ->
             "${relativePath}:${lineNumber} \u2192 ${type}"
         }.flatten() as List<String>
     }
+
     errors.each { buildScan.value valueName, it }
 }
 
+static String appendIfMissing(String str, String suffix) {
+    str.endsWith(suffix) ? str : str + suffix
+}
+
 enum SpotBugsParent {
+
     BugInstance, Method, Class
 }
 
@@ -84,15 +96,12 @@ enum ReportingTask {
         this.className = className
     }
 
-    ReportingTask isTask(task) {
-        task.class.name.contains(className) ? this : null
+    boolean isTask(task) {
+        task.class.name.contains(className)
     }
-}
 
-static boolean isCapturedReportingTask(task) {
-    ReportingTask.values().toList().any { it.isTask(task) }
-}
+    static boolean isSupported(task) {
+        values().any { it.isTask(task) }
+    }
 
-static String appendIfMissing(String str, String suffix) {
-    str.endsWith(suffix) ? str : str + suffix
 }

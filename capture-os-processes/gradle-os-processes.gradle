@@ -2,7 +2,8 @@ import java.nio.charset.Charset
 import java.util.concurrent.TimeUnit
 
 /**
- * This Gradle script captures OS processes as reported by the OS 'ps' command via custom value.
+ * This Gradle script captures the OS processes as reported by the OS 'ps' command,
+ * and adds these as a custom value.
  */
 
 def buildScanApi = project.extensions.findByName('buildScan')
@@ -11,15 +12,19 @@ if (!buildScanApi) {
 }
 
 buildScan.background { api ->
+    captureOsProcesses(api)
+}
+
+static void captureOsProcesses(def api) {
     def psOutput = execAndGetStdout('ps', '-o pid,ppid,time,command')
     api.value 'OS processes', psOutput
 }
 
-String execAndGetStdout(String... args) {
+static String execAndGetStdout(String... args) {
     Process process = args.toList().execute()
     try {
-        def standardText = process.getInputStream().getText(Charset.defaultCharset().name())
-        def ignore = process.getErrorStream().getText(Charset.defaultCharset().name())
+        def standardText = process.inputStream.withStream { s -> s.getText(Charset.defaultCharset().name()) }
+        def ignore = process.errorStream.withStream { s -> s.getText(Charset.defaultCharset().name()) }
 
         def finished = process.waitFor(10, TimeUnit.SECONDS)
         finished && process.exitValue() == 0 ? trimAtEnd(standardText) : null
@@ -28,6 +33,6 @@ String execAndGetStdout(String... args) {
     }
 }
 
-String trimAtEnd(String str) {
+static String trimAtEnd(String str) {
     ('x' + str).trim().substring(1)
 }

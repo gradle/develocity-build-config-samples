@@ -1,13 +1,19 @@
 /**
- * This Gradle script captures all tasks of a given type taking longer to execute than a certain threshold via custom values.
+ * This Gradle script captures all tasks of a given type taking longer to execute than a certain threshold,
+ * and adds these as custom values.
  */
+
+def buildScanApi = project.extensions.findByName('buildScan')
+if (!buildScanApi) {
+    return
+}
 
 def THRESHOLD_MILLIS = 15 * 60 * 1000 // 15 min
 
 allprojects {
     tasks.matching { t ->
         t instanceof JavaCompile
-    }.configureEach {
+    }.configureEach { t ->
         long start
         doFirst {
             start = System.currentTimeMillis()
@@ -15,7 +21,7 @@ allprojects {
         doLast {
             long duration = System.currentTimeMillis() - start
             if (duration > THRESHOLD_MILLIS) {
-                buildScan.value 'Slow task', identityPath
+                buildScan.value 'Slow task', t.identityPath as String
             }
         }
     }

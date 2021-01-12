@@ -1,7 +1,8 @@
 import java.nio.file.Paths
 
 /**
- * This Groovy script captures issues found by reporting goals and stores them in build scans via custom values.
+ * This Groovy script captures issues found by reporting goals,
+ * and adds these as custom values.
  */
 
 BuildScanApi buildScan = session.lookup('com.gradle.maven.extension.api.scan.BuildScanApi')
@@ -9,11 +10,11 @@ if (!buildScan) {
     return
 }
 
-buildScan.executeOnce('reporting-goals') { api ->
-    addReportingGoalIssues(api)
+buildScan.executeOnce('reporting-issues') { BuildScanApi buildScanApi ->
+    captureReportingIssues(buildScanApi)
 }
 
-void addReportingGoalIssues(def api) {
+void captureReportingIssues(def api) {
     api.buildFinished { result ->
         def topLevelProject = session.topLevelProject
         while (topLevelProject.hasParent()) {
@@ -24,7 +25,7 @@ void addReportingGoalIssues(def api) {
             session.currentProject = project
             def lifecycleExecutor = container.lookup('org.apache.maven.lifecycle.LifecycleExecutor')
             def mojoExecutions = lifecycleExecutor.calculateExecutionPlan(session, *session.goals).getMojoExecutions()
-            def reportingMojoExecutions = mojoExecutions.findAll { isCapturedReportingPlugin(it.plugin) }
+            def reportingMojoExecutions = mojoExecutions.findAll { ReportingPlugin.isSupported(it.plugin) }
             if (!reportingMojoExecutions) {
                 return
             }
@@ -117,32 +118,6 @@ void addReportingGoalIssues(def api) {
     }
 }
 
-enum SpotBugsParent {
-    BugInstance, Method, Class
-}
-
-enum ReportingPlugin {
-
-    CHECKSTYLE('org.apache.maven.plugins:maven-checkstyle-plugin'),
-    CODENARC('org.codehaus.mojo:codenarc-maven-plugin'),
-    FINDBUGS('org.codehaus.mojo:findbugs-maven-plugin'),
-    SPOTBUGS('com.github.spotbugs:spotbugs-maven-plugin')
-
-    String pluginKey
-
-    private ReportingPlugin(String pluginKey) {
-        this.pluginKey = pluginKey
-    }
-
-    ReportingPlugin isPlugin(plugin) {
-        plugin.key == pluginKey ? this : null
-    }
-}
-
-static boolean isCapturedReportingPlugin(plugin) {
-    ReportingPlugin.values().toList().any { it.isPlugin(plugin) }
-}
-
 static def reportingMojo(def session, def mojoExecution, def mojoInterface, def componentConfiguratorClass, def xmlPlexusConfigurationClass, def pluginParameterExpressionEvaluatorClass) {
     def pluginRealm = mojoExecution.mojoDescriptor.pluginDescriptor.classRealm
     def oldLookupRealm = session.container.setLookupRealm(pluginRealm)
@@ -167,4 +142,31 @@ static def reportingMojo(def session, def mojoExecution, def mojoInterface, def 
 
 static String appendIfMissing(String str, String suffix) {
     str.endsWith(suffix) ? str : str + suffix
+}
+
+enum SpotBugsParent {
+    BugInstance, Method, Class
+}
+
+enum ReportingPlugin {
+
+    CHECKSTYLE('org.apache.maven.plugins:maven-checkstyle-plugin'),
+    CODENARC('org.codehaus.mojo:codenarc-maven-plugin'),
+    FINDBUGS('org.codehaus.mojo:findbugs-maven-plugin'),
+    SPOTBUGS('com.github.spotbugs:spotbugs-maven-plugin')
+
+    String pluginKey
+
+    private ReportingPlugin(String pluginKey) {
+        this.pluginKey = pluginKey
+    }
+
+    boolean isPlugin(plugin) {
+        plugin.key == pluginKey
+    }
+
+    static boolean isSupported(plugin) {
+        values().any { it.isPlugin(plugin) }
+    }
+
 }
