@@ -3,6 +3,10 @@
  */
 package com.gradle;
 
+import com.gradle.enterprise.gradleplugin.GradleEnterpriseExtension;
+import com.gradle.enterprise.gradleplugin.GradleEnterprisePlugin;
+import com.gradle.scan.plugin.BuildScanExtension;
+import com.gradle.scan.plugin.BuildScanPlugin;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.initialization.Settings;
@@ -17,10 +21,20 @@ public class CommonCustomUserDataGradlePlugin implements Plugin<Object> {
     }
 
     private void applySettingsPlugin(Settings settings) {
-        System.out.println("Adding values for gradle enterprise plugin applied to settings");
+        settings.getPlugins().withType(GradleEnterprisePlugin.class, __ -> {
+            BuildScanExtension buildScan = settings.getExtensions().getByType(GradleEnterpriseExtension.class).getBuildScan();
+            configureGradleEnterprise(buildScan);
+        });
     }
 
     private void applyProjectPlugin(Project project) {
-        System.out.println("Adding values for build scan plugin applied to project");
+        project.getPlugins().withType(BuildScanPlugin.class, __ -> {
+            BuildScanExtension buildScan = project.getExtensions().getByType(GradleEnterpriseExtension.class).getBuildScan();
+            configureGradleEnterprise(buildScan);
+        });
+    }
+
+    private void configureGradleEnterprise(BuildScanExtension buildScan) {
+        CustomBuildScanConfig.configureBuildScan(buildScan);
     }
 }

@@ -13,6 +13,7 @@ repositories {
 
 dependencies {
     compileOnly "com.gradle:gradle-enterprise-gradle-plugin:3.5.1"
+    implementation "com.google.guava:guava:28.0-jre"
 }
 
 gradlePlugin {
