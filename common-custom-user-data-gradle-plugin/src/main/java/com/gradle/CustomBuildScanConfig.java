@@ -24,6 +24,8 @@ final class CustomBuildScanConfig {
         addCiMetadata(buildScan);
         addGitMetadata(buildScan);
         captureTestProperties(buildScan, gradle);
+
+        CustomBuildScanConfigExtras.configureBuildScan(buildScan, gradle);
     }
 
     private static void tagOs(BuildScanExtension buildScan) {
