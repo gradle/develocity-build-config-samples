@@ -7,6 +7,7 @@ import com.gradle.enterprise.gradleplugin.GradleEnterpriseExtension;
 import com.gradle.enterprise.gradleplugin.GradleEnterprisePlugin;
 import com.gradle.scan.plugin.BuildScanExtension;
 import com.gradle.scan.plugin.BuildScanPlugin;
+import org.gradle.api.GradleException;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.initialization.Settings;
@@ -32,6 +33,9 @@ public class CommonCustomUserDataGradlePlugin implements Plugin<Object> {
     }
 
     private void applyProjectPlugin(Project project) {
+        if (!project.equals(project.getRootProject())) {
+            throw new GradleException("Common custom user data plugin may only be applied to root project");
+        }
         project.getPlugins().withType(BuildScanPlugin.class, __ -> {
             BuildScanExtension buildScan = project.getExtensions().getByType(GradleEnterpriseExtension.class).getBuildScan();
             CustomBuildScanConfig.configureBuildScan(buildScan, project.getGradle());
