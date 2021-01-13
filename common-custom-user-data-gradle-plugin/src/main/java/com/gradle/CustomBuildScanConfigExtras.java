@@ -1,14 +1,19 @@
 package com.gradle;
 
 import com.gradle.scan.plugin.BuildScanExtension;
+import org.gradle.api.Action;
+import org.gradle.api.Task;
 import org.gradle.api.invocation.Gradle;
+import org.gradle.api.tasks.testing.Test;
 
-import static com.gradle.Utils.execAndGetStdOut;
-import static com.gradle.Utils.isNullOrEmpty;
+import static com.gradle.Utils.*;
 
 final class CustomBuildScanConfigExtras {
 
     static void configureBuildScan(BuildScanExtension buildScan, Gradle gradle) {
+        if (isCaptureEnabled("TestTaskConfiguration", true)) {
+            captureTestTaskConfiguration(buildScan, gradle);
+        }
         if (isCaptureEnabled("JvmProcesses", false)) {
             captureJvmProcesses(buildScan);
         }
@@ -28,7 +33,23 @@ final class CustomBuildScanConfigExtras {
             return Boolean.parseBoolean(featurePropertyValue);
         }
     }
-    
+
+    private static void captureTestTaskConfiguration(BuildScanExtension buildScan, Gradle gradle) {
+        gradle.allprojects(p ->
+                p.getTasks().withType(Test.class).configureEach(test ->
+                        test.doFirst("capture configuration for build scans", new Action<Task>() {
+                                    @Override
+                                    public void execute(Task task) {
+                                        buildScan.value(test.getIdentityPath() + "#maxParallelForks", String.valueOf(test.getMaxParallelForks()));
+                                        test.getSystemProperties().forEach((key, val) ->
+                                                buildScan.value(test.getIdentityPath() + "#sysProps-" + key, hashValue(val)));
+                                    }
+                                }
+                        )
+                )
+        );
+    }
+
     private static void captureJvmProcesses(BuildScanExtension buildScan) {
         buildScan.background(api -> {
             String psOutput = execAndGetStdOut("jps", "-v");
