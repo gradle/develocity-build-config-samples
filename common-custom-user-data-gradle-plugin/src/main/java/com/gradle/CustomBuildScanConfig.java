@@ -1,6 +1,7 @@
 package com.gradle;
 
 import com.gradle.scan.plugin.BuildScanExtension;
+import org.gradle.api.Project;
 import org.gradle.api.invocation.Gradle;
 import org.gradle.api.tasks.testing.Test;
 
@@ -25,7 +26,7 @@ final class CustomBuildScanConfig {
 
     static void configureBuildScan(BuildScanExtension buildScan, Gradle gradle) {
         tagOs(buildScan);
-        tagIde(buildScan);
+        tagIde(buildScan, gradle);
         tagCiOrLocal(buildScan);
         addCiMetadata(buildScan);
         addGitMetadata(buildScan);
@@ -36,14 +37,22 @@ final class CustomBuildScanConfig {
         buildScan.tag(sysProperty("os.name"));
     }
 
-    private static void tagIde(BuildScanExtension buildScan) {
-        if (sysPropertyPresent("idea.version") || sysPropertyKeyStartingWith("idea.version")) {
-            buildScan.tag("IntelliJ IDEA");
-        } else if (sysPropertyPresent("eclipse.buildId")) {
-            buildScan.tag("Eclipse");
-        } else if (!isCi()) {
-            buildScan.tag("Cmd Line");
-        }
+    private static void tagIde(BuildScanExtension buildScan, Gradle gradle) {
+        gradle.projectsEvaluated(g -> {
+            Project project = g.getRootProject();
+            if (project.hasProperty("android.injected.invoked.from.ide")) {
+                buildScan.tag("Android Studio");
+                if (project.hasProperty("android.injected.studio.version")) {
+                    buildScan.value("Android Studio version", String.valueOf(project.property("android.injected.studio.version")));
+                }
+            } else if (sysPropertyPresent("idea.version") || sysPropertyKeyStartingWith("idea.version")) {
+                buildScan.tag("IntelliJ IDEA");
+            } else if (sysPropertyPresent("eclipse.buildId")) {
+                buildScan.tag("Eclipse");
+            } else if (!isCi()) {
+                buildScan.tag("Cmd Line");
+            }
+        });
     }
 
     private static void tagCiOrLocal(BuildScanExtension buildScan) {
