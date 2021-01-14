@@ -1,81 +1,120 @@
 #!/bin/bash
 
-commit_msg="Apply Gradle Enterprise Maven Extension"
+commit_msg="Apply latest Gradle Enterprise configuration"
 basedir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-checkout_area=`mktemp -d`
 repositories=$basedir/repositories.txt
+checkout_area=
 
-# process arguments "$1", "$2", ... (i.e. "$@")
-while getopts "pfu" opt; do
+yellow='\033[1;33m'
+nc='\033[0m'
+
+# process arguments
+while getopts "ufp" opt; do
     case $opt in
-    p) push=true ;;   # Push only if -p is set
-    f) force=true ;;  # Override existing gradle settings
-    u) do_update=true ;; # Only update existing project with .mvn Folders 
-    \?) ;; # Handle error: unknown option or missing required argument.
+    u) do_update=true ;;
+    f) force=true ;;
+    p) push=true ;;
+    \?) ;;
     esac
 done
 
+function prepare() {
+  checkout_area=`mktemp -d`
+}
+
 function process_repositories() {
-  num=$(cat $repositories | sed '/^\s*$/d' | wc -l | awk '{ print $1 }')
-  i=1
-  for line in $(cat repositories.txt | grep .); do
-    echo "($i/$num) Updating $line..."
-    process_repository $line
-    ((i++))
+  numOfRepos=$( cat $repositories | sed '/^[[:blank:]]*#/d;s/^[[:blank:]]*//;s/#.*//' | wc -l )
+  current=1
+  for repo in $(cat $repositories | sed '/^[[:blank:]]*#/d;s/^[[:blank:]]*//;s/#.*//'); do
+    echo -e "${yellow}($current/$numOfRepos) Processing $repo...${nc}"
+    process_repository $repo
+    ((current++))
   done
 }
 
 function process_repository() {
   repository_name="${1##*/}"
-  # clone the repository without actually downloading files or history
+
+  # clone the Git epository without actually downloading files or history
   git clone -n "$1" "$checkout_area/$repository_name" --depth 1 >& /dev/null
   pushd "$checkout_area/$repository_name" >& /dev/null
   git reset HEAD . >& /dev/null
-  if [ ! -z  "$(git ls-tree -r HEAD --name-only | grep '^.mvn')" ] && [ -z "$force" ] && [ -z "$do_update" ]; then
-    echo ".mvn directory already exists in $repository_name, skipping..." >&2
-  elif [ -z "$(git ls-tree -r HEAD --name-only | grep pom.xml)" ]; then  
-    # Only process maven projects
-    echo "$repository_name is not a mvn project, skipping..." >&2
-  elif [ -z  "$(git ls-tree -r HEAD --name-only | grep '^.mvn')" ] && [ ! -z "$do_update" ]; then
-    echo "$repository_name is not enabled for gradle caching, skipping..." >&2
-  else
-    cp -R $basedir/.mvn/ .mvn
-    
-    git add .mvn/. >& /dev/null
-    insert_gitignore
-    git commit -m "$commit_msg" >& /dev/null
 
-    if [ ! -z "$push" ]; then
-      git push >& /dev/null
+  # ensure it is a Maven project
+  if [ -z "$(git ls-tree -r HEAD --name-only | grep 'pom.xml')" ]; then
+    # no pom.xml found in the project  
+    echo "$repository_name repository is not a Maven project, skipping..." >&2
+    return
+  fi
+
+  # ensure .mvn folder exists
+  if [ -z "$(git ls-tree -r HEAD --name-only | grep '^.mvn/')" ]; then
+    # .mvn folder not found 
+    if [ "$do_update" ]; then
+      # script invoked with -u (update) flag, thus .mvn folder expected to already exist
+      echo "$repository_name repository does not contain existing .mvn directory, skipping..." >&2
+      return
+    else
+      # script invoked without -u (update) flag, thus .mvn folder will be created
+      mkdir .mvn
     fi
   fi
+
+  # Check out .mvn folder and recursively copy Gradle Enterprise configuration into it
+  git checkout .mvn >& /dev/null
+  if [ "$force" ]; then 
+    # override existing files
+    cp -a $basedir/.mvn/. .mvn
+  else
+    # do not override existing files
+    cp -na $basedir/.mvn/. .mvn
+  fi
+
+  # update .gitignore file to ignore the .mvn/.gradle-enterprise folder
+  git checkout -- .gitignore >& /dev/null
+  if [ $? -eq 0 ]; then
+    # .gitignore file already exists
+    if ! grep -Fxq ".mvn/.gradle-enterprise/" .gitignore ; then
+      echo ".mvn/.gradle-enterprise/" >> .gitignore
+    fi
+  else
+    # .gitignore file does not already exist
+    echo ".mvn/.gradle-enterprise/" > .gitignore
+  fi
+
+  # add changes to staging and commit
+  git add .mvn/. 
+  git add .gitignore
+  git commit -m "$commit_msg"
+
+  # push change if script was invoked with -p (push) flag
+  if [ "$push" ]; then
+     git push >& /dev/null
+     echo "Changes pushed to $repository_name repository"
+  else
+     echo "Changes to $repository_name repository available at $PWD"
+  fi
+
   popd >& /dev/null
 }
 
-function insert_gitignore() {
-  git checkout -- .gitignore >& /dev/null
-  if [ $? -eq 0 ]; then
-    if ! grep -Fxq "/.mvn/.gradle-enterprise/" .gitignore ; then
-      echo "/.mvn/.gradle-enterprise/" >>  .gitignore
-    fi
-  else
-    echo "/.mvn/.gradle-enterprise/" > .gitignore
-  fi
-  git add .gitignore >& /dev/null
-}
-
 function cleanup() {
-  if [ ! -z "$push" ]; then
+  if [ "$push" ]; then
     rm -rf $checkout_area
   else
-    echo "Stored repos to " $checkout_area
+    echo "All cloned repositories available at "$checkout_area
   fi
 }
 
+# entry point
 if [ ! -d ".mvn" ]; then
   echo ".mvn directory is missing" >&2
   exit 1
+elif [ ! -f "repositories.txt" ]; then
+  echo "repositories.txt file is missing" >&2
+  exit 1
 else
+  prepare
   process_repositories
   cleanup
   exit 0

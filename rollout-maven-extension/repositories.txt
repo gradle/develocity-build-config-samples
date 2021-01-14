@@ -1,2 +1,2 @@
-https://github.com/my-company/repository-1
-https://github.com/my-company/repository-2
+# List of Git repositories to process, one repository per line, end with an empty line
+https://github.com/gradle/maven-build-scan-quickstart
