@@ -1,7 +1,9 @@
 package com.gradle;
 
-import com.google.common.io.CharStreams;
-import com.gradle.maven.extension.api.scan.BuildScanApi;
+import com.gradle.scan.plugin.BuildScanExtension;
+import org.gradle.api.Project;
+import org.gradle.api.invocation.Gradle;
+import org.gradle.api.tasks.testing.Test;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -18,37 +20,46 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.google.common.base.Strings.isNullOrEmpty;
+import static com.gradle.Hasher.hashValue;
 
 final class CustomBuildScanConfig {
 
-    static void configureBuildScan(BuildScanApi buildScan) {
+    static void configureBuildScan(BuildScanExtension buildScan, Gradle gradle) {
         tagOs(buildScan);
-        tagIde(buildScan);
+        tagIde(buildScan, gradle);
         tagCiOrLocal(buildScan);
         addCiMetadata(buildScan);
         addGitMetadata(buildScan);
+        captureTestProperties(buildScan, gradle);
     }
 
-    private static void tagOs(BuildScanApi buildScan) {
+    private static void tagOs(BuildScanExtension buildScan) {
         buildScan.tag(sysProperty("os.name"));
     }
 
-    private static void tagIde(BuildScanApi buildScan) {
-        if (sysPropertyPresent("idea.version") || sysPropertyKeyStartingWith("idea.version")) {
-            buildScan.tag("IntelliJ IDEA");
-        } else if (sysPropertyPresent("eclipse.buildId")) {
-            buildScan.tag("Eclipse");
-        } else if (!isCi()) {
-            buildScan.tag("Cmd Line");
-        }
+    private static void tagIde(BuildScanExtension buildScan, Gradle gradle) {
+        gradle.projectsEvaluated(g -> {
+            Project project = g.getRootProject();
+            if (project.hasProperty("android.injected.invoked.from.ide")) {
+                buildScan.tag("Android Studio");
+                if (project.hasProperty("android.injected.studio.version")) {
+                    buildScan.value("Android Studio version", String.valueOf(project.property("android.injected.studio.version")));
+                }
+            } else if (sysPropertyPresent("idea.version") || sysPropertyKeyStartingWith("idea.version")) {
+                buildScan.tag("IntelliJ IDEA");
+            } else if (sysPropertyPresent("eclipse.buildId")) {
+                buildScan.tag("Eclipse");
+            } else if (!isCi()) {
+                buildScan.tag("Cmd Line");
+            }
+        });
     }
 
-    private static void tagCiOrLocal(BuildScanApi buildScan) {
+    private static void tagCiOrLocal(BuildScanExtension buildScan) {
         buildScan.tag(isCi() ? "CI" : "LOCAL");
     }
 
-    private static void addCiMetadata(BuildScanApi buildScan) {
+    private static void addCiMetadata(BuildScanExtension buildScan) {
         if (isJenkins()) {
             if (envVariablePresent("BUILD_URL")) {
                 buildScan.link("Jenkins build", envVariable("BUILD_URL"));
@@ -159,7 +170,7 @@ final class CustomBuildScanConfig {
         }
     }
 
-    static void addGitMetadata(BuildScanApi buildScan) {
+    static void addGitMetadata(BuildScanExtension buildScan) {
         buildScan.background(api -> {
             if (!isGitInstalled()) {
                 return;
@@ -262,8 +273,8 @@ final class CustomBuildScanConfig {
 
         try (Reader standard = new BufferedReader(new InputStreamReader(process.getInputStream(), Charset.defaultCharset()))) {
             try (Reader error = new BufferedReader(new InputStreamReader(process.getErrorStream(), Charset.defaultCharset()))) {
-                String standardText = CharStreams.toString(standard);
-                String ignore = CharStreams.toString(error);
+                String standardText = readFully(standard);
+                String ignore = readFully(error);
 
                 boolean finished = process.waitFor(10, TimeUnit.SECONDS);
                 return finished && process.exitValue() == 0 ? trimAtEnd(standardText) : null;
@@ -275,12 +286,12 @@ final class CustomBuildScanConfig {
         }
     }
 
-    private static void addCustomValueAndSearchLink(BuildScanApi buildScan, String label, String value) {
+    private static void addCustomValueAndSearchLink(BuildScanExtension buildScan, String label, String value) {
         buildScan.value(label, value);
         addCustomLinkWithSearchTerms(buildScan, label + " build scans", label, value);
     }
 
-    private static void addCustomLinkWithSearchTerms(BuildScanApi buildScan, String title, String name, String value) {
+    private static void addCustomLinkWithSearchTerms(BuildScanExtension buildScan, String title, String name, String value) {
         String server = buildScan.getServer();
         if (server != null) {
             String searchParams = "search.names=" + urlEncode(name) + "&search.values=" + urlEncode(value);
@@ -341,6 +352,33 @@ final class CustomBuildScanConfig {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private static void captureTestProperties(BuildScanExtension buildScan, Gradle gradle) {
+        gradle.allprojects(p ->
+                p.getTasks().withType(Test.class).configureEach(test ->
+                        test.doFirst(t -> {
+                                    buildScan.value(test.getIdentityPath() + "#maxParallelForks", String.valueOf(test.getMaxParallelForks()));
+                                    test.getSystemProperties().forEach((key, val) ->
+                                            buildScan.value(test.getIdentityPath() + "#sysProps-" + key, hashValue(val)));
+                                }
+                        )
+                )
+        );
+    }
+
+    private static String readFully(Reader reader) throws IOException {
+        StringBuilder sb = new StringBuilder();
+        char[] buf = new char[1024];
+        int nRead;
+        while ((nRead = reader.read(buf)) != -1) {
+            sb.append(buf, 0, nRead);
+        }
+        return sb.toString();
+    }
+
+    private static boolean isNullOrEmpty(String value) {
+        return value == null || value.isEmpty();
     }
 
     private CustomBuildScanConfig() {
