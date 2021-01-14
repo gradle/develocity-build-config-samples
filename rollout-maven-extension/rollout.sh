@@ -19,17 +19,18 @@ while getopts "ufp" opt; do
 done
 
 function prepare() {
-  checkout_area=`mktemp -d`
+  checkout_area=$( mktemp -d )
 }
 
 function process_repositories() {
-  numOfRepos=$( cat $repositories | sed '/^[[:blank:]]*#/d;s/^[[:blank:]]*//;s/#.*//' | wc -l )
+  numOfRepos=$( sed "/^[[:blank:]]*#/d;s/^[[:blank:]]*//;s/#.*//" "$repositories" | wc -l )
   current=1
-  for repo in $(cat $repositories | sed '/^[[:blank:]]*#/d;s/^[[:blank:]]*//;s/#.*//'); do
-    echo -e "${yellow}($current/$numOfRepos) Processing $repo...${nc}"
-    process_repository $repo
+  while IFS= read -r repo
+  do
+    echo -e "${yellow}($current/$numOfRepos) Processing ${repo}...${nc}"
+    process_repository "$repo"
     ((current++))
-  done
+  done < <(sed "/^[[:blank:]]*#/d;s/^[[:blank:]]*//;s/#.*//" "$repositories")
 }
 
 function process_repository() {
@@ -37,18 +38,20 @@ function process_repository() {
 
   # clone the Git epository without actually downloading files or history
   git clone -n "$1" "$checkout_area/$repository_name" --depth 1 >& /dev/null
-  pushd "$checkout_area/$repository_name" >& /dev/null
+  pushd "$checkout_area/$repository_name" >& /dev/null || return
   git reset HEAD . >& /dev/null
 
   # ensure it is a Maven project
-  if [ -z "$(git ls-tree -r HEAD --name-only | grep 'pom.xml')" ]; then
+  if ! git ls-tree -r HEAD --name-only | grep -q 'pom.xml'
+  then
     # no pom.xml found in the project  
     echo "$repository_name repository is not a Maven project, skipping..." >&2
     return
   fi
 
   # ensure .mvn folder exists
-  if [ -z "$(git ls-tree -r HEAD --name-only | grep '^.mvn/')" ]; then
+  if ! git ls-tree -r HEAD --name-only | grep -q '^.mvn/'
+  then
     # .mvn folder not found 
     if [ "$do_update" ]; then
       # script invoked with -u (update) flag, thus .mvn folder expected to already exist
@@ -64,15 +67,15 @@ function process_repository() {
   git checkout .mvn >& /dev/null
   if [ "$force" ]; then 
     # override existing files
-    cp -a $basedir/.mvn/. .mvn
+    cp -a "$basedir"/.mvn/. .mvn
   else
     # do not override existing files
-    cp -na $basedir/.mvn/. .mvn
+    cp -na "$basedir"/.mvn/. .mvn
   fi
 
   # update .gitignore file to ignore the .mvn/.gradle-enterprise folder
-  git checkout -- .gitignore >& /dev/null
-  if [ $? -eq 0 ]; then
+  if git checkout -- .gitignore >& /dev/null
+  then
     # .gitignore file already exists
     if ! grep -Fxq ".mvn/.gradle-enterprise/" .gitignore ; then
       echo ".mvn/.gradle-enterprise/" >> .gitignore
@@ -95,14 +98,14 @@ function process_repository() {
      echo "Changes to $repository_name repository available at $PWD"
   fi
 
-  popd >& /dev/null
+  popd >& /dev/null || return
 }
 
 function cleanup() {
   if [ "$push" ]; then
-    rm -rf $checkout_area
+    rm -rf "$checkout_area"
   else
-    echo "All cloned repositories available at "$checkout_area
+    echo "All cloned repositories available at $checkout_area"
   fi
 }
 
