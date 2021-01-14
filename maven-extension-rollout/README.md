@@ -2,17 +2,17 @@
 
 ### Overview
 
-The Gradle Enterprise Maven Extension rollout script allows to automate the application and upgrade of the [Gradle Enterprise Maven extension](https://docs.gradle.com/enterprise/maven-extension) on multiple Maven projects stored in separate Git repositories.
+The Gradle Enterprise Maven Extension rollout script provides a means to automate the application and upgrade of the [Gradle Enterprise Maven extension](https://docs.gradle.com/enterprise/maven-extension) on multiple Maven projects stored in separate Git repositories.
 
 ### Usage
 
 1. Update the `repositories.txt` file with the list of Git repositories you want to apply the extension on.
    Make sure each line contains a single Git repository URL.
-1. Update the `extensions.xml` and `gradle-enterprise.xml` files with your desired Gradle Enterprise configuration.
-1. Run the `./rollout.sh` bash script to execute the Gradle Enterprise configuration rollout. The script provides the following execution flags:
-   * `-p`: Push changes to the listed repositories. When not passing `-p` the script will do a dry run.
-   * `-f`: Force overriding of preexisting `extension.xml` and `gradle-enterprise.xml` files in the listed repositories.
-   * `-u`: Only update repositories with an existing with `.mvn` folder.
+1. Update the Maven `extensions.xml` and the Gradle Enterprise `gradle-enterprise.xml` files with your desired Gradle Enterprise configuration.
+1. Run the `./rollout.sh` bash script to execute the Gradle Enterprise configuration rollout. The script supports the following execution flags:
+   * `-u`: Only update those repositories that already contain the `.mvn` folder where the configuration files need to be stored.
+   * `-f`: Force overriding any pre-existing `extensions.xml` and `gradle-enterprise.xml` configuration files in the `.mvn` folder.
+   * `-p`: Commit and push the applied changes to the listed repositories. Omit the `-p` flag to do a dry run.
 
 ### What it does
 
