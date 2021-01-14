@@ -1,7 +1,9 @@
 package com.gradle;
 
 import com.gradle.scan.plugin.BuildScanExtension;
+import org.gradle.api.Action;
 import org.gradle.api.Project;
+import org.gradle.api.Task;
 import org.gradle.api.invocation.Gradle;
 import org.gradle.api.tasks.testing.Test;
 
@@ -357,10 +359,13 @@ final class CustomBuildScanConfig {
     private static void captureTestProperties(BuildScanExtension buildScan, Gradle gradle) {
         gradle.allprojects(p ->
                 p.getTasks().withType(Test.class).configureEach(test ->
-                        test.doFirst(t -> {
-                                    buildScan.value(test.getIdentityPath() + "#maxParallelForks", String.valueOf(test.getMaxParallelForks()));
-                                    test.getSystemProperties().forEach((key, val) ->
-                                            buildScan.value(test.getIdentityPath() + "#sysProps-" + key, hashValue(val)));
+                        test.doFirst("capture configuration for build scans", new Action<Task>() {
+                                    @Override
+                                    public void execute(Task task) {
+                                        buildScan.value(test.getIdentityPath() + "#maxParallelForks", String.valueOf(test.getMaxParallelForks()));
+                                        test.getSystemProperties().forEach((key, val) ->
+                                                buildScan.value(test.getIdentityPath() + "#sysProps-" + key, hashValue(val)));
+                                    }
                                 }
                         )
                 )
