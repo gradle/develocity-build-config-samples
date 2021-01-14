@@ -7,22 +7,13 @@ import org.gradle.api.Task;
 import org.gradle.api.invocation.Gradle;
 import org.gradle.api.tasks.testing.Test;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.gradle.Hasher.hashValue;
+import static com.gradle.Utils.*;
 
 final class CustomBuildScanConfig {
 
@@ -172,6 +163,38 @@ final class CustomBuildScanConfig {
         }
     }
 
+    private static boolean isCi() {
+        return isJenkins() || isTeamCity() || isCircleCI() || isBamboo() || isGitHubActions() || isGitLab() || isTravis();
+    }
+
+    private static boolean isJenkins() {
+        return envVariablePresent("JENKINS_URL");
+    }
+
+    private static boolean isTeamCity() {
+        return envVariablePresent("TEAMCITY_VERSION");
+    }
+
+    private static boolean isCircleCI() {
+        return envVariablePresent("CIRCLE_BUILD_URL");
+    }
+
+    private static boolean isBamboo() {
+        return envVariablePresent("bamboo_resultsUrl");
+    }
+
+    private static boolean isGitHubActions() {
+        return envVariablePresent("GITHUB_ACTIONS");
+    }
+
+    private static boolean isGitLab() {
+        return envVariablePresent("GITLAB_CI");
+    }
+
+    private static boolean isTravis() {
+        return envVariablePresent("TRAVIS_JOB_ID");
+    }
+
     static void addGitMetadata(BuildScanExtension buildScan) {
         buildScan.background(api -> {
             if (!isGitInstalled()) {
@@ -215,145 +238,8 @@ final class CustomBuildScanConfig {
         });
     }
 
-    private static boolean isCi() {
-        return isJenkins() || isTeamCity() || isCircleCI() || isBamboo() || isGitHubActions() || isGitLab() || isTravis();
-    }
-
-    private static boolean isJenkins() {
-        return envVariablePresent("JENKINS_URL");
-    }
-
-    private static boolean isTeamCity() {
-        return envVariablePresent("TEAMCITY_VERSION");
-    }
-
-    private static boolean isCircleCI() {
-        return envVariablePresent("CIRCLE_BUILD_URL");
-    }
-
-    private static boolean isBamboo() {
-        return envVariablePresent("bamboo_resultsUrl");
-    }
-
-    private static boolean isGitHubActions() {
-        return envVariablePresent("GITHUB_ACTIONS");
-    }
-
-    private static boolean isGitLab() {
-        return envVariablePresent("GITLAB_CI");
-    }
-
-    private static boolean isTravis() {
-        return envVariablePresent("TRAVIS_JOB_ID");
-    }
-
     private static boolean isGitInstalled() {
-        Runtime runtime = Runtime.getRuntime();
-        Process process = null;
-        try {
-            process = runtime.exec(new String[]{"git", "--version"});
-            boolean finished = process.waitFor(10, TimeUnit.SECONDS);
-            return finished && process.exitValue() == 0;
-        } catch (IOException | InterruptedException ignored) {
-            return false;
-        } finally {
-            if (process != null) {
-                process.destroyForcibly();
-            }
-        }
-    }
-
-    @SuppressWarnings("UnstableApiUsage")
-    private static String execAndGetStdOut(String... args) {
-        Runtime runtime = Runtime.getRuntime();
-        Process process;
-        try {
-            process = runtime.exec(args);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        try (Reader standard = new BufferedReader(new InputStreamReader(process.getInputStream(), Charset.defaultCharset()))) {
-            try (Reader error = new BufferedReader(new InputStreamReader(process.getErrorStream(), Charset.defaultCharset()))) {
-                String standardText = readFully(standard);
-                String ignore = readFully(error);
-
-                boolean finished = process.waitFor(10, TimeUnit.SECONDS);
-                return finished && process.exitValue() == 0 ? trimAtEnd(standardText) : null;
-            }
-        } catch (IOException | InterruptedException e) {
-            throw new RuntimeException(e);
-        } finally {
-            process.destroyForcibly();
-        }
-    }
-
-    private static void addCustomValueAndSearchLink(BuildScanExtension buildScan, String label, String value) {
-        buildScan.value(label, value);
-        addCustomLinkWithSearchTerms(buildScan, label + " build scans", label, value);
-    }
-
-    private static void addCustomLinkWithSearchTerms(BuildScanExtension buildScan, String title, String name, String value) {
-        String server = buildScan.getServer();
-        if (server != null) {
-            String searchParams = "search.names=" + urlEncode(name) + "&search.values=" + urlEncode(value);
-            String url = appendIfMissing(server, "/") + "scans?" + searchParams + "#selection.buildScanB=" + urlEncode("{SCAN_ID}");
-            buildScan.link(title, url);
-        }
-    }
-
-    private static String sysProperty(String name) {
-        return System.getProperty(name);
-    }
-
-    private static boolean sysPropertyPresent(String name) {
-        return !isNullOrEmpty(sysProperty(name));
-    }
-
-    private static boolean sysPropertyKeyStartingWith(String keyPrefix) {
-        for (Object key : System.getProperties().keySet()) {
-            if (key instanceof String) {
-                String stringKey = (String) key;
-                if (stringKey.startsWith(keyPrefix)) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    private static String envVariable(String name) {
-        return System.getenv(name);
-    }
-
-    private static boolean envVariablePresent(String name) {
-        return !isNullOrEmpty(envVariable(name));
-    }
-
-    private static String appendIfMissing(String str, String suffix) {
-        return str.endsWith(suffix) ? str : str + suffix;
-    }
-
-    private static String trimAtEnd(String str) {
-        return ('x' + str).trim().substring(1);
-    }
-
-    private static String urlEncode(String str) {
-        try {
-            return URLEncoder.encode(str, StandardCharsets.UTF_8.name());
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private static Properties readPropertiesFile(String name) {
-        try (InputStream input = new FileInputStream(name)) {
-            Properties properties = new Properties();
-            properties.load(input);
-            return properties;
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        return execAndCheckSuccess("git", "--version");
     }
 
     private static void captureTestProperties(BuildScanExtension buildScan, Gradle gradle) {
@@ -372,20 +258,19 @@ final class CustomBuildScanConfig {
         );
     }
 
-    private static String readFully(Reader reader) throws IOException {
-        StringBuilder sb = new StringBuilder();
-        char[] buf = new char[1024];
-        int nRead;
-        while ((nRead = reader.read(buf)) != -1) {
-            sb.append(buf, 0, nRead);
+    private static void addCustomValueAndSearchLink(BuildScanExtension buildScan, String label, String value) {
+        buildScan.value(label, value);
+        addCustomLinkWithSearchTerms(buildScan, label + " build scans", label, value);
+    }
+
+    private static void addCustomLinkWithSearchTerms(BuildScanExtension buildScan, String title, String name, String value) {
+        String server = buildScan.getServer();
+        if (server != null) {
+            String searchParams = "search.names=" + urlEncode(name) + "&search.values=" + urlEncode(value);
+            String url = appendIfMissing(server, "/") + "scans?" + searchParams + "#selection.buildScanB=" + urlEncode("{SCAN_ID}");
+            buildScan.link(title, url);
         }
-        return sb.toString();
     }
-
-    private static boolean isNullOrEmpty(String value) {
-        return value == null || value.isEmpty();
-    }
-
     private CustomBuildScanConfig() {
     }
 
