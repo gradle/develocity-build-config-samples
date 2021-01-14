@@ -23,10 +23,10 @@ If the `-u` flag is specified, the script only processes those repositories that
 If the `-u` flag is not specified, the script will process all repositories and create the `.mvn` folder for those repositories that do not already contain it.
 
 For each processed repository, if the `-f` flag is specified, any pre-existing `extensions.xml` and `gradle-enterprise.xml` configuration files in the `.mvn` folder are overridden.
-If the `-f` flag is not specified, any pre-existing configuration files are not modified. The modifications are committed to the Git repository.
+If the `-f` flag is not specified, any pre-existing configuration files are not modified. The modifications are committed to the cloned repository.
 
 For each repository, if the `-p` flag is specified, the committed changes are pushed to the remote Git repository, and the temporary folder is deleted once all repositories have been processed.
-If the `-p` flag is not specified, the committed changes are not pushed, and the tempory folder with all the cloned repositories is kept for further inspection.
+If the `-p` flag is not specified, the committed changes are not pushed, and the temporary folder with all the cloned repositories is kept for further inspection.
 
 ### Changelog
 
