@@ -3,7 +3,7 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
-## [1.0] - 2021-01-11
+## [1.0] - 2021-01-14
 Initial release.
 
 [Unreleased]: https://github.com/olivierlacan/keep-a-changelog/compare/common-custom-user-data-gradle-plugin-1.0...HEAD
