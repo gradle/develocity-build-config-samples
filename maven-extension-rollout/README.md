@@ -1,15 +1,17 @@
-# Gradle Enterprise Maven Extension rollout script
+## Gradle Enterprise Maven Extension rollout script
 
-This directory contains a script for rolling out the [Gradle Enterprise Maven Extension](https://docs.gradle.com/enterprise/maven-get-started/) to many repositories.
+### Overview
 
-## Repository layout
+The Gradle Enterprise Maven Extension rollout script allows to automate the application and upgrade of the [Gradle Enterprise Maven extension](https://docs.gradle.com/enterprise/maven-extension) on multiple Maven projects stored in separate GitHub repositories.
 
-- `rollout.sh` - the main rollout script.
-- `repository.txt.template` - a template file for the list of repositories to roll out the extension to.
-- `.mvn/extensions.xml` - the `extensions.xml` file that will be committed to each repository.
-- `.mvn/gradle-enterprise.xml` - the `gradle-enterprise.xml` file that will be committed to each repository.
+### Repository layout
 
-## Usage
+- `rollout.sh` - bash script containing the rollout logic
+- `repository.txt.template` - text file containing the list of Github repositories to apply the extension on
+- `.mvn/extensions.xml` - `extensions.xml` file that will be committed to each Github repository
+- `.mvn/gradle-enterprise.xml` - `gradle-enterprise.xml` file that will be committed to each Github repository
+
+### Usage
 
 1. Copy `repositories.txt.template` to `repositories.txt` in this directory
 2. Replace the list of repositories in `repositories.txt` with the list of repositories you want to apply the extension to.
@@ -20,7 +22,7 @@ This directory contains a script for rolling out the [Gradle Enterprise Maven Ex
    * `-f`: Force overriding of preexisting `extension.xml` and `gradle-enterprise.xml` files in the listed repositories.
    * `-u`: Only update repositories with an existing with `.mvn` folder.
 
-## What it does
+### What it does
 
 `rollout.sh` reads the list of repositories to modify from `repositories.txt`.
 It creates a temporary folder and clones the repositories to that folder.
@@ -34,7 +36,7 @@ If `-p` is specified the changes are also pushed back the remote repositories an
 If `-p` not specified changes will not be pushed back, but the location of the temporary work area will be logged.
 This way the result of running the script can be examined without changing the remote repositories.
 
-## Changelog
+### Changelog
 
 - 2020-09-01 - Added the `-p`, `-f` and `-u` flags to give more control over the behavior of the script
 - 2020-07-27 - Initial release
