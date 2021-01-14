@@ -10,9 +10,9 @@ The Gradle Enterprise Maven Extension rollout script provides a means to automat
    Make sure each line contains a single Git repository URL.
 1. Update the Maven `.mvn/extensions.xml` and the Gradle Enterprise `.mvn/gradle-enterprise.xml` files with your desired Gradle Enterprise configuration.
 1. Run the `./rollout.sh` bash script to execute the Gradle Enterprise configuration rollout. The script supports the following command line arguments:
-   * `-u`: Only update those repositories that already contain the `.mvn` folder where the configuration files are stored.
+   * `-u`: Only update those Git repositories that already contain the `.mvn` folder where the configuration files are stored.
    * `-f`: Force override of any pre-existing `extensions.xml` and `gradle-enterprise.xml` configuration files in the `.mvn` folder.
-   * `-p`: Push the applied changes to the listed repositories. Omit the `-p` flag to do a dry run.
+   * `-p`: Push the applied changes to the listed Git repositories. Omit the `-p` flag to do a dry run.
 
 ### How it works
 
