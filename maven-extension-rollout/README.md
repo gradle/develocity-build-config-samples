@@ -18,12 +18,13 @@ The Gradle Enterprise Maven Extension rollout script provides a means to automat
 
 The `rollout.sh` script reads the list of Git repositories with Maven projects to instrument from the `repositories.txt` file.
 The script creates a temporary folder and clones the listed Git repositories to that folder.
+
 If the `-u` flag is specified, the script only processes those repositories that already contain a `.mvn` folder.
+
 For each repository, if the `-f` flag is specified, any pre-existing `extensions.xml` and `gradle-enterprise.xml` configuration files in the `.mvn` folder are overridden.
 If the `-f` flag is not specified, any pre-existing configuration files are not modified. The modifications are then committed to the cloned Git repositories.
+
 If the `-p` flag is specified, the committed changes are pushed to the remote Git repositories and the temporary work area is deleted.
-If the `-p` flag is not specified,  changes will not be pushed back, but the location of the temporary work area will be logged.
-This way the result of running the script can be examined without changing the remote repositories.
 
 ### Changelog
 
