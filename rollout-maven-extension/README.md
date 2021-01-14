@@ -20,11 +20,13 @@ The `rollout.sh` script reads the list of Git repositories with Maven projects t
 The script creates a temporary folder and clones the listed Git repositories to that folder.
 
 If the `-u` flag is specified, the script only processes those repositories that already contain a `.mvn` folder.
+If the `-u` flag is not specified, the script will process all repositories and create the `.mvn` folder for those repositories that do not already contain it.
 
 For each repository, if the `-f` flag is specified, any pre-existing `extensions.xml` and `gradle-enterprise.xml` configuration files in the `.mvn` folder are overridden.
 If the `-f` flag is not specified, any pre-existing configuration files are not modified. The modifications are then committed to the cloned Git repositories.
 
-If the `-p` flag is specified, the committed changes are pushed to the remote Git repositories and the temporary work area is deleted.
+For each repository, if the `-p` flag is specified, the committed changes are pushed to the remote Git repositories, and the temporary folder is deleted once all repositories have been processed.
+If the `-p` flag is not specified, the committed changes are not pushed, and the tempory folder with the cloned repositories is kept.
 
 ### Changelog
 
