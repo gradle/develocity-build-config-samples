@@ -2,22 +2,14 @@
 
 ### Overview
 
-The Gradle Enterprise Maven Extension rollout script allows to automate the application and upgrade of the [Gradle Enterprise Maven extension](https://docs.gradle.com/enterprise/maven-extension) on multiple Maven projects stored in separate GitHub repositories.
-
-### Repository layout
-
-- `rollout.sh` - bash script containing the rollout logic
-- `repository.txt.template` - text file containing the list of Github repositories to apply the extension on
-- `.mvn/extensions.xml` - `extensions.xml` file that will be committed to each Github repository
-- `.mvn/gradle-enterprise.xml` - `gradle-enterprise.xml` file that will be committed to each Github repository
+The Gradle Enterprise Maven Extension rollout script allows to automate the application and upgrade of the [Gradle Enterprise Maven extension](https://docs.gradle.com/enterprise/maven-extension) on multiple Maven projects stored in separate Git repositories.
 
 ### Usage
 
-1. Copy `repositories.txt.template` to `repositories.txt` in this directory
-2. Replace the list of repositories in `repositories.txt` with the list of repositories you want to apply the extension to.
-   Make sure each line contains one git repository URL.
-3. Customize `.mvn/extensions.xml` and `.mvn/gradle-enterprise.xml` to your liking.
-5. Run `./rollout.sh`. The script provides the following flags to control the behavior:
+1. Update the `repositories.txt` file with the list of Git repositories you want to apply the extension on.
+   Make sure each line contains a single Git repository URL.
+1. Update the `extensions.xml` and `gradle-enterprise.xml` files with your desired Gradle Enterprise configuration.
+1. Run the `./rollout.sh` bash script to execute the Gradle Enterprise configuration rollout. The script provides the following execution flags:
    * `-p`: Push changes to the listed repositories. When not passing `-p` the script will do a dry run.
    * `-f`: Force overriding of preexisting `extension.xml` and `gradle-enterprise.xml` files in the listed repositories.
    * `-u`: Only update repositories with an existing with `.mvn` folder.
