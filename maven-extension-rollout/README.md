@@ -12,7 +12,7 @@ The Gradle Enterprise Maven Extension rollout script provides a means to automat
 1. Run the `./rollout.sh` bash script to execute the Gradle Enterprise configuration rollout. The script supports the following command line arguments:
    * `-u`: Only update those Git repositories that already contain the `.mvn` folder where the configuration files are stored.
    * `-f`: Force override of any pre-existing `extensions.xml` and `gradle-enterprise.xml` configuration files in the `.mvn` folder.
-   * `-p`: Push the applied changes to the listed Git repositories. Omit the `-p` flag to do a dry run.
+   * `-p`: Push the applied changes to the listed Git repositories.
 
 ### How it works
 
@@ -27,5 +27,5 @@ This way the result of running the script can be examined without changing the r
 
 ### Changelog
 
-- 2020-09-01 - Added the `-p`, `-f` and `-u` flags to give more control over the behavior of the script
+- 2020-09-01 - Add the `-p`, `-f`, and `-u` flags
 - 2020-07-27 - Initial release
