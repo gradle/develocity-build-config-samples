@@ -7,9 +7,7 @@ import org.gradle.api.Task;
 import org.gradle.api.invocation.Gradle;
 import org.gradle.api.tasks.testing.Test;
 
-import java.io.IOException;
 import java.util.Properties;
-import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -209,7 +207,7 @@ final class CustomBuildScanConfig {
                 addCustomValueAndSearchLink(api, "Git commit id", gitCommitId);
 
                 String originUrl = execAndGetStdOut("git", "config", "--get", "remote.origin.url");
-                if (!isNullOrEmpty(originUrl)) {
+                if (isNotEmpty(originUrl)) {
                     if (originUrl.contains("github.com/") || originUrl.contains("github.com:")) {
                         Matcher matcher = Pattern.compile("(.*)github\\.com[/|:](.*)").matcher(originUrl);
                         if (matcher.matches()) {
@@ -227,11 +225,11 @@ final class CustomBuildScanConfig {
                     }
                 }
             }
-            if (!isNullOrEmpty(gitBranchName)) {
+            if (isNotEmpty(gitBranchName)) {
                 api.tag(gitBranchName);
                 api.value("Git branch", gitBranchName);
             }
-            if (!isNullOrEmpty(gitStatus)) {
+            if (isNotEmpty(gitStatus)) {
                 api.tag("Dirty");
                 api.value("Git status", gitStatus);
             }
