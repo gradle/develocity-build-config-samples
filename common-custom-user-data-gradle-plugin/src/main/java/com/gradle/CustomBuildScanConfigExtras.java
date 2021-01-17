@@ -56,7 +56,7 @@ final class CustomBuildScanConfigExtras {
             if (String.valueOf(psOutput).length() >= 100000) {
                 psOutput = execAndGetStdOut("jps", "-m");
             }
-            if (!isNullOrEmpty(psOutput)) {
+            if (isNotEmpty(psOutput)) {
                 api.value("JVM processes", psOutput);
             }
         });
@@ -65,7 +65,7 @@ final class CustomBuildScanConfigExtras {
     private static void captureOsProcesses(BuildScanExtension buildScan) {
         buildScan.background(api -> {
             String psOutput = execAndGetStdOut("ps", "-o pid,ppid,time,command");
-            if (!isNullOrEmpty(psOutput)) {
+            if (isNotEmpty(psOutput)) {
                 api.value("OS processes", psOutput);
             }
         });

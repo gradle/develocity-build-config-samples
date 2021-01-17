@@ -13,10 +13,10 @@ import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
-class Utils {
+final class Utils {
 
-    static boolean isNullOrEmpty(String value) {
-        return value == null || value.isEmpty();
+    static boolean isNotEmpty(String value) {
+        return value != null && !value.isEmpty();
     }
 
     static String sysProperty(String name) {
@@ -24,7 +24,7 @@ class Utils {
     }
 
     static boolean sysPropertyPresent(String name) {
-        return !isNullOrEmpty(sysProperty(name));
+        return isNotEmpty(sysProperty(name));
     }
 
     static boolean sysPropertyKeyStartingWith(String keyPrefix) {
@@ -44,7 +44,7 @@ class Utils {
     }
 
     static boolean envVariablePresent(String name) {
-        return !isNullOrEmpty(envVariable(name));
+        return isNotEmpty(envVariable(name));
     }
 
     static String appendIfMissing(String str, String suffix) {
@@ -85,7 +85,6 @@ class Utils {
         }
     }
 
-    @SuppressWarnings("UnstableApiUsage")
     static String execAndGetStdOut(String... args) {
         Runtime runtime = Runtime.getRuntime();
         Process process;
