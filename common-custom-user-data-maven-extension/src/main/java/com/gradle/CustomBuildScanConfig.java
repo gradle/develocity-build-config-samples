@@ -1,24 +1,12 @@
 package com.gradle;
 
-import com.google.common.io.CharStreams;
 import com.gradle.maven.extension.api.scan.BuildScanApi;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.Properties;
-import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.google.common.base.Strings.isNullOrEmpty;
+import static com.gradle.Utils.*;
 
 final class CustomBuildScanConfig {
 
@@ -159,49 +147,6 @@ final class CustomBuildScanConfig {
         }
     }
 
-    static void addGitMetadata(BuildScanApi buildScan) {
-        buildScan.background(api -> {
-            if (!isGitInstalled()) {
-                return;
-            }
-
-            String gitCommitId = execAndGetStdOut("git", "rev-parse", "--short=8", "--verify", "HEAD");
-            String gitBranchName = execAndGetStdOut("git", "rev-parse", "--abbrev-ref", "HEAD");
-            String gitStatus = execAndGetStdOut("git", "status", "--porcelain");
-
-            if (gitCommitId != null) {
-                addCustomValueAndSearchLink(api, "Git commit id", gitCommitId);
-
-                String originUrl = execAndGetStdOut("git", "config", "--get", "remote.origin.url");
-                if (!isNullOrEmpty(originUrl)) {
-                    if (originUrl.contains("github.com/") || originUrl.contains("github.com:")) {
-                        Matcher matcher = Pattern.compile("(.*)github\\.com[/|:](.*)").matcher(originUrl);
-                        if (matcher.matches()) {
-                            String rawRepoPath = matcher.group(2);
-                            String repoPath = rawRepoPath.endsWith(".git") ? rawRepoPath.substring(0, rawRepoPath.length() - 4) : rawRepoPath;
-                            api.link("Github source", "https://github.com/" + repoPath + "/tree/" + gitCommitId);
-                        }
-                    } else if (originUrl.contains("gitlab.com/") || originUrl.contains("gitlab.com:")) {
-                        Matcher matcher = Pattern.compile("(.*)gitlab\\.com[/|:](.*)").matcher(originUrl);
-                        if (matcher.matches()) {
-                            String rawRepoPath = matcher.group(2);
-                            String repoPath = rawRepoPath.endsWith(".git") ? rawRepoPath.substring(0, rawRepoPath.length() - 4) : rawRepoPath;
-                            api.link("GitLab Source", "https://gitlab.com/" + repoPath + "/-/commit/" + gitCommitId);
-                        }
-                    }
-                }
-            }
-            if (!isNullOrEmpty(gitBranchName)) {
-                api.tag(gitBranchName);
-                api.value("Git branch", gitBranchName);
-            }
-            if (!isNullOrEmpty(gitStatus)) {
-                api.tag("Dirty");
-                api.value("Git status", gitStatus);
-            }
-        });
-    }
-
     private static boolean isCi() {
         return isJenkins() || isTeamCity() || isCircleCI() || isBamboo() || isGitHubActions() || isGitLab() || isTravis();
     }
@@ -234,45 +179,51 @@ final class CustomBuildScanConfig {
         return envVariablePresent("TRAVIS_JOB_ID");
     }
 
-    private static boolean isGitInstalled() {
-        Runtime runtime = Runtime.getRuntime();
-        Process process = null;
-        try {
-            process = runtime.exec(new String[]{"git", "--version"});
-            boolean finished = process.waitFor(10, TimeUnit.SECONDS);
-            return finished && process.exitValue() == 0;
-        } catch (IOException | InterruptedException ignored) {
-            return false;
-        } finally {
-            if (process != null) {
-                process.destroyForcibly();
+    static void addGitMetadata(BuildScanApi buildScan) {
+        buildScan.background(api -> {
+            if (!isGitInstalled()) {
+                return;
             }
-        }
+
+            String gitCommitId = execAndGetStdOut("git", "rev-parse", "--short=8", "--verify", "HEAD");
+            String gitBranchName = execAndGetStdOut("git", "rev-parse", "--abbrev-ref", "HEAD");
+            String gitStatus = execAndGetStdOut("git", "status", "--porcelain");
+
+            if (gitCommitId != null) {
+                addCustomValueAndSearchLink(api, "Git commit id", gitCommitId);
+
+                String originUrl = execAndGetStdOut("git", "config", "--get", "remote.origin.url");
+                if (isNotEmpty(originUrl)) {
+                    if (originUrl.contains("github.com/") || originUrl.contains("github.com:")) {
+                        Matcher matcher = Pattern.compile("(.*)github\\.com[/|:](.*)").matcher(originUrl);
+                        if (matcher.matches()) {
+                            String rawRepoPath = matcher.group(2);
+                            String repoPath = rawRepoPath.endsWith(".git") ? rawRepoPath.substring(0, rawRepoPath.length() - 4) : rawRepoPath;
+                            api.link("Github source", "https://github.com/" + repoPath + "/tree/" + gitCommitId);
+                        }
+                    } else if (originUrl.contains("gitlab.com/") || originUrl.contains("gitlab.com:")) {
+                        Matcher matcher = Pattern.compile("(.*)gitlab\\.com[/|:](.*)").matcher(originUrl);
+                        if (matcher.matches()) {
+                            String rawRepoPath = matcher.group(2);
+                            String repoPath = rawRepoPath.endsWith(".git") ? rawRepoPath.substring(0, rawRepoPath.length() - 4) : rawRepoPath;
+                            api.link("GitLab Source", "https://gitlab.com/" + repoPath + "/-/commit/" + gitCommitId);
+                        }
+                    }
+                }
+            }
+            if (isNotEmpty(gitBranchName)) {
+                api.tag(gitBranchName);
+                api.value("Git branch", gitBranchName);
+            }
+            if (isNotEmpty(gitStatus)) {
+                api.tag("Dirty");
+                api.value("Git status", gitStatus);
+            }
+        });
     }
 
-    @SuppressWarnings("UnstableApiUsage")
-    private static String execAndGetStdOut(String... args) {
-        Runtime runtime = Runtime.getRuntime();
-        Process process;
-        try {
-            process = runtime.exec(args);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        try (Reader standard = new BufferedReader(new InputStreamReader(process.getInputStream(), Charset.defaultCharset()))) {
-            try (Reader error = new BufferedReader(new InputStreamReader(process.getErrorStream(), Charset.defaultCharset()))) {
-                String standardText = CharStreams.toString(standard);
-                String ignore = CharStreams.toString(error);
-
-                boolean finished = process.waitFor(10, TimeUnit.SECONDS);
-                return finished && process.exitValue() == 0 ? trimAtEnd(standardText) : null;
-            }
-        } catch (IOException | InterruptedException e) {
-            throw new RuntimeException(e);
-        } finally {
-            process.destroyForcibly();
-        }
+    private static boolean isGitInstalled() {
+        return execAndCheckSuccess("git", "--version");
     }
 
     private static void addCustomValueAndSearchLink(BuildScanApi buildScan, String label, String value) {
@@ -288,61 +239,6 @@ final class CustomBuildScanConfig {
             buildScan.link(title, url);
         }
     }
-
-    private static String sysProperty(String name) {
-        return System.getProperty(name);
-    }
-
-    private static boolean sysPropertyPresent(String name) {
-        return !isNullOrEmpty(sysProperty(name));
-    }
-
-    private static boolean sysPropertyKeyStartingWith(String keyPrefix) {
-        for (Object key : System.getProperties().keySet()) {
-            if (key instanceof String) {
-                String stringKey = (String) key;
-                if (stringKey.startsWith(keyPrefix)) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    private static String envVariable(String name) {
-        return System.getenv(name);
-    }
-
-    private static boolean envVariablePresent(String name) {
-        return !isNullOrEmpty(envVariable(name));
-    }
-
-    private static String appendIfMissing(String str, String suffix) {
-        return str.endsWith(suffix) ? str : str + suffix;
-    }
-
-    private static String trimAtEnd(String str) {
-        return ('x' + str).trim().substring(1);
-    }
-
-    private static String urlEncode(String str) {
-        try {
-            return URLEncoder.encode(str, StandardCharsets.UTF_8.name());
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private static Properties readPropertiesFile(String name) {
-        try (InputStream input = new FileInputStream(name)) {
-            Properties properties = new Properties();
-            properties.load(input);
-            return properties;
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     private CustomBuildScanConfig() {
     }
 
