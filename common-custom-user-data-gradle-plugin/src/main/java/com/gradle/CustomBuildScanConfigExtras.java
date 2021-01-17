@@ -11,21 +11,21 @@ import static com.gradle.Utils.*;
 final class CustomBuildScanConfigExtras {
 
     static void configureBuildScan(BuildScanExtension buildScan, Gradle gradle) {
-        if (isCaptureEnabled("TestTaskConfiguration", true)) {
+        if (isCaptureEnabled("TestTaskConfiguration")) {
             captureTestTaskConfiguration(buildScan, gradle);
         }
-        if (isCaptureEnabled("JvmProcesses", false)) {
+        if (isCaptureEnabled("JvmProcesses")) {
             captureJvmProcesses(buildScan);
         }
-        if (isCaptureEnabled("OsProcesses", false)) {
+        if (isCaptureEnabled("OsProcesses")) {
             captureOsProcesses(buildScan);
         }
     }
 
-    private static boolean isCaptureEnabled(String feature, boolean enabledByDefault) {
+    private static boolean isCaptureEnabled(String feature) {
         String featurePropertyValue = System.getProperty("com.gradle.common-custom-user-data.capture" + feature);
         if (featurePropertyValue == null) {
-            return enabledByDefault;
+            return false;
         } else if (featurePropertyValue.isEmpty()) {
             // System property with no value enables capture
             return true;
