@@ -20,7 +20,7 @@ gradlePlugin {
         commonCustomUserData {
             id = 'com.gradle.common-custom-user-data-gradle-plugin'
             displayName = 'Gradle Enterprise Common Custom User Data Gradle Plugin'
-            description = 'A Gradle Plugin to capture common custom user data used for Gradle Build Scans in Gradle Enterprise'
+            description = 'A Gradle plugin to capture common custom user data used for Gradle Build Scans in Gradle Enterprise'
             implementationClass = 'com.gradle.CommonCustomUserDataGradlePlugin'
         }
     }
