@@ -1,1 +1,5 @@
+plugins {
+    id "com.gradle.enterprise" version "3.5.1"
+    id "com.gradle.common-custom-user-data-gradle-plugin" version "1.0"
+}
 rootProject.name = 'common-custom-user-data-gradle-plugin'
