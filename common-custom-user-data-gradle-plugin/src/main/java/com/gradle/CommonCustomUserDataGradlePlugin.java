@@ -23,7 +23,7 @@ public class CommonCustomUserDataGradlePlugin implements Plugin<Object> {
     }
 
     private void applySettingsPlugin(Settings settings) {
-        settings.getPlugins().withType(GradleEnterprisePlugin.class, __ -> {
+        settings.getPluginManager().withPlugin("com.gradle.enterprise", __ -> {
             BuildScanExtension buildScan = settings.getExtensions().getByType(GradleEnterpriseExtension.class).getBuildScan();
             CustomBuildScanConfig.configureBuildScan(buildScan, settings.getGradle());
 
@@ -36,7 +36,7 @@ public class CommonCustomUserDataGradlePlugin implements Plugin<Object> {
         if (!project.equals(project.getRootProject())) {
             throw new GradleException("Common custom user data plugin may only be applied to root project");
         }
-        project.getPlugins().withType(BuildScanPlugin.class, __ -> {
+        project.getPluginManager().withPlugin("com.gradle.build-scan", __ -> {
             BuildScanExtension buildScan = project.getExtensions().getByType(GradleEnterpriseExtension.class).getBuildScan();
             CustomBuildScanConfig.configureBuildScan(buildScan, project.getGradle());
             // Build cache configuration cannot be accessed from a project plugin
