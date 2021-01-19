@@ -15,6 +15,10 @@ dependencies {
     compileOnly "com.gradle:gradle-enterprise-gradle-plugin:3.5.1"
 }
 
+// Translate CI variables to project properties used for publishing
+ext["gradle.publish.key"] = findProperty("gradlePublishKey")
+ext["gradle.publish.secret"] = findProperty("gradlePublishSecret")
+
 gradlePlugin {
     plugins {
         commonCustomUserData {
