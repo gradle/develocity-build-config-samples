@@ -8,7 +8,7 @@ The Common Custom User Data Maven Extension for Gradle Enterprise serves multipl
 
 Please refer to the [Gradle Enterprise Maven Extension User Manual](https://docs.gradle.com/enterprise/maven-extension/#using_the_common_custom_user_data_maven_extension) for more details.
 
-This plugin requires the `com.gradle.gradle-enterprise-maven-extension` extension to be applied in your build in order to have an effect.
+This plugin requires the `com.gradle:gradle-enterprise-maven-extension` extension to be applied in your build in order to have an effect.
 
 ### Usage
 
