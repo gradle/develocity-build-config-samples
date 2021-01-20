@@ -1,4 +1,5 @@
-## Common Custom User Data Gradle Plugin
+## Common Custom User Data Gradle Plugin [![Revved up by Gradle Enterprise](https://img.shields.io/badge/Revved%20up%20by-Gradle%20Enterprise-06A0CE?logo=Gradle&labelColor=02303A)](https://ge.gradle.org/scans)
+
 
 ### Overview
 
@@ -12,6 +13,10 @@ This plugin requires the `com.gradle.enterprise` or `com.gradle.build-scan` plug
 This plugin is able to be applied as either a `Settings` plugin or a regular `Project` plugin:
 - for newer versions of Gradle (6.0 and later), this plugin should be applied to `settings.gradle[.kts]` (together with the `com.gradle.enterprise` plugin)
 - for older Gradle versions (5.x and older), this plugin should be applied to the root project in `build.gradle[.kts]` (together with the `com.gradle.build-scan` plugin)
+
+### Usage
+
+...
 
 ### Changelog
 
