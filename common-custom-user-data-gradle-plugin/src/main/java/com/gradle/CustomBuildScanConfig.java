@@ -26,19 +26,19 @@ import static com.gradle.Utils.urlEncode;
 final class CustomBuildScanConfig {
 
     static void configureBuildScan(BuildScanExtension buildScan, Gradle gradle) {
-        tagOs(buildScan);
-        tagIde(buildScan, gradle);
-        tagCiOrLocal(buildScan);
-        addCiMetadata(buildScan);
-        addGitMetadata(buildScan);
-        captureTestProperties(buildScan, gradle);
+        captureOs(buildScan);
+        captureIde(buildScan, gradle);
+        captureCiOrLocal(buildScan);
+        captureCiMetadata(buildScan);
+        captureGitMetadata(buildScan);
+        captureTestParallelization(buildScan, gradle);
     }
 
-    private static void tagOs(BuildScanExtension buildScan) {
+    private static void captureOs(BuildScanExtension buildScan) {
         buildScan.tag(sysProperty("os.name"));
     }
 
-    private static void tagIde(BuildScanExtension buildScan, Gradle gradle) {
+    private static void captureIde(BuildScanExtension buildScan, Gradle gradle) {
         gradle.projectsEvaluated(g -> {
             Project project = g.getRootProject();
             if (project.hasProperty("android.injected.invoked.from.ide")) {
@@ -56,11 +56,11 @@ final class CustomBuildScanConfig {
         });
     }
 
-    private static void tagCiOrLocal(BuildScanExtension buildScan) {
+    private static void captureCiOrLocal(BuildScanExtension buildScan) {
         buildScan.tag(isCi() ? "CI" : "LOCAL");
     }
 
-    private static void addCiMetadata(BuildScanExtension buildScan) {
+    private static void captureCiMetadata(BuildScanExtension buildScan) {
         if (isJenkins()) {
             if (envVariablePresent("BUILD_URL")) {
                 buildScan.link("Jenkins build", envVariable("BUILD_URL"));
@@ -203,7 +203,7 @@ final class CustomBuildScanConfig {
         return envVariablePresent("TRAVIS_JOB_ID");
     }
 
-    static void addGitMetadata(BuildScanExtension buildScan) {
+    static void captureGitMetadata(BuildScanExtension buildScan) {
         buildScan.background(api -> {
             if (!isGitInstalled()) {
                 return;
@@ -250,7 +250,7 @@ final class CustomBuildScanConfig {
         return execAndCheckSuccess("git", "--version");
     }
 
-    private static void captureTestProperties(BuildScanExtension buildScan, Gradle gradle) {
+    private static void captureTestParallelization(BuildScanExtension buildScan, Gradle gradle) {
         gradle.allprojects(p ->
             p.getTasks().withType(Test.class).configureEach(test ->
                 test.doFirst(new Action<Task>() {

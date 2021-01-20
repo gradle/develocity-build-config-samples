@@ -11,18 +11,18 @@ import static com.gradle.Utils.*;
 final class CustomBuildScanConfig {
 
     static void configureBuildScan(BuildScanApi buildScan) {
-        tagOs(buildScan);
-        tagIde(buildScan);
-        tagCiOrLocal(buildScan);
-        addCiMetadata(buildScan);
-        addGitMetadata(buildScan);
+        captureOs(buildScan);
+        captureIde(buildScan);
+        captureCiOrLocal(buildScan);
+        captureCiMetadata(buildScan);
+        captureGitMetadata(buildScan);
     }
 
-    private static void tagOs(BuildScanApi buildScan) {
+    private static void captureOs(BuildScanApi buildScan) {
         buildScan.tag(sysProperty("os.name"));
     }
 
-    private static void tagIde(BuildScanApi buildScan) {
+    private static void captureIde(BuildScanApi buildScan) {
         if (sysPropertyPresent("idea.version") || sysPropertyKeyStartingWith("idea.version")) {
             buildScan.tag("IntelliJ IDEA");
         } else if (sysPropertyPresent("eclipse.buildId")) {
@@ -32,11 +32,11 @@ final class CustomBuildScanConfig {
         }
     }
 
-    private static void tagCiOrLocal(BuildScanApi buildScan) {
+    private static void captureCiOrLocal(BuildScanApi buildScan) {
         buildScan.tag(isCi() ? "CI" : "LOCAL");
     }
 
-    private static void addCiMetadata(BuildScanApi buildScan) {
+    private static void captureCiMetadata(BuildScanApi buildScan) {
         if (isJenkins()) {
             if (envVariablePresent("BUILD_URL")) {
                 buildScan.link("Jenkins build", envVariable("BUILD_URL"));
@@ -179,7 +179,7 @@ final class CustomBuildScanConfig {
         return envVariablePresent("TRAVIS_JOB_ID");
     }
 
-    static void addGitMetadata(BuildScanApi buildScan) {
+    static void captureGitMetadata(BuildScanApi buildScan) {
         buildScan.background(api -> {
             if (!isGitInstalled()) {
                 return;
@@ -239,7 +239,7 @@ final class CustomBuildScanConfig {
             buildScan.link(title, url);
         }
     }
-    
+
     private CustomBuildScanConfig() {
     }
 
