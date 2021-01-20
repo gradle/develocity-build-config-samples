@@ -11,7 +11,17 @@ import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.gradle.Utils.*;
+import static com.gradle.Utils.appendIfMissing;
+import static com.gradle.Utils.envVariable;
+import static com.gradle.Utils.envVariablePresent;
+import static com.gradle.Utils.execAndCheckSuccess;
+import static com.gradle.Utils.execAndGetStdOut;
+import static com.gradle.Utils.isNotEmpty;
+import static com.gradle.Utils.readPropertiesFile;
+import static com.gradle.Utils.sysProperty;
+import static com.gradle.Utils.sysPropertyKeyStartingWith;
+import static com.gradle.Utils.sysPropertyPresent;
+import static com.gradle.Utils.urlEncode;
 
 final class CustomBuildScanConfig {
 
@@ -242,17 +252,15 @@ final class CustomBuildScanConfig {
 
     private static void captureTestProperties(BuildScanExtension buildScan, Gradle gradle) {
         gradle.allprojects(p ->
-                p.getTasks().withType(Test.class).configureEach(test ->
-                        test.doFirst("capture configuration for build scans", new Action<Task>() {
-                                    @Override
-                                    public void execute(Task task) {
-                                        buildScan.value(test.getIdentityPath() + "#maxParallelForks", String.valueOf(test.getMaxParallelForks()));
-                                        test.getSystemProperties().forEach((key, val) ->
-                                                buildScan.value(test.getIdentityPath() + "#sysProps-" + key, hashValue(val)));
-                                    }
-                                }
-                        )
-                )
+            p.getTasks().withType(Test.class).configureEach(test ->
+                test.doFirst(new Action<Task>() {
+                    // use anonymous inner class to keep Test task instance cacheable
+                    @Override
+                    public void execute(Task task) {
+                        buildScan.value(test.getIdentityPath() + "#maxParallelForks", String.valueOf(test.getMaxParallelForks()));
+                    }
+                })
+            )
         );
     }
 
@@ -269,6 +277,7 @@ final class CustomBuildScanConfig {
             buildScan.link(title, url);
         }
     }
+
     private CustomBuildScanConfig() {
     }
 
