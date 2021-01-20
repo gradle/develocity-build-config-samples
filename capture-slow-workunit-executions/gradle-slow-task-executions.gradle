@@ -11,9 +11,7 @@ if (!buildScanApi) {
 def THRESHOLD_MILLIS = 15 * 60 * 1000 // 15 min
 
 allprojects {
-    tasks.matching { t ->
-        t instanceof JavaCompile
-    }.configureEach { t ->
+    tasks.withType(JavaCompile).configureEach { t ->
         long start
         doFirst {
             start = System.currentTimeMillis()
