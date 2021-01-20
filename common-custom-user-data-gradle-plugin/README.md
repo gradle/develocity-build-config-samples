@@ -6,11 +6,11 @@ The Common Custom User Data Gradle Plugin for Gradle Enterprise serves multiple 
 - an example how to create a custom Gradle plugin that will standardise your Gradle Enterprise usage
 - a reusable artifact deployed to the [Gradle Plugin Portal](https://plugins.gradle.org/plugin/com.gradle.common-custom-user-data-gradle-plugin) that you can apply to your Gradle builds, and it just works 
   
-This plugin requires the `com.gradle.enterprise` or `com.gradle.build-scan` plugin to be applied in order to have an effect.
+This plugin requires the `com.gradle.enterprise` or `com.gradle.build-scan` plugin to be applied in your build in order to have an effect.
 
 ### Usage
 
-In order for the Common Custom User Gradle plugin to take effect, you need to apply it in the `settings.gradle[.kts]` file of your project. The `settings.gradle[.kts]` file is the same file where you have already declared the Gradle Enterprise Gradle plugin. See [here](https://github.com/gradle/gradle-enterprise-build-config-samples/blob/master/common-custom-user-data-gradle-plugin/settings.gradle) for an example.
+In order for the Common Custom User Gradle plugin to become active, you need to apply it in the `settings.gradle[.kts]` file of your project. The `settings.gradle[.kts]` file is the same file where you have already declared the Gradle Enterprise Gradle plugin. See [here](https://github.com/gradle/gradle-enterprise-build-config-samples/blob/master/common-custom-user-data-gradle-plugin/settings.gradle) for an example.
 
 If you are still using a 5.x version of Gradle, apply the Common Custom User Gradle plugin to the `build.gradle[.kts]` file of your root project.
 
