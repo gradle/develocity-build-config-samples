@@ -11,7 +11,11 @@ import org.codehaus.plexus.logging.Logger;
 
 import javax.inject.Inject;
 
-@Component(role = AbstractMavenLifecycleParticipant.class, hint = "common-custom-user-data")
+@Component(
+    role = AbstractMavenLifecycleParticipant.class,
+    hint = "common-custom-user-data",
+    description = "Captures common custom user data in Maven build scans"
+)
 public final class CommonCustomUserDataMavenExtension extends AbstractMavenLifecycleParticipant {
 
     private final PlexusContainer container;
