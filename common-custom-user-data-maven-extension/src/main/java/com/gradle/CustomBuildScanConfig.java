@@ -239,6 +239,7 @@ final class CustomBuildScanConfig {
             buildScan.link(title, url);
         }
     }
+    
     private CustomBuildScanConfig() {
     }
 

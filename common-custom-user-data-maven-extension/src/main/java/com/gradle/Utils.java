@@ -123,5 +123,7 @@ final class Utils {
         return ('x' + str).trim().substring(1);
     }
 
-    private Utils() {}
+    private Utils() {
+    }
+
 }

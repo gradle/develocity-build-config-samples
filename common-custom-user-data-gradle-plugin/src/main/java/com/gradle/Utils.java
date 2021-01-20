@@ -16,6 +16,7 @@ import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 final class Utils {
+
     private static final MessageDigest SHA_256 = createMessageDigest();
 
     static boolean isNotEmpty(String value) {
@@ -130,6 +131,7 @@ final class Utils {
         if (value == null) {
             return null;
         }
+
         String string = String.valueOf(value);
         byte[] encodedHash = SHA_256.digest(string.getBytes());
         StringBuilder hexString = new StringBuilder();
@@ -152,5 +154,7 @@ final class Utils {
         }
     }
 
-    private Utils() {}
+    private Utils() {
+    }
+
 }

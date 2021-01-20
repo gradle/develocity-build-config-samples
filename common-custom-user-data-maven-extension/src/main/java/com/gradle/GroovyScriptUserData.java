@@ -12,7 +12,7 @@ import org.codehaus.plexus.logging.Logger;
 import javax.annotation.Nullable;
 import java.io.File;
 
-class GroovyScriptUserData {
+final class GroovyScriptUserData {
 
     static void addToApis(MavenSession session, @Nullable BuildScanApi buildScan, @Nullable BuildCacheApi buildCache, Logger logger) throws MavenExecutionException {
         File scriptFile = getScriptFile(session);
