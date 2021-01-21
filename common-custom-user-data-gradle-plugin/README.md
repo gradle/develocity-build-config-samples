@@ -32,7 +32,7 @@ This approach has a number of benefits:
 - Add, remove and change the set of tags, links and custom values added to each Build Scan. This allows you to customize your Build Scans for your particular needs.
 - Standardize Gradle Enterprise and Gradle Build Cache configuration in your organization, removing the need for each project to specify this configuration.
 
-This approach can be particularly useful when Gradle Enterprise and Build Cache configuration should be shared among a number of Gradle projects. If your customized plugin applies the Gradle Enterprise plugin and provides all required configuration, then each consumer project will get all the benefits of Gradle Enterprise simply by applying this single plugin.
+This approach can be particularly useful when Gradle Enterprise and Build Cache configuration should be shared among a number of Gradle projects. If your customized plugin provides all required Gradle Enterprise configuration, then each consumer project will get all the benefits of Gradle Enterprise simply by applying this single plugin. The plugin sources provide a placeholder and example code to get you started.
 
 See the [Gradle User Manual](https://docs.gradle.org/current/userguide/publishing_gradle_plugins.html#custom-plugin-repositories) for more details on publishing Gradle plugins to an internal repository.
 

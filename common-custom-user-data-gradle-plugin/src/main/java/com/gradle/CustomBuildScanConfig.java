@@ -23,6 +23,9 @@ import static com.gradle.Utils.sysPropertyKeyStartingWith;
 import static com.gradle.Utils.sysPropertyPresent;
 import static com.gradle.Utils.urlEncode;
 
+/**
+ * Adds a standard set of useful tags, links and custom values to all build scans published.
+ */
 final class CustomBuildScanConfig {
 
     static void configureBuildScan(BuildScanExtension buildScan, Gradle gradle) {
