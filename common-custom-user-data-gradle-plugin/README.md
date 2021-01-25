@@ -2,19 +2,18 @@
 
 ### Overview
 
-The Common Custom User Data Gradle Plugin for Gradle Enterprise enhances published Build Scans 
-by adding a set of Tags, Links and Custom Values that have proven to be useful for many users of Gradle Enterprise.
+The Common Custom User Data Gradle Plugin for Gradle Enterprise enhances published build scans 
+by adding a set of tags, links and custom values that have proven to be useful for many users of Gradle Enterprise.
 
 You can leverage this plugin for your project in one of two ways:
-1. Apply the published plugin directly in your build and immediately benefit from enhanced Build Scans
-2. Copy this repository and develop a customized version of the plugin which will standardize Gradle Enterprise usage across multiple projects
+1. Apply the published plugin directly in your build and immediately benefit from enhanced build scans.
+2. Copy this repository and develop a customized version of the plugin which will standardize Gradle Enterprise usage across multiple projects.
 
-Out of the box, this plugin will enhance all Build Scans published with additional tags, links and custom values. These include:
+Out of the box, this plugin enhances all build scans published with additional tags, links and custom values. These include:
 - A tag representing the Operating System.
 - A tag representing how the build was invoked, be that from your IDE (IDEA, Eclipse, Android Studio) or from the command-line.
-- A `CI` tag for builds run on CI. In addition, a set of tags, links and custom values specific to the CI server will be added.
-  - The following CI servers are supported: Jenkins, Team City, Circle CI, Bamboo, GitHub Actions, Gitlab and Travis.
-- For `git` repositories, custom values with the Commit ID, Branch and the output of `git status`
+- A tag representing builds run on CI, together with a set of tags, links and custom values specific to the CI server running the build.
+- For `git` repositories, information on the commit id, branch name, status, and whether the checkout is dirty or not.
 
 ### Applying the published plugin
 
@@ -26,13 +25,13 @@ If you are still using a 5.x version of Gradle, apply the plugin to the `build.g
 
 ### Developing a customized version of the plugin
 
-For more power and flexibility, we recommend creating a copy of this repository so that you may develop a customized version of the plugin and publish it locally for your projects to consume.
+For more flexibility, we recommend creating a copy of this repository so that you may develop a customized version of the plugin and publish it locally for your projects to consume.
 
 This approach has a number of benefits:
-- Add, remove and change the set of tags, links and custom values added to each Build Scan. This allows you to customize your Build Scans for your particular needs.
-- Standardize Gradle Enterprise and Gradle Build Cache configuration in your organization, removing the need for each project to specify this configuration.
+- Tailor the build scan enhancements to exactly the set of tags, links and custom values you require.
+- Standardize the configuration for connecting to Gradle Enterprise and Gradle Build Cache in your organization, removing the need for each project to specify this configuration.
 
-This approach can be particularly useful when Gradle Enterprise and Build Cache configuration should be shared among a number of Gradle projects. If your customized plugin provides all required Gradle Enterprise configuration, then each consumer project will get all the benefits of Gradle Enterprise simply by applying this single plugin. The plugin sources provide a placeholder and example code to get you started.
+If your customized plugin provides all required Gradle Enterprise configuration, then a consumer project will get all the benefits of Gradle Enterprise simply by applying the plugin. The plugin sources provide a placeholder and example code to get you started.
 
 See the [Gradle User Manual](https://docs.gradle.org/current/userguide/publishing_gradle_plugins.html#custom-plugin-repositories) for more details on publishing Gradle plugins to an internal repository.
 
