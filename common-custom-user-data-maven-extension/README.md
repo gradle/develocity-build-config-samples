@@ -28,7 +28,7 @@ For more flexibility, we recommend creating a copy of this repository so that yo
 
 This approach has a number of benefits:
 - Tailor the build scan enhancements to exactly the set of tags, links and custom values you require.
-- Standardize the configuration for connecting to Gradle Enterprise in your organization, removing the need for each project to specify this configuration.
+- Standardize the configuration for connecting to Gradle Enterprise and Gradle Build Cache in your organization, removing the need for each project to specify this configuration.
 
 If your customized extension provides all required Gradle Enterprise configuration, then a consumer project will get all the benefits of Gradle Enterprise simply by applying the extension. The plugin sources provide a placeholder and example code to get you started.
 
