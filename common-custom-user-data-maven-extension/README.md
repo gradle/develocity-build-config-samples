@@ -30,7 +30,16 @@ This approach has a number of benefits:
 - Tailor the build scan enhancements to exactly the set of tags, links and custom values you require.
 - Standardize the configuration for connecting to Gradle Enterprise and Gradle Build Cache in your organization, removing the need for each project to specify this configuration.
 
-If your customized extension provides all required Gradle Enterprise configuration, then a consumer project will get all the benefits of Gradle Enterprise simply by applying the extension. The plugin sources provide a placeholder and example code to get you started.
+#### Providing Gradle Enterprise configuration in your custom Maven extension
+
+Using a custom extension, it is possible to completely remove the need for each project to declare a `gradle-enterprise.xml` file.
+Much of the configuration can be supplied programmatically. See `CustomGradleEnterpriseConfig` and `CustomBuildCacheConfig` for examples.
+
+At this time, the Gradle Enterprise server URL and credentials cannot be provided programmatically, and must be specified in a `gradle-enterprise.xml` file.
+To avoid adding this file to every project, this configuration file can be added to the `src/main/resources` directory so that it will be discovered by Gradle Enterprise when loading the extension.
+This project includes a `gradle-enterprise.sample.xml` file, which should be modified with your server URL and renamed to `gradle-enterprise.xml`.
+
+Once your custom extension provides all required Gradle Enterprise configuration, then a consumer project will get all the benefits of Gradle Enterprise simply by applying the extension.
 
 ### Changelog
 
