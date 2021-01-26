@@ -9,7 +9,18 @@ import com.gradle.maven.extension.api.cache.BuildCacheApi;
 final class CustomBuildCacheConfig {
 
     static void configureBuildCache(BuildCacheApi buildCache) {
-        // custom config goes here
+        /* Example of build cache configuration
+
+        boolean isCiServer = System.getenv().containsKey("CI");
+
+        // For short-lived CI agents, it makes sense to disable the local build cache.
+        buildCache.getLocal().setEnabled(!isCiServer);
+
+        // Only permit cache store operations for CI builds. Local builds will only read from the remote cache.
+        buildCache.getRemote().setEnabled(true);
+        buildCache.getRemote().setStoreEnabled(isCiServer);
+
+        */
     }
 
     private CustomBuildCacheConfig() {
