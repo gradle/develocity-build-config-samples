@@ -11,7 +11,7 @@ import static com.gradle.Utils.*;
 /**
  * Adds a standard set of useful tags, links and custom values to all build scans published.
  */
-final class CustomBuildScanConfig {
+final class CustomBuildScanEnhancements {
 
     static void configureBuildScan(BuildScanApi buildScan) {
         captureOs(buildScan);
@@ -259,7 +259,7 @@ final class CustomBuildScanConfig {
         }
     }
 
-    private CustomBuildScanConfig() {
+    private CustomBuildScanEnhancements() {
     }
 
 }
