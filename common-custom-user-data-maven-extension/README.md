@@ -17,9 +17,8 @@ Out of the box, this extension enhances all build scans published with additiona
 
 ### Using the published extension
 
-The Common Custom User Data Maven Extension is available in [Maven Central](https://search.maven.org/artifact/com.gradle/common-custom-user-data-maven-extension).
+The Common Custom User Data Maven Extension is available in [Maven Central](https://search.maven.org/artifact/com.gradle/common-custom-user-data-maven-extension). This extension requires the [Gradle Enterprise Maven extension](https://search.maven.org/artifact/com.gradle/gradle-enterprise-maven-extension) to also be applied in your build in order to have an effect.
 
-The Common Custom User Data Maven Extension requires the [Gradle Enterprise Maven extension](https://search.maven.org/artifact/com.gradle/gradle-enterprise-maven-extension) to already be applied in your build in order to have an effect.
 In order for the Common Custom User Data Maven Extension to become active, you need to register it in the `.mvn/extensions.xml` file in your root project.
 The `extensions.xml` file is the same file where you have already declared the Gradle Enterprise Maven extension. See [here](https://github.com/gradle/gradle-enterprise-build-config-samples/blob/master/common-custom-user-data-maven-extension/.mvn/extensions.xml) for an example.
 
