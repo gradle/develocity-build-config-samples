@@ -19,7 +19,7 @@ Out of the box, this plugin enhances all build scans published with additional t
 
 The Common Custom User Data Gradle Plugin is available in the [Gradle Plugin Portal](https://plugins.gradle.org/plugin/com.gradle.common-custom-user-data-gradle-plugin). This plugin requires the [Gradle Enterprise Gradle plugin](https://plugins.gradle.org/plugin/com.gradle.enterprise) to also be applied in your build in order to have an effect.
 
-To benefit from the Common Custom User Gradle plugin in your project, you must apply it in the `settings.gradle[.kts]` file of your project. This is the same file where you have already declared the Gradle Enterprise Gradle plugin. See [here](https://github.com/gradle/gradle-enterprise-build-config-samples/blob/master/common-custom-user-data-gradle-plugin/settings.gradle) for an example.
+To benefit from the Common Custom User Data Gradle plugin in your project, you must apply it in the `settings.gradle[.kts]` file of your project. This is the same file where you have already declared the Gradle Enterprise Gradle plugin. See [here](https://github.com/gradle/gradle-enterprise-build-config-samples/blob/master/common-custom-user-data-gradle-plugin/settings.gradle) for an example.
 
 If you are still using a 5.x version of Gradle, apply the plugin to the `build.gradle[.kts]` file of your root project.
 
