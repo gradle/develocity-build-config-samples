@@ -32,8 +32,6 @@ This approach has a number of benefits:
 
 If your customized extension provides all required Gradle Enterprise configuration, then a consumer project will get all the benefits of Gradle Enterprise simply by applying the extension. The plugin sources provide a placeholder and example code to get you started.
 
-Please refer to the [Gradle Enterprise Maven Extension User Manual](https://docs.gradle.com/enterprise/maven-extension/#using_the_common_custom_user_data_maven_extension) for more details.
-
 ### Changelog
 
 Refer to the [changelog](https://github.com/gradle/gradle-enterprise-build-config-samples/blob/master/common-custom-user-data-maven-extension/CHANGELOG.md) to see detailed changes on the versions.
