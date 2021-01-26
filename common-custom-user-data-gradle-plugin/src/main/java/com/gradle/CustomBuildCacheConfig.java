@@ -18,7 +18,7 @@ final class CustomBuildCacheConfig {
         });
 
         buildCache.remote(HttpBuildCache.class, remote -> {
-            remote.setUrl("https://localhost/cache/");
+            remote.setUrl("https://your-gradle-enterprise-server.com/cache/");
             remote.setAllowUntrustedServer(true);
             remote.setPush(isCiServer);
         });

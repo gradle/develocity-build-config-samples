@@ -8,6 +8,9 @@ import java.util.regex.Pattern;
 
 import static com.gradle.Utils.*;
 
+/**
+ * Adds a standard set of useful tags, links and custom values to all build scans published.
+ */
 final class CustomBuildScanConfig {
 
     static void configureBuildScan(BuildScanApi buildScan) {
