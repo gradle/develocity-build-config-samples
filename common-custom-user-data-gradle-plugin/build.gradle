@@ -16,10 +16,6 @@ dependencies {
     compileOnly 'com.gradle:gradle-enterprise-gradle-plugin:3.5.1'
 }
 
-// Translate CI variables to project properties used for publishing
-ext['gradle.publish.key'] = findProperty('gradlePublishKey')
-ext['gradle.publish.secret'] = findProperty('gradlePublishSecret')
-
 gradlePlugin {
     plugins {
         commonCustomUserData {
@@ -31,6 +27,16 @@ gradlePlugin {
     }
 }
 
+/*
+The rest of the build logic in this file is only required for publishing to the Gradle Plugin Portal.
+When using this project as a template for your own plugin to publish internally, you should delete all code following this comment.
+You may also remove `plugin-publish` and `signing` from the `plugins {}` block above.
+ */
+
+// Translate CI variables to project properties used for publishing
+ext['gradle.publish.key'] = findProperty('gradlePublishKey')
+ext['gradle.publish.secret'] = findProperty('gradlePublishSecret')
+
 pluginBundle {
     website = "https://github.com/gradle/gradle-enterprise-build-config-samples/tree/master/common-custom-user-data-gradle-plugin"
     vcsUrl = "https://github.com/gradle/gradle-enterprise-build-config-samples.git"
@@ -40,6 +46,7 @@ pluginBundle {
 signing {
     // Require publications to be signed on CI. Otherwise, publication will be signed only if keys are provided.
     required System.getenv().containsKey("CI")
+
     useInMemoryPgpKeys(System.getenv("PGP_SIGNING_KEY"), System.getenv("PGP_SIGNING_KEY_PASSPHRASE"))
 
     sign(configurations.archives)
