@@ -23,9 +23,9 @@ The Common Custom User Data Maven Extension requires the [Gradle Enterprise Mave
 In order for the Common Custom User Data Maven Extension to become active, you need to register it in the `.mvn/extensions.xml` file in your root project.
 The `extensions.xml` file is the same file where you have already declared the Gradle Enterprise Maven extension. See [here](https://github.com/gradle/gradle-enterprise-build-config-samples/blob/master/common-custom-user-data-maven-extension/.mvn/extensions.xml) for an example.
 
-### Developing a customized version of the plugin
+### Developing a customized version of the extension
 
-For more flexibility, we recommend creating a copy of this repository so that you may develop a customized version of the extension and publish it locally for your projects to consume.
+For more flexibility, we recommend creating a copy of this repository so that you may develop a customized version of the extension and publish it internally for your projects to consume.
 
 This approach has a number of benefits:
 - Tailor the build scan enhancements to exactly the set of tags, links and custom values you require.
