@@ -15,7 +15,7 @@ Out of the box, this extension enhances all build scans published with additiona
 - A tag representing builds run on CI, together with a set of tags, links and custom values specific to the CI server running the build.
 - For `git` repositories, information on the commit id, branch name, status, and whether the checkout is dirty or not.
 
-### Using the published extension
+### Applying the published extension
 
 The Common Custom User Data Maven Extension is available in [Maven Central](https://search.maven.org/artifact/com.gradle/common-custom-user-data-maven-extension). This extension requires the [Gradle Enterprise Maven extension](https://search.maven.org/artifact/com.gradle/gradle-enterprise-maven-extension) to also be applied in your build in order to have an effect.
 
