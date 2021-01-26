@@ -25,7 +25,7 @@ If you are still using a 5.x version of Gradle, apply the plugin to the `build.g
 
 ### Developing a customized version of the plugin
 
-For more flexibility, we recommend creating a copy of this repository so that you may develop a customized version of the plugin and publish it locally for your projects to consume.
+For more flexibility, we recommend creating a copy of this repository so that you may develop a customized version of the plugin and publish it internally for your projects to consume.
 
 This approach has a number of benefits:
 - Tailor the build scan enhancements to exactly the set of tags, links and custom values you require.
