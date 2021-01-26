@@ -1,6 +1,7 @@
 plugins {
     id 'java-gradle-plugin'
     id 'maven-publish'
+    id 'signing'
     id 'com.gradle.plugin-publish' version '0.12.0'
 }
 
@@ -34,4 +35,12 @@ pluginBundle {
     website = "https://github.com/gradle/gradle-enterprise-build-config-samples/tree/master/common-custom-user-data-gradle-plugin"
     vcsUrl = "https://github.com/gradle/gradle-enterprise-build-config-samples.git"
     tags = ["gradle", "gradle enterprise"]
+}
+
+signing {
+    // Require publications to be signed on CI. Otherwise, publication will be signed only if keys are provided.
+    required System.getenv().containsKey("CI")
+    useInMemoryPgpKeys(System.getenv("PGP_SIGNING_KEY"), System.getenv("PGP_SIGNING_KEY_PASSPHRASE"))
+
+    sign(configurations.archives)
 }
