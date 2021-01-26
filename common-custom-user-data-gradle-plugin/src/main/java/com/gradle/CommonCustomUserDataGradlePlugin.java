@@ -1,20 +1,22 @@
 package com.gradle;
 
 import com.gradle.enterprise.gradleplugin.GradleEnterpriseExtension;
-import com.gradle.enterprise.gradleplugin.GradleEnterprisePlugin;
 import com.gradle.scan.plugin.BuildScanExtension;
-import com.gradle.scan.plugin.BuildScanPlugin;
 import org.gradle.api.GradleException;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.initialization.Settings;
 import org.gradle.caching.configuration.BuildCacheConfiguration;
+import org.gradle.util.GradleVersion;
 
 public class CommonCustomUserDataGradlePlugin implements Plugin<Object> {
     public void apply(Object target) {
         if (target instanceof Settings) {
             applySettingsPlugin((Settings) target);
         } else if (target instanceof Project) {
+            if (settingsPluginsSupported()) {
+                throw new GradleException("For Gradle 6.0 and newer, common-custom-user-data-gradle-plugin must be applied to Settings");
+            }
             applyProjectPlugin((Project) target);
         }
     }
@@ -45,5 +47,9 @@ public class CommonCustomUserDataGradlePlugin implements Plugin<Object> {
 
             // Build cache configuration cannot be accessed from a project plugin
         });
+    }
+
+    private boolean settingsPluginsSupported() {
+        return GradleVersion.current().compareTo(GradleVersion.version("6.0")) >= 0;
     }
 }
