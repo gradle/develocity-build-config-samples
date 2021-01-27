@@ -109,7 +109,6 @@ final class CustomBuildScanConfig {
             }
             if (envVariablePresent("CIRCLE_JOB")) {
                 addCustomValueAndSearchLink(buildScan, "CI job", envVariable("CIRCLE_JOB"));
-
             }
             if (envVariablePresent("CIRCLE_WORKFLOW_ID")) {
                 addCustomValueAndSearchLink(buildScan, "CI workflow", envVariable("CIRCLE_WORKFLOW_ID"));
@@ -172,10 +171,19 @@ final class CustomBuildScanConfig {
                 buildScan.tag(envVariable("TRAVIS_EVENT_TYPE"));
             }
         }
+
+        if (isBitrise()) {
+            if (envVariablePresent("BITRISE_BUILD_URL")) {
+                buildScan.link("Bitrise build", envVariable("BITRISE_BUILD_URL"));
+            }
+            if (envVariablePresent("BITRISE_BUILD_NUMBER")) {
+                buildScan.value("CI build number", envVariable("BITRISE_BUILD_NUMBER"));
+            }
+        }
     }
 
     private static boolean isCi() {
-        return isGenericCI() || isJenkins() || isTeamCity() || isCircleCI() || isBamboo() || isGitHubActions() || isGitLab() || isTravis();
+        return isGenericCI() || isJenkins() || isTeamCity() || isCircleCI() || isBamboo() || isGitHubActions() || isGitLab() || isTravis() || isBitrise();
     }
 
     private static boolean isGenericCI() {
@@ -208,6 +216,10 @@ final class CustomBuildScanConfig {
 
     private static boolean isTravis() {
         return envVariablePresent("TRAVIS_JOB_ID");
+    }
+
+    private static boolean isBitrise() {
+        return envVariablePresent("BITRISE_BUILD_NUMBER");
     }
 
     static void captureGitMetadata(BuildScanExtension buildScan) {
