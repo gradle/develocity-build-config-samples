@@ -4,13 +4,17 @@
 
      This file specifies only the URL of the Gradle Enterprise server, assuming that the rest of the Gradle Enterprise
      configuration is provided programmatically in the extension.
+
+     NOTE: To include this in your custom extension:
+     - Update the values for your Gradle Enterprise instance
+     - Rename the file to `gradle-enterprise.xml`
 -->
 
 <gradleEnterprise
     xmlns="https://www.gradle.com/gradle-enterprise-maven" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="https://www.gradle.com/gradle-enterprise-maven https://www.gradle.com/schema/gradle-enterprise-maven.xsd">
   <server>
-    <url>https://enterprise-samples.gradle.com</url>
+    <url>https://your-gradle-enterprise-server.com</url>
     <allowUntrusted>true</allowUntrusted>
   </server>
 </gradleEnterprise>

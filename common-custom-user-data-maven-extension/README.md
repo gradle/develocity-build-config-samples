@@ -52,18 +52,11 @@ Refer to the [Javadoc](https://docs.gradle.com/enterprise/maven-extension/api/) 
 Using a custom extension, it is possible to completely remove the need for each project to declare a `gradle-enterprise.xml` file.
 Much of the configuration can be supplied programmatically. See `CustomBuildScanConfig` and `CustomBuildCacheConfig` for examples.
 
-At this time, the Gradle Enterprise server URL and credentials cannot be provided programmatically, and must be specified in a `gradle-enterprise.xml` file.
-To avoid adding this file to every project, this configuration file can be added to the `src/main/resources` directory so that it will be discovered by Gradle Enterprise when loading the extension.
+At this time, the Gradle Enterprise server URL cannot be provided programmatically, and must be specified in a `gradle-enterprise.xml` file.
+To avoid adding this file to every project, this configuration file can be added to the `src/main/resources` directory so that it will be packaged in the root of you custom extension, and discovered by Gradle Enterprise when loading the extension.
 This project includes a `gradle-enterprise.sample.xml` file, which should be modified with your server URL and renamed to `gradle-enterprise.xml`.
 
 Once your custom extension provides all required Gradle Enterprise configuration, then a consumer project will get all the benefits of Gradle Enterprise simply by applying the extension.
-
-#### Running custom build scan configuration logic once
-
-The build scan API offers a way to guarantee that some code is only executed once for the whole execution of a multi-project Maven build.
-
-The `BuildScanApi` provides an `executeOnce()` hook that you can use for these situations. It must be provided with an identifier, and can call any service provided by the API.
-The identifier is used to guarantee that the provided action will be executed at most once.
 
 ### Changelog
 

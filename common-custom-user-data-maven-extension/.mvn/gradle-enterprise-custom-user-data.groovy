@@ -12,4 +12,4 @@ buildScan.tag(project.name)
 buildScan.value('parallel', session.parallel as String)
 
 // Enable storing in the remote build cache based on the presence of a `CI` environment variable
-buildCache.getRemote().setStoreEnabled(session.systemProperties.containsKey('CI'))
+buildCache.remote.storeEnabled = session.systemProperties.containsKey('CI')
