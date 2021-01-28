@@ -33,15 +33,19 @@ public final class CommonCustomUserDataMavenExtension extends AbstractMavenLifec
 
         BuildScanApi buildScan = ApiAccessor.lookupBuildScanApi(container, getClass());
         if (buildScan != null) {
-            logger.debug("Configuring build scan");
-            CustomBuildScanConfig.configureBuildScan(buildScan);
-            logger.debug("Finished configuring build scan");
+            logger.debug("Configuring build scan publishing");
+            CustomGradleEnterpriseConfig.configureBuildScanPublishing(buildScan);
+            logger.debug("Finished configuring build scan publishing");
+
+            logger.debug("Applying build scan enhancements");
+            CustomBuildScanEnhancements.configureBuildScan(buildScan);
+            logger.debug("Finished applying build scan enhancements");
         }
 
         BuildCacheApi buildCache = ApiAccessor.lookupBuildCacheApi(container, getClass());
         if (buildCache != null) {
             logger.debug("Configuring build cache");
-            CustomBuildCacheConfig.configureBuildCache(buildCache);
+            CustomGradleEnterpriseConfig.configureBuildCache(buildCache);
             logger.debug("Finished configuring build cache");
         }
 

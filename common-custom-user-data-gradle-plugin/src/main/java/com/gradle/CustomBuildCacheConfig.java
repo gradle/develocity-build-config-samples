@@ -13,6 +13,7 @@ final class CustomBuildCacheConfig {
 
         boolean isCiServer = System.getenv().containsKey("CI");
 
+        // For short-lived CI agents, it makes sense to disable the local build cache
         buildCache.local(local -> {
             local.setEnabled(!isCiServer);
         });
