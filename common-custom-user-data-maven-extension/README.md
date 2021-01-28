@@ -50,7 +50,7 @@ Refer to the [Javadoc](https://docs.gradle.com/enterprise/maven-extension/api/) 
 #### Providing Gradle Enterprise configuration in your custom Maven extension
 
 Using a custom extension, it is possible to completely remove the need for each project to declare a `gradle-enterprise.xml` file.
-Much of the configuration can be supplied programmatically. See `CustomBuildScanConfig` and `CustomBuildCacheConfig` for examples.
+Much of the configuration can be supplied programmatically. See `CustomGradleEnterpriseConfig` for examples.
 
 At this time, the Gradle Enterprise server URL cannot be provided programmatically, and must be specified in a `gradle-enterprise.xml` file.
 To avoid adding this file to every project, this configuration file can be added to the `src/main/resources` directory so that it will be packaged in the root of you custom extension, and discovered by Gradle Enterprise when loading the extension.

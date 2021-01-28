@@ -1,12 +1,25 @@
 package com.gradle;
 
 import com.gradle.maven.extension.api.cache.BuildCacheApi;
+import com.gradle.maven.extension.api.scan.BuildScanApi;
 
 /**
- * Provide standardized build cache configuration.
- * By applying the extension, these build cache settings will automatically be applied.
+ * Provide standardized Gradle Enterprise configuration.
+ * By applying the extension, these settings will automatically be applied.
  */
-final class CustomBuildCacheConfig {
+final class CustomGradleEnterpriseConfig {
+
+    static void configureBuildScanPublishing(BuildScanApi buildScans) {
+        /* Example of build scan configuration
+
+        boolean isCiServer = System.getenv().containsKey("CI");
+
+        buildScans.publishAlways();
+        buildScans.setCaptureGoalInputFiles(true);
+        buildScans.setUploadInBackground(!isCiServer);
+
+        */
+    }
 
     static void configureBuildCache(BuildCacheApi buildCache) {
         /* Example of build cache configuration
@@ -23,7 +36,7 @@ final class CustomBuildCacheConfig {
         */
     }
 
-    private CustomBuildCacheConfig() {
+    private CustomGradleEnterpriseConfig() {
     }
 
 }
