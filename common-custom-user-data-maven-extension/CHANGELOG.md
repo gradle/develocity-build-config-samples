@@ -2,10 +2,11 @@
 All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
+- Detect generic "CI" environment variable or system property to add `CI` tag
 
 ## [1.3.1] - 2021-01-21
 ### Fixed
-- Builds with no changes as per `git status` are no longer tagged as "Dirty"
+- Builds with no changes as per `git status` are no longer tagged as `Dirty`
 
 ## [1.3] - 2020-09-10
 ### Added

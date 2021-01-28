@@ -151,7 +151,11 @@ final class CustomBuildScanConfig {
     }
 
     private static boolean isCi() {
-        return isJenkins() || isTeamCity() || isCircleCI() || isBamboo() || isGitHubActions() || isGitLab() || isTravis();
+        return isGenericCI() || isJenkins() || isTeamCity() || isCircleCI() || isBamboo() || isGitHubActions() || isGitLab() || isTravis();
+    }
+
+    private static boolean isGenericCI() {
+        return envVariablePresent("CI") || sysPropertyPresent("CI");
     }
 
     private static boolean isJenkins() {
