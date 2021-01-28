@@ -12,9 +12,12 @@ import org.gradle.util.GradleVersion;
 public class CommonCustomUserDataGradlePlugin implements Plugin<Object> {
     public void apply(Object target) {
         if (target instanceof Settings) {
+            if (!isGradle6OrNewer()) {
+                throw new GradleException("For Gradle versions prior to 6.0, common-custom-user-data-gradle-plugin cannot be applied to Settings");
+            }
             applySettingsPlugin((Settings) target);
         } else if (target instanceof Project) {
-            if (settingsPluginsSupported()) {
+            if (isGradle6OrNewer()) {
                 throw new GradleException("For Gradle 6.0 and newer, common-custom-user-data-gradle-plugin must be applied to Settings");
             }
             applyProjectPlugin((Project) target);
@@ -49,7 +52,7 @@ public class CommonCustomUserDataGradlePlugin implements Plugin<Object> {
         });
     }
 
-    private boolean settingsPluginsSupported() {
+    private boolean isGradle6OrNewer() {
         return GradleVersion.current().compareTo(GradleVersion.version("6.0")) >= 0;
     }
 }
