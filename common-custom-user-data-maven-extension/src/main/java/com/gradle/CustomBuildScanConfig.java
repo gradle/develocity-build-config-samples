@@ -195,7 +195,7 @@ final class CustomBuildScanConfig {
     }
 
     private static boolean isBitrise() {
-        return envVariablePresent("BITRISE_BUILD_NUMBER");
+        return envVariablePresent("BITRISE_BUILD_URL");
     }
 
     static void captureGitMetadata(BuildScanApi buildScan) {
