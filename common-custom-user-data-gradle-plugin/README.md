@@ -2,7 +2,7 @@
 
 ### Overview
 
-The Common Custom User Data Gradle Plugin for Gradle Enterprise enhances published build scans 
+The Common Custom User Data Gradle Plugin for Gradle Enterprise enhances published build scans
 by adding a set of tags, links and custom values that have proven to be useful for many users of Gradle Enterprise.
 
 You can leverage this plugin for your project in one of two ways:
@@ -26,8 +26,8 @@ The plugin should be applied in `settings.gradle`, alongside the `com.gradle.ent
 ```groovy
 plugins {
     // …
-    id "com.gradle.enterprise" version "<<version>>"
-    id "com.gradle.common-custom-user-data-gradle-plugin" version "<<version>>"
+    id 'com.gradle.enterprise' version '3.5.1'
+    id 'com.gradle.common-custom-user-data-gradle-plugin' version '1.1.1'
     // …
 }
 ```
@@ -39,8 +39,8 @@ The plugin should be applied in `build.gradle` of the root project, alongside th
 ```groovy
 plugins {
     // …
-    id "com.gradle.build-scan" version "<<version>>"
-    id "com.gradle.common-custom-user-data-gradle-plugin" version "<<version>>"
+    id 'com.gradle.build-scan' version '3.5.1'
+    id 'com.gradle.common-custom-user-data-gradle-plugin' version '1.1.1'
     // …
 }
 ```
