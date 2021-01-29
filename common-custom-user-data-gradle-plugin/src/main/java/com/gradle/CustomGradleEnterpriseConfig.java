@@ -4,7 +4,7 @@ import com.gradle.enterprise.gradleplugin.GradleEnterpriseExtension;
 
 /**
  * Provide standardized Gradle Enterprise configuration.
- * By applying the plugin, this Gradle Enterprise configuration will automatically be applied.
+ * By applying the plugin, these settings will automatically be applied.
  */
 final class CustomGradleEnterpriseConfig {
 

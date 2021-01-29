@@ -10,7 +10,7 @@ import com.gradle.maven.extension.api.scan.BuildScanApi;
 final class CustomGradleEnterpriseConfig {
 
     static void configureBuildScanPublishing(BuildScanApi buildScans) {
-        /* Example of build scan configuration
+        /* Example of build scan publishing configuration
 
         boolean isCiServer = System.getenv().containsKey("CI");
 
@@ -26,10 +26,12 @@ final class CustomGradleEnterpriseConfig {
 
         boolean isCiServer = System.getenv().containsKey("CI");
 
-        // For short-lived CI agents, it makes sense to disable the local build cache.
-        buildCache.getLocal().setEnabled(!isCiServer);
+        // Enable the local build cache for all local and CI builds
+        // For short-lived CI agents, it makes sense to disable the local build cache
+        buildCache.getLocal().setEnabled(true);
 
-        // Only permit cache store operations for CI builds. Local builds will only read from the remote cache.
+        // Only permit store operations to the remote build cache for CI builds
+        // Local builds will only read from the remote build cache
         buildCache.getRemote().setEnabled(true);
         buildCache.getRemote().setStoreEnabled(isCiServer);
 
