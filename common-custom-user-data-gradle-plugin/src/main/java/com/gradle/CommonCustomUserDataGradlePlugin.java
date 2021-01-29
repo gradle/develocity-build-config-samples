@@ -13,12 +13,12 @@ public class CommonCustomUserDataGradlePlugin implements Plugin<Object> {
     public void apply(Object target) {
         if (target instanceof Settings) {
             if (!isGradle6OrNewer()) {
-                throw new GradleException("For Gradle versions prior to 6.0, common-custom-user-data-gradle-plugin cannot be applied to Settings");
+                throw new GradleException("For Gradle versions prior to 6.0, common-custom-user-data-gradle-plugin must be applied to the Root project");
             }
             applySettingsPlugin((Settings) target);
         } else if (target instanceof Project) {
             if (isGradle6OrNewer()) {
-                throw new GradleException("For Gradle 6.0 and newer, common-custom-user-data-gradle-plugin must be applied to Settings");
+                throw new GradleException("For Gradle versions 6.0 and newer, common-custom-user-data-gradle-plugin must be applied to Settings");
             }
             applyProjectPlugin((Project) target);
         }
