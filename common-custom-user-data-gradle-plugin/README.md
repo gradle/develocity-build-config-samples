@@ -21,7 +21,7 @@ The Common Custom User Data Gradle Plugin is available in the [Gradle Plugin Por
 
 #### Gradle 6.x (or newer)
 
-The plugin should be applied in `settings.gradle`, alongside the `com.gradle.enterprise` plugin:
+The plugin needs to be applied in `settings.gradle`, alongside the `com.gradle.enterprise` plugin:
 
 ```groovy
 plugins {
@@ -34,7 +34,7 @@ plugins {
 
 #### Gradle 5.x
 
-The plugin should be applied in `build.gradle` of the root project, alongside the `com.gradle.build-scan` plugin:
+The plugin needs to be applied in `build.gradle` of the root project, alongside the `com.gradle.build-scan` plugin:
 
 ```groovy
 plugins {
