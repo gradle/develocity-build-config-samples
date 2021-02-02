@@ -4,3 +4,11 @@ plugins {
 }
 
 rootProject.name = 'common-custom-user-data-gradle-plugin'
+
+gradleEnterprise {
+    buildScan {
+        termsOfServiceUrl = "https://gradle.com/terms-of-service"
+        termsOfServiceAgree = "yes"
+        publishAlways()
+    }
+}
