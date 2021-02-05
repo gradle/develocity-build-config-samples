@@ -64,9 +64,27 @@ final class CustomBuildScanEnhancements {
     }
 
     private static void captureCiMetadata(BuildScanExtension buildScan) {
-        if (isJenkins() || isHudson()) {
+        if (isJenkins()) {
             if (envVariablePresent("BUILD_URL")) {
                 buildScan.link("Jenkins build", envVariable("BUILD_URL"));
+            }
+            if (envVariablePresent("BUILD_NUMBER")) {
+                buildScan.value("CI build number", envVariable("BUILD_NUMBER"));
+            }
+            if (envVariablePresent("NODE_NAME")) {
+                addCustomValueAndSearchLink(buildScan, "CI node", envVariable("NODE_NAME"));
+            }
+            if (envVariablePresent("JOB_NAME")) {
+                addCustomValueAndSearchLink(buildScan, "CI job", envVariable("JOB_NAME"));
+            }
+            if (envVariablePresent("STAGE_NAME")) {
+                addCustomValueAndSearchLink(buildScan, "CI stage", envVariable("STAGE_NAME"));
+            }
+        }
+
+        if (isHudson()) {
+            if (envVariablePresent("BUILD_URL")) {
+                buildScan.link("Hudson build", envVariable("BUILD_URL"));
             }
             if (envVariablePresent("BUILD_NUMBER")) {
                 buildScan.value("CI build number", envVariable("BUILD_NUMBER"));
