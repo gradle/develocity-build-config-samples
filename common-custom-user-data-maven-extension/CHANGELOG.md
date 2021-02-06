@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 - Detect generic "CI" environment variable or system property to add `CI` tag
 
+### Fixed
+- Fix TeamCity integration by using environment variables that are present in TeamCity 2020.2
+
 ## [1.3.1] - 2021-01-21
 ### Fixed
 - Builds with no changes as per `git status` are no longer tagged as `Dirty`
