@@ -53,9 +53,9 @@ final class CustomBuildScanEnhancements {
     }
 
     private static void captureCiMetadata(BuildScanExtension buildScan) {
-        if (isJenkins()) {
+        if (isJenkins() || isHudson()) {
             if (envVariablePresent("BUILD_URL")) {
-                buildScan.link("Jenkins build", envVariable("BUILD_URL"));
+                buildScan.link(isJenkins() ? "Jenkins build" : "Hudson build", envVariable("BUILD_URL"));
             }
             if (envVariablePresent("BUILD_NUMBER")) {
                 buildScan.value("CI build number", envVariable("BUILD_NUMBER"));
@@ -166,7 +166,7 @@ final class CustomBuildScanEnhancements {
     }
 
     private static boolean isCi() {
-        return isGenericCI() || isJenkins() || isTeamCity() || isCircleCI() || isBamboo() || isGitHubActions() || isGitLab() || isTravis() || isBitrise();
+        return isGenericCI() || isJenkins() || isHudson() || isTeamCity() || isCircleCI() || isBamboo() || isGitHubActions() || isGitLab() || isTravis() || isBitrise();
     }
 
     private static boolean isGenericCI() {
@@ -175,6 +175,10 @@ final class CustomBuildScanEnhancements {
 
     private static boolean isJenkins() {
         return envVariablePresent("JENKINS_URL");
+    }
+
+    private static boolean isHudson() {
+        return envVariablePresent("HUDSON_URL");
     }
 
     private static boolean isTeamCity() {
