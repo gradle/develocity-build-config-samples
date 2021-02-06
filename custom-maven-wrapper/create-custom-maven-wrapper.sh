@@ -9,7 +9,7 @@
 # Note: You can invoke the Maven wrapper generation tool in a custom directory by running
 #       this script and passing the working directory as the first argument, e.g.:
 #
-#       mkdir /tmp/custom-maven-wrapper && ./create-custom-maven-wrapper /tmp/custom-maven-wrapper
+#       mkdir /tmp/custom-maven-wrapper && ./create-custom-maven-wrapper.sh /tmp/custom-maven-wrapper
 #
 
 current_dir=$PWD
@@ -21,7 +21,7 @@ nc='\033[0m'
 if [ -n "$1" ]
 then
   cd $1
-fi  
+fi
 
 echo -e "${yellow}Installing Maven wrapper${nc}"
 mvn -N io.takari:maven:0.7.7:wrapper -Dmaven=$maven_version
