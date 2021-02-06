@@ -6,7 +6,17 @@ import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.gradle.Utils.*;
+import static com.gradle.Utils.appendIfMissing;
+import static com.gradle.Utils.envVariable;
+import static com.gradle.Utils.envVariablePresent;
+import static com.gradle.Utils.execAndCheckSuccess;
+import static com.gradle.Utils.execAndGetStdOut;
+import static com.gradle.Utils.isNotEmpty;
+import static com.gradle.Utils.readPropertiesFile;
+import static com.gradle.Utils.sysProperty;
+import static com.gradle.Utils.sysPropertyKeyStartingWith;
+import static com.gradle.Utils.sysPropertyPresent;
+import static com.gradle.Utils.urlEncode;
 
 /**
  * Adds a standard set of useful tags, links and custom values to all build scans published.
@@ -40,9 +50,9 @@ final class CustomBuildScanEnhancements {
     }
 
     private static void captureCiMetadata(BuildScanApi buildScan) {
-        if (isJenkins()) {
+        if (isJenkins() || isHudson()) {
             if (envVariablePresent("BUILD_URL")) {
-                buildScan.link("Jenkins build", envVariable("BUILD_URL"));
+                buildScan.link(isJenkins() ? "Jenkins build" : "Hudson build", envVariable("BUILD_URL"));
             }
             if (envVariablePresent("BUILD_NUMBER")) {
                 buildScan.value("CI build number", envVariable("BUILD_NUMBER"));
@@ -168,6 +178,10 @@ final class CustomBuildScanEnhancements {
 
     private static boolean isJenkins() {
         return envVariablePresent("JENKINS_URL");
+    }
+
+    private static boolean isHudson() {
+        return envVariablePresent("HUDSON_URL");
     }
 
     private static boolean isTeamCity() {
