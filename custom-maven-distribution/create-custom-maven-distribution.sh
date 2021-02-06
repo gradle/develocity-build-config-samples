@@ -20,7 +20,7 @@
 # Note: You can build a Maven distribution that connects to _your_ Gradle Enterprise instance by running
 #       this script and passing the root URL of your Gradle Enterprise server as the first argument, e.g.:
 #
-#       ./create-custom-maven-distribution https://gradle-enterprise.mycompany.com
+#       ./create-custom-maven-distribution.sh https://gradle-enterprise.mycompany.com
 #
 
 maven_version=3.6.3
