@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 - Detect generic "CI" environment variable or system property to add `CI` tag
 
+### Fixed
+- Fix TeamCity integration by using environment variables that are present in TeamCity 2020.2
+
 ## [1.1.1] - 2021-01-26
 ### Fixed
 - Build will now fail if plugin is applied to `Project` on Gradle 6+. Plugin must be applied to `Settings` together with the `com.gradle.enterprise` plugin.

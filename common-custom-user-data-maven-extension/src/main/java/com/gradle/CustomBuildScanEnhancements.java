@@ -2,7 +2,6 @@ package com.gradle;
 
 import com.gradle.maven.extension.api.scan.BuildScanApi;
 
-import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -69,20 +68,14 @@ final class CustomBuildScanEnhancements {
         }
 
         if (isTeamCity()) {
-            if (sysPropertyPresent("teamcity.configuration.properties.file")) {
-                Properties properties = readPropertiesFile(sysProperty("teamcity.configuration.properties.file"));
-                String teamCityServerUrl = properties.getProperty("teamcity.serverUrl");
-                if (teamCityServerUrl != null && sysPropertyPresent("build.number") && sysPropertyPresent("teamcity.buildType.id")) {
-                    String buildNumber = sysProperty("build.number");
-                    String buildTypeId = sysProperty("teamcity.buildType.id");
-                    buildScan.link("TeamCity build", appendIfMissing(teamCityServerUrl, "/") + "viewLog.html?buildNumber=" + buildNumber + "&buildTypeId=" + buildTypeId);
-                }
+            if (envVariablePresent("BUILD_URL")) {
+                buildScan.link("TeamCity build", envVariable("BUILD_URL"));
             }
-            if (sysPropertyPresent("build.number")) {
-                buildScan.value("CI build number", sysProperty("build.number"));
+            if (envVariablePresent("BUILD_NUMBER")) {
+                buildScan.value("CI build number", envVariable("BUILD_NUMBER"));
             }
-            if (sysPropertyPresent("agent.name")) {
-                addCustomValueAndSearchLink(buildScan, "CI agent", sysProperty("agent.name"));
+            if (envVariablePresent("BUILD_AGENT_NAME")) {
+                addCustomValueAndSearchLink(buildScan, "CI agent", envVariable("BUILD_AGENT_NAME"));
             }
         }
 
