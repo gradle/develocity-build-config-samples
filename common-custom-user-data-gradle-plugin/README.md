@@ -27,7 +27,7 @@ The plugin needs to be applied in `settings.gradle`, alongside the `com.gradle.e
 ```groovy
 plugins {
     // …
-    id 'com.gradle.enterprise' version '3.5.1'
+    id 'com.gradle.enterprise' version '3.5.2'
     id 'com.gradle.common-custom-user-data-gradle-plugin' version '1.1.1'
     // …
 }
@@ -40,7 +40,7 @@ The plugin needs to be applied in `build.gradle` of the root project, alongside 
 ```groovy
 plugins {
     // …
-    id 'com.gradle.build-scan' version '3.5.1'
+    id 'com.gradle.build-scan' version '3.5.2'
     id 'com.gradle.common-custom-user-data-gradle-plugin' version '1.1.1'
     // …
 }

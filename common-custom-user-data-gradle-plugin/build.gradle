@@ -13,7 +13,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly 'com.gradle:gradle-enterprise-gradle-plugin:3.5.1'
+    compileOnly 'com.gradle:gradle-enterprise-gradle-plugin:3.5.2'
 }
 
 gradlePlugin {
