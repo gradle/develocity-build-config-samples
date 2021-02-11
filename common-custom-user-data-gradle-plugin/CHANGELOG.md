@@ -3,6 +3,7 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 - Detect generic "CI" environment variable or system property to add `CI` tag
+- Detect Hudson and Bitrise CI and add respective custom tags and values
 
 ### Fixed
 - Fix TeamCity integration by using environment variables that are present in TeamCity 2020.2
