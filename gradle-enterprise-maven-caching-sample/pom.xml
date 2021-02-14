@@ -9,6 +9,7 @@
 
   <modules>
     <module>java-project</module>
+    <module>avro-project</module>
   </modules>
 
   <properties>
