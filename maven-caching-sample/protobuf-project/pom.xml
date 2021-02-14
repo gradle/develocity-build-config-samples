@@ -109,6 +109,7 @@
                       <ignore>project</ignore>
 
                       <!-- NOTE : This cache configuration does not handle `outputTargets`, and will produce invalid results if this is set. -->
+                      <!-- When outputTargets are set, then outputDirectory is ignored (together with a bunch of other properties) -->
                       <ignore>outputTargets</ignore>
 
                       <!-- NOTE : If outputDirectorySuffix is defined for plugin, then we need to provide the resulting outputDirectory path below -->
