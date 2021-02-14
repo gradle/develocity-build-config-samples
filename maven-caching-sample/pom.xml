@@ -13,6 +13,7 @@
     <module>protobuf-project</module>
     <module>pmd-project</module>
     <module>spotbugs-project</module>
+    <module>antlr3-project</module>
   </modules>
 
   <properties>
