@@ -11,6 +11,7 @@
     <module>java-project</module>
     <module>avro-project</module>
     <module>protobuf-project</module>
+    <module>pmd-project</module>
   </modules>
 
   <properties>
