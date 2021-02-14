@@ -40,6 +40,84 @@
           </execution>
         </executions>
       </plugin>
+
+      <!-- When resolving from cache, need to explicitly add Antlr output as source root -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <version>3.2.0</version>
+        <executions>
+          <execution>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>add-source</goal>
+            </goals>
+            <configuration>
+              <sources>
+                <source>target/generated-sources/antlr3/</source>
+              </sources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
+
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>com.gradle</groupId>
+          <artifactId>gradle-enterprise-maven-extension</artifactId>
+          <configuration>
+            <gradleEnterprise>
+              <plugins>
+                <plugin>
+                  <groupId>org.antlr</groupId>
+                  <artifactId>antlr3-maven-plugin</artifactId>
+                  <inputs>
+                    <fileSets>
+                      <fileSet>
+                        <name>sourceDirectory</name>
+                      </fileSet>
+                      <fileSet>
+                        <name>libDirectory</name>
+                      </fileSet>
+                    </fileSets>
+                    <properties>
+                      <property><name>excludes</name></property>
+                      <property><name>includes</name></property>
+                      <property><name>dfa</name></property>
+                      <property><name>nfa</name></property>
+                      <property><name>maxSwitchCaseLabels</name></property>
+                      <property><name>minSwitchAlts</name></property>
+                      <property><name>messageFormat</name></property>
+                    </properties>
+                    <ignoredProperties>
+                      <ignore>debug</ignore>
+                      <ignore>trace</ignore>
+                      <ignore>verbose</ignore>
+                      <ignore>printGrammar</ignore>
+                      <ignore>profile</ignore>
+                      <ignore>report</ignore>
+
+                      <!-- internal mojo properties -->
+                      <ignore>project</ignore>
+                    </ignoredProperties>
+                  </inputs>
+                  <outputs>
+                    <directories>
+                      <directory>
+                        <name>outputDirectory</name>
+                      </directory>
+                    </directories>
+                    <cacheableBecause>All inputs and outputs declared</cacheableBecause>
+                  </outputs>
+                </plugin>
+              </plugins>
+            </gradleEnterprise>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+
   </build>
 </project>
