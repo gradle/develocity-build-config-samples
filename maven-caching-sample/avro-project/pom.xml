@@ -97,6 +97,7 @@
 
                       <property><name>stringType</name></property>
                       <property><name>imports</name></property>
+                      <property><name>fieldVisibility</name></property>
 
                       <property><name>customConversions</name></property>
                       <property><name>customLogicalTypeFactories</name></property>
@@ -104,7 +105,7 @@
                       <property><name>velocityToolsClassesNames</name></property>
                     </properties>
                     <ignoredProperties>
-                      <ignore>fieldVisibility</ignore>
+                      <!-- Maven project state cannot be part of cache key -->
                       <ignore>project</ignore>
                     </ignoredProperties>
                   </inputs>

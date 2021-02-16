@@ -94,6 +94,25 @@
                           <property><name>excludeBugsFile</name></property>
                         </properties>
                         <ignoredProperties>
+                          <!-- Ignore properties that control Mojo execution but do not influence outputs -->
+                          <ignore>debug</ignore>
+                          <ignore>trace</ignore>
+                          <ignore>fork</ignore>
+                          <ignore>maxHeap</ignore>
+                          <ignore>timeout</ignore>
+                          <ignore>jvmArgs</ignore>
+                          <ignore>spotbugsXmlOutput</ignore><!-- Deprecated, always true -->
+                          <ignore>compileSourceRoots</ignore> <!-- Read-only -->
+                          <ignore>testSourceRoots</ignore> <!-- Read-only -->
+                          <ignore>remoteRepositories</ignore>
+                          <ignore>localRepository</ignore>
+                          <ignore>remoteArtifactRepositories</ignore>
+
+                          <!-- Ignore Maven state, as it cannot be part of cache key -->
+                          <ignore>pluginArtifacts</ignore>
+                          <ignore>session</ignore>
+                          <ignore>plugins</ignore>
+
                           <!-- NOTE: Ignored because we hard-code the output files : there is no single property representing the location of each input file -->
                           <!-- If these values are changed, the <outputs> below should be modified accordingly -->
                           <ignore>xmlOutputDirectory</ignore>
@@ -105,21 +124,7 @@
                           <ignore>xrefLocation</ignore>
                           <ignore>xrefTestLocation</ignore>
 
-                          <ignore>spotbugsXmlOutput</ignore><!-- Deprecated, always true -->
-                          <ignore>compileSourceRoots</ignore> <!-- Read-only -->
-                          <ignore>testSourceRoots</ignore> <!-- Read-only -->
-                          <ignore>pluginArtifacts</ignore>
-                          <ignore>remoteRepositories</ignore>
-                          <ignore>localRepository</ignore>
-                          <ignore>remoteArtifactRepositories</ignore>
-                          <ignore>session</ignore>
-                          <ignore>debug</ignore>
-                          <ignore>plugins</ignore>
-                          <ignore>trace</ignore>
-                          <ignore>fork</ignore>
-                          <ignore>maxHeap</ignore>
-                          <ignore>timeout</ignore>
-                          <ignore>jvmArgs</ignore>
+
                         </ignoredProperties>
                       </inputs>
                       <outputs>

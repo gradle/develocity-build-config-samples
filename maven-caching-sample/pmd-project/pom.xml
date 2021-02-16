@@ -86,11 +86,17 @@
                           <property><name>renderViolationsByPriority</name></property>
                         </properties>
                         <ignoredProperties>
+                          <!-- Ignore property that has no impact on plugin outputs -->
                           <ignore>showPmdLog</ignore>
-                          <ignore>reactorProjects</ignore>
+                          <!-- Maven session state cannot be part of cache key -->
                           <ignore>session</ignore>
                           <!-- Temporary file location can be ignored, assuming no external process is relying on these ruleset files. -->
                           <ignore>rulesetsTargetDirectory</ignore>
+
+                          <!-- Maven project state cannot be part of cache key. -->
+                          <!-- NOTE: This could result in an incorrect cache hit for an aggregate report if the set
+                                     of projects in the reactor has changed. -->
+                          <ignore>reactorProjects</ignore>
 
                           <!-- NOTE: Not really correct to ignore these: this means that excluded roots will be included in the cache key,
                                      so changes in an excluded root will result in cache misses. -->

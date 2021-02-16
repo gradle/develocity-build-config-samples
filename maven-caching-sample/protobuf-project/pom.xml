@@ -102,10 +102,12 @@
                       <property><name>type</name></property>
                     </properties>
                     <ignoredProperties>
-                      <!-- Properties do no impact output files -->
+                      <!-- Ignore properties that do no impact output files -->
                       <ignore>optimizeCodegen</ignore>
                       <ignore>localRepository</ignore>
                       <ignore>remoteRepositories</ignore>
+
+                      <!-- Maven project state cannot be part of cache key -->
                       <ignore>project</ignore>
 
                       <!-- NOTE : This cache configuration does not handle `outputTargets`, and will produce invalid results if this is set. -->
