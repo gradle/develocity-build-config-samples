@@ -90,13 +90,16 @@
                       <property><name>maxSwitchCaseLabels</name></property>
                       <property><name>minSwitchAlts</name></property>
                       <property><name>messageFormat</name></property>
+
+                      <!-- These "debug" properties actually impact the generated Parser sources -->
+                      <property><name>debug</name></property>
+                      <property><name>trace</name></property>
+                      <property><name>profile</name></property>
                     </properties>
                     <ignoredProperties>
-                      <ignore>debug</ignore>
-                      <ignore>trace</ignore>
+                      <!-- Ignore properties that do not impact output files -->
                       <ignore>verbose</ignore>
                       <ignore>printGrammar</ignore>
-                      <ignore>profile</ignore>
                       <ignore>report</ignore>
 
                       <!-- internal mojo properties -->
