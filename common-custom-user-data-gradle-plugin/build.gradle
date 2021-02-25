@@ -34,6 +34,8 @@ When using this project as a template for your own plugin to publish internally,
 You may also remove `plugin-publish`, `signing` and `grgit` from the `plugins {}` block above.
  */
 
+version = System.getenv("RELEASE_OVERRIDE_VERSION") ?: version
+
 pluginBundle {
     website = "https://github.com/gradle/gradle-enterprise-build-config-samples/tree/master/common-custom-user-data-gradle-plugin"
     vcsUrl = "https://github.com/gradle/gradle-enterprise-build-config-samples.git"
