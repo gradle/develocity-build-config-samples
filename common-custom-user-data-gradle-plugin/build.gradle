@@ -3,6 +3,7 @@ plugins {
     id 'maven-publish'
     id 'signing'
     id 'com.gradle.plugin-publish' version '0.12.0'
+    id "org.ajoberstar.grgit" version "4.1.0"
 }
 
 group = 'com.gradle'
@@ -30,7 +31,7 @@ gradlePlugin {
 /*
 The rest of the build logic in this file is only required for publishing to the Gradle Plugin Portal.
 When using this project as a template for your own plugin to publish internally, you should delete all code following this comment.
-You may also remove `plugin-publish` and `signing` from the `plugins {}` block above.
+You may also remove `plugin-publish`, `signing` and `grgit` from the `plugins {}` block above.
  */
 
 // Translate CI variables to project properties used for publishing
@@ -50,4 +51,11 @@ signing {
     useInMemoryPgpKeys(System.getenv("PGP_SIGNING_KEY"), System.getenv("PGP_SIGNING_KEY_PASSPHRASE"))
 
     sign(configurations.archives)
+}
+
+task tagRelease {
+    doFirst {
+        grgit.tag.add(name: "common-custom-user-data-gradle-plugin-${version}")
+        grgit.push(tags: true)
+    }
 }
