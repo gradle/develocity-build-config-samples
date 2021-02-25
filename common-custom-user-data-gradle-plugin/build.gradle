@@ -2,7 +2,7 @@ plugins {
     id 'java-gradle-plugin'
     id 'maven-publish'
     id 'signing'
-    id 'com.gradle.plugin-publish' version '0.12.0'
+    id 'com.gradle.plugin-publish' version '0.13.0'
     id "org.ajoberstar.grgit" version "4.1.0"
 }
 
@@ -33,10 +33,6 @@ The rest of the build logic in this file is only required for publishing to the 
 When using this project as a template for your own plugin to publish internally, you should delete all code following this comment.
 You may also remove `plugin-publish`, `signing` and `grgit` from the `plugins {}` block above.
  */
-
-// Translate CI variables to project properties used for publishing
-ext['gradle.publish.key'] = findProperty('gradlePublishKey')
-ext['gradle.publish.secret'] = findProperty('gradlePublishSecret')
 
 pluginBundle {
     website = "https://github.com/gradle/gradle-enterprise-build-config-samples/tree/master/common-custom-user-data-gradle-plugin"
