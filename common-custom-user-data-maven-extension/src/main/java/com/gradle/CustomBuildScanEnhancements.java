@@ -163,7 +163,7 @@ final class CustomBuildScanEnhancements {
         }
 
         private static boolean isCi() {
-            return isGenericCI() || isJenkins() || isTeamCity() || isCircleCI() || isBamboo() || isGitHubActions() || isGitLab() || isTravis() || isBitrise();
+            return isGenericCI() || isJenkins() || isHudson() || isTeamCity() || isCircleCI() || isBamboo() || isGitHubActions() || isGitLab() || isTravis() || isBitrise();
         }
 
         private static boolean isGenericCI() {
