@@ -8,6 +8,7 @@ import org.gradle.api.Task;
 import org.gradle.api.invocation.Gradle;
 import org.gradle.api.tasks.testing.Test;
 
+import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -29,6 +30,14 @@ final class CustomBuildScanEnhancements {
         private CustomBuildScanEnhancer(BuildScanExtension buildScan, Gradle gradle) {
             this.buildScan = buildScan;
             this.gradle = gradle;
+        }
+
+        private boolean projectPropertyPresent(String name) {
+            return isNotEmpty(projectProperty(name));
+        }
+
+        private String projectProperty(String name) {
+            return (String) gradle.getRootProject().findProperty(name);
         }
 
         public void enhance() {
@@ -86,15 +95,26 @@ final class CustomBuildScanEnhancements {
             }
 
             if (isTeamCity()) {
-                if (envVariablePresent("BUILD_URL")) {
-                    buildScan.link("TeamCity build", envVariable("BUILD_URL"));
-                }
-                if (envVariablePresent("BUILD_NUMBER")) {
-                    buildScan.value("CI build number", envVariable("BUILD_NUMBER"));
-                }
-                if (envVariablePresent("BUILD_AGENT_NAME")) {
-                    addCustomValueAndSearchLink("CI agent", envVariable("BUILD_AGENT_NAME"));
-                }
+                gradle.projectsEvaluated(g -> {
+                    if (projectPropertyPresent("teamcity.configuration.properties.file")
+                            && projectPropertyPresent("build.number")
+                            && projectPropertyPresent("teamcity.buildType.id")) {
+                        Properties properties = readPropertiesFile(projectProperty("teamcity.configuration.properties.file"));
+                        String teamCityServerUrl = properties.getProperty("teamcity.serverUrl");
+                        if (teamCityServerUrl != null) {
+                            String buildNumber = projectProperty("build.number");
+                            String buildTypeId = projectProperty("teamcity.buildType.id");
+                            String buildUrl = appendIfMissing(teamCityServerUrl, "/") + "viewLog.html?buildNumber=" + buildNumber + "&buildTypeId=" + buildTypeId;
+                            buildScan.link("TeamCity build", buildUrl);
+                        }
+                    }
+                    if (projectPropertyPresent("build.number")) {
+                        buildScan.value("CI build number", projectProperty("build.number"));
+                    }
+                    if (projectPropertyPresent("agent.name")) {
+                        addCustomValueAndSearchLink("CI agent", projectProperty("agent.name"));
+                    }
+                });
             }
 
             if (isCircleCI()) {
