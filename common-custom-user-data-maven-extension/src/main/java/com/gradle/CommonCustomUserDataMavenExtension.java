@@ -38,7 +38,7 @@ public final class CommonCustomUserDataMavenExtension extends AbstractMavenLifec
             logger.debug("Finished configuring build scan publishing");
 
             logger.debug("Applying build scan enhancements");
-            CustomBuildScanEnhancements.configureBuildScan(buildScan);
+            CustomBuildScanEnhancements.configureBuildScan(buildScan, session);
             logger.debug("Finished applying build scan enhancements");
         }
 
