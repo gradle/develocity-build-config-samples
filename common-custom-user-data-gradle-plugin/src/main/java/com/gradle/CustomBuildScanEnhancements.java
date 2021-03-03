@@ -52,6 +52,7 @@ final class CustomBuildScanEnhancements {
         }
 
         private void captureIde() {
+            // Wait for projects to load to ensure Gradle project properties are initialized
             gradle.projectsEvaluated(g -> {
                 Project project = g.getRootProject();
                 if (project.hasProperty("android.injected.invoked.from.ide")) {
@@ -88,6 +89,7 @@ final class CustomBuildScanEnhancements {
             }
 
             if (isTeamCity()) {
+                // Wait for projects to load to ensure Gradle project properties are initialized
                 gradle.projectsEvaluated(g -> {
                     Optional<String> teamCityConfigFile = projectProperty("teamcity.configuration.properties.file");
                     Optional<String> buildNumber = projectProperty("build.number");
