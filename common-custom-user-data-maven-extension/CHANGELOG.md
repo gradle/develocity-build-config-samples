@@ -3,6 +3,11 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [1.4] - 2021-03-03
+
+### Fixed
+- Fix TeamCity integration by loading properties from the `MavenSession`
+
 ## [1.3.2] - 2021-02-15
 - Detect generic "CI" environment variable or system property to add `CI` tag
 - Detect Hudson and Bitrise CI and add respective custom tags and values
@@ -47,7 +52,8 @@ All notable changes to this project will be documented in this file.
 ## [1.0] - 2020-05-25
 Initial release.
 
-[Unreleased]: https://github.com/gradle/gradle-enterprise-build-config-samples/compare/common-custom-user-data-maven-extension-1.3.1...HEAD
+[Unreleased]: https://github.com/gradle/gradle-enterprise-build-config-samples/compare/common-custom-user-data-maven-extension-1.4...HEAD
+[1.4]: https://github.com/gradle/gradle-enterprise-build-config-samples/compare/common-custom-user-data-maven-extension-1.3.2...common-custom-user-data-maven-extension-1.4
 [1.3.2]: https://github.com/gradle/gradle-enterprise-build-config-samples/compare/common-custom-user-data-maven-extension-1.3.1...common-custom-user-data-maven-extension-1.3.2
 [1.3.1]: https://github.com/gradle/gradle-enterprise-build-config-samples/compare/common-custom-user-data-maven-extension-1.3...common-custom-user-data-maven-extension-1.3.1
 [1.3]: https://github.com/gradle/gradle-enterprise-build-config-samples/compare/common-custom-user-data-maven-extension-1.2...common-custom-user-data-maven-extension-1.3
