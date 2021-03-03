@@ -3,6 +3,7 @@ package com.gradle;
 import com.gradle.maven.extension.api.scan.BuildScanApi;
 import org.apache.maven.execution.MavenSession;
 
+import java.util.Optional;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -27,12 +28,9 @@ final class CustomBuildScanEnhancements {
             this.mavenSession = mavenSession;
         }
 
-        private boolean projectPropertyPresent(String name) {
-            return isNotEmpty(projectProperty(name));
-        }
-
-        private String projectProperty(String name) {
-            return mavenSession.getSystemProperties().getProperty(name);
+        private Optional<String> projectProperty(String name) {
+            String value = mavenSession.getSystemProperties().getProperty(name);
+            return Optional.ofNullable(value);
         }
 
         public void enhance() {
@@ -44,13 +42,13 @@ final class CustomBuildScanEnhancements {
         }
 
         private void captureOs() {
-            buildScan.tag(sysProperty("os.name"));
+            sysProperty("os.name").ifPresent(buildScan::tag);
         }
 
         private void captureIde() {
-            if (sysPropertyPresent("idea.version") || sysPropertyKeyStartingWith("idea.version")) {
+            if (sysProperty("idea.version").isPresent() || sysPropertyKeyStartingWith("idea.version")) {
                 buildScan.tag("IntelliJ IDEA");
-            } else if (sysPropertyPresent("eclipse.buildId")) {
+            } else if (sysProperty("eclipse.buildId").isPresent()) {
                 buildScan.tag("Eclipse");
             } else if (!isCi()) {
                 buildScan.tag("Cmd Line");
@@ -63,123 +61,99 @@ final class CustomBuildScanEnhancements {
 
         private void captureCiMetadata() {
             if (isJenkins() || isHudson()) {
-                if (envVariablePresent("BUILD_URL")) {
-                    buildScan.link(isJenkins() ? "Jenkins build" : "Hudson build", envVariable("BUILD_URL"));
-                }
-                if (envVariablePresent("BUILD_NUMBER")) {
-                    buildScan.value("CI build number", envVariable("BUILD_NUMBER"));
-                }
-                if (envVariablePresent("NODE_NAME")) {
-                    addCustomValueAndSearchLink("CI node", envVariable("NODE_NAME"));
-                }
-                if (envVariablePresent("JOB_NAME")) {
-                    addCustomValueAndSearchLink("CI job", envVariable("JOB_NAME"));
-                }
-                if (envVariablePresent("STAGE_NAME")) {
-                    addCustomValueAndSearchLink("CI stage", envVariable("STAGE_NAME"));
-                }
+                envVariable("BUILD_URL").ifPresent(url ->
+                        buildScan.link(isJenkins() ? "Jenkins build" : "Hudson build", url));
+                envVariable("BUILD_NUMBER").ifPresent(value ->
+                        buildScan.value("CI build number", value));
+                envVariable("NODE_NAME").ifPresent(value2 ->
+                        addCustomValueAndSearchLink("CI node", value2));
+                envVariable("JOB_NAME").ifPresent(value1 ->
+                        addCustomValueAndSearchLink("CI job", value1));
+                envVariable("STAGE_NAME").ifPresent(value ->
+                        addCustomValueAndSearchLink("CI stage", value));
             }
 
             if (isTeamCity()) {
-                if (projectPropertyPresent("teamcity.configuration.properties.file")
-                        && projectPropertyPresent("build.number")
-                        && projectPropertyPresent("teamcity.buildType.id")) {
-                    Properties properties = readPropertiesFile(projectProperty("teamcity.configuration.properties.file"));
+                Optional<String> teamCityConfigFile = projectProperty("teamcity.configuration.properties.file");
+                Optional<String> buildNumber = projectProperty("build.number");
+                Optional<String> buildTypeId = projectProperty("teamcity.buildType.id");
+                Optional<String> agentName = projectProperty("agent.name");
+                if (teamCityConfigFile.isPresent()
+                        && buildNumber.isPresent()
+                        && buildTypeId.isPresent()) {
+                    Properties properties = readPropertiesFile(teamCityConfigFile.get());
                     String teamCityServerUrl = properties.getProperty("teamcity.serverUrl");
                     if (teamCityServerUrl != null) {
-                        String buildNumber = projectProperty("build.number");
-                        String buildTypeId = projectProperty("teamcity.buildType.id");
-                        String buildUrl = appendIfMissing(teamCityServerUrl, "/") + "viewLog.html?buildNumber=" + buildNumber + "&buildTypeId=" + buildTypeId;
+                        String buildUrl = appendIfMissing(teamCityServerUrl, "/") + "viewLog.html?buildNumber=" + buildNumber.get() + "&buildTypeId=" + buildTypeId.get();
                         buildScan.link("TeamCity build", buildUrl);
                     }
                 }
-                if (projectPropertyPresent("build.number")) {
-                    buildScan.value("CI build number", projectProperty("build.number"));
-                }
-                if (projectPropertyPresent("agent.name")) {
-                    addCustomValueAndSearchLink("CI agent", projectProperty("agent.name"));
-                }
+                buildNumber.ifPresent(value ->
+                        buildScan.value("CI build number", value));
+                agentName.ifPresent(value ->
+                        addCustomValueAndSearchLink("CI agent", value));
             }
 
             if (isCircleCI()) {
-                if (envVariablePresent("CIRCLE_BUILD_URL")) {
-                    buildScan.link("CircleCI build", envVariable("CIRCLE_BUILD_URL"));
-                }
-                if (envVariablePresent("CIRCLE_BUILD_NUM")) {
-                    buildScan.value("CI build number", envVariable("CIRCLE_BUILD_NUM"));
-                }
-                if (envVariablePresent("CIRCLE_JOB")) {
-                    addCustomValueAndSearchLink("CI job", envVariable("CIRCLE_JOB"));
-                }
-                if (envVariablePresent("CIRCLE_WORKFLOW_ID")) {
-                    addCustomValueAndSearchLink("CI workflow", envVariable("CIRCLE_WORKFLOW_ID"));
-                }
+                envVariable("CIRCLE_BUILD_URL").ifPresent(url ->
+                        buildScan.link("CircleCI build", url));
+                envVariable("CIRCLE_BUILD_NUM").ifPresent(value ->
+                        buildScan.value("CI build number", value));
+                envVariable("CIRCLE_JOB").ifPresent(value1 ->
+                        addCustomValueAndSearchLink("CI job", value1));
+                envVariable("CIRCLE_WORKFLOW_ID").ifPresent(value ->
+                        addCustomValueAndSearchLink("CI workflow", value));
             }
 
             if (isBamboo()) {
-                if (envVariablePresent("bamboo_resultsUrl")) {
-                    buildScan.link("Bamboo build", envVariable("bamboo_resultsUrl"));
-                }
-                if (envVariablePresent("bamboo_buildNumber")) {
-                    buildScan.value("CI build number", envVariable("bamboo_buildNumber"));
-                }
-                if (envVariablePresent("bamboo_planName")) {
-                    addCustomValueAndSearchLink("CI plan", envVariable("bamboo_planName"));
-                }
-                if (envVariablePresent("bamboo_buildPlanName")) {
-                    addCustomValueAndSearchLink("CI build plan", envVariable("bamboo_buildPlanName"));
-                }
-                if (envVariablePresent("bamboo_agentId")) {
-                    addCustomValueAndSearchLink("CI agent", envVariable("bamboo_agentId"));
-                }
+                envVariable("bamboo_resultsUrl").ifPresent(url ->
+                        buildScan.link("Bamboo build", url));
+                envVariable("bamboo_buildNumber").ifPresent(value ->
+                        buildScan.value("CI build number", value));
+                envVariable("bamboo_planName").ifPresent(value2 ->
+                        addCustomValueAndSearchLink("CI plan", value2));
+                envVariable("bamboo_buildPlanName").ifPresent(value1 ->
+                        addCustomValueAndSearchLink("CI build plan", value1));
+                envVariable("bamboo_agentId").ifPresent(value ->
+                        addCustomValueAndSearchLink("CI agent", value));
             }
 
             if (isGitHubActions()) {
-                if (envVariablePresent("GITHUB_REPOSITORY") && envVariablePresent("GITHUB_RUN_ID")) {
-                    buildScan.link("GitHub Actions build", "https://github.com/" + envVariable("GITHUB_REPOSITORY") + "/actions/runs/" + envVariable("GITHUB_RUN_ID"));
+                Optional<String> gitHubRepository = envVariable("GITHUB_REPOSITORY");
+                Optional<String> gitHubRunId = envVariable("GITHUB_RUN_ID");
+                if (gitHubRepository.isPresent() && gitHubRunId.isPresent()) {
+                    buildScan.link("GitHub Actions build", "https://github.com/" + gitHubRepository.get() + "/actions/runs/" + gitHubRunId.get());
                 }
-                if (envVariablePresent("GITHUB_WORKFLOW")) {
-                    addCustomValueAndSearchLink("GitHub workflow", envVariable("GITHUB_WORKFLOW"));
-                }
+                envVariable("GITHUB_WORKFLOW").ifPresent(value ->
+                        addCustomValueAndSearchLink("GitHub workflow", value));
             }
 
             if (isGitLab()) {
-                if (envVariablePresent("CI_JOB_URL")) {
-                    buildScan.link("GitLab build", envVariable("CI_JOB_URL"));
-                }
-                if (envVariablePresent("CI_PIPELINE_URL")) {
-                    buildScan.link("GitLab pipeline", envVariable("CI_PIPELINE_URL"));
-                }
-                if (envVariablePresent("CI_JOB_NAME")) {
-                    addCustomValueAndSearchLink("CI job", envVariable("CI_JOB_NAME"));
-                }
-                if (envVariablePresent("CI_JOB_STAGE")) {
-                    addCustomValueAndSearchLink("CI stage", envVariable("CI_JOB_STAGE"));
-                }
+                envVariable("CI_JOB_URL").ifPresent(url1 ->
+                        buildScan.link("GitLab build", url1));
+                envVariable("CI_PIPELINE_URL").ifPresent(url ->
+                        buildScan.link("GitLab pipeline", url));
+                envVariable("CI_JOB_NAME").ifPresent(value1 ->
+                        addCustomValueAndSearchLink("CI job", value1));
+                envVariable("CI_JOB_STAGE").ifPresent(value ->
+                        addCustomValueAndSearchLink("CI stage", value));
             }
 
             if (isTravis()) {
-                if (envVariablePresent("TRAVIS_BUILD_WEB_URL")) {
-                    buildScan.link("Travis build", envVariable("TRAVIS_BUILD_WEB_URL"));
-                }
-                if (envVariablePresent("TRAVIS_BUILD_NUMBER")) {
-                    buildScan.value("CI build number", envVariable("TRAVIS_BUILD_NUMBER"));
-                }
-                if (envVariablePresent("TRAVIS_JOB_NAME")) {
-                    addCustomValueAndSearchLink("CI job", envVariable("TRAVIS_JOB_NAME"));
-                }
-                if (envVariablePresent("TRAVIS_EVENT_TYPE")) {
-                    buildScan.tag(envVariable("TRAVIS_EVENT_TYPE"));
-                }
+                envVariable("TRAVIS_BUILD_WEB_URL").ifPresent(url ->
+                        buildScan.link("Travis build", url));
+                envVariable("TRAVIS_BUILD_NUMBER").ifPresent(value ->
+                        buildScan.value("CI build number", value));
+                envVariable("TRAVIS_JOB_NAME").ifPresent(value ->
+                        addCustomValueAndSearchLink("CI job", value));
+                envVariable("TRAVIS_EVENT_TYPE").ifPresent(buildScan::tag);
             }
 
             if (isBitrise()) {
-                if (envVariablePresent("BITRISE_BUILD_URL")) {
-                    buildScan.link("Bitrise build", envVariable("BITRISE_BUILD_URL"));
-                }
-                if (envVariablePresent("BITRISE_BUILD_NUMBER")) {
-                    buildScan.value("CI build number", envVariable("BITRISE_BUILD_NUMBER"));
-                }
+                envVariable("BITRISE_BUILD_URL").ifPresent(url ->
+                        buildScan.link("Bitrise build", url));
+                envVariable("BITRISE_BUILD_NUMBER").ifPresent(value ->
+                        buildScan.value("CI build number", value));
             }
         }
 
@@ -188,43 +162,43 @@ final class CustomBuildScanEnhancements {
         }
 
         private static boolean isGenericCI() {
-            return envVariablePresent("CI") || sysPropertyPresent("CI");
+            return envVariable("CI").isPresent() || sysProperty("CI").isPresent();
         }
 
         private static boolean isJenkins() {
-            return envVariablePresent("JENKINS_URL");
+            return envVariable("JENKINS_URL").isPresent();
         }
 
         private static boolean isHudson() {
-            return envVariablePresent("HUDSON_URL");
+            return envVariable("HUDSON_URL").isPresent();
         }
 
         private static boolean isTeamCity() {
-            return envVariablePresent("TEAMCITY_VERSION");
+            return envVariable("TEAMCITY_VERSION").isPresent();
         }
 
         private static boolean isCircleCI() {
-            return envVariablePresent("CIRCLE_BUILD_URL");
+            return envVariable("CIRCLE_BUILD_URL").isPresent();
         }
 
         private static boolean isBamboo() {
-            return envVariablePresent("bamboo_resultsUrl");
+            return envVariable("bamboo_resultsUrl").isPresent();
         }
 
         private static boolean isGitHubActions() {
-            return envVariablePresent("GITHUB_ACTIONS");
+            return envVariable("GITHUB_ACTIONS").isPresent();
         }
 
         private static boolean isGitLab() {
-            return envVariablePresent("GITLAB_CI");
+            return envVariable("GITLAB_CI").isPresent();
         }
 
         private static boolean isTravis() {
-            return envVariablePresent("TRAVIS_JOB_ID");
+            return envVariable("TRAVIS_JOB_ID").isPresent();
         }
 
         private static boolean isBitrise() {
-            return envVariablePresent("BITRISE_BUILD_URL");
+            return envVariable("BITRISE_BUILD_URL").isPresent();
         }
 
         private void captureGitMetadata() {
@@ -276,15 +250,11 @@ final class CustomBuildScanEnhancements {
 
         private void addCustomValueAndSearchLink(String label, String value) {
             buildScan.value(label, value);
-            addCustomLinkWithSearchTerms(label + " build scans", label, value);
-        }
-
-        private void addCustomLinkWithSearchTerms(String title, String name, String value) {
             String server = buildScan.getServer();
             if (server != null) {
-                String searchParams = "search.names=" + urlEncode(name) + "&search.values=" + urlEncode(value);
+                String searchParams = "search.names=" + urlEncode(label) + "&search.values=" + urlEncode(value);
                 String url = appendIfMissing(server, "/") + "scans?" + searchParams + "#selection.buildScanB=" + urlEncode("{SCAN_ID}");
-                buildScan.link(title, url);
+                buildScan.link(label + " build scans", url);
             }
         }
     }

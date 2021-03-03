@@ -10,6 +10,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
@@ -19,12 +20,8 @@ final class Utils {
         return value != null && !value.isEmpty();
     }
 
-    static String sysProperty(String name) {
-        return System.getProperty(name);
-    }
-
-    static boolean sysPropertyPresent(String name) {
-        return isNotEmpty(sysProperty(name));
+    static Optional<String> sysProperty(String name) {
+        return Optional.ofNullable(System.getProperty(name));
     }
 
     static boolean sysPropertyKeyStartingWith(String keyPrefix) {
@@ -39,12 +36,12 @@ final class Utils {
         return false;
     }
 
-    static String envVariable(String name) {
-        return System.getenv(name);
-    }
-
-    static boolean envVariablePresent(String name) {
-        return isNotEmpty(envVariable(name));
+    static Optional<String> envVariable(String name) {
+        String value = System.getenv(name);
+        if (isNotEmpty(value)) {
+            return Optional.of(value);
+        }
+        return Optional.empty();
     }
 
     static String appendIfMissing(String str, String suffix) {
