@@ -28,6 +28,11 @@ gradlePlugin {
     }
 }
 
+tasks.withType(ValidatePlugins).configureEach {
+    failOnWarning = true
+    enableStricterValidation = true
+}
+
 /*
 The rest of the build logic in this file is only required for publishing to the Gradle Plugin Portal.
 When using this project as a template for your own plugin to publish internally, you should delete all code following this comment.
