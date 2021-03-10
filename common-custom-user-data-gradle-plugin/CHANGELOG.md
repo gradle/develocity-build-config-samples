@@ -6,7 +6,7 @@ All notable changes to this project will be documented in this file.
 ## [1.2] - 2021-03-03
 
 ### Fixed
-- Fix TeamCity integration by loading properties from the `MavenSession`
+- Fix TeamCity integration by loading environment via Gradle properties
 
 ## [1.1.2]
 - Detect generic "CI" environment variable or system property to add `CI` tag
