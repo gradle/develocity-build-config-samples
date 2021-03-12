@@ -1,0 +1,40 @@
+plugins {
+    id 'com.gradle.enterprise' version '3.5.2'
+    id 'com.gradle.common-custom-user-data-gradle-plugin' version '1.2'
+}
+
+def isCI = System.getenv('CI') != null // adjust to your CI provider
+
+gradleEnterprise {
+    server = 'https://e.grdev.net' // adjust to your GE server
+    allowUntrustedServer = false // ensure a trusted certificate is configured
+
+    buildScan {
+        captureTaskInputFiles = true
+        uploadInBackground = !isCI
+        publishAlways()
+    }
+}
+
+buildCache {
+    local { 
+        enabled = true 
+    }
+
+    remote(HttpBuildCache) { 
+        url = 'https://cache-node-hetzner.grdev.net/cache/' // adjust to your GE server, and note the trailing slash
+        allowUntrustedServer = false // ensure a trusted certificate is configured
+        enabled = true
+        push = isCI
+        
+        if(System.getenv('GRADLE_ENTERPRISE_CACHE_USERNAME') && System.getenv('GRADLE_ENTERPRISE_CACHE_PASSWORD')) {
+            credentials { creds ->
+                creds.username = System.getenv('GRADLE_ENTERPRISE_CACHE_USERNAME')
+                creds.password = System.getenv('GRADLE_ENTERPRISE_CACHE_PASSWORD')
+            }
+        }
+
+    }
+}
+
+rootProject.name = 'common-gradle-enterprise-gradle-configuration' // adjust to your project
