@@ -19,12 +19,12 @@
     xmlns="https://www.gradle.com/gradle-enterprise-maven" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="https://www.gradle.com/gradle-enterprise-maven https://www.gradle.com/schema/gradle-enterprise-maven.xsd">
   <server>
-    <url>https://enterprise-samples.gradle.com</url>
-    <allowUntrusted>false</allowUntrusted>
+    <url>https://enterprise-samples.gradle.com</url> <!-- adjust to your GE server -->
+    <allowUntrusted>false</allowUntrusted> <!-- ensure a trusted certificate is configured -->
   </server>
   <buildScan>
     <captureGoalInputFiles>true</captureGoalInputFiles>
-    <backgroundBuildScanUpload>#{isFalse(env['CI'])}</backgroundBuildScanUpload>
+    <backgroundBuildScanUpload>#{isFalse(env['CI'])}</backgroundBuildScanUpload> <!-- adjust to your CI provider -->
     <publish>ALWAYS</publish>
   </buildScan>
   <buildCache>
@@ -33,15 +33,15 @@
     </local>
     <remote>
       <server>
-        <url>https://enterprise-samples.gradle.com/cache/</url>
-        <allowUntrusted>false</allowUntrusted>
+        <url>https://enterprise-samples.gradle.com/cache/</url> <!-- adjust to your GE server, and note the trailing slash -->
+        <allowUntrusted>false</allowUntrusted> <!-- ensure a trusted certificate is configured -->
         <credentials>
           <username>${env.GRADLE_ENTERPRISE_CACHE_USERNAME}</username>
           <password>${env.GRADLE_ENTERPRISE_CACHE_PASSWORD}</password>
         </credentials>
       </server>
       <enabled>true</enabled>
-      <storeEnabled>#{isTrue(env['CI'])}</storeEnabled>
+      <storeEnabled>#{isTrue(env['CI'])}</storeEnabled> <!-- adjust to your CI provider -->
     </remote>
   </buildCache>
 </gradleEnterprise>
