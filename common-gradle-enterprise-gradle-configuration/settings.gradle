@@ -6,7 +6,7 @@ plugins {
 def isCI = System.getenv('CI') != null // adjust to your CI provider
 
 gradleEnterprise {
-    server = 'https://e.grdev.net' // adjust to your GE server
+    server = 'https://enterprise-samples.gradle.com' // adjust to your GE server
     allowUntrustedServer = false // ensure a trusted certificate is configured
 
     buildScan {
@@ -22,7 +22,7 @@ buildCache {
     }
 
     remote(HttpBuildCache) { 
-        url = 'https://cache-node-hetzner.grdev.net/cache/' // adjust to your GE server, and note the trailing slash
+        url = 'https://enterprise-samples.gradle.com/cache/' // adjust to your GE server, and note the trailing slash
         allowUntrustedServer = false // ensure a trusted certificate is configured
         enabled = true
         push = isCI
