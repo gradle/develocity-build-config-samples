@@ -1,4 +1,4 @@
-# Examples of Gradle Enterprise cache configuration for Maven
+## Examples of Gradle Enterprise cache configuration for Maven
 
 This Maven project provides example configuration for enabling caching for certain Maven plugins that are not supported out of the box by Gradle Enterprise.
 Although the cache configuration does not cover all possible plugin uses, most standard/default plugin settings should work.
