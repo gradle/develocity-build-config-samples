@@ -1,0 +1,5 @@
+# Ignore Gradle project-specific cache directory
+.mvn/.gradle-enterprise
+
+# Ignore Maven build output directory
+target
