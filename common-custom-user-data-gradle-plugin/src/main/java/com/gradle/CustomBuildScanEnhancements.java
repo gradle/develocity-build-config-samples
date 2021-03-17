@@ -81,7 +81,6 @@ final class CustomBuildScanEnhancements {
                 Optional<String> teamCityConfigFile = projectProperty(gradle, "teamcity.configuration.properties.file");
                 Optional<String> buildNumber = projectProperty(gradle, "build.number");
                 Optional<String> buildTypeId = projectProperty(gradle, "teamcity.buildType.id");
-                Optional<String> agentName = projectProperty(gradle, "agent.name");
                 if (teamCityConfigFile.isPresent()
                         && buildNumber.isPresent()
                         && buildTypeId.isPresent()) {
@@ -94,9 +93,10 @@ final class CustomBuildScanEnhancements {
                 }
                 buildNumber.ifPresent(value ->
                         buildScan.value("CI build number", value));
-                agentName.ifPresent(value ->
+                buildTypeId.ifPresent(value ->
+                        addCustomValueAndSearchLink(buildScan, "CI build config", value));
+                projectProperty(gradle, "agent.name").ifPresent(value ->
                         addCustomValueAndSearchLink(buildScan, "CI agent", value));
-
             });
         }
 

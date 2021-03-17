@@ -2,6 +2,7 @@
 All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
+- Add TeamCity build configuration as a custom value and search link
 
 ## [1.4] - 2021-03-03
 

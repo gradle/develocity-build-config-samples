@@ -2,6 +2,8 @@
 All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
+- Add TeamCity build configuration as a custom value and search link
+- Fix configuration-cache support
 
 ## [1.2] - 2021-03-03
 
