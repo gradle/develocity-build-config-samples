@@ -2,6 +2,8 @@
 All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
+
+## [1.2.1] - 2021-03-17
 - Add TeamCity build configuration as a custom value and search link
 - Fix configuration-cache support
 
@@ -28,7 +30,8 @@ All notable changes to this project will be documented in this file.
 ## [1.0] - 2021-01-14
 Initial release.
 
-[Unreleased]: https://github.com/gradle/gradle-enterprise-build-config-samples/compare/common-custom-user-data-gradle-plugin-1.2...HEAD
+[Unreleased]: https://github.com/gradle/gradle-enterprise-build-config-samples/compare/common-custom-user-data-gradle-plugin-1.2.1...HEAD
+[1.2.1]: https://github.com/gradle/gradle-enterprise-build-config-samples/compare/common-custom-user-data-gradle-plugin-1.2...common-custom-user-data-gradle-plugin-1.2.1
 [1.2]: https://github.com/gradle/gradle-enterprise-build-config-samples/compare/common-custom-user-data-gradle-plugin-1.1.2...common-custom-user-data-gradle-plugin-1.2
 [1.1.2]: https://github.com/gradle/gradle-enterprise-build-config-samples/compare/common-custom-user-data-gradle-plugin-1.1.1...common-custom-user-data-gradle-plugin-1.1.2
 [1.1.1]: https://github.com/gradle/gradle-enterprise-build-config-samples/compare/common-custom-user-data-gradle-plugin-1.1...common-custom-user-data-gradle-plugin-1.1.1
