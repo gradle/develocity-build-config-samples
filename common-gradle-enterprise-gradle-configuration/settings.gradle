@@ -1,5 +1,5 @@
 plugins {
-    id 'com.gradle.enterprise' version '3.5.2'
+    id 'com.gradle.enterprise' version '3.6'
     id 'com.gradle.common-custom-user-data-gradle-plugin' version '1.2'
 }
 
@@ -17,11 +17,11 @@ gradleEnterprise {
 }
 
 buildCache {
-    local { 
-        enabled = true 
+    local {
+        enabled = true
     }
 
-    remote(HttpBuildCache) { 
+    remote(HttpBuildCache) {
         url = 'https://enterprise-samples.gradle.com/cache/' // adjust to your GE server, and note the trailing slash
         allowUntrustedServer = false // ensure a trusted certificate is configured
         credentials { creds ->
@@ -29,7 +29,7 @@ buildCache {
             creds.password = System.getenv('GRADLE_ENTERPRISE_CACHE_PASSWORD')
         }
         enabled = true
-        push = isCI        
+        push = isCI
     }
 }
 
