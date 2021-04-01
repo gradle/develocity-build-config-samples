@@ -12,4 +12,4 @@ jobs:
     - name: Run ShellCheck
       uses: ludeeus/action-shellcheck@master
       with:
-        ignore: "**/gradlew"
+        ignore: "./common-gradle-enterprise-gradle-configuration/gradlew"
