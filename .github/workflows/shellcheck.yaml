@@ -1,7 +1,7 @@
+name: 'Shellcheck'
+
 on:
   push
-
-name: 'Shellcheck'
 
 jobs:
   shellcheck:
@@ -10,6 +10,10 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Run ShellCheck
-      uses: ludeeus/action-shellcheck@master
+      uses: luizm/action-sh-checker@v0.1.12
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        ignore: "./common-gradle-enterprise-gradle-configuration/gradlew"
+        sh_checker_comment: false
+        sh_checker_exclude: "gradlew"
+
