@@ -15,5 +15,5 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         sh_checker_comment: false
-        sh_checker_exclude: "gradlew"
+        sh_checker_exclude: "gradlew mvnw"
 
