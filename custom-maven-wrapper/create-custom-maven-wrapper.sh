@@ -20,7 +20,7 @@ nc='\033[0m'
 
 if [ -n "$1" ]
 then
-  cd "$1"
+  cd "$1" || exit
 fi
 
 echo -e "${yellow}Installing Maven wrapper${nc}"
@@ -29,6 +29,6 @@ mvn -N io.takari:maven:0.7.7:wrapper -Dmaven=$maven_version
 echo -e "${yellow}Customizing Maven wrapper script by adding a custom 'Wrapper' tag${nc}"
 grep -q 'scan.tag.Wrapper' mvnw || sed -i '' $'s/^MAVEN_OPTS/&="-Dscan.tag.Wrapper $&"\\\n&/' mvnw
 
-cd "$current_dir"
+cd "$current_dir" || exit
 
 exit 0
