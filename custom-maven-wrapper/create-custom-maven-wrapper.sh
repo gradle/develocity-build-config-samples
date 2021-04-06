@@ -13,7 +13,7 @@
 #
 
 current_dir=$PWD
-maven_version=3.6.3
+maven_version=3.8.1
 
 yellow='\033[1;33m'
 nc='\033[0m'
