@@ -16,6 +16,6 @@ jobs:
         SHELLCHECK_OPTS: -x
       with:
         sh_checker_comment: true
-        sh_checker_exclude: "gradlew mvnw"
+        sh_checker_exclude: "gradlew mvnw experiments/lib/"
         sh_checker_shfmt_disable: true
 
