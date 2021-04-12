@@ -16,6 +16,7 @@
     <module>antlr3-project</module>
     <module>webstart-project</module>
     <module>clojure-project</module>
+    <module>asciidoctor-project</module>
   </modules>
 
   <properties>
