@@ -22,11 +22,6 @@
         </dependencies>
         <configuration>
           <sourceDirectory>src/docs/asciidoc</sourceDirectory>
-          <!-- If you set baseDir to ${project.basedir}, top-level includes are resolved relative to the project root -->
-          <!--
-          <baseDir>${project.basedir}</baseDir>
-          -->
-          <!-- Attributes common to all output formats -->
           <attributes>
             <endpoint-url>http://example.org</endpoint-url>
             <sourcedir>${project.build.sourceDirectory}</sourcedir>
@@ -59,5 +54,130 @@
         </executions>
       </plugin>
     </plugins>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>com.gradle</groupId>
+          <artifactId>gradle-enterprise-maven-extension</artifactId>
+          <configuration>
+            <gradleEnterprise>
+              <plugins>
+                <plugin>
+                  <groupId>org.asciidoctor</groupId>
+                  <artifactId>asciidoctor-maven-plugin</artifactId>
+                  <inputs>
+                    <fileSets>
+                      <fileSet>
+                        <name>sourceDirectory</name>
+                      </fileSet>
+                      <fileSet>
+                        <name>templateDirs</name>
+                      </fileSet>
+                    </fileSets>
+                    <properties>
+                      <property>
+                        <name>encoding</name>
+                      </property>
+                      <property>
+                        <name>preserveDirectories</name>
+                      </property>
+                      <property>
+                        <name>relativeBaseDir</name>
+                      </property>
+                      <property>
+                        <name>skip</name>
+                      </property>
+                      <property>
+                        <name>requires</name>
+                      </property>
+                      <property>
+                        <name>attributes</name>
+                      </property>
+                      <property>
+                        <name>backend</name>
+                      </property>
+                      <property>
+                        <name>doctype</name>
+                      </property>
+                      <property>
+                        <name>headerFooter</name>
+                      </property>
+                      <property>
+                        <name>templateEngine</name>
+                      </property>
+                      <property>
+                        <name>templateCache</name>
+                      </property>
+                      <property>
+                        <name>sourceDocumentName</name>
+                      </property>
+                      <property>
+                        <name>sourceDocumentExtensions</name>
+                      </property>
+                      <property>
+                        <name>sourcemap</name>
+                      </property>
+                      <property>
+                        <name>catalogAssets</name>
+                      </property>
+                      <property>
+                        <name>extensions</name>
+                      </property>
+                      <property>
+                        <name>embedAssets</name>
+                      </property>
+                      <property>
+                        <name>attributesChain</name>
+                      </property>
+                    </properties>
+                    <ignoredProperties>
+                      <!-- These properties should not impact goal output -->
+                      <ignore>projectDirectory</ignore>
+                      <ignore>rootDir</ignore>
+                      <ignore>baseDir</ignore>
+                      <ignore>gemPath</ignore>
+
+                      <ignore>eruby</ignore>
+                      <ignore>project</ignore>
+                      <ignore>session</ignore>
+                      <ignore>enableVerbose</ignore>
+                      <ignore>logHandler</ignore>
+                    </ignoredProperties>
+                  </inputs>
+                  <iteratedProperties>
+                    <property>
+                      <name>resources</name>
+                      <inputs>
+                        <properties>
+                          <property>
+                            <name>targetPath</name>
+                          </property>
+                          <property>
+                            <name>filtering</name>
+                          </property>
+                        </properties>
+                      </inputs>
+                    </property>
+                  </iteratedProperties>
+                  <outputs>
+                    <directories>
+                      <directory>
+                        <name>outputDirectory</name>
+                      </directory>
+                    </directories>
+                    <files>
+                      <file>
+                        <name>outputFile</name>
+                      </file>
+                    </files>
+                    <cacheableBecause>asciidoctor generates the same output if the input hasn't changed</cacheableBecause>
+                  </outputs>
+                </plugin>
+              </plugins>
+            </gradleEnterprise>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
   </build>
 </project>
