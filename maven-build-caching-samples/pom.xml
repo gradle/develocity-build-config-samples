@@ -17,6 +17,7 @@
     <module>webstart-project</module>
     <module>clojure-project</module>
     <module>asciidoctor-project</module>
+    <module>animal-sniffer-project</module>
   </modules>
 
   <properties>
