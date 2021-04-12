@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd https://www.gradle.com/gradle-enterprise-maven-project https://www.gradle.com/schema/gradle-enterprise-maven-project.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <artifactId>webstart-project</artifactId>
+  <packaging>jar</packaging>
+
+  <parent>
+    <groupId>com.example</groupId>
+    <artifactId>gradle-enterprise-maven-caching-sample</artifactId>
+    <version>1.0-SNAPSHOT</version>
+  </parent>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+      <version>3.8</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-logging</artifactId>
+      <version>2.2.4.RELEASE</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>webstart-maven-plugin</artifactId>
+        <version>1.0-beta-7</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>jnlp-single</goal>
+            </goals>
+            <phase>package</phase>
+          </execution>
+        </executions>
+        <configuration>
+          <jnlp>
+            <mainClass>com.example.App</mainClass>
+            <properties>
+              <foo>bar</foo>
+            </properties>
+          </jnlp>
+          <sign>
+            <keystore>${project.build.directory}/keystore</keystore>
+            <keypass>fillme</keypass>
+            <storepass>fillme</storepass>
+            <alias>fillme</alias>
+
+            <dnameCn>fillme</dnameCn>
+            <dnameOu>fillme</dnameOu>
+            <dnameO>fillme</dnameO>
+            <dnameL>fillme</dnameL>
+            <dnameSt>fillme</dnameSt>
+            <dnameC>fillme</dnameC>
+
+            <verify>true</verify>
+
+            <keystoreConfig>
+              <delete>true</delete>
+              <gen>true</gen>
+            </keystoreConfig>
+          </sign>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>

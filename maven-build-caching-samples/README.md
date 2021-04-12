@@ -9,3 +9,4 @@ The following Maven plugins are demonstrated:
 - Apache Avro: `org.apache.avro:avro-maven-plugin: 1.10.1`
 - Protobuf: `com.github.os72:protoc-jar-maven-plugin:3.11.4`
 - Antlr3: `org.antlr:antlr3-maven-plugin:3.4`
+- Webstart: `org.codehaus.mojo:webstart-maven-plugin:1.0-beta-7` (Java 1.8 only)
