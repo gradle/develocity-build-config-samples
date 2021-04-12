@@ -18,6 +18,7 @@
     <module>clojure-project</module>
     <module>asciidoctor-project</module>
     <module>animal-sniffer-project</module>
+    <module>enforcer-project</module>
   </modules>
 
   <properties>
