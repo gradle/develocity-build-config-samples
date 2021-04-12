@@ -15,9 +15,10 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>animal-sniffer-maven-plugin</artifactId>
-        <version>1.16</version>
+        <version>1.20</version>
         <executions>
           <execution>
+            <id>animal-sniffer-check</id>
             <phase>test</phase>
             <goals>
               <goal>check</goal>
@@ -34,6 +35,91 @@
         </configuration>
       </plugin>
     </plugins>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>com.gradle</groupId>
+          <artifactId>gradle-enterprise-maven-extension</artifactId>
+          <configuration>
+            <gradleEnterprise>
+              <plugins>
+                <plugin>
+                  <groupId>org.codehaus.mojo</groupId>
+                  <artifactId>animal-sniffer-maven-plugin</artifactId>
+                  <executions>
+                    <execution>
+                      <id>animal-sniffer-check</id>
+                      <inputs>
+                        <ignoredProperties>
+                          <ignore>localRepository</ignore>
+                          <ignore>project</ignore>
+                        </ignoredProperties>
+                        <fileSets>
+                          <fileSet>
+                            <name>outputDirectory</name>
+                            <normalization>CLASSPATH</normalization>
+                          </fileSet>
+                          <fileSet>
+                            <name>testOutputDirectory</name>
+                            <normalization>CLASSPATH</normalization>
+                          </fileSet>
+                        </fileSets>
+                        <properties>
+                          <property>
+                            <name>ignores</name>
+                          </property>
+                          <property>
+                            <name>annotations</name>
+                          </property>
+                          <property>
+                            <name>ignoreDependencies</name>
+                          </property>
+                          <property>
+                            <name>includeDependencies</name>
+                          </property>
+                          <property>
+                            <name>excludeDependencies</name>
+                          </property>
+                          <property>
+                            <name>checkTestClasses</name>
+                          </property>
+                          <property>
+                            <name>skip</name>
+                          </property>
+                          <property>
+                            <name>failOnError</name>
+                          </property>
+                        </properties>
+                      </inputs>
+                      <nestedProperties>
+                        <property>
+                          <name>signature</name>
+                          <inputs>
+                            <properties>
+                              <property>
+                                <name>groupId</name>
+                              </property>
+                              <property>
+                                <name>artifactId</name>
+                              </property>
+                              <property>
+                                <name>version</name>
+                              </property>
+                            </properties>
+                          </inputs>
+                        </property>
+                      </nestedProperties>
+                      <outputs>
+                        <cacheableBecause>Animal Sniffer is slow</cacheableBecause>
+                      </outputs>
+                    </execution>
+                  </executions>
+                </plugin>
+              </plugins>
+            </gradleEnterprise>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
   </build>
-
 </project>
