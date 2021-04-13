@@ -18,9 +18,9 @@
         <version>3.0.0-M3</version>
 
         <executions>
-          <!-- All fast rules can be in a single, uncached execution -->
+          <!-- Split the slow enforcer rules into their own execution. All fast rules can be in a single, uncached execution. -->
           <execution>
-            <id>enforce-fast-rules</id>
+            <id>enforce-default</id>
             <goals>
               <goal>enforce</goal>
             </goals>
@@ -30,9 +30,42 @@
                   <version>1.8</version>
                 </requireJavaVersion>
               </rules>
+              <rules>
+                <bannedRepositories>
+                  <bannedRepositories>
+                    <bannedRepository>http://repo1/*</bannedRepository>
+                  </bannedRepositories>
+                </bannedRepositories>
+                <banDistributionManagement/>
+              </rules>
+              <fail>true</fail>
             </configuration>
           </execution>
-          <!-- Split the slow enforcer rules into their own execution -->
+          <execution>
+            <id>enforce-banned-dependencies</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <bannedDependencies>
+                  <message>Testing framework libraries should have test scope</message>
+                  <searchTransitive>false</searchTransitive>
+                  <excludes>
+                    <exclude>junit:junit:*:jar:*</exclude>
+                    <exclude>xmlunit:xmlunit:*:jar:*</exclude>
+                    <exclude>*:*:*:jar:*:tests</exclude>
+                  </excludes>
+                  <includes>
+                    <include>junit:junit:*:jar:test</include>
+                    <include>xmlunit:xmlunit:*:jar:test</include>
+                    <include>*:*:*:jar:test:tests</include>
+                  </includes>
+                </bannedDependencies>
+              </rules>
+              <fail>true</fail>
+            </configuration>
+          </execution>
           <execution>
             <id>enforce-bytecode-version</id>
             <goals>
@@ -69,6 +102,86 @@
                   <groupId>org.apache.maven.plugins</groupId>
                   <artifactId>maven-enforcer-plugin</artifactId>
                   <executions>
+                    <execution>
+                      <id>enforce-banned-dependencies</id>
+                      <inputs>
+                        <properties>
+                          <property>
+                            <name>commandLineRules</name>
+                          </property>
+                          <property>
+                            <name>fail</name>
+                          </property>
+                          <property>
+                            <name>failFast</name>
+                          </property>
+                          <property>
+                            <name>ignoreCache</name>
+                          </property>
+                          <property>
+                            <name>skip</name>
+                          </property>
+                        </properties>
+                        <ignoredProperties>
+                          <ignore>session</ignore>
+                          <ignore>project</ignore>
+                          <ignore>mojoExecution</ignore>
+                        </ignoredProperties>
+                      </inputs>
+                      <iteratedProperties>
+                        <property>
+                          <name>rules</name>
+                          <inputs>
+                            <properties>
+                              <property>
+                                <name>includes</name>
+                              </property>
+                              <property>
+                                <name>excludes</name>
+                              </property>
+                              <property>
+                                <name>searchTransitive</name>
+                              </property>
+                              <property>
+                                <name>message</name>
+                              </property>
+                            </properties>
+                          </inputs>
+                        </property>
+                      </iteratedProperties>
+                      <nestedProperties>
+                        <property>
+                          <name>project</name>
+                          <iteratedProperties>
+                            <property>
+                              <name>dependencies</name>
+                              <inputs>
+                                <properties>
+                                  <property>
+                                    <name>groupId</name>
+                                  </property>
+                                  <property>
+                                    <name>artifactId</name>
+                                  </property>
+                                  <property>
+                                    <name>version</name>
+                                  </property>
+                                  <property>
+                                    <name>type</name>
+                                  </property>
+                                  <property>
+                                    <name>scope</name>
+                                  </property>
+                                </properties>
+                              </inputs>
+                            </property>
+                          </iteratedProperties>
+                        </property>
+                      </nestedProperties>
+                      <outputs>
+                        <cacheableBecause>banned dependency check should run when dependencies change</cacheableBecause>
+                      </outputs>
+                    </execution>
                     <execution>
                       <id>enforce-bytecode-version</id>
                       <inputs>
