@@ -128,7 +128,7 @@
                         </property>
                       </nestedProperties>
                       <outputs>
-                        <cacheableBecause>it's slow</cacheableBecause>
+                        <cacheableBecause>bytecode version check should only run when class files change</cacheableBecause>
                       </outputs>
                     </execution>
                   </executions>

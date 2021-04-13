@@ -112,7 +112,7 @@
                         <name>testOutputDirectory</name>
                       </directory>
                     </directories>
-                    <cacheableBecause>All inputs and outputs declared</cacheableBecause>
+                    <cacheableBecause>generates consistent outputs for declared inputs</cacheableBecause>
                   </outputs>
                 </plugin>
               </plugins>

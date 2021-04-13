@@ -153,7 +153,7 @@
                             <path>${project.basedir}/target/out</path>
                           </directory>
                         </directories>
-                        <cacheableBecause>All inputs to yarn build are tracked</cacheableBecause>
+                        <cacheableBecause>generates consistent outputs for declared inputs</cacheableBecause>
                       </outputs>
                     </execution>
                   </executions>

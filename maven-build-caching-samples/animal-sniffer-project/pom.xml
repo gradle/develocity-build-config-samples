@@ -110,7 +110,7 @@
                         </property>
                       </nestedProperties>
                       <outputs>
-                        <cacheableBecause>Animal Sniffer is slow</cacheableBecause>
+                        <cacheableBecause>check only needs to be performed when classes or signature file changes</cacheableBecause>
                       </outputs>
                     </execution>
                   </executions>

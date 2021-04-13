@@ -123,7 +123,7 @@
                             <path>${project.build.directory}/pmd-benchmark.txt</path>
                           </file>
                         </files>
-                        <cacheableBecause>All inputs and outputs declared</cacheableBecause>
+                        <cacheableBecause>generates consistent outputs for declared inputs</cacheableBecause>
                       </outputs>
                     </execution>
                   </executions>

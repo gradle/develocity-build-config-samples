@@ -84,7 +84,7 @@
                     <execution>
                       <id>test-clojure</id>
                       <outputs>
-                        <cacheableBecause>test execution is time-consuming</cacheableBecause>
+                        <cacheableBecause>test results are consistent for declared inputs</cacheableBecause>
                       </outputs>
                       <inputs>
                         <fileSets>

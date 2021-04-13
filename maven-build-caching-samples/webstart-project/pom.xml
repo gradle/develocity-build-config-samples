@@ -411,7 +411,7 @@
                     </property>
                   </nestedProperties>
                   <outputs>
-                    <cacheableBecause>Signing artifacts is CPU-bound</cacheableBecause>
+                    <cacheableBecause>signing artifacts is CPU-bound</cacheableBecause>
                     <files>
                       <file>
                         <name>archive</name>

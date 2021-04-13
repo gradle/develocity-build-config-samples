@@ -170,7 +170,7 @@
                         <name>outputFile</name>
                       </file>
                     </files>
-                    <cacheableBecause>asciidoctor generates the same output if the input hasn't changed</cacheableBecause>
+                    <cacheableBecause>generates consistent outputs for declared inputs</cacheableBecause>
                   </outputs>
                 </plugin>
               </plugins>
