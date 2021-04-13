@@ -47,5 +47,122 @@
         </executions>
       </plugin>
     </plugins>
+    <pluginManagement>
+      <plugins>
+        <!-- Make yarn build cacheable -->
+        <plugin>
+          <groupId>com.gradle</groupId>
+          <artifactId>gradle-enterprise-maven-extension</artifactId>
+          <configuration>
+            <gradleEnterprise>
+              <plugins>
+                <plugin>
+                  <groupId>org.codehaus.mojo</groupId>
+                  <artifactId>exec-maven-plugin</artifactId>
+                  <executions>
+                    <execution>
+                      <id>yarn-build</id>
+                      <inputs>
+                        <fileSets>
+                          <fileSet>
+                            <name>sources</name>
+                            <paths>
+                              <path>${project.basedir}/src</path>
+                              <path>${project.basedir}/public</path>
+                            </paths>
+                          </fileSet>
+                          <fileSet>
+                            <name>build-files</name>
+                            <paths>
+                              <path>${project.basedir}/package.json</path>
+                              <path>${project.basedir}/yarn.lock</path>
+                            </paths>
+                          </fileSet>
+                        </fileSets>
+                        <!-- Many properties that _can_ be configured on the `exec-maven-plugin`. They should be tracked as inputs. -->
+                        <properties>
+                          <property>
+                            <name>addOutputToClasspath</name>
+                          </property>
+                          <property>
+                            <name>addResourcesToClasspath</name>
+                          </property>
+                          <property>
+                            <name>arguments</name>
+                          </property>
+                          <property>
+                            <name>async</name>
+                          </property>
+                          <property>
+                            <name>asyncDestroyOnShutdown</name>
+                          </property>
+                          <property>
+                            <name>classpathScope</name>
+                          </property>
+                          <property>
+                            <name>commandlineArgs</name>
+                          </property>
+                          <property>
+                            <name>environmentScript</name>
+                          </property>
+                          <property>
+                            <name>environmentVariables</name>
+                          </property>
+                          <property>
+                            <name>executable</name>
+                          </property>
+                          <property>
+                            <name>skip</name>
+                          </property>
+                          <property>
+                            <name>sourceRoot</name>
+                          </property>
+                          <property>
+                            <name>successCodes</name>
+                          </property>
+                          <property>
+                            <name>testSourceRoot</name>
+                          </property>
+                          <property>
+                            <name>toolchain</name>
+                          </property>
+                          <property>
+                            <name>workingDirectory</name>
+                          </property>
+                        </properties>
+                        <ignoredProperties>
+                          <!-- Only needed for exec:java -->
+                          <ignore>executableDependency</ignore>
+                          <ignore>longClasspath</ignore>
+                          <ignore>longModulepath</ignore>
+                          <!-- Whether to send logs to a file or not -->
+                          <ignore>outputFile</ignore>
+                          <!-- internal mojo properties -->
+                          <ignore>basedir</ignore>
+                          <ignore>localRepository</ignore>
+                          <ignore>pluginDependencies</ignore>
+                          <ignore>project</ignore>
+                          <ignore>remoteRepositories</ignore>
+                          <ignore>session</ignore>
+                        </ignoredProperties>
+                      </inputs>
+                      <outputs>
+                        <directories>
+                          <directory>
+                            <name>yarn-output</name>
+                            <path>${project.basedir}/target/out</path>
+                          </directory>
+                        </directories>
+                        <cacheableBecause>All inputs to yarn build are tracked</cacheableBecause>
+                      </outputs>
+                    </execution>
+                  </executions>
+                </plugin>
+              </plugins>
+            </gradleEnterprise>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
   </build>
 </project>
