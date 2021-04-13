@@ -19,6 +19,7 @@
     <module>asciidoctor-project</module>
     <module>animal-sniffer-project</module>
     <module>enforcer-project</module>
+    <module>exec-yarn-project</module>
   </modules>
 
   <properties>
