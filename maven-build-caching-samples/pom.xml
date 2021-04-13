@@ -20,6 +20,7 @@
     <module>animal-sniffer-project</module>
     <module>enforcer-project</module>
     <module>exec-yarn-project</module>
+    <module>spring-cloud-contract-project</module>
   </modules>
 
   <properties>
