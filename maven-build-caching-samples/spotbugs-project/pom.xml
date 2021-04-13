@@ -129,7 +129,7 @@
                             <path>${project.build.directory}/spotbugsXml.xml</path>
                           </file>
                         </files>
-                        <cacheableBecause>All inputs and outputs declared</cacheableBecause>
+                        <cacheableBecause>check should only run when inputs change</cacheableBecause>
                       </outputs>
                     </execution>
                   </executions>
