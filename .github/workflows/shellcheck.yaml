@@ -18,6 +18,6 @@ jobs:
         SHELLCHECK_OPTS: -a -x
       with:
         sh_checker_comment: true
-        sh_checker_exclude: "gradlew mvnw build-validation-automation/scripts/src/lib"
+        sh_checker_exclude: "gradlew mvnw build-validation/scripts/lib"
         sh_checker_shfmt_disable: true
 
