@@ -1,4 +1,4 @@
-name: 'Publish Build Validation Scripts'
+name: Publish Build Validation Scripts
 
 on: workflow_dispatch
 
