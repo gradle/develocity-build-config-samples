@@ -383,14 +383,12 @@
                           <property>
                             <name>httpsProxyPort</name>
                           </property>
-                          <!-- Add this as property if you explicitly configured it -->
-                          <!-- <property>
-                            <name>arguments</name>
-                          </property> -->
                         </properties>
                         <ignoredProperties>
                           <ignore>verbose</ignore>
                           <ignore>securityDispatcher</ignore>
+                          <!-- Add this as property if you explicitly configured it -->
+                          <ignore>arguments</ignore>
                         </ignoredProperties>
                       </inputs>
                       <nestedProperties>
