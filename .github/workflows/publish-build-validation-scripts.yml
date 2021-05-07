@@ -14,9 +14,14 @@ jobs:
         with:
           java-version: '11'
           distribution: 'adopt'
-      - name: Build with Gradle
-        run: ./gradlew build
-        working-directory: build-validation/distribution-build
+      -  name: Build with Gradle
+         uses: eskatos/gradle-command-action@v1
+         with:
+           arguments: build
+           wrapper-cache-enabled: true
+           dependencies-cache-enabled: true
+           configuration-cache-enabled: false
+           build-root-directory: build-validation/distribution-build
       - name: Commit and push updated archives
         run: |
           git config user.name github-actions
