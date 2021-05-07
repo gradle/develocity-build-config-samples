@@ -15,7 +15,7 @@ jobs:
           java-version: '11'
           distribution: 'adopt'
       -  name: Build with Gradle
-         uses: eskatos/gradle-command-action@v1
+         uses: eskatos/gradle-command-action@v1.3.3
          with:
            arguments: build
            wrapper-cache-enabled: true
