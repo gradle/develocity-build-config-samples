@@ -1,6 +1,10 @@
-name: Release Build Validation Scripts
+name: Pre-release Build Validation Scripts
 
-on: workflow_dispatch
+on: 
+  push:
+    branches:
+      - jhurne/experiment-automation
+  workflow_dispatch:
 
 jobs:
   prerelease:
@@ -27,7 +31,7 @@ jobs:
         uses: "marvinpinto/action-automatic-releases@v1.2.0"
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          automatic_release_tag: "build-validation-latest-development"
+          automatic_release_tag: "build-validation-development-latest"
           prerelease: true
           title: "Build Validation - Development Build"
           files: "build-validation/*.zip"
