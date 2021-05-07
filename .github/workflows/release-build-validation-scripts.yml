@@ -1,4 +1,4 @@
-name: Publish Build Validation Scripts
+name: Release Build Validation Scripts
 
 on: workflow_dispatch
 
@@ -23,10 +23,11 @@ jobs:
            configuration-cache-enabled: false
            build-root-directory: build-validation/distribution-build
            wrapper-directory: build-validation/distribution-build
-      - name: Commit and push updated archives
-        run: |
-          git config user.name github-actions
-          git config user.email github-actions@github.com
-          git add .
-          git commit -m "Update build validation script archives"
-          git push origin HEAD
+      - name: Create GitHub Release
+        uses: "marvinpinto/action-automatic-releases@v1.2.0"
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          automatic_release_tag: "build-validation-latest"
+          prerelease: true
+          title: "Development Build"
+          files: "build-validation/*.zip"
