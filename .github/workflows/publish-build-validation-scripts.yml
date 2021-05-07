@@ -22,6 +22,7 @@ jobs:
            dependencies-cache-enabled: true
            configuration-cache-enabled: false
            build-root-directory: build-validation/distribution-build
+           wrapper-directory: build-validation/distribution-build
       - name: Commit and push updated archives
         run: |
           git config user.name github-actions
