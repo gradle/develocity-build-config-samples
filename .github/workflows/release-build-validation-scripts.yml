@@ -34,4 +34,5 @@ jobs:
           automatic_release_tag: "build-validation-development-latest"
           prerelease: true
           title: "Build Validation - Development Build"
-          files: "build-validation/*.zip"
+          files: "build-validation/distribution-build/build/distributions/*.zip"
+
