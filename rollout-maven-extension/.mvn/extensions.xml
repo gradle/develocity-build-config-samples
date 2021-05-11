@@ -7,11 +7,11 @@
     <extension>
         <groupId>com.gradle</groupId>
         <artifactId>gradle-enterprise-maven-extension</artifactId>
-        <version>1.9.1</version>
+        <version>1.9.2</version>
     </extension>
     <extension>
         <groupId>com.gradle</groupId>
         <artifactId>common-custom-user-data-maven-extension</artifactId>
-        <version>1.4.1</version>
+        <version>1.5</version>
     </extension>
 </extensions>

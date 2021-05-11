@@ -195,6 +195,7 @@ final class CustomBuildScanEnhancements {
                 return;
             }
 
+            String gitRepo = execAndGetStdOut("git", "config", "--get", "remote.origin.url");
             String gitCommitId = execAndGetStdOut("git", "rev-parse", "--short=8", "--verify", "HEAD");
             String gitBranchName = execAndGetStdOut("git", "rev-parse", "--abbrev-ref", "HEAD");
             String gitStatus = execAndGetStdOut("git", "status", "--porcelain");
@@ -202,17 +203,16 @@ final class CustomBuildScanEnhancements {
             if (gitCommitId != null) {
                 addCustomValueAndSearchLink(buildScan, "Git commit id", gitCommitId);
 
-                String originUrl = execAndGetStdOut("git", "config", "--get", "remote.origin.url");
-                if (isNotEmpty(originUrl)) {
-                    if (originUrl.contains("github.com/") || originUrl.contains("github.com:")) {
-                        Matcher matcher = Pattern.compile("(.*)github\\.com[/|:](.*)").matcher(originUrl);
+                if (isNotEmpty(gitRepo)) {
+                    if (gitRepo.contains("github.com/") || gitRepo.contains("github.com:")) {
+                        Matcher matcher = Pattern.compile("(.*)github\\.com[/|:](.*)").matcher(gitRepo);
                         if (matcher.matches()) {
                             String rawRepoPath = matcher.group(2);
                             String repoPath = rawRepoPath.endsWith(".git") ? rawRepoPath.substring(0, rawRepoPath.length() - 4) : rawRepoPath;
                             api.link("Github source", "https://github.com/" + repoPath + "/tree/" + gitCommitId);
                         }
-                    } else if (originUrl.contains("gitlab.com/") || originUrl.contains("gitlab.com:")) {
-                        Matcher matcher = Pattern.compile("(.*)gitlab\\.com[/|:](.*)").matcher(originUrl);
+                    } else if (gitRepo.contains("gitlab.com/") || gitRepo.contains("gitlab.com:")) {
+                        Matcher matcher = Pattern.compile("(.*)gitlab\\.com[/|:](.*)").matcher(gitRepo);
                         if (matcher.matches()) {
                             String rawRepoPath = matcher.group(2);
                             String repoPath = rawRepoPath.endsWith(".git") ? rawRepoPath.substring(0, rawRepoPath.length() - 4) : rawRepoPath;
@@ -220,6 +220,9 @@ final class CustomBuildScanEnhancements {
                         }
                     }
                 }
+            }
+            if (isNotEmpty(gitRepo)) {
+                api.value("Git repository", gitRepo);
             }
             if (isNotEmpty(gitBranchName)) {
                 api.tag(gitBranchName);
