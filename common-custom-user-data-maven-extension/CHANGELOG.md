@@ -3,6 +3,9 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [1.5] - 2021-05-11
+- Add the Git repository URL as a custom value
+
 ## [1.4.1] - 2021-03-17
 - Add TeamCity build configuration as a custom value and search link
 
@@ -55,7 +58,8 @@ All notable changes to this project will be documented in this file.
 ## [1.0] - 2020-05-25
 Initial release.
 
-[Unreleased]: https://github.com/gradle/gradle-enterprise-build-config-samples/compare/common-custom-user-data-maven-extension-1.4.1...HEAD
+[Unreleased]: https://github.com/gradle/gradle-enterprise-build-config-samples/compare/common-custom-user-data-maven-extension-1.5...HEAD
+[1.5]: https://github.com/gradle/gradle-enterprise-build-config-samples/compare/common-custom-user-data-maven-extension-1.4.1...common-custom-user-data-maven-extension-1.5
 [1.4.1]: https://github.com/gradle/gradle-enterprise-build-config-samples/compare/common-custom-user-data-maven-extension-1.4...common-custom-user-data-maven-extension-1.4.1
 [1.4]: https://github.com/gradle/gradle-enterprise-build-config-samples/compare/common-custom-user-data-maven-extension-1.3.2...common-custom-user-data-maven-extension-1.4
 [1.3.2]: https://github.com/gradle/gradle-enterprise-build-config-samples/compare/common-custom-user-data-maven-extension-1.3.1...common-custom-user-data-maven-extension-1.3.2
