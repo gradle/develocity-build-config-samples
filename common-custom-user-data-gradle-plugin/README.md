@@ -15,6 +15,9 @@ Out of the box, this plugin enhances all build scans published with additional t
 - A tag representing builds run on CI, together with a set of tags, links and custom values specific to the CI server running the build.
 - For `git` repositories, information on the commit id, branch name, status, and whether the checkout is dirty or not.
 
+Out of the box, this plugin also allows users to override various Gradle Enterprise, build scan, and build caching settings via
+system properties.
+
 ### Applying the published plugin
 
 The Common Custom User Data Gradle Plugin is available in the [Gradle Plugin Portal](https://plugins.gradle.org/plugin/com.gradle.common-custom-user-data-gradle-plugin). This plugin
@@ -45,6 +48,40 @@ plugins {
     // …
 }
 ```
+
+### Overriding Gradle Enterprise configuration values via system properties
+
+The Common Custom User Data Gradle Plugin adds the ability to override many Gradle Enterprise settings via system properties.
+You can use the system properties to override Gradle Enterprise settings temporarily, such as while performing a
+[build validation experiment](../build-validation) or as a troubleshooting step while investigating a problem.
+
+The following system properties are supported:
+
+|System Property                            | Acceptable Values   | Description
+|-------------------------------------------|---------------------|------------
+|`gradle.enterprise.url`                    | URL                 | Sets the URL of the Gradle Enterprise server, primarily for publishing build scans.
+|`gradle.cache.local.enabled`               | `true` or `false`   | Enables/disables the local build cache.
+|`gradle.cache.local.directory`             | path to a directory | Sets the location of the local build cache.
+|`gradle.cache.local.cleanup.enabled`       | `true` or `false`   | Enables/disables cleanup of the local build cache. If set to true, then the cleanup retention is set to Integer.MAX_INT days.
+|`gradle.cache.local.cleanup.retention`     | [Duration String Representation](https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/time/Duration.html#parse(java.lang.CharSequence)) | Sets how long local build cache entries are allowed to exist before they are deleted automatically.
+|`gradle.cache.remote.enabled`              | `true` or `false`   | Enables/disables the remote build cache.
+|`gradle.cache.remote.url`                  | URL | Sets the URL of the remote cache node. Assumes the remote cache is a HTTPBuildCache.
+|`gradle.cache.remote.storeEnabled`         | `true` or `false`   | Enables/disables pushing (storing) new entries in the remote build cache.
+|`gradle.cache.remote.allowUntrustedServer` | `true` or `false`   | Enables/disables accepting insecure (e.g., self-signed) SSL certificates when connecting to the remote build cache node via HTTPS.
+
+For example, to change the Gradle Enterprise server used, and to disable the local build cache:
+
+```bash
+./gradlew -Dgradle.enterprise.url=https://example.com -Dgradle.cache.local.enabled=false build
+```
+
+The Gradle Enterprise plugin directly supports two other system properties:
+
+|System Property                            | Acceptable Values   | Description
+|-------------------------------------------|---------------------|------------
+|`scan.captureTaskInputFiles`               | `true` or `false`   | Enables/disables capturing task input files in build scans.
+|`scan.uploadInBackground`                  | `true` or `false`   | Enables/disables uploading build scans in the background.
+
 
 ### Developing a customized version of the plugin
 
