@@ -19,8 +19,6 @@ import static java.lang.Boolean.parseBoolean;
  */
 final class CustomGradleEnterpriseConfig {
     public static final String GRADLE_ENTERPRISE_URL_PROP = "gradle.enterprise.url";
-    public static final String CAPTURE_TASK_INPUT_FILES_PROP = "gradle.scan.captureTaskInputFiles";
-    public static final String UPLOAD_IN_BACKGROUND_PROP = "gradle.scan.uploadInBackground";
     public static final String LOCAL_CACHE_ENABLED_PROP = "gradle.cache.local.enabled";
     public static final String LOCAL_CACHE_DIRECTORY_PROP = "gradle.cache.local.directory";
     public static final String LOCAL_CACHE_CLEANUP_ENABLED_PROP = "gradle.cache.local.cleanup.enabled";
@@ -29,8 +27,6 @@ final class CustomGradleEnterpriseConfig {
     public static final String REMOTE_CACHE_ENABLED_PROP = "gradle.cache.remote.enabled";
     public static final String REMOTE_CACHE_PUSH_ENABLED_PROP = "gradle.cache.remote.storeEnabled";
     public static final String REMOTE_CACHE_ALLOW_UNTRUSTED_SERVER_PROP = "gradle.cache.remote.allowUntrustedServer";
-    public static final String REMOTE_CACHE_USERNAME_PROP = "gradle.cache.remote.username";
-    public static final String REMOTE_CACHE_PASSWORD_PROP = "gradle.cache.remote.password";
 
     private final ProviderFactory providers;
 
@@ -58,8 +54,6 @@ final class CustomGradleEnterpriseConfig {
         buildScan.setUploadInBackground(!isCiServer);
 
         */
-        withBooleanSystemProp(CAPTURE_TASK_INPUT_FILES_PROP, buildScan::setCaptureTaskInputFiles);
-        withBooleanSystemProp(UPLOAD_IN_BACKGROUND_PROP, buildScan::setUploadInBackground);
     }
 
     public void configureBuildCache(BuildCacheConfiguration buildCache) {
@@ -108,12 +102,6 @@ final class CustomGradleEnterpriseConfig {
         });
         withBooleanSystemProp(REMOTE_CACHE_ALLOW_UNTRUSTED_SERVER_PROP, value -> {
             buildCache.remote(HttpBuildCache.class).setAllowUntrustedServer(value);
-        });
-        withSystemProp(REMOTE_CACHE_USERNAME_PROP, value -> {
-            buildCache.remote(HttpBuildCache.class).getCredentials().setUsername(value);
-        });
-        withSystemProp(REMOTE_CACHE_PASSWORD_PROP, value -> {
-            buildCache.remote(HttpBuildCache.class).getCredentials().setUsername(value);
         });
     }
 
