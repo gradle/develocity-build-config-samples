@@ -120,7 +120,6 @@ final class CustomGradleEnterpriseConfig {
     private void withSystemProp(String systemPropertyName, Consumer<String> action) {
         Provider<String> prop = providers.systemProperty(systemPropertyName).forUseAtConfigurationTime();
         if(prop.isPresent()) {
-            System.out.println("Using " + systemPropertyName + ": " + prop.get());
             action.accept(prop.get());
         }
     }
