@@ -36,6 +36,12 @@ public class CommonCustomUserDataGradlePlugin implements Plugin<Object> {
 
     private void applySettingsPlugin(Settings settings) {
         settings.getPluginManager().withPlugin("com.gradle.enterprise", __ -> {
+            // Applies configuration changes after any settings in the project's settings.gradle(.kts) has been evaluated.
+            // This means that any configuration changes applied here will override configuration settings set in the
+            // settings.gradle.
+            ///
+            // Unwrap this block (delete the next line) to instead allow the project's settings.gradle to override
+            // settings set by this plugin.
             settings.getGradle().settingsEvaluated(___ -> {
                 GradleEnterpriseExtension gradleEnterprise = settings.getExtensions().getByType(GradleEnterpriseExtension.class);
                 customGradleEnterpriseConfig.configureGradleEnterprise(gradleEnterprise);
@@ -55,6 +61,12 @@ public class CommonCustomUserDataGradlePlugin implements Plugin<Object> {
             throw new GradleException("Common custom user data plugin may only be applied to root project");
         }
         project.getPluginManager().withPlugin("com.gradle.build-scan", __ -> {
+            // Applies configuration changes after any settings in the project's build.gradle(.kts) has been evaluated.
+            // This means that any configuration changes applied here will override configuration settings set in the
+            // build script.
+            ///
+            // Unwrap this block (delete the next line) to instead allow the project's build script to override
+            // settings set by this plugin.
             project.afterEvaluate(___ -> {
                 GradleEnterpriseExtension gradleEnterprise = project.getExtensions().getByType(GradleEnterpriseExtension.class);
                 customGradleEnterpriseConfig.configureGradleEnterprise(gradleEnterprise);
