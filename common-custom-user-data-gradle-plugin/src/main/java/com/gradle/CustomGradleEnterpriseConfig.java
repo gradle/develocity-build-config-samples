@@ -2,9 +2,11 @@ package com.gradle;
 
 import com.gradle.enterprise.gradleplugin.GradleEnterpriseExtension;
 import com.gradle.scan.plugin.BuildScanExtension;
+import org.gradle.api.provider.ProviderFactory;
 import org.gradle.caching.configuration.BuildCacheConfiguration;
 import org.gradle.caching.http.HttpBuildCache;
 
+import javax.inject.Inject;
 import java.time.Duration;
 
 import static java.lang.Boolean.parseBoolean;
@@ -14,7 +16,6 @@ import static java.lang.Boolean.parseBoolean;
  * By applying the plugin, these settings will automatically be applied.
  */
 final class CustomGradleEnterpriseConfig {
-
     public static final String GRADLE_ENTERPRISE_URL_PROP = "gradle.enterprise.url";
     public static final String CAPTURE_TASK_INPUT_FILES_PROP = "gradle.scan.captureTaskInputFiles";
     public static final String UPLOAD_IN_BACKGROUND_PROP = "gradle.scan.uploadInBackground";
@@ -29,7 +30,14 @@ final class CustomGradleEnterpriseConfig {
     public static final String REMOTE_CACHE_USERNAME_PROP = "gradle.cache.remote.username";
     public static final String REMOTE_CACHE_PASSWORD_PROP = "gradle.cache.remote.password";
 
-    static void configureGradleEnterprise(GradleEnterpriseExtension gradleEnterprise) {
+    private final ProviderFactory providers;
+
+    @Inject
+    CustomGradleEnterpriseConfig(ProviderFactory providers) {
+        this.providers = providers;
+    }
+
+    public void configureGradleEnterprise(GradleEnterpriseExtension gradleEnterprise) {
         /* Example of Gradle Enterprise configuration
 
         gradleEnterprise.setServer("https://your-gradle-enterprise-server.com");
@@ -40,7 +48,7 @@ final class CustomGradleEnterpriseConfig {
         }
     }
 
-    static void configureBuildScanPublishing(BuildScanExtension buildScan) {
+    public void configureBuildScanPublishing(BuildScanExtension buildScan) {
         /* Example of build scan publishing configuration
 
         boolean isCiServer = System.getenv().containsKey("CI");
@@ -58,7 +66,7 @@ final class CustomGradleEnterpriseConfig {
         }
     }
 
-    static void configureBuildCache(BuildCacheConfiguration buildCache) {
+    public void configureBuildCache(BuildCacheConfiguration buildCache) {
         /* Example of build cache configuration
 
         boolean isCiServer = System.getenv().containsKey("CI");
@@ -115,8 +123,4 @@ final class CustomGradleEnterpriseConfig {
             buildCache.remote(HttpBuildCache.class).getCredentials().setUsername(System.getProperty(REMOTE_CACHE_PASSWORD_PROP));
         }
     }
-
-    private CustomGradleEnterpriseConfig() {
-    }
-
 }
