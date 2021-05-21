@@ -2,12 +2,14 @@ package com.gradle;
 
 import com.gradle.enterprise.gradleplugin.GradleEnterpriseExtension;
 import com.gradle.scan.plugin.BuildScanExtension;
+import org.gradle.api.provider.Provider;
 import org.gradle.api.provider.ProviderFactory;
 import org.gradle.caching.configuration.BuildCacheConfiguration;
 import org.gradle.caching.http.HttpBuildCache;
 
 import javax.inject.Inject;
 import java.time.Duration;
+import java.util.function.Consumer;
 
 import static java.lang.Boolean.parseBoolean;
 
@@ -43,9 +45,7 @@ final class CustomGradleEnterpriseConfig {
         gradleEnterprise.setServer("https://your-gradle-enterprise-server.com");
 
         */
-        if (System.getProperties().containsKey(GRADLE_ENTERPRISE_URL_PROP)) {
-            gradleEnterprise.setServer(System.getProperty(GRADLE_ENTERPRISE_URL_PROP));
-        }
+        withSystemProp(GRADLE_ENTERPRISE_URL_PROP, gradleEnterprise::setServer);
     }
 
     public void configureBuildScanPublishing(BuildScanExtension buildScan) {
@@ -58,12 +58,8 @@ final class CustomGradleEnterpriseConfig {
         buildScan.setUploadInBackground(!isCiServer);
 
         */
-        if (System.getProperties().containsKey(CAPTURE_TASK_INPUT_FILES_PROP)) {
-            buildScan.setCaptureTaskInputFiles(parseBoolean(System.getProperty(CAPTURE_TASK_INPUT_FILES_PROP)));
-        }
-        if (System.getProperties().containsKey(UPLOAD_IN_BACKGROUND_PROP)) {
-            buildScan.setUploadInBackground(parseBoolean(System.getProperty(UPLOAD_IN_BACKGROUND_PROP)));
-        }
+        withBooleanSystemProp(CAPTURE_TASK_INPUT_FILES_PROP, buildScan::setCaptureTaskInputFiles);
+        withBooleanSystemProp(UPLOAD_IN_BACKGROUND_PROP, buildScan::setUploadInBackground);
     }
 
     public void configureBuildCache(BuildCacheConfiguration buildCache) {
@@ -88,39 +84,50 @@ final class CustomGradleEnterpriseConfig {
         */
 
         buildCache.local(local -> {
-            if (System.getProperties().containsKey(LOCAL_CACHE_ENABLED_PROP)) {
-                local.setEnabled(parseBoolean(System.getProperty(LOCAL_CACHE_ENABLED_PROP)));
-            }
-            if (System.getProperties().containsKey(LOCAL_CACHE_DIRECTORY_PROP)) {
-                local.setDirectory(System.getProperty(LOCAL_CACHE_DIRECTORY_PROP));
-            }
-            if (System.getProperties().containsKey(LOCAL_CACHE_CLEANUP_RETENTION_PROP)) {
+            withBooleanSystemProp(LOCAL_CACHE_ENABLED_PROP, local::setEnabled);
+            withSystemProp(LOCAL_CACHE_DIRECTORY_PROP, local::setDirectory);
+            withSystemProp(LOCAL_CACHE_CLEANUP_RETENTION_PROP, value -> {
                 Duration retention = Duration.parse(System.getProperty(LOCAL_CACHE_CLEANUP_RETENTION_PROP));
                 local.setRemoveUnusedEntriesAfterDays((int) retention.toDays());
-            }
-            if (System.getProperties().containsKey(LOCAL_CACHE_CLEANUP_ENABLED_PROP) &&
-                !parseBoolean(System.getProperty(LOCAL_CACHE_CLEANUP_ENABLED_PROP))) {
-                local.setRemoveUnusedEntriesAfterDays(Integer.MAX_VALUE);
-            }
+            });
+            withBooleanSystemProp(LOCAL_CACHE_CLEANUP_ENABLED_PROP, localCacheCleanupEnabled -> {
+                if(!localCacheCleanupEnabled) {
+                    local.setRemoveUnusedEntriesAfterDays(Integer.MAX_VALUE);
+                }
+            });
         });
 
-        if (System.getProperties().containsKey(REMOTE_CACHE_URL_PROP)) {
-            buildCache.remote(HttpBuildCache.class).setUrl(System.getProperty(REMOTE_CACHE_URL_PROP));
+        withSystemProp(REMOTE_CACHE_URL_PROP, value -> {
+            buildCache.remote(HttpBuildCache.class).setUrl(value);
+        });
+        withBooleanSystemProp(REMOTE_CACHE_ENABLED_PROP, value -> {
+            buildCache.remote(HttpBuildCache.class).setEnabled(value);
+        });
+        withBooleanSystemProp(REMOTE_CACHE_PUSH_ENABLED_PROP, value -> {
+            buildCache.remote(HttpBuildCache.class).setPush(value);
+        });
+        withBooleanSystemProp(REMOTE_CACHE_ALLOW_UNTRUSTED_SERVER_PROP, value -> {
+            buildCache.remote(HttpBuildCache.class).setAllowUntrustedServer(value);
+        });
+        withSystemProp(REMOTE_CACHE_USERNAME_PROP, value -> {
+            buildCache.remote(HttpBuildCache.class).getCredentials().setUsername(value);
+        });
+        withSystemProp(REMOTE_CACHE_PASSWORD_PROP, value -> {
+            buildCache.remote(HttpBuildCache.class).getCredentials().setUsername(value);
+        });
+    }
+
+    private void withSystemProp(String systemPropertyName, Consumer<String> action) {
+        Provider<String> prop = providers.systemProperty(systemPropertyName).forUseAtConfigurationTime();
+        if(prop.isPresent()) {
+            System.out.println("Using " + systemPropertyName + ": " + prop.get());
+            action.accept(prop.get());
         }
-        if (System.getProperties().containsKey(REMOTE_CACHE_ENABLED_PROP)) {
-            buildCache.remote(HttpBuildCache.class).setEnabled(parseBoolean(System.getProperty(REMOTE_CACHE_ENABLED_PROP)));
-        }
-        if (System.getProperties().containsKey(REMOTE_CACHE_PUSH_ENABLED_PROP)) {
-            buildCache.remote(HttpBuildCache.class).setPush(parseBoolean(System.getProperty(REMOTE_CACHE_PUSH_ENABLED_PROP)));
-        }
-        if (System.getProperties().containsKey(REMOTE_CACHE_PUSH_ENABLED_PROP)) {
-            buildCache.remote(HttpBuildCache.class).setAllowUntrustedServer(parseBoolean(System.getProperty(REMOTE_CACHE_ALLOW_UNTRUSTED_SERVER_PROP)));
-        }
-        if (System.getProperties().containsKey(REMOTE_CACHE_USERNAME_PROP)) {
-            buildCache.remote(HttpBuildCache.class).getCredentials().setUsername(System.getProperty(REMOTE_CACHE_USERNAME_PROP));
-        }
-        if (System.getProperties().containsKey(REMOTE_CACHE_PASSWORD_PROP)) {
-            buildCache.remote(HttpBuildCache.class).getCredentials().setUsername(System.getProperty(REMOTE_CACHE_PASSWORD_PROP));
-        }
+    }
+
+    private void withBooleanSystemProp(String systemPropertyName, Consumer<Boolean> action) {
+        withSystemProp(systemPropertyName, value -> {
+            action.accept(parseBoolean(value));
+        });
     }
 }
