@@ -1,5 +1,8 @@
 package com.gradle;
 
+import org.gradle.api.provider.Provider;
+import org.gradle.api.provider.ProviderFactory;
+
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -13,6 +16,9 @@ import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
+
+import static java.lang.Boolean.parseBoolean;
 
 final class Utils {
 
@@ -34,6 +40,19 @@ final class Utils {
             }
         }
         return false;
+    }
+
+    static void withSystemProp(ProviderFactory providers, String systemPropertyName, Consumer<String> action) {
+        Provider<String> prop = providers.systemProperty(systemPropertyName).forUseAtConfigurationTime();
+        if(prop.isPresent()) {
+            action.accept(prop.get());
+        }
+    }
+
+    static void withBooleanSystemProp(ProviderFactory providers, String systemPropertyName, Consumer<Boolean> action) {
+        withSystemProp(providers, systemPropertyName, value -> {
+            action.accept(parseBoolean(value));
+        });
     }
 
     static Optional<String> envVariable(String name) {
@@ -122,5 +141,4 @@ final class Utils {
 
     private Utils() {
     }
-
 }

@@ -106,15 +106,10 @@ final class CustomGradleEnterpriseConfig {
     }
 
     private void withSystemProp(String systemPropertyName, Consumer<String> action) {
-        Provider<String> prop = providers.systemProperty(systemPropertyName).forUseAtConfigurationTime();
-        if(prop.isPresent()) {
-            action.accept(prop.get());
-        }
+        Utils.withSystemProp(providers, systemPropertyName, action);
     }
 
     private void withBooleanSystemProp(String systemPropertyName, Consumer<Boolean> action) {
-        withSystemProp(systemPropertyName, value -> {
-            action.accept(parseBoolean(value));
-        });
+        Utils.withBooleanSystemProp(providers, systemPropertyName, action);
     }
 }
