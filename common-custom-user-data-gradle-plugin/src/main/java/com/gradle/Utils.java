@@ -43,9 +43,18 @@ final class Utils {
     }
 
     static void withSystemProp(ProviderFactory providers, String systemPropertyName, Consumer<String> action) {
-        Provider<String> prop = providers.systemProperty(systemPropertyName).forUseAtConfigurationTime();
-        if(prop.isPresent()) {
-            action.accept(prop.get());
+        try {
+            Provider<String> prop = providers.systemProperty(systemPropertyName).forUseAtConfigurationTime();
+            if (prop.isPresent()) {
+                action.accept(prop.get());
+            }
+        } catch (NoSuchMethodError e) {
+            // If we get here, we're running on an earlier version of Gradle that doesn't support providers.systemProperty
+            // Fallback to direct system property access
+            Optional<String> prop = sysProperty(systemPropertyName);
+            if(prop.isPresent()) {
+                action.accept(prop.get());
+            }
         }
     }
 
