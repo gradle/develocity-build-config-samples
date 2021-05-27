@@ -56,9 +56,7 @@ final class Utils {
     }
 
     static void withBooleanSysProperty(ProviderFactory providers, String systemPropertyName, Consumer<Boolean> action) {
-        withSysProperty(providers, systemPropertyName, value -> {
-            action.accept(parseBoolean(value));
-        });
+        withSysProperty(providers, systemPropertyName, value -> action.accept(parseBoolean(value)));
     }
 
     static Optional<String> envVariable(String name) {

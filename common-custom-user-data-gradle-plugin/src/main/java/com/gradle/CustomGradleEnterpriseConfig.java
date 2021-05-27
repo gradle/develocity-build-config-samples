@@ -91,18 +91,10 @@ final class CustomGradleEnterpriseConfig {
                 });
         });
 
-        withSysProperty(providers, REMOTE_CACHE_URL_PROP, value -> {
-            buildCache.remote(HttpBuildCache.class).setUrl(value);
-        });
-        withBooleanSysProperty(providers, REMOTE_CACHE_ENABLED_PROP, value -> {
-            buildCache.remote(HttpBuildCache.class).setEnabled(value);
-        });
-        withBooleanSysProperty(providers, REMOTE_CACHE_PUSH_ENABLED_PROP, value -> {
-            buildCache.remote(HttpBuildCache.class).setPush(value);
-        });
-        withBooleanSysProperty(providers, REMOTE_CACHE_ALLOW_UNTRUSTED_SERVER_PROP, value -> {
-            buildCache.remote(HttpBuildCache.class).setAllowUntrustedServer(value);
-        });
+        withSysProperty(providers, REMOTE_CACHE_URL_PROP, value -> buildCache.remote(HttpBuildCache.class).setUrl(value));
+        withBooleanSysProperty(providers, REMOTE_CACHE_ENABLED_PROP, value -> buildCache.remote(HttpBuildCache.class).setEnabled(value));
+        withBooleanSysProperty(providers, REMOTE_CACHE_PUSH_ENABLED_PROP, value -> buildCache.remote(HttpBuildCache.class).setPush(value));
+        withBooleanSysProperty(providers, REMOTE_CACHE_ALLOW_UNTRUSTED_SERVER_PROP, value -> buildCache.remote(HttpBuildCache.class).setAllowUntrustedServer(value));
     }
 
 }
