@@ -45,12 +45,9 @@ final class CustomBuildScanEnhancements {
     private static void captureIde(BuildScanExtension buildScan, Gradle gradle, ProviderFactory providers) {
         // Wait for projects to load to ensure Gradle project properties are initialized
         gradle.projectsEvaluated(g -> {
-            Project project = g.getRootProject();
-            if (project.hasProperty("android.injected.invoked.from.ide")) {
+            if (projectProperty(gradle,"android.injected.invoked.from.ide", providers).isPresent()) {
                 buildScan.tag("Android Studio");
-                if (project.hasProperty("android.injected.studio.version")) {
-                    buildScan.value("Android Studio version", String.valueOf(project.property("android.injected.studio.version")));
-                }
+                projectProperty(gradle, "android.injected.studio.version", providers).ifPresent(v -> buildScan.value("Android Studio version", v));
             } else if (sysProperty("idea.version", providers).isPresent() || sysPropertyKeyStartingWith("idea.version")) {
                 buildScan.tag("IntelliJ IDEA");
             } else if (sysProperty("eclipse.buildId", providers).isPresent()) {
