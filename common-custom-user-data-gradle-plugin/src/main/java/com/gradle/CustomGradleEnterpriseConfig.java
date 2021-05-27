@@ -18,6 +18,7 @@ import static java.lang.Boolean.parseBoolean;
  * By applying the plugin, these settings will automatically be applied.
  */
 final class CustomGradleEnterpriseConfig {
+
     public static final String GRADLE_ENTERPRISE_URL_PROP = "gradle.enterprise.url";
     public static final String LOCAL_CACHE_ENABLED_PROP = "gradle.cache.local.enabled";
     public static final String LOCAL_CACHE_DIRECTORY_PROP = "gradle.cache.local.directory";
@@ -85,7 +86,7 @@ final class CustomGradleEnterpriseConfig {
                 local.setRemoveUnusedEntriesAfterDays((int) retention.toDays());
             });
             withBooleanSystemProp(LOCAL_CACHE_CLEANUP_ENABLED_PROP, localCacheCleanupEnabled -> {
-                if(!localCacheCleanupEnabled) {
+                if (!localCacheCleanupEnabled) {
                     local.setRemoveUnusedEntriesAfterDays(Integer.MAX_VALUE);
                 }
             });
@@ -106,10 +107,10 @@ final class CustomGradleEnterpriseConfig {
     }
 
     private void withSystemProp(String systemPropertyName, Consumer<String> action) {
-        Utils.withSystemProp(providers, systemPropertyName, action);
+        Utils.withSysProperty(providers, systemPropertyName, action);
     }
 
     private void withBooleanSystemProp(String systemPropertyName, Consumer<Boolean> action) {
-        Utils.withBooleanSystemProp(providers, systemPropertyName, action);
+        Utils.withBooleanSysProperty(providers, systemPropertyName, action);
     }
 }
