@@ -17,15 +17,16 @@ import static com.gradle.Utils.withSysProperty;
  */
 final class CustomGradleEnterpriseConfig {
 
-    public static final String GRADLE_ENTERPRISE_URL_PROP = "gradle.enterprise.url";
-    public static final String LOCAL_CACHE_ENABLED_PROP = "gradle.cache.local.enabled";
-    public static final String LOCAL_CACHE_DIRECTORY_PROP = "gradle.cache.local.directory";
-    public static final String LOCAL_CACHE_CLEANUP_ENABLED_PROP = "gradle.cache.local.cleanup.enabled";
-    public static final String LOCAL_CACHE_CLEANUP_RETENTION_PROP = "gradle.cache.local.cleanup.retention";
-    public static final String REMOTE_CACHE_URL_PROP = "gradle.cache.remote.url";
-    public static final String REMOTE_CACHE_ENABLED_PROP = "gradle.cache.remote.enabled";
-    public static final String REMOTE_CACHE_PUSH_ENABLED_PROP = "gradle.cache.remote.storeEnabled";
-    public static final String REMOTE_CACHE_ALLOW_UNTRUSTED_SERVER_PROP = "gradle.cache.remote.allowUntrustedServer";
+    // system properties to override Gradle Enterprise, Build Cache, and Build Scan configuration
+    public static final String GRADLE_ENTERPRISE_URL = "gradle.enterprise.url";
+    public static final String LOCAL_CACHE_ENABLED = "gradle.cache.local.enabled";
+    public static final String LOCAL_CACHE_DIRECTORY = "gradle.cache.local.directory";
+    public static final String LOCAL_CACHE_CLEANUP_ENABLED = "gradle.cache.local.cleanup.enabled";
+    public static final String LOCAL_CACHE_CLEANUP_RETENTION = "gradle.cache.local.cleanup.retention";
+    public static final String REMOTE_CACHE_URL = "gradle.cache.remote.url";
+    public static final String REMOTE_CACHE_ENABLED = "gradle.cache.remote.enabled";
+    public static final String REMOTE_CACHE_PUSH_ENABLED = "gradle.cache.remote.storeEnabled";
+    public static final String REMOTE_CACHE_ALLOW_UNTRUSTED_SERVER = "gradle.cache.remote.allowUntrustedServer";
 
     static void configureGradleEnterprise(GradleEnterpriseExtension gradleEnterprise, ProviderFactory providers) {
         /* Example of Gradle Enterprise configuration
@@ -34,7 +35,7 @@ final class CustomGradleEnterpriseConfig {
 
         */
 
-        withSysProperty(GRADLE_ENTERPRISE_URL_PROP, gradleEnterprise::setServer, providers);
+        withSysProperty(GRADLE_ENTERPRISE_URL, gradleEnterprise::setServer, providers);
     }
 
     static void configureBuildScanPublishing(BuildScanExtension buildScan, ProviderFactory providers) {
@@ -71,13 +72,13 @@ final class CustomGradleEnterpriseConfig {
         */
 
         buildCache.local(local -> {
-            withBooleanSysProperty(LOCAL_CACHE_ENABLED_PROP, local::setEnabled, providers);
-            withSysProperty(LOCAL_CACHE_DIRECTORY_PROP, local::setDirectory, providers);
-            withSysProperty(LOCAL_CACHE_CLEANUP_RETENTION_PROP, value -> {
-                Duration retention = Duration.parse(System.getProperty(LOCAL_CACHE_CLEANUP_RETENTION_PROP));
+            withBooleanSysProperty(LOCAL_CACHE_ENABLED, local::setEnabled, providers);
+            withSysProperty(LOCAL_CACHE_DIRECTORY, local::setDirectory, providers);
+            withSysProperty(LOCAL_CACHE_CLEANUP_RETENTION, value -> {
+                Duration retention = Duration.parse(System.getProperty(LOCAL_CACHE_CLEANUP_RETENTION));
                 local.setRemoveUnusedEntriesAfterDays((int) retention.toDays());
             }, providers);
-            withBooleanSysProperty(LOCAL_CACHE_CLEANUP_ENABLED_PROP, localCacheCleanupEnabled -> {
+            withBooleanSysProperty(LOCAL_CACHE_CLEANUP_ENABLED, localCacheCleanupEnabled -> {
                 if (!localCacheCleanupEnabled) {
                     local.setRemoveUnusedEntriesAfterDays(Integer.MAX_VALUE);
                 }
@@ -85,10 +86,10 @@ final class CustomGradleEnterpriseConfig {
         });
 
         buildCache.remote(HttpBuildCache.class, remote -> {
-            withSysProperty(REMOTE_CACHE_URL_PROP, remote::setUrl, providers);
-            withBooleanSysProperty(REMOTE_CACHE_ENABLED_PROP, remote::setEnabled, providers);
-            withBooleanSysProperty(REMOTE_CACHE_PUSH_ENABLED_PROP, remote::setPush, providers);
-            withBooleanSysProperty(REMOTE_CACHE_ALLOW_UNTRUSTED_SERVER_PROP, remote::setAllowUntrustedServer, providers);
+            withSysProperty(REMOTE_CACHE_URL, remote::setUrl, providers);
+            withBooleanSysProperty(REMOTE_CACHE_ENABLED, remote::setEnabled, providers);
+            withBooleanSysProperty(REMOTE_CACHE_PUSH_ENABLED, remote::setPush, providers);
+            withBooleanSysProperty(REMOTE_CACHE_ALLOW_UNTRUSTED_SERVER, remote::setAllowUntrustedServer, providers);
         });
     }
 
