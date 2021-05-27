@@ -60,12 +60,12 @@ final class Utils {
         withSysProperty(name, value -> action.accept(Duration.parse(value)), providers);
     }
 
-    static Optional<String> envVariable(String name) {
-        String value = System.getenv(name);
-        if (isNotEmpty(value)) {
-            return Optional.of(value);
+    static Optional<String> envVariable(String name, ProviderFactory providers) {
+        if (isGradle65OrNewer()) {
+            Provider<String> property = providers.environmentVariable(name).forUseAtConfigurationTime();
+            return Optional.ofNullable(property.getOrNull());
         }
-        return Optional.empty();
+        return Optional.ofNullable(System.getenv(name));
     }
 
     static String appendIfMissing(String str, String suffix) {

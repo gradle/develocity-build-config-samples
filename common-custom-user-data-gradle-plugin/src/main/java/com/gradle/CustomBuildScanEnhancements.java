@@ -33,7 +33,7 @@ final class CustomBuildScanEnhancements {
         captureOs(buildScan, providers);
         captureIde(buildScan, gradle, providers);
         captureCiOrLocal(buildScan, providers);
-        captureCiMetadata(buildScan, gradle);
+        captureCiMetadata(buildScan, gradle, providers);
         captureGitMetadata(buildScan);
         captureTestParallelization(buildScan, gradle);
     }
@@ -70,21 +70,21 @@ final class CustomBuildScanEnhancements {
         buildScan.tag(isCi(providers) ? "CI" : "LOCAL");
     }
 
-    private static void captureCiMetadata(BuildScanExtension buildScan, Gradle gradle) {
-        if (isJenkins() || isHudson()) {
-            envVariable("BUILD_URL").ifPresent(url ->
-                buildScan.link(isJenkins() ? "Jenkins build" : "Hudson build", url));
-            envVariable("BUILD_NUMBER").ifPresent(value ->
+    private static void captureCiMetadata(BuildScanExtension buildScan, Gradle gradle, ProviderFactory providers) {
+        if (isJenkins(providers) || isHudson(providers)) {
+            envVariable("BUILD_URL", providers).ifPresent(url ->
+                buildScan.link(isJenkins(providers) ? "Jenkins build" : "Hudson build", url));
+            envVariable("BUILD_NUMBER", providers).ifPresent(value ->
                 buildScan.value("CI build number", value));
-            envVariable("NODE_NAME").ifPresent(value ->
+            envVariable("NODE_NAME", providers).ifPresent(value ->
                 addCustomValueAndSearchLink(buildScan, "CI node", value));
-            envVariable("JOB_NAME").ifPresent(value ->
+            envVariable("JOB_NAME", providers).ifPresent(value ->
                 addCustomValueAndSearchLink(buildScan, "CI job", value));
-            envVariable("STAGE_NAME").ifPresent(value ->
+            envVariable("STAGE_NAME", providers).ifPresent(value ->
                 addCustomValueAndSearchLink(buildScan, "CI stage", value));
         }
 
-        if (isTeamCity()) {
+        if (isTeamCity(providers)) {
             // Wait for projects to load to ensure Gradle project properties are initialized
             gradle.projectsEvaluated(g -> {
                 Optional<String> teamCityConfigFile = projectProperty(gradle, "teamcity.configuration.properties.file");
@@ -109,111 +109,111 @@ final class CustomBuildScanEnhancements {
             });
         }
 
-        if (isCircleCI()) {
-            envVariable("CIRCLE_BUILD_URL").ifPresent(url ->
+        if (isCircleCI(providers)) {
+            envVariable("CIRCLE_BUILD_URL", providers).ifPresent(url ->
                 buildScan.link("CircleCI build", url));
-            envVariable("CIRCLE_BUILD_NUM").ifPresent(value ->
+            envVariable("CIRCLE_BUILD_NUM", providers).ifPresent(value ->
                 buildScan.value("CI build number", value));
-            envVariable("CIRCLE_JOB").ifPresent(value ->
+            envVariable("CIRCLE_JOB", providers).ifPresent(value ->
                 addCustomValueAndSearchLink(buildScan, "CI job", value));
-            envVariable("CIRCLE_WORKFLOW_ID").ifPresent(value ->
+            envVariable("CIRCLE_WORKFLOW_ID", providers).ifPresent(value ->
                 addCustomValueAndSearchLink(buildScan, "CI workflow", value));
         }
 
-        if (isBamboo()) {
-            envVariable("bamboo_resultsUrl").ifPresent(url ->
+        if (isBamboo(providers)) {
+            envVariable("bamboo_resultsUrl", providers).ifPresent(url ->
                 buildScan.link("Bamboo build", url));
-            envVariable("bamboo_buildNumber").ifPresent(value ->
+            envVariable("bamboo_buildNumber", providers).ifPresent(value ->
                 buildScan.value("CI build number", value));
-            envVariable("bamboo_planName").ifPresent(value ->
+            envVariable("bamboo_planName", providers).ifPresent(value ->
                 addCustomValueAndSearchLink(buildScan, "CI plan", value));
-            envVariable("bamboo_buildPlanName").ifPresent(value ->
+            envVariable("bamboo_buildPlanName", providers).ifPresent(value ->
                 addCustomValueAndSearchLink(buildScan, "CI build plan", value));
-            envVariable("bamboo_agentId").ifPresent(value ->
+            envVariable("bamboo_agentId", providers).ifPresent(value ->
                 addCustomValueAndSearchLink(buildScan, "CI agent", value));
         }
 
-        if (isGitHubActions()) {
-            Optional<String> gitHubRepository = envVariable("GITHUB_REPOSITORY");
-            Optional<String> gitHubRunId = envVariable("GITHUB_RUN_ID");
+        if (isGitHubActions(providers)) {
+            Optional<String> gitHubRepository = envVariable("GITHUB_REPOSITORY", providers);
+            Optional<String> gitHubRunId = envVariable("GITHUB_RUN_ID", providers);
             if (gitHubRepository.isPresent() && gitHubRunId.isPresent()) {
                 buildScan.link("GitHub Actions build", "https://github.com/" + gitHubRepository.get() + "/actions/runs/" + gitHubRunId.get());
             }
-            envVariable("GITHUB_WORKFLOW").ifPresent(value ->
+            envVariable("GITHUB_WORKFLOW", providers).ifPresent(value ->
                 addCustomValueAndSearchLink(buildScan, "GitHub workflow", value));
         }
 
-        if (isGitLab()) {
-            envVariable("CI_JOB_URL").ifPresent(url ->
+        if (isGitLab(providers)) {
+            envVariable("CI_JOB_URL", providers).ifPresent(url ->
                 buildScan.link("GitLab build", url));
-            envVariable("CI_PIPELINE_URL").ifPresent(url ->
+            envVariable("CI_PIPELINE_URL", providers).ifPresent(url ->
                 buildScan.link("GitLab pipeline", url));
-            envVariable("CI_JOB_NAME").ifPresent(value1 ->
+            envVariable("CI_JOB_NAME", providers).ifPresent(value1 ->
                 addCustomValueAndSearchLink(buildScan, "CI job", value1));
-            envVariable("CI_JOB_STAGE").ifPresent(value ->
+            envVariable("CI_JOB_STAGE", providers).ifPresent(value ->
                 addCustomValueAndSearchLink(buildScan, "CI stage", value));
         }
 
-        if (isTravis()) {
-            envVariable("TRAVIS_BUILD_WEB_URL").ifPresent(url ->
+        if (isTravis(providers)) {
+            envVariable("TRAVIS_BUILD_WEB_URL", providers).ifPresent(url ->
                 buildScan.link("Travis build", url));
-            envVariable("TRAVIS_BUILD_NUMBER").ifPresent(value ->
+            envVariable("TRAVIS_BUILD_NUMBER", providers).ifPresent(value ->
                 buildScan.value("CI build number", value));
-            envVariable("TRAVIS_JOB_NAME").ifPresent(value ->
+            envVariable("TRAVIS_JOB_NAME", providers).ifPresent(value ->
                 addCustomValueAndSearchLink(buildScan, "CI job", value));
-            envVariable("TRAVIS_EVENT_TYPE").ifPresent(buildScan::tag);
+            envVariable("TRAVIS_EVENT_TYPE", providers).ifPresent(buildScan::tag);
         }
 
-        if (isBitrise()) {
-            envVariable("BITRISE_BUILD_URL").ifPresent(url ->
+        if (isBitrise(providers)) {
+            envVariable("BITRISE_BUILD_URL", providers).ifPresent(url ->
                 buildScan.link("Bitrise build", url));
-            envVariable("BITRISE_BUILD_NUMBER").ifPresent(value ->
+            envVariable("BITRISE_BUILD_NUMBER", providers).ifPresent(value ->
                 buildScan.value("CI build number", value));
         }
     }
 
     private static boolean isCi(ProviderFactory providers) {
-        return isGenericCI(providers) || isJenkins() || isHudson() || isTeamCity() || isCircleCI() || isBamboo() || isGitHubActions() || isGitLab() || isTravis() || isBitrise();
+        return isGenericCI(providers) || isJenkins(providers) || isHudson(providers) || isTeamCity(providers) || isCircleCI(providers) || isBamboo(providers) || isGitHubActions(providers) || isGitLab(providers) || isTravis(providers) || isBitrise(providers);
     }
 
     private static boolean isGenericCI(ProviderFactory providers) {
-        return envVariable("CI").isPresent() || sysProperty("CI", providers).isPresent();
+        return envVariable("CI", providers).isPresent() || sysProperty("CI", providers).isPresent();
     }
 
-    private static boolean isJenkins() {
-        return envVariable("JENKINS_URL").isPresent();
+    private static boolean isJenkins(ProviderFactory providers) {
+        return envVariable("JENKINS_URL", providers).isPresent();
     }
 
-    private static boolean isHudson() {
-        return envVariable("HUDSON_URL").isPresent();
+    private static boolean isHudson(ProviderFactory providers) {
+        return envVariable("HUDSON_URL", providers).isPresent();
     }
 
-    private static boolean isTeamCity() {
-        return envVariable("TEAMCITY_VERSION").isPresent();
+    private static boolean isTeamCity(ProviderFactory providers) {
+        return envVariable("TEAMCITY_VERSION", providers).isPresent();
     }
 
-    private static boolean isCircleCI() {
-        return envVariable("CIRCLE_BUILD_URL").isPresent();
+    private static boolean isCircleCI(ProviderFactory providers) {
+        return envVariable("CIRCLE_BUILD_URL", providers).isPresent();
     }
 
-    private static boolean isBamboo() {
-        return envVariable("bamboo_resultsUrl").isPresent();
+    private static boolean isBamboo(ProviderFactory providers) {
+        return envVariable("bamboo_resultsUrl", providers).isPresent();
     }
 
-    private static boolean isGitHubActions() {
-        return envVariable("GITHUB_ACTIONS").isPresent();
+    private static boolean isGitHubActions(ProviderFactory providers) {
+        return envVariable("GITHUB_ACTIONS", providers).isPresent();
     }
 
-    private static boolean isGitLab() {
-        return envVariable("GITLAB_CI").isPresent();
+    private static boolean isGitLab(ProviderFactory providers) {
+        return envVariable("GITLAB_CI", providers).isPresent();
     }
 
-    private static boolean isTravis() {
-        return envVariable("TRAVIS_JOB_ID").isPresent();
+    private static boolean isTravis(ProviderFactory providers) {
+        return envVariable("TRAVIS_JOB_ID", providers).isPresent();
     }
 
-    private static boolean isBitrise() {
-        return envVariable("BITRISE_BUILD_URL").isPresent();
+    private static boolean isBitrise(ProviderFactory providers) {
+        return envVariable("BITRISE_BUILD_URL", providers).isPresent();
     }
 
     private static void captureGitMetadata(BuildScanExtension buildScan) {
