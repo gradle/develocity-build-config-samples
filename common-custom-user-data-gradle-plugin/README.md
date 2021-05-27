@@ -62,11 +62,10 @@ The following system properties are supported:
 |`gradle.enterprise.url`                    | URL                 | Sets the URL of the Gradle Enterprise server, primarily for publishing build scans.
 |`gradle.cache.local.enabled`               | `true` or `false`   | Enables/disables the local build cache.
 |`gradle.cache.local.directory`             | path to a directory | Sets the location of the local build cache.
-|`gradle.cache.local.cleanup.enabled`       | `true` or `false`   | Enables/disables cleanup of the local build cache. If set to true, then the cleanup retention is set to Integer.MAX_INT days.
-|`gradle.cache.local.cleanup.retention`     | [Duration String Representation](https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/time/Duration.html#parse(java.lang.CharSequence)) | Sets how long local build cache entries are allowed to exist before they are deleted automatically.
+|`gradle.cache.local.removeUnusedEntriesAfterDays` | [Duration String Representation](https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/time/Duration.html#parse(java.lang.CharSequence)) | Sets how long local build cache entries are allowed to exist before they are deleted automatically.
 |`gradle.cache.remote.enabled`              | `true` or `false`   | Enables/disables the remote build cache.
 |`gradle.cache.remote.url`                  | URL | Sets the URL of the remote cache node. Assumes the remote cache is a HTTPBuildCache.
-|`gradle.cache.remote.storeEnabled`         | `true` or `false`   | Enables/disables pushing (storing) new entries in the remote build cache.
+|`gradle.cache.remote.push`                 | `true` or `false`   | Enables/disables pushing (storing) new entries in the remote build cache.
 |`gradle.cache.remote.allowUntrustedServer` | `true` or `false`   | Enables/disables accepting insecure (e.g., self-signed) SSL certificates when connecting to the remote build cache node via HTTPS.
 
 For example, to change the Gradle Enterprise server used, and to disable the local build cache:
