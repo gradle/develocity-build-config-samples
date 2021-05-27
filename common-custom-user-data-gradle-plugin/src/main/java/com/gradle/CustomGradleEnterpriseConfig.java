@@ -81,20 +81,22 @@ final class CustomGradleEnterpriseConfig {
             withBooleanSysProperty(providers, LOCAL_CACHE_ENABLED_PROP, local::setEnabled);
             withSysProperty(providers, LOCAL_CACHE_DIRECTORY_PROP, local::setDirectory);
             withSysProperty(providers, LOCAL_CACHE_CLEANUP_RETENTION_PROP, value -> {
-                    Duration retention = Duration.parse(System.getProperty(LOCAL_CACHE_CLEANUP_RETENTION_PROP));
-                    local.setRemoveUnusedEntriesAfterDays((int) retention.toDays());
-                });
+                Duration retention = Duration.parse(System.getProperty(LOCAL_CACHE_CLEANUP_RETENTION_PROP));
+                local.setRemoveUnusedEntriesAfterDays((int) retention.toDays());
+            });
             withBooleanSysProperty(providers, LOCAL_CACHE_CLEANUP_ENABLED_PROP, localCacheCleanupEnabled -> {
-                    if (!localCacheCleanupEnabled) {
-                        local.setRemoveUnusedEntriesAfterDays(Integer.MAX_VALUE);
-                    }
-                });
+                if (!localCacheCleanupEnabled) {
+                    local.setRemoveUnusedEntriesAfterDays(Integer.MAX_VALUE);
+                }
+            });
         });
 
-        withSysProperty(providers, REMOTE_CACHE_URL_PROP, value -> buildCache.remote(HttpBuildCache.class).setUrl(value));
-        withBooleanSysProperty(providers, REMOTE_CACHE_ENABLED_PROP, value -> buildCache.remote(HttpBuildCache.class).setEnabled(value));
-        withBooleanSysProperty(providers, REMOTE_CACHE_PUSH_ENABLED_PROP, value -> buildCache.remote(HttpBuildCache.class).setPush(value));
-        withBooleanSysProperty(providers, REMOTE_CACHE_ALLOW_UNTRUSTED_SERVER_PROP, value -> buildCache.remote(HttpBuildCache.class).setAllowUntrustedServer(value));
+        buildCache.remote(HttpBuildCache.class, remote -> {
+            withSysProperty(providers, REMOTE_CACHE_URL_PROP, remote::setUrl);
+            withBooleanSysProperty(providers, REMOTE_CACHE_ENABLED_PROP, remote::setEnabled);
+            withBooleanSysProperty(providers, REMOTE_CACHE_PUSH_ENABLED_PROP, remote::setPush);
+            withBooleanSysProperty(providers, REMOTE_CACHE_ALLOW_UNTRUSTED_SERVER_PROP, remote::setAllowUntrustedServer);
+        });
     }
 
 }
