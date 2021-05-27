@@ -1,5 +1,9 @@
 package com.gradle;
 
+import org.gradle.api.provider.Provider;
+import org.gradle.api.provider.ProviderFactory;
+import org.gradle.util.GradleVersion;
+
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -10,9 +14,13 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
+
+import static java.lang.Boolean.parseBoolean;
 
 final class Utils {
 
@@ -34,6 +42,26 @@ final class Utils {
             }
         }
         return false;
+    }
+
+    static void withSysProperty(String name, Consumer<String> action, ProviderFactory providers) {
+        if (isGradle65OrNewer()) {
+            Provider<String> property = providers.systemProperty(name).forUseAtConfigurationTime();
+            if (property.isPresent()) {
+                action.accept(property.get());
+            }
+        } else {
+            Optional<String> property = sysProperty(name);
+            property.ifPresent(action);
+        }
+    }
+
+    static void withBooleanSysProperty(String name, Consumer<Boolean> action, ProviderFactory providers) {
+        withSysProperty(name, value -> action.accept(parseBoolean(value)), providers);
+    }
+
+    static void withDurationSysProperty(String name, Consumer<Duration> action, ProviderFactory providers) {
+        withSysProperty(name, value -> action.accept(Duration.parse(value)), providers);
     }
 
     static Optional<String> envVariable(String name) {
@@ -118,6 +146,10 @@ final class Utils {
 
     private static String trimAtEnd(String str) {
         return ('x' + str).trim().substring(1);
+    }
+
+    private static boolean isGradle65OrNewer() {
+        return GradleVersion.current().compareTo(GradleVersion.version("6.5")) >= 0;
     }
 
     private Utils() {
