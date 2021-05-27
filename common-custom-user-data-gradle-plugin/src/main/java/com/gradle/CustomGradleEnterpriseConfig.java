@@ -6,7 +6,6 @@ import org.gradle.api.provider.ProviderFactory;
 import org.gradle.caching.configuration.BuildCacheConfiguration;
 import org.gradle.caching.http.HttpBuildCache;
 
-import javax.inject.Inject;
 import java.time.Duration;
 
 import static com.gradle.Utils.withBooleanSysProperty;
@@ -30,7 +29,6 @@ final class CustomGradleEnterpriseConfig {
 
     private final ProviderFactory providers;
 
-    @Inject
     CustomGradleEnterpriseConfig(ProviderFactory providers) {
         this.providers = providers;
     }
