@@ -1,5 +1,6 @@
 package com.gradle;
 
+import org.gradle.api.invocation.Gradle;
 import org.gradle.api.provider.Provider;
 import org.gradle.api.provider.ProviderFactory;
 import org.gradle.util.GradleVersion;
@@ -66,6 +67,15 @@ final class Utils {
             return Optional.ofNullable(property.getOrNull());
         }
         return Optional.ofNullable(System.getenv(name));
+    }
+
+    static Optional<String> projectProperty(Gradle gradle, String name, ProviderFactory providers) {
+        if (isGradle65OrNewer()) {
+            Provider<String> property = providers.gradleProperty(name).forUseAtConfigurationTime();
+            return Optional.ofNullable(property.getOrNull());
+        }
+        String value = (String) gradle.getRootProject().findProperty(name);
+        return Optional.ofNullable(value);
     }
 
     static String appendIfMissing(String str, String suffix) {
@@ -150,5 +160,4 @@ final class Utils {
 
     private Utils() {
     }
-
 }
