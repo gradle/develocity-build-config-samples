@@ -37,18 +37,20 @@ public class CommonCustomUserDataGradlePlugin implements Plugin<Object> {
 
     private void applySettingsPlugin(Settings settings) {
         settings.getPluginManager().withPlugin("com.gradle.enterprise", __ -> {
-            // configuration changes applied here will override configuration settings set in the settings.gradle(.kts)
-            // unwrap this block to instead allow the project's settings.gradle(.kts) to override the configuration settings set by this plugin
+            GradleEnterpriseExtension gradleEnterprise = settings.getExtensions().getByType(GradleEnterpriseExtension.class);
+            CustomGradleEnterpriseConfig.configureGradleEnterprise(gradleEnterprise);
+
+            BuildScanExtension buildScan = gradleEnterprise.getBuildScan();
+            CustomGradleEnterpriseConfig.configureBuildScanPublishing(buildScan);
+            CustomBuildScanEnhancements.configureBuildScan(buildScan, settings.getGradle());
+
+            BuildCacheConfiguration buildCache = settings.getBuildCache();
+            CustomGradleEnterpriseConfig.configureBuildCache(buildCache);
+
             settings.getGradle().settingsEvaluated(___ -> {
-                GradleEnterpriseExtension gradleEnterprise = settings.getExtensions().getByType(GradleEnterpriseExtension.class);
-                CustomGradleEnterpriseConfig.configureGradleEnterprise(gradleEnterprise, providers);
-
-                BuildScanExtension buildScan = gradleEnterprise.getBuildScan();
-                CustomGradleEnterpriseConfig.configureBuildScanPublishing(buildScan, providers);
-                CustomBuildScanEnhancements.configureBuildScan(buildScan, settings.getGradle());
-
-                BuildCacheConfiguration buildCache = settings.getBuildCache();
-                CustomGradleEnterpriseConfig.configureBuildCache(buildCache, providers);
+                // configuration changes applied here will override earlier configuration settings (including those set in the settings.gradle(.kts))
+                SystemPropertyOverrides.configureGradleEnterprise(gradleEnterprise, providers);
+                SystemPropertyOverrides.configureBuildCache(buildCache, providers);
             });
         });
     }
@@ -58,17 +60,18 @@ public class CommonCustomUserDataGradlePlugin implements Plugin<Object> {
             throw new GradleException("Common custom user data plugin may only be applied to root project");
         }
         project.getPluginManager().withPlugin("com.gradle.build-scan", __ -> {
-            // configuration changes applied here will override configuration settings set in the root project's build.gradle(.kts)
-            // unwrap this block to instead allow the root project's build.gradle(.kts) to override the configuration settings set by this plugin
+            GradleEnterpriseExtension gradleEnterprise = project.getExtensions().getByType(GradleEnterpriseExtension.class);
+            CustomGradleEnterpriseConfig.configureGradleEnterprise(gradleEnterprise);
+
+            BuildScanExtension buildScan = gradleEnterprise.getBuildScan();
+            CustomGradleEnterpriseConfig.configureBuildScanPublishing(buildScan);
+            CustomBuildScanEnhancements.configureBuildScan(buildScan, project.getGradle());
+
+            // Build cache configuration cannot be accessed from a project plugin
+
             project.afterEvaluate(___ -> {
-                GradleEnterpriseExtension gradleEnterprise = project.getExtensions().getByType(GradleEnterpriseExtension.class);
-                CustomGradleEnterpriseConfig.configureGradleEnterprise(gradleEnterprise, providers);
-
-                BuildScanExtension buildScan = gradleEnterprise.getBuildScan();
-                CustomGradleEnterpriseConfig.configureBuildScanPublishing(buildScan, providers);
-                CustomBuildScanEnhancements.configureBuildScan(buildScan, project.getGradle());
-
-                // Build cache configuration cannot be accessed from a project plugin
+                // configuration changes applied here will override earlier configuration settings (including those set in the settings.gradle(.kts))
+                SystemPropertyOverrides.configureGradleEnterprise(gradleEnterprise, providers);
             });
         });
     }
