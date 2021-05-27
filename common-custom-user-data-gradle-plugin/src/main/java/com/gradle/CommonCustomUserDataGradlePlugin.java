@@ -13,6 +13,7 @@ import org.gradle.util.GradleVersion;
 import javax.inject.Inject;
 
 public class CommonCustomUserDataGradlePlugin implements Plugin<Object> {
+
     private final CustomGradleEnterpriseConfig customGradleEnterpriseConfig;
 
     @Inject
@@ -80,7 +81,8 @@ public class CommonCustomUserDataGradlePlugin implements Plugin<Object> {
         });
     }
 
-    private boolean isGradle6OrNewer() {
+    private static boolean isGradle6OrNewer() {
         return GradleVersion.current().compareTo(GradleVersion.version("6.0")) >= 0;
     }
+
 }
