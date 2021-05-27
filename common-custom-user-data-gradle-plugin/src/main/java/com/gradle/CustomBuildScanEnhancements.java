@@ -5,6 +5,8 @@ import org.gradle.api.Action;
 import org.gradle.api.Project;
 import org.gradle.api.Task;
 import org.gradle.api.invocation.Gradle;
+import org.gradle.api.provider.Provider;
+import org.gradle.api.provider.ProviderFactory;
 import org.gradle.api.tasks.testing.Test;
 
 import java.util.Optional;
@@ -27,10 +29,10 @@ import static com.gradle.Utils.urlEncode;
  */
 final class CustomBuildScanEnhancements {
 
-    static void configureBuildScan(BuildScanExtension buildScan, Gradle gradle) {
-        captureOs(buildScan);
-        captureIde(buildScan, gradle);
-        captureCiOrLocal(buildScan);
+    static void configureBuildScan(BuildScanExtension buildScan, Gradle gradle, ProviderFactory providers) {
+        captureOs(buildScan, providers);
+        captureIde(buildScan, gradle, providers);
+        captureCiOrLocal(buildScan, providers);
         captureCiMetadata(buildScan, gradle);
         captureGitMetadata(buildScan);
         captureTestParallelization(buildScan, gradle);
@@ -41,11 +43,11 @@ final class CustomBuildScanEnhancements {
         return Optional.ofNullable(value);
     }
 
-    private static void captureOs(BuildScanExtension buildScan) {
-        sysProperty("os.name").ifPresent(buildScan::tag);
+    private static void captureOs(BuildScanExtension buildScan, ProviderFactory providers) {
+        sysProperty("os.name", providers).ifPresent(buildScan::tag);
     }
 
-    private static void captureIde(BuildScanExtension buildScan, Gradle gradle) {
+    private static void captureIde(BuildScanExtension buildScan, Gradle gradle, ProviderFactory providers) {
         // Wait for projects to load to ensure Gradle project properties are initialized
         gradle.projectsEvaluated(g -> {
             Project project = g.getRootProject();
@@ -54,18 +56,18 @@ final class CustomBuildScanEnhancements {
                 if (project.hasProperty("android.injected.studio.version")) {
                     buildScan.value("Android Studio version", String.valueOf(project.property("android.injected.studio.version")));
                 }
-            } else if (sysProperty("idea.version").isPresent() || sysPropertyKeyStartingWith("idea.version")) {
+            } else if (sysProperty("idea.version", providers).isPresent() || sysPropertyKeyStartingWith("idea.version")) {
                 buildScan.tag("IntelliJ IDEA");
-            } else if (sysProperty("eclipse.buildId").isPresent()) {
+            } else if (sysProperty("eclipse.buildId", providers).isPresent()) {
                 buildScan.tag("Eclipse");
-            } else if (!isCi()) {
+            } else if (!isCi(providers)) {
                 buildScan.tag("Cmd Line");
             }
         });
     }
 
-    private static void captureCiOrLocal(BuildScanExtension buildScan) {
-        buildScan.tag(isCi() ? "CI" : "LOCAL");
+    private static void captureCiOrLocal(BuildScanExtension buildScan, ProviderFactory providers) {
+        buildScan.tag(isCi(providers) ? "CI" : "LOCAL");
     }
 
     private static void captureCiMetadata(BuildScanExtension buildScan, Gradle gradle) {
@@ -170,12 +172,12 @@ final class CustomBuildScanEnhancements {
         }
     }
 
-    private static boolean isCi() {
-        return isGenericCI() || isJenkins() || isHudson() || isTeamCity() || isCircleCI() || isBamboo() || isGitHubActions() || isGitLab() || isTravis() || isBitrise();
+    private static boolean isCi(ProviderFactory providers) {
+        return isGenericCI(providers) || isJenkins() || isHudson() || isTeamCity() || isCircleCI() || isBamboo() || isGitHubActions() || isGitLab() || isTravis() || isBitrise();
     }
 
-    private static boolean isGenericCI() {
-        return envVariable("CI").isPresent() || sysProperty("CI").isPresent();
+    private static boolean isGenericCI(ProviderFactory providers) {
+        return envVariable("CI").isPresent() || sysProperty("CI", providers).isPresent();
     }
 
     private static boolean isJenkins() {

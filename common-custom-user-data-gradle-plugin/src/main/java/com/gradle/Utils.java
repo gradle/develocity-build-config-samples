@@ -28,7 +28,11 @@ final class Utils {
         return value != null && !value.isEmpty();
     }
 
-    static Optional<String> sysProperty(String name) {
+    static Optional<String> sysProperty(String name, ProviderFactory providers) {
+        if (isGradle65OrNewer()) {
+            Provider<String> property = providers.systemProperty(name).forUseAtConfigurationTime();
+            return Optional.ofNullable(property.getOrNull());
+        }
         return Optional.ofNullable(System.getProperty(name));
     }
 
@@ -45,15 +49,7 @@ final class Utils {
     }
 
     static void withSysProperty(String name, Consumer<String> action, ProviderFactory providers) {
-        if (isGradle65OrNewer()) {
-            Provider<String> property = providers.systemProperty(name).forUseAtConfigurationTime();
-            if (property.isPresent()) {
-                action.accept(property.get());
-            }
-        } else {
-            Optional<String> property = sysProperty(name);
-            property.ifPresent(action);
-        }
+        sysProperty(name, providers).ifPresent(action);
     }
 
     static void withBooleanSysProperty(String name, Consumer<Boolean> action, ProviderFactory providers) {
