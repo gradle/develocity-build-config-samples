@@ -8,7 +8,6 @@ import org.gradle.caching.http.HttpBuildCache;
 
 import javax.inject.Inject;
 import java.time.Duration;
-import java.util.function.Consumer;
 
 import static com.gradle.Utils.withBooleanSysProperty;
 import static com.gradle.Utils.withSysProperty;
@@ -42,7 +41,7 @@ final class CustomGradleEnterpriseConfig {
         gradleEnterprise.setServer("https://your-gradle-enterprise-server.com");
 
         */
-        withSystemProp(GRADLE_ENTERPRISE_URL_PROP, gradleEnterprise::setServer);
+        withSysProperty(providers, GRADLE_ENTERPRISE_URL_PROP, gradleEnterprise::setServer);
     }
 
     public void configureBuildScanPublishing(BuildScanExtension buildScan) {
@@ -79,38 +78,31 @@ final class CustomGradleEnterpriseConfig {
         */
 
         buildCache.local(local -> {
-            withBooleanSystemProp(LOCAL_CACHE_ENABLED_PROP, local::setEnabled);
-            withSystemProp(LOCAL_CACHE_DIRECTORY_PROP, local::setDirectory);
-            withSystemProp(LOCAL_CACHE_CLEANUP_RETENTION_PROP, value -> {
-                Duration retention = Duration.parse(System.getProperty(LOCAL_CACHE_CLEANUP_RETENTION_PROP));
-                local.setRemoveUnusedEntriesAfterDays((int) retention.toDays());
-            });
-            withBooleanSystemProp(LOCAL_CACHE_CLEANUP_ENABLED_PROP, localCacheCleanupEnabled -> {
-                if (!localCacheCleanupEnabled) {
-                    local.setRemoveUnusedEntriesAfterDays(Integer.MAX_VALUE);
-                }
-            });
+            withBooleanSysProperty(providers, LOCAL_CACHE_ENABLED_PROP, local::setEnabled);
+            withSysProperty(providers, LOCAL_CACHE_DIRECTORY_PROP, local::setDirectory);
+            withSysProperty(providers, LOCAL_CACHE_CLEANUP_RETENTION_PROP, value -> {
+                    Duration retention = Duration.parse(System.getProperty(LOCAL_CACHE_CLEANUP_RETENTION_PROP));
+                    local.setRemoveUnusedEntriesAfterDays((int) retention.toDays());
+                });
+            withBooleanSysProperty(providers, LOCAL_CACHE_CLEANUP_ENABLED_PROP, localCacheCleanupEnabled -> {
+                    if (!localCacheCleanupEnabled) {
+                        local.setRemoveUnusedEntriesAfterDays(Integer.MAX_VALUE);
+                    }
+                });
         });
 
-        withSystemProp(REMOTE_CACHE_URL_PROP, value -> {
+        withSysProperty(providers, REMOTE_CACHE_URL_PROP, value -> {
             buildCache.remote(HttpBuildCache.class).setUrl(value);
         });
-        withBooleanSystemProp(REMOTE_CACHE_ENABLED_PROP, value -> {
+        withBooleanSysProperty(providers, REMOTE_CACHE_ENABLED_PROP, value -> {
             buildCache.remote(HttpBuildCache.class).setEnabled(value);
         });
-        withBooleanSystemProp(REMOTE_CACHE_PUSH_ENABLED_PROP, value -> {
+        withBooleanSysProperty(providers, REMOTE_CACHE_PUSH_ENABLED_PROP, value -> {
             buildCache.remote(HttpBuildCache.class).setPush(value);
         });
-        withBooleanSystemProp(REMOTE_CACHE_ALLOW_UNTRUSTED_SERVER_PROP, value -> {
+        withBooleanSysProperty(providers, REMOTE_CACHE_ALLOW_UNTRUSTED_SERVER_PROP, value -> {
             buildCache.remote(HttpBuildCache.class).setAllowUntrustedServer(value);
         });
     }
 
-    private void withSystemProp(String systemPropertyName, Consumer<String> action) {
-        withSysProperty(providers, systemPropertyName, action);
-    }
-
-    private void withBooleanSystemProp(String systemPropertyName, Consumer<Boolean> action) {
-        withBooleanSysProperty(providers, systemPropertyName, action);
-    }
 }
