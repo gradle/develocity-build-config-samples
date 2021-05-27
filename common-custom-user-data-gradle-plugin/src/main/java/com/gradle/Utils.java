@@ -2,6 +2,7 @@ package com.gradle;
 
 import org.gradle.api.provider.Provider;
 import org.gradle.api.provider.ProviderFactory;
+import org.gradle.util.GradleVersion;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -42,19 +43,15 @@ final class Utils {
         return false;
     }
 
-    static void withSystemProp(ProviderFactory providers, String systemPropertyName, Consumer<String> action) {
-        try {
-            Provider<String> prop = providers.systemProperty(systemPropertyName).forUseAtConfigurationTime();
-            if (prop.isPresent()) {
-                action.accept(prop.get());
+    static void withSystemProp(ProviderFactory providers, String name, Consumer<String> action) {
+        if (isGradle65OrNewer()) {
+            Provider<String> property = providers.systemProperty(name).forUseAtConfigurationTime();
+            if (property.isPresent()) {
+                action.accept(property.get());
             }
-        } catch (NoSuchMethodError e) {
-            // If we get here, we're running on an earlier version of Gradle that doesn't support providers.systemProperty
-            // Fallback to direct system property access
-            Optional<String> prop = sysProperty(systemPropertyName);
-            if(prop.isPresent()) {
-                action.accept(prop.get());
-            }
+        } else {
+            Optional<String> property = sysProperty(name);
+            property.ifPresent(action);
         }
     }
 
@@ -148,6 +145,11 @@ final class Utils {
         return ('x' + str).trim().substring(1);
     }
 
+    private static boolean isGradle65OrNewer() {
+        return GradleVersion.current().compareTo(GradleVersion.version("6.5")) >= 0;
+    }
+
     private Utils() {
     }
+
 }
