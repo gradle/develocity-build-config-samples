@@ -77,12 +77,15 @@ final class CustomGradleEnterpriseConfig {
             withBooleanSysProperty(LOCAL_CACHE_PUSH_ENABLED, local::setPush, providers);
         });
 
-        buildCache.remote(HttpBuildCache.class, remote -> {
-            withSysProperty(REMOTE_CACHE_URL, remote::setUrl, providers);
-            withBooleanSysProperty(REMOTE_CACHE_ALLOW_UNTRUSTED_SERVER, remote::setAllowUntrustedServer, providers);
-            withBooleanSysProperty(REMOTE_CACHE_ENABLED, remote::setEnabled, providers);
-            withBooleanSysProperty(REMOTE_CACHE_PUSH_ENABLED, remote::setPush, providers);
-        });
+        // null check required to avoid creating a remote build cache instance when none was already present in the build
+        if (buildCache.getRemote() != null) {
+            buildCache.remote(HttpBuildCache.class, remote -> {
+                withSysProperty(REMOTE_CACHE_URL, remote::setUrl, providers);
+                withBooleanSysProperty(REMOTE_CACHE_ALLOW_UNTRUSTED_SERVER, remote::setAllowUntrustedServer, providers);
+                withBooleanSysProperty(REMOTE_CACHE_ENABLED, remote::setEnabled, providers);
+                withBooleanSysProperty(REMOTE_CACHE_PUSH_ENABLED, remote::setPush, providers);
+            });
+        }
     }
 
     private CustomGradleEnterpriseConfig() {
