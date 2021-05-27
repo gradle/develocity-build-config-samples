@@ -33,7 +33,7 @@ final class CustomGradleEnterpriseConfig {
         this.providers = providers;
     }
 
-    public void configureGradleEnterprise(GradleEnterpriseExtension gradleEnterprise) {
+    void configureGradleEnterprise(GradleEnterpriseExtension gradleEnterprise) {
         /* Example of Gradle Enterprise configuration
 
         gradleEnterprise.setServer("https://your-gradle-enterprise-server.com");
@@ -42,7 +42,7 @@ final class CustomGradleEnterpriseConfig {
         withSysProperty(providers, GRADLE_ENTERPRISE_URL_PROP, gradleEnterprise::setServer);
     }
 
-    public void configureBuildScanPublishing(BuildScanExtension buildScan) {
+    void configureBuildScanPublishing(BuildScanExtension buildScan) {
         /* Example of build scan publishing configuration
 
         boolean isCiServer = System.getenv().containsKey("CI");
@@ -54,7 +54,7 @@ final class CustomGradleEnterpriseConfig {
         */
     }
 
-    public void configureBuildCache(BuildCacheConfiguration buildCache) {
+    void configureBuildCache(BuildCacheConfiguration buildCache) {
         /* Example of build cache configuration
 
         boolean isCiServer = System.getenv().containsKey("CI");
