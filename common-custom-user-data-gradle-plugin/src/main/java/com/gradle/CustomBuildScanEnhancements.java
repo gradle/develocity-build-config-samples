@@ -225,6 +225,21 @@ final class CustomBuildScanEnhancements {
             String gitBranchName = execAndGetStdOut("git", "rev-parse", "--abbrev-ref", "HEAD");
             String gitStatus = execAndGetStdOut("git", "status", "--porcelain");
 
+            if (isNotEmpty(gitRepo)) {
+                api.value("Git repository", gitRepo);
+            }
+            if (isNotEmpty(gitCommitId)) {
+                addCustomValueAndSearchLink(buildScan, "Git commit id", gitCommitId);
+            }
+            if (isNotEmpty(gitBranchName)) {
+                api.tag(gitBranchName);
+                api.value("Git branch", gitBranchName);
+            }
+            if (isNotEmpty(gitStatus)) {
+                api.tag("Dirty");
+                api.value("Git status", gitStatus);
+            }
+
             if (isNotEmpty(gitRepo) && isNotEmpty(gitCommitId)) {
                 if (gitRepo.contains("github.com/") || gitRepo.contains("github.com:")) {
                     Matcher matcher = Pattern.compile("(.*)github\\.com[/|:](.*)").matcher(gitRepo);
@@ -241,21 +256,6 @@ final class CustomBuildScanEnhancements {
                         api.link("GitLab Source", "https://gitlab.com/" + repoPath + "/-/commit/" + gitCommitId);
                     }
                 }
-            }
-
-            if (isNotEmpty(gitRepo)) {
-                api.value("Git repository", gitRepo);
-            }
-            if (isNotEmpty(gitCommitId)) {
-                addCustomValueAndSearchLink(buildScan, "Git commit id", gitCommitId);
-            }
-            if (isNotEmpty(gitBranchName)) {
-                api.tag(gitBranchName);
-                api.value("Git branch", gitBranchName);
-            }
-            if (isNotEmpty(gitStatus)) {
-                api.tag("Dirty");
-                api.value("Git status", gitStatus);
             }
         });
     }
