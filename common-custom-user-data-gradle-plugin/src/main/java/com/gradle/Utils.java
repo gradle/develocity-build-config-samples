@@ -49,16 +49,12 @@ final class Utils {
         return false;
     }
 
-    static void withSysProperty(String name, Consumer<String> action, ProviderFactory providers) {
-        sysProperty(name, providers).ifPresent(action);
+    static Optional<Boolean> booleanSysProperty(String name, ProviderFactory providers) {
+        return sysProperty(name, providers).map(Boolean::parseBoolean);
     }
 
-    static void withBooleanSysProperty(String name, Consumer<Boolean> action, ProviderFactory providers) {
-        withSysProperty(name, value -> action.accept(parseBoolean(value)), providers);
-    }
-
-    static void withDurationSysProperty(String name, Consumer<Duration> action, ProviderFactory providers) {
-        withSysProperty(name, value -> action.accept(Duration.parse(value)), providers);
+    static Optional<Duration> durationSysProperty(String name, ProviderFactory providers) {
+        return sysProperty(name, providers).map(Duration::parse);
     }
 
     static Optional<String> envVariable(String name, ProviderFactory providers) {
