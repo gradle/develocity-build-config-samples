@@ -43,7 +43,7 @@ final class Utils {
         return false;
     }
 
-    static void withSysProperty(ProviderFactory providers, String name, Consumer<String> action) {
+    static void withSysProperty(String name, Consumer<String> action, ProviderFactory providers) {
         if (isGradle65OrNewer()) {
             Provider<String> property = providers.systemProperty(name).forUseAtConfigurationTime();
             if (property.isPresent()) {
@@ -55,8 +55,8 @@ final class Utils {
         }
     }
 
-    static void withBooleanSysProperty(ProviderFactory providers, String name, Consumer<Boolean> action) {
-        withSysProperty(providers, name, value -> action.accept(parseBoolean(value)));
+    static void withBooleanSysProperty(String name, Consumer<Boolean> action, ProviderFactory providers) {
+        withSysProperty(name, value -> action.accept(parseBoolean(value)), providers);
     }
 
     static Optional<String> envVariable(String name) {
