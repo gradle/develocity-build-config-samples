@@ -27,13 +27,7 @@ final class CustomGradleEnterpriseConfig {
     public static final String REMOTE_CACHE_PUSH_ENABLED_PROP = "gradle.cache.remote.storeEnabled";
     public static final String REMOTE_CACHE_ALLOW_UNTRUSTED_SERVER_PROP = "gradle.cache.remote.allowUntrustedServer";
 
-    private final ProviderFactory providers;
-
-    CustomGradleEnterpriseConfig(ProviderFactory providers) {
-        this.providers = providers;
-    }
-
-    void configureGradleEnterprise(GradleEnterpriseExtension gradleEnterprise) {
+    static void configureGradleEnterprise(GradleEnterpriseExtension gradleEnterprise, ProviderFactory providers) {
         /* Example of Gradle Enterprise configuration
 
         gradleEnterprise.setServer("https://your-gradle-enterprise-server.com");
@@ -42,7 +36,7 @@ final class CustomGradleEnterpriseConfig {
         withSysProperty(providers, GRADLE_ENTERPRISE_URL_PROP, gradleEnterprise::setServer);
     }
 
-    void configureBuildScanPublishing(BuildScanExtension buildScan) {
+    static void configureBuildScanPublishing(BuildScanExtension buildScan, ProviderFactory providers) {
         /* Example of build scan publishing configuration
 
         boolean isCiServer = System.getenv().containsKey("CI");
@@ -54,7 +48,7 @@ final class CustomGradleEnterpriseConfig {
         */
     }
 
-    void configureBuildCache(BuildCacheConfiguration buildCache) {
+    static void configureBuildCache(BuildCacheConfiguration buildCache, ProviderFactory providers) {
         /* Example of build cache configuration
 
         boolean isCiServer = System.getenv().containsKey("CI");
@@ -95,6 +89,9 @@ final class CustomGradleEnterpriseConfig {
             withBooleanSysProperty(providers, REMOTE_CACHE_PUSH_ENABLED_PROP, remote::setPush);
             withBooleanSysProperty(providers, REMOTE_CACHE_ALLOW_UNTRUSTED_SERVER_PROP, remote::setAllowUntrustedServer);
         });
+    }
+
+    private CustomGradleEnterpriseConfig() {
     }
 
 }
