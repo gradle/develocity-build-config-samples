@@ -10,6 +10,9 @@ import javax.inject.Inject;
 import java.time.Duration;
 import java.util.function.Consumer;
 
+import static com.gradle.Utils.withBooleanSysProperty;
+import static com.gradle.Utils.withSysProperty;
+
 /**
  * Provide standardized Gradle Enterprise configuration.
  * By applying the plugin, these settings will automatically be applied.
@@ -104,10 +107,10 @@ final class CustomGradleEnterpriseConfig {
     }
 
     private void withSystemProp(String systemPropertyName, Consumer<String> action) {
-        Utils.withSysProperty(providers, systemPropertyName, action);
+        withSysProperty(providers, systemPropertyName, action);
     }
 
     private void withBooleanSystemProp(String systemPropertyName, Consumer<Boolean> action) {
-        Utils.withBooleanSysProperty(providers, systemPropertyName, action);
+        withBooleanSysProperty(providers, systemPropertyName, action);
     }
 }
