@@ -2,7 +2,6 @@ package com.gradle;
 
 import com.gradle.enterprise.gradleplugin.GradleEnterpriseExtension;
 import com.gradle.scan.plugin.BuildScanExtension;
-import org.gradle.api.provider.Provider;
 import org.gradle.api.provider.ProviderFactory;
 import org.gradle.caching.configuration.BuildCacheConfiguration;
 import org.gradle.caching.http.HttpBuildCache;
@@ -10,8 +9,6 @@ import org.gradle.caching.http.HttpBuildCache;
 import javax.inject.Inject;
 import java.time.Duration;
 import java.util.function.Consumer;
-
-import static java.lang.Boolean.parseBoolean;
 
 /**
  * Provide standardized Gradle Enterprise configuration.
