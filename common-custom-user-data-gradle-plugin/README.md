@@ -16,7 +16,7 @@ Out of the box, this plugin enhances all build scans published with additional t
 - For `git` repositories, information on the commit id, branch name, status, and whether the checkout is dirty or not.
 
 Out of the box, this plugin also allows users to override various Gradle Enterprise, build scan, and build caching settings via
-system properties.
+system properties (see [Overriding Gradle Enterprise configuration values via system properties](#overriding_gradle_enterprise_configuration_values_via_system_properties)).
 
 ### Applying the published plugin
 
@@ -81,6 +81,7 @@ The Gradle Enterprise plugin directly supports two other system properties:
 |`scan.captureTaskInputFiles`               | `true` or `false`   | Enables/disables capturing task input files in build scans.
 |`scan.uploadInBackground`                  | `true` or `false`   | Enables/disables uploading build scans in the background.
 
+See the [Gradle Enterprise Gradle Plugin User Manual](https://docs.gradle.com/enterprise/gradle-plugin/) for more details.
 
 ### Developing a customized version of the plugin
 
