@@ -26,7 +26,7 @@ final class CustomGradleEnterpriseConfig {
     public static final String REMOTE_CACHE_URL = "gradle.cache.remote.url";
     public static final String REMOTE_CACHE_ALLOW_UNTRUSTED_SERVER = "gradle.cache.remote.allowUntrustedServer";
     public static final String REMOTE_CACHE_ENABLED = "gradle.cache.remote.enabled";
-    public static final String REMOTE_CACHE_PUSH_ENABLED = "gradle.cache.remote.storeEnabled";
+    public static final String REMOTE_CACHE_PUSH_ENABLED = "gradle.cache.remote.push";
 
     static void configureGradleEnterprise(GradleEnterpriseExtension gradleEnterprise, ProviderFactory providers) {
         /* Example of Gradle Enterprise configuration
