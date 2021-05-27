@@ -24,9 +24,9 @@ final class CustomGradleEnterpriseConfig {
     public static final String LOCAL_CACHE_CLEANUP_ENABLED = "gradle.cache.local.cleanup.enabled";
     public static final String LOCAL_CACHE_CLEANUP_RETENTION = "gradle.cache.local.cleanup.retention";
     public static final String REMOTE_CACHE_URL = "gradle.cache.remote.url";
+    public static final String REMOTE_CACHE_ALLOW_UNTRUSTED_SERVER = "gradle.cache.remote.allowUntrustedServer";
     public static final String REMOTE_CACHE_ENABLED = "gradle.cache.remote.enabled";
     public static final String REMOTE_CACHE_PUSH_ENABLED = "gradle.cache.remote.storeEnabled";
-    public static final String REMOTE_CACHE_ALLOW_UNTRUSTED_SERVER = "gradle.cache.remote.allowUntrustedServer";
 
     static void configureGradleEnterprise(GradleEnterpriseExtension gradleEnterprise, ProviderFactory providers) {
         /* Example of Gradle Enterprise configuration
@@ -87,9 +87,9 @@ final class CustomGradleEnterpriseConfig {
 
         buildCache.remote(HttpBuildCache.class, remote -> {
             withSysProperty(REMOTE_CACHE_URL, remote::setUrl, providers);
+            withBooleanSysProperty(REMOTE_CACHE_ALLOW_UNTRUSTED_SERVER, remote::setAllowUntrustedServer, providers);
             withBooleanSysProperty(REMOTE_CACHE_ENABLED, remote::setEnabled, providers);
             withBooleanSysProperty(REMOTE_CACHE_PUSH_ENABLED, remote::setPush, providers);
-            withBooleanSysProperty(REMOTE_CACHE_ALLOW_UNTRUSTED_SERVER, remote::setAllowUntrustedServer, providers);
         });
     }
 
