@@ -6,9 +6,8 @@ import org.gradle.api.provider.ProviderFactory;
 import org.gradle.caching.configuration.BuildCacheConfiguration;
 import org.gradle.caching.http.HttpBuildCache;
 
-import java.time.Duration;
-
 import static com.gradle.Utils.withBooleanSysProperty;
+import static com.gradle.Utils.withDurationSysProperty;
 import static com.gradle.Utils.withSysProperty;
 
 /**
@@ -19,10 +18,10 @@ final class CustomGradleEnterpriseConfig {
 
     // system properties to override Gradle Enterprise, Build Cache, and Build Scan configuration
     public static final String GRADLE_ENTERPRISE_URL = "gradle.enterprise.url";
-    public static final String LOCAL_CACHE_ENABLED = "gradle.cache.local.enabled";
     public static final String LOCAL_CACHE_DIRECTORY = "gradle.cache.local.directory";
-    public static final String LOCAL_CACHE_CLEANUP_ENABLED = "gradle.cache.local.cleanup.enabled";
-    public static final String LOCAL_CACHE_CLEANUP_RETENTION = "gradle.cache.local.cleanup.retention";
+    public static final String LOCAL_CACHE_REMOVE_UNUSED_ENTRIES_AFTER_DAYS = "gradle.cache.local.removeUnusedEntriesAfterDays";
+    public static final String LOCAL_CACHE_ENABLED = "gradle.cache.local.enabled";
+    public static final String LOCAL_CACHE_PUSH_ENABLED = "gradle.cache.local.push";
     public static final String REMOTE_CACHE_URL = "gradle.cache.remote.url";
     public static final String REMOTE_CACHE_ALLOW_UNTRUSTED_SERVER = "gradle.cache.remote.allowUntrustedServer";
     public static final String REMOTE_CACHE_ENABLED = "gradle.cache.remote.enabled";
@@ -72,17 +71,10 @@ final class CustomGradleEnterpriseConfig {
         */
 
         buildCache.local(local -> {
-            withBooleanSysProperty(LOCAL_CACHE_ENABLED, local::setEnabled, providers);
             withSysProperty(LOCAL_CACHE_DIRECTORY, local::setDirectory, providers);
-            withSysProperty(LOCAL_CACHE_CLEANUP_RETENTION, value -> {
-                Duration retention = Duration.parse(value);
-                local.setRemoveUnusedEntriesAfterDays((int) retention.toDays());
-            }, providers);
-            withBooleanSysProperty(LOCAL_CACHE_CLEANUP_ENABLED, localCacheCleanupEnabled -> {
-                if (!localCacheCleanupEnabled) {
-                    local.setRemoveUnusedEntriesAfterDays(Integer.MAX_VALUE);
-                }
-            }, providers);
+            withDurationSysProperty(LOCAL_CACHE_REMOVE_UNUSED_ENTRIES_AFTER_DAYS, v -> local.setRemoveUnusedEntriesAfterDays((int) v.toDays()), providers);
+            withBooleanSysProperty(LOCAL_CACHE_ENABLED, local::setEnabled, providers);
+            withBooleanSysProperty(LOCAL_CACHE_PUSH_ENABLED, local::setPush, providers);
         });
 
         buildCache.remote(HttpBuildCache.class, remote -> {

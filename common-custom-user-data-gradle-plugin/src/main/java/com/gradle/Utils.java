@@ -14,6 +14,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
@@ -57,6 +58,10 @@ final class Utils {
 
     static void withBooleanSysProperty(String name, Consumer<Boolean> action, ProviderFactory providers) {
         withSysProperty(name, value -> action.accept(parseBoolean(value)), providers);
+    }
+
+    static void withDurationSysProperty(String name, Consumer<Duration> action, ProviderFactory providers) {
+        withSysProperty(name, value -> action.accept(Duration.parse(value)), providers);
     }
 
     static Optional<String> envVariable(String name) {
