@@ -75,7 +75,7 @@ final class CustomGradleEnterpriseConfig {
             withBooleanSysProperty(LOCAL_CACHE_ENABLED, local::setEnabled, providers);
             withSysProperty(LOCAL_CACHE_DIRECTORY, local::setDirectory, providers);
             withSysProperty(LOCAL_CACHE_CLEANUP_RETENTION, value -> {
-                Duration retention = Duration.parse(System.getProperty(LOCAL_CACHE_CLEANUP_RETENTION));
+                Duration retention = Duration.parse(value);
                 local.setRemoveUnusedEntriesAfterDays((int) retention.toDays());
             }, providers);
             withBooleanSysProperty(LOCAL_CACHE_CLEANUP_ENABLED, localCacheCleanupEnabled -> {
