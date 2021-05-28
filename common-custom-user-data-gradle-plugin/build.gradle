@@ -49,9 +49,10 @@ pluginBundle {
 
 signing {
     // Require publications to be signed on CI. Otherwise, publication will be signed only if keys are provided.
-    required System.getenv().containsKey("CI")
+    required providers.environmentVariable("CI").forUseAtConfigurationTime().isPresent()
 
-    useInMemoryPgpKeys(System.getenv("PGP_SIGNING_KEY"), System.getenv("PGP_SIGNING_KEY_PASSPHRASE"))
+    useInMemoryPgpKeys(providers.environmentVariable("PGP_SINGING_KEY").forUseAtConfigurationTime().orNull,
+        providers.environmentVariable("PGP_SIGNING_KEY_PASSPHRASE").forUseAtConfigurationTime().orNull)
 
     sign(configurations.archives)
 }
