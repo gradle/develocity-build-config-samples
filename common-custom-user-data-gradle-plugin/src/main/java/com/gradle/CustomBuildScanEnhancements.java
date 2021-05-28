@@ -28,11 +28,11 @@ import static com.gradle.Utils.urlEncode;
  */
 final class CustomBuildScanEnhancements {
 
-    static void configureBuildScan(BuildScanExtension buildScan, Gradle gradle, ProviderFactory providers) {
+    static void configureBuildScan(BuildScanExtension buildScan, ProviderFactory providers, Gradle gradle) {
         captureOs(buildScan, providers);
-        captureIde(buildScan, gradle, providers);
+        captureIde(buildScan, providers, gradle);
         captureCiOrLocal(buildScan, providers);
-        captureCiMetadata(buildScan, gradle, providers);
+        captureCiMetadata(buildScan, providers, gradle);
         captureGitMetadata(buildScan);
         captureTestParallelization(buildScan, gradle);
     }
@@ -41,7 +41,7 @@ final class CustomBuildScanEnhancements {
         sysProperty("os.name", providers).ifPresent(buildScan::tag);
     }
 
-    private static void captureIde(BuildScanExtension buildScan, Gradle gradle, ProviderFactory providers) {
+    private static void captureIde(BuildScanExtension buildScan, ProviderFactory providers, Gradle gradle) {
         // Wait for projects to load to ensure Gradle project properties are initialized
         gradle.projectsEvaluated(g -> {
             if (projectProperty(gradle, "android.injected.invoked.from.ide", providers).isPresent()) {
@@ -61,7 +61,7 @@ final class CustomBuildScanEnhancements {
         buildScan.tag(isCi(providers) ? "CI" : "LOCAL");
     }
 
-    private static void captureCiMetadata(BuildScanExtension buildScan, Gradle gradle, ProviderFactory providers) {
+    private static void captureCiMetadata(BuildScanExtension buildScan, ProviderFactory providers, Gradle gradle) {
         if (isJenkins(providers) || isHudson(providers)) {
             envVariable("BUILD_URL", providers).ifPresent(url ->
                 buildScan.link(isJenkins(providers) ? "Jenkins build" : "Hudson build", url));
