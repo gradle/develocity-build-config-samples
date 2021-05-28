@@ -19,9 +19,6 @@ import java.time.Duration;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
-
-import static java.lang.Boolean.parseBoolean;
 
 final class Utils {
 
