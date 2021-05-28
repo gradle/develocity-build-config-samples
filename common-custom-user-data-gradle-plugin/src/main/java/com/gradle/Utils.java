@@ -67,8 +67,7 @@ final class Utils {
             Provider<String> property = providers.gradleProperty(name).forUseAtConfigurationTime();
             return Optional.ofNullable(property.getOrNull());
         }
-        String value = (String) gradle.getRootProject().findProperty(name);
-        return Optional.ofNullable(value);
+        return Optional.ofNullable((String) gradle.getRootProject().findProperty(name));
     }
 
     static String appendIfMissing(String str, String suffix) {
