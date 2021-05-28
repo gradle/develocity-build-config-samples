@@ -62,7 +62,7 @@ final class Utils {
         return Optional.ofNullable(System.getenv(name));
     }
 
-    static Optional<String> projectProperty(Gradle gradle, String name, ProviderFactory providers) {
+    static Optional<String> projectProperty(String name, ProviderFactory providers, Gradle gradle) {
         if (isGradle65OrNewer()) {
             Provider<String> property = providers.gradleProperty(name).forUseAtConfigurationTime();
             return Optional.ofNullable(property.getOrNull());

@@ -44,9 +44,9 @@ final class CustomBuildScanEnhancements {
     private static void captureIde(BuildScanExtension buildScan, ProviderFactory providers, Gradle gradle) {
         // Wait for projects to load to ensure Gradle project properties are initialized
         gradle.projectsEvaluated(g -> {
-            if (projectProperty(gradle, "android.injected.invoked.from.ide", providers).isPresent()) {
+            if (projectProperty("android.injected.invoked.from.ide", providers, gradle).isPresent()) {
                 buildScan.tag("Android Studio");
-                projectProperty(gradle, "android.injected.studio.version", providers).ifPresent(v -> buildScan.value("Android Studio version", v));
+                projectProperty("android.injected.studio.version", providers, gradle).ifPresent(v -> buildScan.value("Android Studio version", v));
             } else if (sysProperty("idea.version", providers).isPresent() || sysPropertyKeyStartingWith("idea.version")) {
                 buildScan.tag("IntelliJ IDEA");
             } else if (sysProperty("eclipse.buildId", providers).isPresent()) {
@@ -78,9 +78,9 @@ final class CustomBuildScanEnhancements {
         if (isTeamCity(providers)) {
             // Wait for projects to load to ensure Gradle project properties are initialized
             gradle.projectsEvaluated(g -> {
-                Optional<String> teamCityConfigFile = projectProperty(gradle, "teamcity.configuration.properties.file", providers);
-                Optional<String> buildNumber = projectProperty(gradle, "build.number", providers);
-                Optional<String> buildTypeId = projectProperty(gradle, "teamcity.buildType.id", providers);
+                Optional<String> teamCityConfigFile = projectProperty("teamcity.configuration.properties.file", providers, gradle);
+                Optional<String> buildNumber = projectProperty("build.number", providers, gradle);
+                Optional<String> buildTypeId = projectProperty("teamcity.buildType.id", providers, gradle);
                 if (teamCityConfigFile.isPresent()
                     && buildNumber.isPresent()
                     && buildTypeId.isPresent()) {
@@ -95,7 +95,7 @@ final class CustomBuildScanEnhancements {
                     buildScan.value("CI build number", value));
                 buildTypeId.ifPresent(value ->
                     addCustomValueAndSearchLink(buildScan, "CI build config", value));
-                projectProperty(gradle, "agent.name", providers).ifPresent(value ->
+                projectProperty("agent.name", providers, gradle).ifPresent(value ->
                     addCustomValueAndSearchLink(buildScan, "CI agent", value));
             });
         }
