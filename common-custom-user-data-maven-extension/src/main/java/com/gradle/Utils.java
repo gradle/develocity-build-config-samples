@@ -10,6 +10,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
@@ -36,12 +37,16 @@ final class Utils {
         return false;
     }
 
+    static Optional<Boolean> booleanSysProperty(String name) {
+        return sysProperty(name).map(Boolean::parseBoolean);
+    }
+
+    static Optional<Duration> durationSysProperty(String name) {
+        return sysProperty(name).map(Duration::parse);
+    }
+
     static Optional<String> envVariable(String name) {
-        String value = System.getenv(name);
-        if (isNotEmpty(value)) {
-            return Optional.of(value);
-        }
-        return Optional.empty();
+        return Optional.ofNullable(System.getenv(name));
     }
 
     static String appendIfMissing(String str, String suffix) {
