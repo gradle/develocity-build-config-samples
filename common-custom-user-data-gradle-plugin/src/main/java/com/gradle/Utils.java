@@ -8,8 +8,10 @@ import org.gradle.api.provider.ProviderFactory;
 import org.gradle.util.GradleVersion;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -87,8 +89,7 @@ final class Utils {
     }
 
     static Properties readPropertiesFile(String name, ProviderFactory providers, Gradle gradle) {
-        String fileContent = readFile(name, providers, gradle);
-        try (Reader input = new StringReader(fileContent)) {
+        try (InputStream input = readFile(name, providers, gradle)) {
             Properties properties = new Properties();
             properties.load(input);
             return properties;
@@ -97,12 +98,15 @@ final class Utils {
         }
     }
 
-    static String readFile(String name, ProviderFactory providers, Gradle gradle) {
-        Provider<File> file = providers.provider(() -> new File(name));
-        Provider<RegularFile> regularFile = gradle.getRootProject().getLayout().file(file);
-        Provider<String> fileText = providers.fileContents(regularFile).getAsText().forUseAtConfigurationTime();
+    static InputStream readFile(String name, ProviderFactory providers, Gradle gradle) throws FileNotFoundException {
+        if(isGradle65OrNewer()) {
+            Provider<File> file = providers.provider(() -> new File(name));
+            Provider<RegularFile> regularFile = gradle.getRootProject().getLayout().file(file);
+            Provider<byte[]> fileContent = providers.fileContents(regularFile).getAsBytes().forUseAtConfigurationTime();
 
-        return fileText.getOrElse("");
+            return new ByteArrayInputStream(fileContent.getOrElse(new byte[0]));
+        }
+        return new FileInputStream(name);
     }
 
     static boolean execAndCheckSuccess(String... args) {
