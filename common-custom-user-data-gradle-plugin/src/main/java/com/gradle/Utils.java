@@ -1,16 +1,20 @@
 package com.gradle;
 
+import org.gradle.api.file.ProjectLayout;
+import org.gradle.api.file.RegularFile;
 import org.gradle.api.invocation.Gradle;
 import org.gradle.api.provider.Provider;
 import org.gradle.api.provider.ProviderFactory;
 import org.gradle.util.GradleVersion;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
@@ -82,14 +86,23 @@ final class Utils {
         }
     }
 
-    static Properties readPropertiesFile(String name) {
-        try (InputStream input = new FileInputStream(name)) {
+    static Properties readPropertiesFile(String name, ProviderFactory providers, Gradle gradle) {
+        String fileContent = readFile(name, providers, gradle);
+        try (Reader input = new StringReader(fileContent)) {
             Properties properties = new Properties();
             properties.load(input);
             return properties;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    static String readFile(String name, ProviderFactory providers, Gradle gradle) {
+        Provider<File> file = providers.provider(() -> new File(name));
+        Provider<RegularFile> regularFile = gradle.getRootProject().getLayout().file(file);
+        Provider<String> fileText = providers.fileContents(regularFile).getAsText().forUseAtConfigurationTime();
+
+        return fileText.getOrElse("");
     }
 
     static boolean execAndCheckSuccess(String... args) {

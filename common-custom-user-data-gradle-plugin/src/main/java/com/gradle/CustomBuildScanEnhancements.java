@@ -84,7 +84,7 @@ final class CustomBuildScanEnhancements {
                 if (teamCityConfigFile.isPresent()
                     && buildNumber.isPresent()
                     && buildTypeId.isPresent()) {
-                    Properties properties = readPropertiesFile(teamCityConfigFile.get());
+                    Properties properties = readPropertiesFile(teamCityConfigFile.get(), providers, gradle);
                     String teamCityServerUrl = properties.getProperty("teamcity.serverUrl");
                     if (teamCityServerUrl != null) {
                         String buildUrl = appendIfMissing(teamCityServerUrl, "/") + "viewLog.html?buildNumber=" + buildNumber.get() + "&buildTypeId=" + buildTypeId.get();
