@@ -56,8 +56,8 @@ final class Utils {
 
     static Optional<String> envVariable(String name, ProviderFactory providers) {
         if (isGradle65OrNewer()) {
-            Provider<String> property = providers.environmentVariable(name).forUseAtConfigurationTime();
-            return Optional.ofNullable(property.getOrNull());
+            Provider<String> variable = providers.environmentVariable(name).forUseAtConfigurationTime();
+            return Optional.ofNullable(variable.getOrNull());
         }
         return Optional.ofNullable(System.getenv(name));
     }
