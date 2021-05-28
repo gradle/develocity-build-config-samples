@@ -2,7 +2,6 @@ package com.gradle;
 
 import com.gradle.scan.plugin.BuildScanExtension;
 import org.gradle.api.Action;
-import org.gradle.api.Project;
 import org.gradle.api.Task;
 import org.gradle.api.invocation.Gradle;
 import org.gradle.api.provider.ProviderFactory;
@@ -45,7 +44,7 @@ final class CustomBuildScanEnhancements {
     private static void captureIde(BuildScanExtension buildScan, Gradle gradle, ProviderFactory providers) {
         // Wait for projects to load to ensure Gradle project properties are initialized
         gradle.projectsEvaluated(g -> {
-            if (projectProperty(gradle,"android.injected.invoked.from.ide", providers).isPresent()) {
+            if (projectProperty(gradle, "android.injected.invoked.from.ide", providers).isPresent()) {
                 buildScan.tag("Android Studio");
                 projectProperty(gradle, "android.injected.studio.version", providers).ifPresent(v -> buildScan.value("Android Studio version", v));
             } else if (sysProperty("idea.version", providers).isPresent() || sysPropertyKeyStartingWith("idea.version")) {
