@@ -47,7 +47,8 @@ public class CommonCustomUserDataGradlePlugin implements Plugin<Object> {
             BuildCacheConfiguration buildCache = settings.getBuildCache();
             CustomGradleEnterpriseConfig.configureBuildCache(buildCache);
 
-            // configuration changes applied in this block will override earlier configuration settings (including those set in the settings.gradle(.kts))
+            // configuration changes applied in this block will override earlier configuration settings,
+            // including those set in the settings.gradle(.kts)
             settings.getGradle().settingsEvaluated(___ -> {
                 SystemPropertyOverrides.configureGradleEnterprise(gradleEnterprise, providers);
                 SystemPropertyOverrides.configureBuildCache(buildCache, providers);
@@ -69,7 +70,8 @@ public class CommonCustomUserDataGradlePlugin implements Plugin<Object> {
 
             // Build cache configuration cannot be accessed from a project plugin
 
-            // configuration changes applied within this block will override earlier configuration settings (including those set in the settings.gradle(.kts))
+            // configuration changes applied within this block will override earlier configuration settings,
+            // including those set in the root project's build.gradle(.kts)
             project.afterEvaluate(___ -> {
                 SystemPropertyOverrides.configureGradleEnterprise(gradleEnterprise, providers);
             });
