@@ -42,19 +42,21 @@ final class CustomBuildScanEnhancements {
     }
 
     private static void captureIde(BuildScanExtension buildScan, ProviderFactory providers, Gradle gradle) {
-        // Wait for projects to load to ensure Gradle project properties are initialized
-        gradle.projectsEvaluated(g -> {
-            if (projectProperty("android.injected.invoked.from.ide", providers, gradle).isPresent()) {
-                buildScan.tag("Android Studio");
-                projectProperty("android.injected.studio.version", providers, gradle).ifPresent(v -> buildScan.value("Android Studio version", v));
-            } else if (sysProperty("idea.version", providers).isPresent() || sysPropertyKeyStartingWith("idea.version")) {
-                buildScan.tag("IntelliJ IDEA");
-            } else if (sysProperty("eclipse.buildId", providers).isPresent()) {
-                buildScan.tag("Eclipse");
-            } else if (!isCi(providers)) {
-                buildScan.tag("Cmd Line");
-            }
-        });
+        if (!isCi(providers)) {
+            // Wait for projects to load to ensure Gradle project properties are initialized
+            gradle.projectsEvaluated(g -> {
+                if (projectProperty("android.injected.invoked.from.ide", providers, gradle).isPresent()) {
+                    buildScan.tag("Android Studio");
+                    projectProperty("android.injected.studio.version", providers, gradle).ifPresent(v -> buildScan.value("Android Studio version", v));
+                } else if (sysProperty("idea.version", providers).isPresent() || sysPropertyKeyStartingWith("idea.version")) {
+                    buildScan.tag("IntelliJ IDEA");
+                } else if (sysProperty("eclipse.buildId", providers).isPresent()) {
+                    buildScan.tag("Eclipse");
+                } else {
+                    buildScan.tag("Cmd Line");
+                }
+            });
+        }
     }
 
     private static void captureCiOrLocal(BuildScanExtension buildScan, ProviderFactory providers) {
