@@ -51,7 +51,8 @@ signing {
     // Require publications to be signed on CI. Otherwise, publication will be signed only if keys are provided.
     required providers.environmentVariable("CI").forUseAtConfigurationTime().isPresent()
 
-    useInMemoryPgpKeys(providers.environmentVariable("PGP_SINGING_KEY").forUseAtConfigurationTime().orNull,
+    useInMemoryPgpKeys(
+        providers.environmentVariable("PGP_SINGING_KEY").forUseAtConfigurationTime().orNull,
         providers.environmentVariable("PGP_SIGNING_KEY_PASSPHRASE").forUseAtConfigurationTime().orNull)
 
     sign(configurations.archives)
