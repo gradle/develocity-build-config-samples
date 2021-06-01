@@ -49,8 +49,10 @@ final class CustomBuildScanEnhancements {
                     projectProperty("android.injected.studio.version", providers, gradle).ifPresent(v -> buildScan.value("Android Studio version", v));
                 } else if (sysProperty("idea.version", providers).isPresent()) {
                     buildScan.tag("IntelliJ IDEA");
+                    buildScan.value("IntelliJ IDEA version", sysProperty("idea.version", providers).get());
                 } else if (sysProperty("eclipse.buildId", providers).isPresent()) {
                     buildScan.tag("Eclipse");
+                    buildScan.value("Eclipse version", sysProperty("eclipse.buildId", providers).get());
                 } else {
                     buildScan.tag("Cmd Line");
                 }
