@@ -47,7 +47,7 @@ final class CustomBuildScanEnhancements {
             } else if (sysProperty("eclipse.buildId").isPresent()) {
                 buildScan.tag("Eclipse");
                 buildScan.value("Eclipse version", sysProperty("eclipse.buildId").get());
-            } else if (!isCi()) {
+            } else {
                 buildScan.tag("Cmd Line");
             }
         }
