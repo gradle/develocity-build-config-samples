@@ -8,7 +8,14 @@ import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.gradle.Utils.*;
+import static com.gradle.Utils.appendIfMissing;
+import static com.gradle.Utils.envVariable;
+import static com.gradle.Utils.execAndCheckSuccess;
+import static com.gradle.Utils.execAndGetStdOut;
+import static com.gradle.Utils.isNotEmpty;
+import static com.gradle.Utils.readPropertiesFile;
+import static com.gradle.Utils.sysProperty;
+import static com.gradle.Utils.urlEncode;
 
 /**
  * Adds a standard set of useful tags, links and custom values to all build scans published.
@@ -33,10 +40,12 @@ final class CustomBuildScanEnhancements {
     }
 
     private static void captureIde(BuildScanApi buildScan) {
-        if (sysProperty("idea.version").isPresent() || sysPropertyKeyStartingWith("idea.version")) {
+        if (sysProperty("idea.version").isPresent()) {
             buildScan.tag("IntelliJ IDEA");
+            buildScan.value("IntelliJ IDEA version", sysProperty("idea.version").get());
         } else if (sysProperty("eclipse.buildId").isPresent()) {
             buildScan.tag("Eclipse");
+            buildScan.value("Eclipse version", sysProperty("eclipse.buildId").get());
         } else if (!isCi()) {
             buildScan.tag("Cmd Line");
         }

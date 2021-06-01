@@ -1,11 +1,16 @@
 package com.gradle;
 
+import org.gradle.api.file.RegularFile;
+import org.gradle.api.invocation.Gradle;
 import org.gradle.api.provider.Provider;
 import org.gradle.api.provider.ProviderFactory;
 import org.gradle.util.GradleVersion;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -18,9 +23,6 @@ import java.time.Duration;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
-
-import static java.lang.Boolean.parseBoolean;
 
 final class Utils {
 
@@ -28,48 +30,36 @@ final class Utils {
         return value != null && !value.isEmpty();
     }
 
-    static Optional<String> sysProperty(String name) {
+    static Optional<String> sysProperty(String name, ProviderFactory providers) {
+        if (isGradle65OrNewer()) {
+            Provider<String> property = providers.systemProperty(name).forUseAtConfigurationTime();
+            return Optional.ofNullable(property.getOrNull());
+        }
         return Optional.ofNullable(System.getProperty(name));
     }
 
-    static boolean sysPropertyKeyStartingWith(String keyPrefix) {
-        for (Object key : System.getProperties().keySet()) {
-            if (key instanceof String) {
-                String stringKey = (String) key;
-                if (stringKey.startsWith(keyPrefix)) {
-                    return true;
-                }
-            }
-        }
-        return false;
+    static Optional<Boolean> booleanSysProperty(String name, ProviderFactory providers) {
+        return sysProperty(name, providers).map(Boolean::parseBoolean);
     }
 
-    static void withSysProperty(String name, Consumer<String> action, ProviderFactory providers) {
+    static Optional<Duration> durationSysProperty(String name, ProviderFactory providers) {
+        return sysProperty(name, providers).map(Duration::parse);
+    }
+
+    static Optional<String> envVariable(String name, ProviderFactory providers) {
         if (isGradle65OrNewer()) {
-            Provider<String> property = providers.systemProperty(name).forUseAtConfigurationTime();
-            if (property.isPresent()) {
-                action.accept(property.get());
-            }
-        } else {
-            Optional<String> property = sysProperty(name);
-            property.ifPresent(action);
+            Provider<String> variable = providers.environmentVariable(name).forUseAtConfigurationTime();
+            return Optional.ofNullable(variable.getOrNull());
         }
+        return Optional.ofNullable(System.getenv(name));
     }
 
-    static void withBooleanSysProperty(String name, Consumer<Boolean> action, ProviderFactory providers) {
-        withSysProperty(name, value -> action.accept(parseBoolean(value)), providers);
-    }
-
-    static void withDurationSysProperty(String name, Consumer<Duration> action, ProviderFactory providers) {
-        withSysProperty(name, value -> action.accept(Duration.parse(value)), providers);
-    }
-
-    static Optional<String> envVariable(String name) {
-        String value = System.getenv(name);
-        if (isNotEmpty(value)) {
-            return Optional.of(value);
+    static Optional<String> projectProperty(String name, ProviderFactory providers, Gradle gradle) {
+        if (isGradle65OrNewer()) {
+            Provider<String> property = providers.gradleProperty(name).forUseAtConfigurationTime();
+            return Optional.ofNullable(property.getOrNull());
         }
-        return Optional.empty();
+        return Optional.ofNullable((String) gradle.getRootProject().findProperty(name));
     }
 
     static String appendIfMissing(String str, String suffix) {
@@ -84,14 +74,24 @@ final class Utils {
         }
     }
 
-    static Properties readPropertiesFile(String name) {
-        try (InputStream input = new FileInputStream(name)) {
+    static Properties readPropertiesFile(String name, ProviderFactory providers, Gradle gradle) {
+        try (InputStream input = readFile(name, providers, gradle)) {
             Properties properties = new Properties();
             properties.load(input);
             return properties;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    static InputStream readFile(String name, ProviderFactory providers, Gradle gradle) throws FileNotFoundException {
+        if(isGradle65OrNewer()) {
+            RegularFile file = gradle.getRootProject().getLayout().getProjectDirectory().file(name);
+            Provider<byte[]> fileContent = providers.fileContents(file).getAsBytes().forUseAtConfigurationTime();
+
+            return new ByteArrayInputStream(fileContent.getOrElse(new byte[0]));
+        }
+        return new FileInputStream(name);
     }
 
     static boolean execAndCheckSuccess(String... args) {
@@ -154,5 +154,4 @@ final class Utils {
 
     private Utils() {
     }
-
 }

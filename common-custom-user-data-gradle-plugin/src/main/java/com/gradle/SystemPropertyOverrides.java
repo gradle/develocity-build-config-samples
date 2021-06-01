@@ -5,9 +5,9 @@ import org.gradle.api.provider.ProviderFactory;
 import org.gradle.caching.configuration.BuildCacheConfiguration;
 import org.gradle.caching.http.HttpBuildCache;
 
-import static com.gradle.Utils.withBooleanSysProperty;
-import static com.gradle.Utils.withDurationSysProperty;
-import static com.gradle.Utils.withSysProperty;
+import static com.gradle.Utils.booleanSysProperty;
+import static com.gradle.Utils.durationSysProperty;
+import static com.gradle.Utils.sysProperty;
 
 /**
  * Provide standardized Gradle Enterprise configuration.
@@ -31,24 +31,24 @@ final class SystemPropertyOverrides {
     public static final String REMOTE_CACHE_PUSH = "gradle.cache.remote.push";
 
     static void configureGradleEnterprise(GradleEnterpriseExtension gradleEnterprise, ProviderFactory providers) {
-        withSysProperty(GRADLE_ENTERPRISE_URL, gradleEnterprise::setServer, providers);
+        sysProperty(GRADLE_ENTERPRISE_URL, providers).ifPresent(gradleEnterprise::setServer);
     }
 
     static void configureBuildCache(BuildCacheConfiguration buildCache, ProviderFactory providers) {
         buildCache.local(local -> {
-            withSysProperty(LOCAL_CACHE_DIRECTORY, local::setDirectory, providers);
-            withDurationSysProperty(LOCAL_CACHE_REMOVE_UNUSED_ENTRIES_AFTER_DAYS, v -> local.setRemoveUnusedEntriesAfterDays((int) v.toDays()), providers);
-            withBooleanSysProperty(LOCAL_CACHE_ENABLED, local::setEnabled, providers);
-            withBooleanSysProperty(LOCAL_CACHE_PUSH, local::setPush, providers);
+            sysProperty(LOCAL_CACHE_DIRECTORY, providers).ifPresent(local::setDirectory);
+            durationSysProperty(LOCAL_CACHE_REMOVE_UNUSED_ENTRIES_AFTER_DAYS, providers).ifPresent(v -> local.setRemoveUnusedEntriesAfterDays((int) v.toDays()));
+            booleanSysProperty(LOCAL_CACHE_ENABLED, providers).ifPresent(local::setEnabled);
+            booleanSysProperty(LOCAL_CACHE_PUSH, providers).ifPresent(local::setPush);
         });
 
         // null check required to avoid creating a remote build cache instance when none was already present in the build
         if (buildCache.getRemote() != null) {
             buildCache.remote(HttpBuildCache.class, remote -> {
-                withSysProperty(REMOTE_CACHE_URL, remote::setUrl, providers);
-                withBooleanSysProperty(REMOTE_CACHE_ALLOW_UNTRUSTED_SERVER, remote::setAllowUntrustedServer, providers);
-                withBooleanSysProperty(REMOTE_CACHE_ENABLED, remote::setEnabled, providers);
-                withBooleanSysProperty(REMOTE_CACHE_PUSH, remote::setPush, providers);
+                sysProperty(REMOTE_CACHE_URL, providers).ifPresent(remote::setUrl);
+                booleanSysProperty(REMOTE_CACHE_ALLOW_UNTRUSTED_SERVER, providers).ifPresent(remote::setAllowUntrustedServer);
+                booleanSysProperty(REMOTE_CACHE_ENABLED, providers).ifPresent(remote::setEnabled);
+                booleanSysProperty(REMOTE_CACHE_PUSH, providers).ifPresent(remote::setPush);
             });
         }
     }
