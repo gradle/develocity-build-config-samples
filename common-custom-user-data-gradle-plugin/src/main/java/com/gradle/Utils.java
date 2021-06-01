@@ -56,7 +56,7 @@ final class Utils {
 
     static Optional<String> projectProperty(String name, ProviderFactory providers, Gradle gradle) {
         if (isGradle65OrNewer()) {
-            Provider<String> property = providers.gradleProperty(name).forUseAtConfigurationTime();
+            Provider<String> property = providers.provider(() -> (String) gradle.getRootProject().findProperty(name)).forUseAtConfigurationTime();
             return Optional.ofNullable(property.getOrNull());
         }
         return Optional.ofNullable((String) gradle.getRootProject().findProperty(name));
