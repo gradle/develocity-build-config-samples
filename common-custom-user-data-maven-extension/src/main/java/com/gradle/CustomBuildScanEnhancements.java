@@ -40,14 +40,16 @@ final class CustomBuildScanEnhancements {
     }
 
     private static void captureIde(BuildScanApi buildScan) {
-        if (sysProperty("idea.version").isPresent()) {
-            buildScan.tag("IntelliJ IDEA");
-            buildScan.value("IntelliJ IDEA version", sysProperty("idea.version").get());
-        } else if (sysProperty("eclipse.buildId").isPresent()) {
-            buildScan.tag("Eclipse");
-            buildScan.value("Eclipse version", sysProperty("eclipse.buildId").get());
-        } else if (!isCi()) {
-            buildScan.tag("Cmd Line");
+        if (!isCi()) {
+            if (sysProperty("idea.version").isPresent()) {
+                buildScan.tag("IntelliJ IDEA");
+                buildScan.value("IntelliJ IDEA version", sysProperty("idea.version").get());
+            } else if (sysProperty("eclipse.buildId").isPresent()) {
+                buildScan.tag("Eclipse");
+                buildScan.value("Eclipse version", sysProperty("eclipse.buildId").get());
+            } else if (!isCi()) {
+                buildScan.tag("Cmd Line");
+            }
         }
     }
 
