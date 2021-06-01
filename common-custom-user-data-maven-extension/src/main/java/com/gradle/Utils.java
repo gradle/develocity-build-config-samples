@@ -25,18 +25,6 @@ final class Utils {
         return Optional.ofNullable(System.getProperty(name));
     }
 
-    static boolean sysPropertyKeyStartingWith(String keyPrefix) {
-        for (Object key : System.getProperties().keySet()) {
-            if (key instanceof String) {
-                String stringKey = (String) key;
-                if (stringKey.startsWith(keyPrefix)) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
     static Optional<Boolean> booleanSysProperty(String name) {
         return sysProperty(name).map(Boolean::parseBoolean);
     }

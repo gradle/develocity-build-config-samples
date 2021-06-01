@@ -20,7 +20,6 @@ import static com.gradle.Utils.isNotEmpty;
 import static com.gradle.Utils.projectProperty;
 import static com.gradle.Utils.readPropertiesFile;
 import static com.gradle.Utils.sysProperty;
-import static com.gradle.Utils.sysPropertyKeyStartingWith;
 import static com.gradle.Utils.urlEncode;
 
 /**
@@ -48,7 +47,7 @@ final class CustomBuildScanEnhancements {
                 if (projectProperty("android.injected.invoked.from.ide", providers, gradle).isPresent()) {
                     buildScan.tag("Android Studio");
                     projectProperty("android.injected.studio.version", providers, gradle).ifPresent(v -> buildScan.value("Android Studio version", v));
-                } else if (sysProperty("idea.version", providers).isPresent() || sysPropertyKeyStartingWith("idea.version")) {
+                } else if (sysProperty("idea.version", providers).isPresent()) {
                     buildScan.tag("IntelliJ IDEA");
                 } else if (sysProperty("eclipse.buildId", providers).isPresent()) {
                     buildScan.tag("Eclipse");
