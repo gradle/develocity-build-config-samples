@@ -8,7 +8,6 @@ import org.gradle.util.GradleVersion;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -36,6 +35,23 @@ final class Utils {
             return Optional.ofNullable(property.getOrNull());
         }
         return Optional.ofNullable(System.getProperty(name));
+    }
+
+    static Optional<String> firstSysPropertyKeyStartingWith(String keyPrefix, ProviderFactory providers) {
+        Optional<String> key = firstKeyStartingWith(keyPrefix, System.getProperties());
+
+        if (isGradle65OrNewer()) {
+            key.ifPresent(k -> providers.systemProperty(k).forUseAtConfigurationTime().get());
+        }
+        return key;
+    }
+
+    private static Optional<String> firstKeyStartingWith(String keyPrefix, Properties properties) {
+        return properties.keySet().stream()
+                .filter(s -> s instanceof String)
+                .map(s -> (String) s)
+                .filter(s -> s.startsWith(keyPrefix))
+                .findFirst();
     }
 
     static Optional<Boolean> booleanSysProperty(String name, ProviderFactory providers) {

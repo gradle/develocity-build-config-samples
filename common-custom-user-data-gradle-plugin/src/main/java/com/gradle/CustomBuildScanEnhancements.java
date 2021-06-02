@@ -16,6 +16,7 @@ import static com.gradle.Utils.appendIfMissing;
 import static com.gradle.Utils.envVariable;
 import static com.gradle.Utils.execAndCheckSuccess;
 import static com.gradle.Utils.execAndGetStdOut;
+import static com.gradle.Utils.firstSysPropertyKeyStartingWith;
 import static com.gradle.Utils.isNotEmpty;
 import static com.gradle.Utils.projectProperty;
 import static com.gradle.Utils.readPropertiesFile;
@@ -50,6 +51,9 @@ final class CustomBuildScanEnhancements {
                 } else if (sysProperty("idea.version", providers).isPresent()) {
                     buildScan.tag("IntelliJ IDEA");
                     buildScan.value("IntelliJ IDEA version", sysProperty("idea.version", providers).get());
+                } else if (firstSysPropertyKeyStartingWith("idea.version", providers).isPresent()) {
+                    buildScan.tag("IntelliJ IDEA");
+                    buildScan.value("IntelliJ IDEA version", stripPrefix("idea.version", firstSysPropertyKeyStartingWith("idea.version", providers).get()));
                 } else if (sysProperty("eclipse.buildId", providers).isPresent()) {
                     buildScan.tag("Eclipse");
                     buildScan.value("Eclipse version", sysProperty("eclipse.buildId", providers).get());
@@ -58,6 +62,10 @@ final class CustomBuildScanEnhancements {
                 }
             });
         }
+    }
+
+    private static String stripPrefix(String prefix, String string) {
+        return string.startsWith(prefix) ? string.substring(prefix.length()) : string;
     }
 
     private static void captureCiOrLocal(BuildScanExtension buildScan, ProviderFactory providers) {

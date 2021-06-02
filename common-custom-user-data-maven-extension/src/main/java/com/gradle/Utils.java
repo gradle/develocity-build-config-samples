@@ -25,6 +25,14 @@ final class Utils {
         return Optional.ofNullable(System.getProperty(name));
     }
 
+    static Optional<String> firstSysPropertyKeyStartingWith(String keyPrefix) {
+        return System.getProperties().keySet().stream()
+                .filter(s -> s instanceof String)
+                .map(s -> (String) s)
+                .filter(s -> s.startsWith(keyPrefix))
+                .findFirst();
+    }
+
     static Optional<Boolean> booleanSysProperty(String name) {
         return sysProperty(name).map(Boolean::parseBoolean);
     }

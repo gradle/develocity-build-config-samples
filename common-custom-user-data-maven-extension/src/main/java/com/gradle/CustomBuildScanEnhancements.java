@@ -12,6 +12,7 @@ import static com.gradle.Utils.appendIfMissing;
 import static com.gradle.Utils.envVariable;
 import static com.gradle.Utils.execAndCheckSuccess;
 import static com.gradle.Utils.execAndGetStdOut;
+import static com.gradle.Utils.firstSysPropertyKeyStartingWith;
 import static com.gradle.Utils.isNotEmpty;
 import static com.gradle.Utils.readPropertiesFile;
 import static com.gradle.Utils.sysProperty;
@@ -47,10 +48,17 @@ final class CustomBuildScanEnhancements {
             } else if (sysProperty("eclipse.buildId").isPresent()) {
                 buildScan.tag("Eclipse");
                 buildScan.value("Eclipse version", sysProperty("eclipse.buildId").get());
+            } else if (firstSysPropertyKeyStartingWith("idea.version").isPresent()) {
+                buildScan.tag("IntelliJ IDEA");
+                buildScan.value("IntelliJ IDEA version", stripPrefix("idea.version", firstSysPropertyKeyStartingWith("idea.version").get()));
             } else {
                 buildScan.tag("Cmd Line");
             }
         }
+    }
+
+    private static String stripPrefix(String prefix, String string) {
+        return string.startsWith(prefix) ? string.substring(prefix.length()) : string;
     }
 
     private static void captureCiOrLocal(BuildScanApi buildScan) {
