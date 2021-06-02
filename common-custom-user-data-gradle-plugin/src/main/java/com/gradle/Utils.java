@@ -41,7 +41,7 @@ final class Utils {
         Optional<String> key = firstKeyStartingWith(keyPrefix, System.getProperties());
 
         if (isGradle65OrNewer()) {
-            key.ifPresent(k -> providers.systemProperty(k).forUseAtConfigurationTime().get());
+            key.ifPresent(k -> providers.systemProperty(k).forUseAtConfigurationTime());
         }
         return key;
     }
