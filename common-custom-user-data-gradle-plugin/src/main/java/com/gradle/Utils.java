@@ -25,8 +25,20 @@ import java.util.concurrent.TimeUnit;
 
 final class Utils {
 
-    static boolean isNotEmpty(String value) {
-        return value != null && !value.isEmpty();
+    static Optional<String> envVariable(String name, ProviderFactory providers) {
+        if (isGradle65OrNewer()) {
+            Provider<String> variable = providers.environmentVariable(name).forUseAtConfigurationTime();
+            return Optional.ofNullable(variable.getOrNull());
+        }
+        return Optional.ofNullable(System.getenv(name));
+    }
+
+    static Optional<String> projectProperty(String name, ProviderFactory providers, Gradle gradle) {
+        if (isGradle65OrNewer()) {
+            Provider<String> property = providers.provider(() -> (String) gradle.getRootProject().findProperty(name)).forUseAtConfigurationTime();
+            return Optional.ofNullable(property.getOrNull());
+        }
+        return Optional.ofNullable((String) gradle.getRootProject().findProperty(name));
     }
 
     static Optional<String> sysProperty(String name, ProviderFactory providers) {
@@ -45,24 +57,32 @@ final class Utils {
         return sysProperty(name, providers).map(Duration::parse);
     }
 
-    static Optional<String> envVariable(String name, ProviderFactory providers) {
+    static Optional<String> firstSysPropertyKeyStartingWith(String keyPrefix, ProviderFactory providers) {
+        Optional<String> key = firstKeyStartingWith(keyPrefix, System.getProperties());
         if (isGradle65OrNewer()) {
-            Provider<String> variable = providers.environmentVariable(name).forUseAtConfigurationTime();
-            return Optional.ofNullable(variable.getOrNull());
+            key.ifPresent(k -> providers.systemProperty(k).forUseAtConfigurationTime());
         }
-        return Optional.ofNullable(System.getenv(name));
+        return key;
     }
 
-    static Optional<String> projectProperty(String name, ProviderFactory providers, Gradle gradle) {
-        if (isGradle65OrNewer()) {
-            Provider<String> property = providers.provider(() -> (String) gradle.getRootProject().findProperty(name)).forUseAtConfigurationTime();
-            return Optional.ofNullable(property.getOrNull());
-        }
-        return Optional.ofNullable((String) gradle.getRootProject().findProperty(name));
+    private static Optional<String> firstKeyStartingWith(String keyPrefix, Properties properties) {
+        return properties.keySet().stream()
+            .filter(s -> s instanceof String)
+            .map(s -> (String) s)
+            .filter(s -> s.startsWith(keyPrefix))
+            .findFirst();
+    }
+
+    static boolean isNotEmpty(String value) {
+        return value != null && !value.isEmpty();
     }
 
     static String appendIfMissing(String str, String suffix) {
         return str.endsWith(suffix) ? str : str + suffix;
+    }
+
+    static String stripPrefix(String prefix, String string) {
+        return string.startsWith(prefix) ? string.substring(prefix.length()) : string;
     }
 
     static String urlEncode(String str) {
@@ -152,4 +172,5 @@ final class Utils {
 
     private Utils() {
     }
+
 }
