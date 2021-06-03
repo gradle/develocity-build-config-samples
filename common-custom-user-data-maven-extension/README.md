@@ -28,9 +28,11 @@ The `extensions.xml` file is the same file where you have already declared the G
 
 #### Capturing additional tag, links and values in your build scans
 
-You can add further build scan configuration and enhancements to the core set provided by the Common Custom User Data Maven extension.
-The extension checks for a `.mvn/gradle-enterprise-custom-user-data.groovy` Groovy script in your root project.
-If the file exists, it evaluates the script with the following bindings:
+You can apply additional configuration beyond what is contributed by the Common Custom User Data Maven extension by default. The additional configuration happens in a specific
+Groovy script. This is a good intermediate step before creating your own extension.
+
+The Common Custom User Data Maven extension checks for a `.mvn/gradle-enterprise-custom-user-data.groovy` Groovy script in your root project. If the file exists, it evaluates
+the script with the following bindings:
 
 - `buildScan` (type: [BuildScanApi](https://docs.gradle.com/enterprise/maven-extension/api/com/gradle/maven/extension/api/scan/BuildScanApi.html)): _enhance build scans and configure build scan publishing_
 - `buildCache` (type: [BuildCacheApi](https://docs.gradle.com/enterprise/maven-extension/api/com/gradle/maven/extension/api/cache/BuildCacheApi.html)): _configure build cache_
@@ -45,8 +47,8 @@ See [here](https://github.com/gradle/gradle-enterprise-build-config-samples/blob
 For more flexibility, we recommend creating a copy of this repository so that you may develop a customized version of the extension and publish it internally for your projects to consume.
 
 This approach has a number of benefits:
-- Tailor the build scan enhancements to exactly the set of tags, links and custom values you require.
-- Standardize the configuration for connecting to Gradle Enterprise and the remote build cache in your organization, removing the need for each project to specify this configuration.
+- Tailor the build scan enhancements to exactly the set of tags, links and custom values you require
+- Standardize the configuration for connecting to Gradle Enterprise and the remote build cache in your organization, removing the need for each project to specify this configuration
 
 If your customized extension provides all required Gradle Enterprise configuration, then a consumer project will get all the benefits of Gradle Enterprise simply by applying the
 extension. The project sources provide a good template to get started with your own extension.
