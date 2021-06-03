@@ -13,9 +13,9 @@ The additional tags, links and custom values captured by this plugin include:
 - A tag representing the operating system
 - A tag representing how the build was invoked, be that from your IDE (IDEA, Eclipse, Android Studio) or from the command-line
 - A tag representing builds run on CI, together with a set of tags, links and custom values specific to the CI server running the build
-- For `git` repositories, information on the commit id, branch name, status, and whether the checkout is dirty or not
+- For Git repositories, information on the commit id, branch name, status, and whether the checkout is dirty or not
 
-See [CustomBuildScanEnhancements.java](./src/main/java/com/gradle/CustomBuildScanEnhancements.java) for details on what is
+See [CustomBuildScanEnhancements.java](./src/main/java/com/gradle/CustomBuildScanEnhancements.java) for details on what data is
 captured and under which conditions.
 
 This plugin also allows overriding various Gradle Enterprise related settings via system properties:
@@ -25,10 +25,7 @@ This plugin also allows overriding various Gradle Enterprise related settings vi
 
 See [SystemPropertyOverrides.java](./src/main/java/com/gradle/SystemPropertyOverrides.java) for the complete set of available
 system properties. You can use the system properties to override Gradle Enterprise related settings temporarily without having
-to modify the build scripts, such as while performing a [build validation experiment](../build-validation) or as a troubleshooting
-step while investigating a problem.
-
-For example, to disable the local build cache when running a build:
+to modify the build scripts. For example, to disable the local build cache when running a build:
 
 ```bash
 ./gradlew -Dgradle.cache.local.enabled=false build
