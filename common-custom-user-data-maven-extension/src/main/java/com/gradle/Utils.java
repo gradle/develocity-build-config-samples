@@ -17,20 +17,12 @@ import java.util.concurrent.TimeUnit;
 
 final class Utils {
 
-    static boolean isNotEmpty(String value) {
-        return value != null && !value.isEmpty();
+    static Optional<String> envVariable(String name) {
+        return Optional.ofNullable(System.getenv(name));
     }
 
     static Optional<String> sysProperty(String name) {
         return Optional.ofNullable(System.getProperty(name));
-    }
-
-    static Optional<String> firstSysPropertyKeyStartingWith(String keyPrefix) {
-        return System.getProperties().keySet().stream()
-            .filter(s -> s instanceof String)
-            .map(s -> (String) s)
-            .filter(s -> s.startsWith(keyPrefix))
-            .findFirst();
     }
 
     static Optional<Boolean> booleanSysProperty(String name) {
@@ -41,8 +33,16 @@ final class Utils {
         return sysProperty(name).map(Duration::parse);
     }
 
-    static Optional<String> envVariable(String name) {
-        return Optional.ofNullable(System.getenv(name));
+    static Optional<String> firstSysPropertyKeyStartingWith(String keyPrefix) {
+        return System.getProperties().keySet().stream()
+            .filter(s -> s instanceof String)
+            .map(s -> (String) s)
+            .filter(s -> s.startsWith(keyPrefix))
+            .findFirst();
+    }
+
+    static boolean isNotEmpty(String value) {
+        return value != null && !value.isEmpty();
     }
 
     static String appendIfMissing(String str, String suffix) {
