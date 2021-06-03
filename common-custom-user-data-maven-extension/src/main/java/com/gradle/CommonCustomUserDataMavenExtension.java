@@ -1,5 +1,6 @@
 package com.gradle;
 
+import com.gradle.maven.extension.api.GradleEnterpriseApi;
 import com.gradle.maven.extension.api.cache.BuildCacheApi;
 import com.gradle.maven.extension.api.scan.BuildScanApi;
 import org.apache.maven.AbstractMavenLifecycleParticipant;
@@ -12,9 +13,9 @@ import org.codehaus.plexus.logging.Logger;
 import javax.inject.Inject;
 
 @Component(
-    role = AbstractMavenLifecycleParticipant.class,
-    hint = "common-custom-user-data",
-    description = "Captures common custom user data in Maven build scans"
+        role = AbstractMavenLifecycleParticipant.class,
+        hint = "common-custom-user-data",
+        description = "Captures common custom user data in Maven build scans"
 )
 public final class CommonCustomUserDataMavenExtension extends AbstractMavenLifecycleParticipant {
 
@@ -30,6 +31,13 @@ public final class CommonCustomUserDataMavenExtension extends AbstractMavenLifec
     @Override
     public void afterProjectsRead(MavenSession session) throws MavenExecutionException {
         logger.debug("Executing extension: " + getClass().getSimpleName());
+
+        GradleEnterpriseApi gradleEnterprise = ApiAccessor.lookupGradleEnterpriseApi(container, getClass());
+        if (gradleEnterprise != null) {
+            logger.debug("Configuring Gradle Enterprise");
+            CustomGradleEnterpriseConfig.configureGradleEnterprise(gradleEnterprise);
+            logger.debug("Finished configuring Gradle Enterprise");
+        }
 
         BuildScanApi buildScan = ApiAccessor.lookupBuildScanApi(container, getClass());
         if (buildScan != null) {
@@ -49,8 +57,8 @@ public final class CommonCustomUserDataMavenExtension extends AbstractMavenLifec
             logger.debug("Finished configuring build cache");
         }
 
-        if (buildScan != null || buildCache != null) {
-            GroovyScriptUserData.addToApis(session, buildScan, buildCache, logger);
+        if (gradleEnterprise != null || buildScan != null || buildCache != null) {
+            GroovyScriptUserData.addToApis(session, gradleEnterprise, buildScan, buildCache, logger);
         } else {
             logger.debug("Skipping evaluation of custom user data Groovy script because BuildScanApi and BuildCacheApi are both not available");
         }

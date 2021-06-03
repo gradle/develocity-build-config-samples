@@ -1,4 +1,4 @@
-## Common Custom User Data Maven Extension [![Maven Central](https://img.shields.io/maven-central/v/com.gradle/common-custom-user-data-maven-extension)](https://search.maven.org/artifact/com.gradle/common-custom-user-data-maven-extension) [![Revved up by Gradle Enterprise](https://img.shields.io/badge/Revved%20up%20by-Gradle%20Enterprise-06A0CE?logo=Gradle&labelColor=02303A)](https://ge.gradle.org/scans)
+## Common Custom User Data Maven extension [![Maven Central](https://img.shields.io/maven-central/v/com.gradle/common-custom-user-data-maven-extension)](https://search.maven.org/artifact/com.gradle/common-custom-user-data-maven-extension) [![Revved up by Gradle Enterprise](https://img.shields.io/badge/Revved%20up%20by-Gradle%20Enterprise-06A0CE?logo=Gradle&labelColor=02303A)](https://ge.gradle.org/scans)
 
 ### Overview
 
@@ -18,6 +18,15 @@ The additional tags, links and custom values captured by this extension include:
 See [CustomBuildScanEnhancements.java](./src/main/java/com/gradle/CustomBuildScanEnhancements.java) for details on what data is
 captured and under which conditions.
 
+#### Version compatibility
+
+This table details the version compatibility of the Common Custom User Data Maven extension with the Gradle Enterprise Maven extension.
+
+| Common Custom User Data Maven extension versions | Gradle Enterprise Maven extension versions |
+| ------------------------------------------------ | ------------------------------------------ |
+| `1.5.1`                                          | `1.10.1+`                                  |
+| `1.0` - `1.5.0`                                  | `1.0.0` - `1.10`                           |
+
 ### Applying the published extension
 
 The Common Custom User Data Maven extension is available in [Maven Central](https://search.maven.org/artifact/com.gradle/common-custom-user-data-maven-extension). This extension
@@ -34,6 +43,7 @@ Groovy script. This is a good intermediate step before creating your own extensi
 The Common Custom User Data Maven extension checks for a `.mvn/gradle-enterprise-custom-user-data.groovy` Groovy script in your root project. If the file exists, it evaluates
 the script with the following bindings:
 
+- `gradleEnterprise` (type: [GradleEnterpriseApi](https://docs.gradle.com/enterprise/maven-extension/api/com/gradle/maven/extension/api/GradleEnterpriseApi.html)): _use as API entry point and configure the Gradle Enterprise Maven extension_
 - `buildScan` (type: [BuildScanApi](https://docs.gradle.com/enterprise/maven-extension/api/com/gradle/maven/extension/api/scan/BuildScanApi.html)): _enhance build scans and configure build scan publishing_
 - `buildCache` (type: [BuildCacheApi](https://docs.gradle.com/enterprise/maven-extension/api/com/gradle/maven/extension/api/cache/BuildCacheApi.html)): _configure build cache_
 - `log` (type: [`Log`](https://maven.apache.org/ref/current/maven-plugin-api/apidocs/org/apache/maven/plugin/logging/Log.html)): _write to the build log_

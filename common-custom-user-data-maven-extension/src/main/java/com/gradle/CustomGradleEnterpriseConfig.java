@@ -1,5 +1,6 @@
 package com.gradle;
 
+import com.gradle.maven.extension.api.GradleEnterpriseApi;
 import com.gradle.maven.extension.api.cache.BuildCacheApi;
 import com.gradle.maven.extension.api.scan.BuildScanApi;
 
@@ -8,6 +9,16 @@ import com.gradle.maven.extension.api.scan.BuildScanApi;
  * By applying the extension, these settings will automatically be applied.
  */
 final class CustomGradleEnterpriseConfig {
+
+    static void configureGradleEnterprise(GradleEnterpriseApi gradleEnterprise) {
+        /* Example of Gradle Enterprise configuration
+
+        // Set a different storage directory.
+        // See https://docs.gradle.com/enterprise/maven-extension/#anatomy_of_the_gradle_enterprise_directory
+        gradleEnterprise.setStorageDirectory(Paths.get("/path/to/new/storage/directory"));
+
+        */
+    }
 
     static void configureBuildScanPublishing(BuildScanApi buildScans) {
         /* Example of build scan publishing configuration

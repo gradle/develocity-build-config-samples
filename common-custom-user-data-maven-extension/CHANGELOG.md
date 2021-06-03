@@ -3,6 +3,9 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [1.5.1] - 2021-06-08
+- Add support for `GradleEnterpriseApi`
+
 ## [1.5] - 2021-05-11
 - Add the Git repository URL as a custom value
 
