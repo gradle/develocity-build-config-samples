@@ -3,17 +3,17 @@
 ### Overview
 
 The Common Custom User Data Maven extension for Gradle Enterprise enhances published build scans
-by adding a set of tags, links and custom values that have proven to be useful for many users of Gradle Enterprise.
+by adding a set of tags, links and custom values that have proven to be useful for many projects building with Gradle Enterprise.
 
 You can leverage this extension for your project in one of two ways:
-1. Apply the published extension directly in your `.mvn/extensions.xml` and immediately benefit from enhanced build scans.
-2. Copy this repository and develop a customized version of the extension which will standardize Gradle Enterprise usage across multiple projects.
+1. Apply the published extension directly in your `.mvn/extensions.xml` and immediately benefit from enhanced build scans
+2. Copy this repository and develop a customized version of the extension to standardize Gradle Enterprise usage across multiple projects
 
-Out of the box, this extension enhances all build scans published with additional tags, links and custom values. These include:
-- A tag representing the operating system.
-- A tag representing how the build was invoked, be that from your IDE (IDEA, Eclipse) or from the command-line.
-- A tag representing builds run on CI, together with a set of tags, links and custom values specific to the CI server running the build.
-- For `git` repositories, information on the commit id, branch name, status, and whether the checkout is dirty or not.
+The additional tags, links and custom values captured by this extension include:
+- A tag representing the operating system
+- A tag representing how the build was invoked, be that from your IDE (IDEA, Eclipse) or from the command-line
+- A tag representing builds run on CI, together with a set of tags, links and custom values specific to the CI server running the build
+- For `git` repositories, information on the commit id, branch name, status, and whether the checkout is dirty or not
 
 ### Applying the published extension
 

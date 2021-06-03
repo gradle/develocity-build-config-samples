@@ -3,20 +3,36 @@
 ### Overview
 
 The Common Custom User Data Gradle Plugin for Gradle Enterprise enhances published build scans
-by adding a set of tags, links and custom values that have proven to be useful for many users of Gradle Enterprise.
+by adding a set of tags, links and custom values that have proven to be useful for many projects building with Gradle Enterprise.
 
 You can leverage this plugin for your project in one of two ways:
-1. Apply the published plugin directly in your build and immediately benefit from enhanced build scans.
-2. Copy this repository and develop a customized version of the plugin which will standardize Gradle Enterprise usage across multiple projects.
+1. Apply the published plugin directly in your build and immediately benefit from enhanced build scans
+2. Copy this repository and develop a customized version of the plugin to standardize Gradle Enterprise usage across multiple projects
 
-Out of the box, this plugin enhances all build scans published with additional tags, links and custom values. These include:
-- A tag representing the operating system.
-- A tag representing how the build was invoked, be that from your IDE (IDEA, Eclipse, Android Studio) or from the command-line.
-- A tag representing builds run on CI, together with a set of tags, links and custom values specific to the CI server running the build.
-- For `git` repositories, information on the commit id, branch name, status, and whether the checkout is dirty or not.
+The additional tags, links and custom values captured by this plugin include:
+- A tag representing the operating system
+- A tag representing how the build was invoked, be that from your IDE (IDEA, Eclipse, Android Studio) or from the command-line
+- A tag representing builds run on CI, together with a set of tags, links and custom values specific to the CI server running the build
+- For `git` repositories, information on the commit id, branch name, status, and whether the checkout is dirty or not
 
-Out of the box, this plugin also allows users to override various Gradle Enterprise, build scan, and build caching settings via
-system properties (see [Overriding Gradle Enterprise configuration values via system properties](#overriding_gradle_enterprise_configuration_values_via_system_properties)).
+See [CustomBuildScanEnhancements.java](./src/main/java/com/gradle/CustomBuildScanEnhancements.java) for details on what is
+captured and under which conditions.
+
+This plugin also allows overriding various Gradle Enterprise related settings via system properties:
+- Gradle Enterprise general configuration
+- Remote build cache configuration
+- Local build cache configuration
+
+See [SystemPropertyOverrides.java](./src/main/java/com/gradle/SystemPropertyOverrides.java) for the complete set of available
+system properties. You can use the system properties to override Gradle Enterprise related settings temporarily without having
+to modify the build scripts, such as while performing a [build validation experiment](../build-validation) or as a troubleshooting
+step while investigating a problem.
+
+For example, to disable the local build cache when running a build:
+
+```bash
+./gradlew -Dgradle.cache.local.enabled=false build
+```
 
 ### Applying the published plugin
 
@@ -48,40 +64,6 @@ plugins {
     // …
 }
 ```
-
-### Overriding Gradle Enterprise configuration values via system properties
-
-The Common Custom User Data Gradle Plugin adds the ability to override many Gradle Enterprise settings via system properties.
-You can use the system properties to override Gradle Enterprise settings temporarily, such as while performing a
-[build validation experiment](../build-validation) or as a troubleshooting step while investigating a problem.
-
-The following system properties are supported:
-
-|System Property                            | Acceptable Values   | Description
-|-------------------------------------------|---------------------|------------
-|`gradle.enterprise.url`                    | URL                 | Sets the URL of the Gradle Enterprise server, primarily for publishing build scans.
-|`gradle.cache.local.enabled`               | `true` or `false`   | Enables/disables the local build cache.
-|`gradle.cache.local.directory`             | path to a directory | Sets the location of the local build cache.
-|`gradle.cache.local.removeUnusedEntriesAfterDays` | [Duration String Representation](https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/time/Duration.html#parse(java.lang.CharSequence)) | Sets how long local build cache entries are allowed to exist before they are deleted automatically.
-|`gradle.cache.remote.enabled`              | `true` or `false`   | Enables/disables the remote build cache.
-|`gradle.cache.remote.url`                  | URL | Sets the URL of the remote cache node. Assumes the remote cache is a HTTPBuildCache.
-|`gradle.cache.remote.push`                 | `true` or `false`   | Enables/disables pushing (storing) new entries in the remote build cache.
-|`gradle.cache.remote.allowUntrustedServer` | `true` or `false`   | Enables/disables accepting insecure (e.g., self-signed) SSL certificates when connecting to the remote build cache node via HTTPS.
-
-For example, to change the Gradle Enterprise server used, and to disable the local build cache:
-
-```bash
-./gradlew -Dgradle.enterprise.url=https://example.com -Dgradle.cache.local.enabled=false build
-```
-
-The Gradle Enterprise plugin directly supports two other system properties:
-
-|System Property                            | Acceptable Values   | Description
-|-------------------------------------------|---------------------|------------
-|`scan.captureTaskInputFiles`               | `true` or `false`   | Enables/disables capturing task input files in build scans.
-|`scan.uploadInBackground`                  | `true` or `false`   | Enables/disables uploading build scans in the background.
-
-See the [Gradle Enterprise Gradle Plugin User Manual](https://docs.gradle.com/enterprise/gradle-plugin/) for more details.
 
 ### Developing a customized version of the plugin
 
