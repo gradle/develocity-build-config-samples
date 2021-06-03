@@ -27,10 +27,10 @@ final class Utils {
 
     static Optional<String> firstSysPropertyKeyStartingWith(String keyPrefix) {
         return System.getProperties().keySet().stream()
-                .filter(s -> s instanceof String)
-                .map(s -> (String) s)
-                .filter(s -> s.startsWith(keyPrefix))
-                .findFirst();
+            .filter(s -> s instanceof String)
+            .map(s -> (String) s)
+            .filter(s -> s.startsWith(keyPrefix))
+            .findFirst();
     }
 
     static Optional<Boolean> booleanSysProperty(String name) {
@@ -47,6 +47,10 @@ final class Utils {
 
     static String appendIfMissing(String str, String suffix) {
         return str.endsWith(suffix) ? str : str + suffix;
+    }
+
+    static String stripPrefix(String prefix, String string) {
+        return string.startsWith(prefix) ? string.substring(prefix.length()) : string;
     }
 
     static String urlEncode(String str) {

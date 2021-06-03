@@ -15,6 +15,7 @@ import static com.gradle.Utils.execAndGetStdOut;
 import static com.gradle.Utils.firstSysPropertyKeyStartingWith;
 import static com.gradle.Utils.isNotEmpty;
 import static com.gradle.Utils.readPropertiesFile;
+import static com.gradle.Utils.stripPrefix;
 import static com.gradle.Utils.sysProperty;
 import static com.gradle.Utils.urlEncode;
 
@@ -42,23 +43,23 @@ final class CustomBuildScanEnhancements {
 
     private static void captureIde(BuildScanApi buildScan) {
         if (!isCi()) {
-            if (sysProperty("idea.version").isPresent()) {
+            Optional<String> newIdeaVersion = sysProperty("idea.version");
+            Optional<String> oldIdeaVersion = firstSysPropertyKeyStartingWith("idea.version");
+            Optional<String> eclipseVersion = sysProperty("eclipse.buildId");
+
+            if (newIdeaVersion.isPresent()) {
                 buildScan.tag("IntelliJ IDEA");
-                buildScan.value("IntelliJ IDEA version", sysProperty("idea.version").get());
-            } else if (sysProperty("eclipse.buildId").isPresent()) {
+                buildScan.value("IntelliJ IDEA version", newIdeaVersion.get());
+            } else if (oldIdeaVersion.isPresent()) {
+                buildScan.tag("IntelliJ IDEA");
+                buildScan.value("IntelliJ IDEA version", stripPrefix("idea.version", oldIdeaVersion.get()));
+            } else if (eclipseVersion.isPresent()) {
                 buildScan.tag("Eclipse");
-                buildScan.value("Eclipse version", sysProperty("eclipse.buildId").get());
-            } else if (firstSysPropertyKeyStartingWith("idea.version").isPresent()) {
-                buildScan.tag("IntelliJ IDEA");
-                buildScan.value("IntelliJ IDEA version", stripPrefix("idea.version", firstSysPropertyKeyStartingWith("idea.version").get()));
+                buildScan.value("Eclipse version", eclipseVersion.get());
             } else {
                 buildScan.tag("Cmd Line");
             }
         }
-    }
-
-    private static String stripPrefix(String prefix, String string) {
-        return string.startsWith(prefix) ? string.substring(prefix.length()) : string;
     }
 
     private static void captureCiOrLocal(BuildScanApi buildScan) {
@@ -68,15 +69,15 @@ final class CustomBuildScanEnhancements {
     private static void captureCiMetadata(BuildScanApi buildScan, MavenSession mavenSession) {
         if (isJenkins() || isHudson()) {
             envVariable("BUILD_URL").ifPresent(url ->
-                    buildScan.link(isJenkins() ? "Jenkins build" : "Hudson build", url));
+                buildScan.link(isJenkins() ? "Jenkins build" : "Hudson build", url));
             envVariable("BUILD_NUMBER").ifPresent(value ->
-                    buildScan.value("CI build number", value));
+                buildScan.value("CI build number", value));
             envVariable("NODE_NAME").ifPresent(value ->
-                    addCustomValueAndSearchLink(buildScan, "CI node", value));
+                addCustomValueAndSearchLink(buildScan, "CI node", value));
             envVariable("JOB_NAME").ifPresent(value ->
-                    addCustomValueAndSearchLink(buildScan, "CI job", value));
+                addCustomValueAndSearchLink(buildScan, "CI job", value));
             envVariable("STAGE_NAME").ifPresent(value ->
-                    addCustomValueAndSearchLink(buildScan, "CI stage", value));
+                addCustomValueAndSearchLink(buildScan, "CI stage", value));
         }
 
         if (isTeamCity()) {
@@ -84,8 +85,8 @@ final class CustomBuildScanEnhancements {
             Optional<String> buildNumber = projectProperty(mavenSession, "build.number");
             Optional<String> buildTypeId = projectProperty(mavenSession, "teamcity.buildType.id");
             if (teamCityConfigFile.isPresent()
-                    && buildNumber.isPresent()
-                    && buildTypeId.isPresent()) {
+                && buildNumber.isPresent()
+                && buildTypeId.isPresent()) {
                 Properties properties = readPropertiesFile(teamCityConfigFile.get());
                 String teamCityServerUrl = properties.getProperty("teamcity.serverUrl");
                 if (teamCityServerUrl != null) {
@@ -94,35 +95,35 @@ final class CustomBuildScanEnhancements {
                 }
             }
             buildNumber.ifPresent(value ->
-                    buildScan.value("CI build number", value));
+                buildScan.value("CI build number", value));
             buildTypeId.ifPresent(value ->
-                    addCustomValueAndSearchLink(buildScan, "CI build config", value));
+                addCustomValueAndSearchLink(buildScan, "CI build config", value));
             projectProperty(mavenSession, "agent.name").ifPresent(value ->
-                    addCustomValueAndSearchLink(buildScan, "CI agent", value));
+                addCustomValueAndSearchLink(buildScan, "CI agent", value));
         }
 
         if (isCircleCI()) {
             envVariable("CIRCLE_BUILD_URL").ifPresent(url ->
-                    buildScan.link("CircleCI build", url));
+                buildScan.link("CircleCI build", url));
             envVariable("CIRCLE_BUILD_NUM").ifPresent(value ->
-                    buildScan.value("CI build number", value));
+                buildScan.value("CI build number", value));
             envVariable("CIRCLE_JOB").ifPresent(value ->
-                    addCustomValueAndSearchLink(buildScan, "CI job", value));
+                addCustomValueAndSearchLink(buildScan, "CI job", value));
             envVariable("CIRCLE_WORKFLOW_ID").ifPresent(value ->
-                    addCustomValueAndSearchLink(buildScan, "CI workflow", value));
+                addCustomValueAndSearchLink(buildScan, "CI workflow", value));
         }
 
         if (isBamboo()) {
             envVariable("bamboo_resultsUrl").ifPresent(url ->
-                    buildScan.link("Bamboo build", url));
+                buildScan.link("Bamboo build", url));
             envVariable("bamboo_buildNumber").ifPresent(value ->
-                    buildScan.value("CI build number", value));
+                buildScan.value("CI build number", value));
             envVariable("bamboo_planName").ifPresent(value ->
-                    addCustomValueAndSearchLink(buildScan, "CI plan", value));
+                addCustomValueAndSearchLink(buildScan, "CI plan", value));
             envVariable("bamboo_buildPlanName").ifPresent(value ->
-                    addCustomValueAndSearchLink(buildScan, "CI build plan", value));
+                addCustomValueAndSearchLink(buildScan, "CI build plan", value));
             envVariable("bamboo_agentId").ifPresent(value ->
-                    addCustomValueAndSearchLink(buildScan, "CI agent", value));
+                addCustomValueAndSearchLink(buildScan, "CI agent", value));
         }
 
         if (isGitHubActions()) {
@@ -132,35 +133,35 @@ final class CustomBuildScanEnhancements {
                 buildScan.link("GitHub Actions build", "https://github.com/" + gitHubRepository.get() + "/actions/runs/" + gitHubRunId.get());
             }
             envVariable("GITHUB_WORKFLOW").ifPresent(value ->
-                    addCustomValueAndSearchLink(buildScan, "GitHub workflow", value));
+                addCustomValueAndSearchLink(buildScan, "GitHub workflow", value));
         }
 
         if (isGitLab()) {
             envVariable("CI_JOB_URL").ifPresent(url ->
-                    buildScan.link("GitLab build", url));
+                buildScan.link("GitLab build", url));
             envVariable("CI_PIPELINE_URL").ifPresent(url ->
-                    buildScan.link("GitLab pipeline", url));
+                buildScan.link("GitLab pipeline", url));
             envVariable("CI_JOB_NAME").ifPresent(value1 ->
-                    addCustomValueAndSearchLink(buildScan, "CI job", value1));
+                addCustomValueAndSearchLink(buildScan, "CI job", value1));
             envVariable("CI_JOB_STAGE").ifPresent(value ->
-                    addCustomValueAndSearchLink(buildScan, "CI stage", value));
+                addCustomValueAndSearchLink(buildScan, "CI stage", value));
         }
 
         if (isTravis()) {
             envVariable("TRAVIS_BUILD_WEB_URL").ifPresent(url ->
-                    buildScan.link("Travis build", url));
+                buildScan.link("Travis build", url));
             envVariable("TRAVIS_BUILD_NUMBER").ifPresent(value ->
-                    buildScan.value("CI build number", value));
+                buildScan.value("CI build number", value));
             envVariable("TRAVIS_JOB_NAME").ifPresent(value ->
-                    addCustomValueAndSearchLink(buildScan, "CI job", value));
+                addCustomValueAndSearchLink(buildScan, "CI job", value));
             envVariable("TRAVIS_EVENT_TYPE").ifPresent(buildScan::tag);
         }
 
         if (isBitrise()) {
             envVariable("BITRISE_BUILD_URL").ifPresent(url ->
-                    buildScan.link("Bitrise build", url));
+                buildScan.link("Bitrise build", url));
             envVariable("BITRISE_BUILD_NUMBER").ifPresent(value ->
-                    buildScan.value("CI build number", value));
+                buildScan.value("CI build number", value));
         }
     }
 
