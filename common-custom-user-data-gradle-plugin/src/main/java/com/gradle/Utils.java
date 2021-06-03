@@ -48,10 +48,10 @@ final class Utils {
 
     private static Optional<String> firstKeyStartingWith(String keyPrefix, Properties properties) {
         return properties.keySet().stream()
-                .filter(s -> s instanceof String)
-                .map(s -> (String) s)
-                .filter(s -> s.startsWith(keyPrefix))
-                .findFirst();
+            .filter(s -> s instanceof String)
+            .map(s -> (String) s)
+            .filter(s -> s.startsWith(keyPrefix))
+            .findFirst();
     }
 
     static Optional<Boolean> booleanSysProperty(String name, ProviderFactory providers) {
@@ -82,6 +82,10 @@ final class Utils {
         return str.endsWith(suffix) ? str : str + suffix;
     }
 
+    static String stripPrefix(String prefix, String string) {
+        return string.startsWith(prefix) ? string.substring(prefix.length()) : string;
+    }
+
     static String urlEncode(String str) {
         try {
             return URLEncoder.encode(str, StandardCharsets.UTF_8.name());
@@ -101,7 +105,7 @@ final class Utils {
     }
 
     static InputStream readFile(String name, ProviderFactory providers, Gradle gradle) throws FileNotFoundException {
-        if(isGradle65OrNewer()) {
+        if (isGradle65OrNewer()) {
             RegularFile file = gradle.getRootProject().getLayout().getProjectDirectory().file(name);
             Provider<byte[]> fileContent = providers.fileContents(file).getAsBytes().forUseAtConfigurationTime();
 
@@ -170,4 +174,5 @@ final class Utils {
 
     private Utils() {
     }
+
 }

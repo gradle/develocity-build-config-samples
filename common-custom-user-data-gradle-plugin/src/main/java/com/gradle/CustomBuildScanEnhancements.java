@@ -20,6 +20,7 @@ import static com.gradle.Utils.firstSysPropertyKeyStartingWith;
 import static com.gradle.Utils.isNotEmpty;
 import static com.gradle.Utils.projectProperty;
 import static com.gradle.Utils.readPropertiesFile;
+import static com.gradle.Utils.stripPrefix;
 import static com.gradle.Utils.sysProperty;
 import static com.gradle.Utils.urlEncode;
 
@@ -45,27 +46,29 @@ final class CustomBuildScanEnhancements {
         if (!isCi(providers)) {
             // Wait for projects to load to ensure Gradle project properties are initialized
             gradle.projectsEvaluated(g -> {
-                if (projectProperty("android.injected.invoked.from.ide", providers, gradle).isPresent()) {
+                Optional<String> invokedFromAndroidStudio = projectProperty("android.injected.invoked.from.ide", providers, gradle);
+                Optional<String> androidStudioVersion = projectProperty("android.injected.studio.version", providers, gradle);
+                Optional<String> newIdeaVersion = sysProperty("idea.version", providers);
+                Optional<String> oldIdeaVersion = firstSysPropertyKeyStartingWith("idea.version", providers);
+                Optional<String> eclipseVersion = sysProperty("eclipse.buildId", providers);
+
+                if (invokedFromAndroidStudio.isPresent()) {
                     buildScan.tag("Android Studio");
-                    projectProperty("android.injected.studio.version", providers, gradle).ifPresent(v -> buildScan.value("Android Studio version", v));
-                } else if (sysProperty("idea.version", providers).isPresent()) {
+                    androidStudioVersion.ifPresent(v -> buildScan.value("Android Studio version", v));
+                } else if (newIdeaVersion.isPresent()) {
                     buildScan.tag("IntelliJ IDEA");
-                    buildScan.value("IntelliJ IDEA version", sysProperty("idea.version", providers).get());
-                } else if (firstSysPropertyKeyStartingWith("idea.version", providers).isPresent()) {
+                    buildScan.value("IntelliJ IDEA version", newIdeaVersion.get());
+                } else if (oldIdeaVersion.isPresent()) {
                     buildScan.tag("IntelliJ IDEA");
-                    buildScan.value("IntelliJ IDEA version", stripPrefix("idea.version", firstSysPropertyKeyStartingWith("idea.version", providers).get()));
-                } else if (sysProperty("eclipse.buildId", providers).isPresent()) {
+                    buildScan.value("IntelliJ IDEA version", stripPrefix("idea.version", oldIdeaVersion.get()));
+                } else if (eclipseVersion.isPresent()) {
                     buildScan.tag("Eclipse");
-                    buildScan.value("Eclipse version", sysProperty("eclipse.buildId", providers).get());
+                    buildScan.value("Eclipse version", eclipseVersion.get());
                 } else {
                     buildScan.tag("Cmd Line");
                 }
             });
         }
-    }
-
-    private static String stripPrefix(String prefix, String string) {
-        return string.startsWith(prefix) ? string.substring(prefix.length()) : string;
     }
 
     private static void captureCiOrLocal(BuildScanExtension buildScan, ProviderFactory providers) {
@@ -291,4 +294,5 @@ final class CustomBuildScanEnhancements {
             buildScan.link(label + " build scans", url);
         }
     }
+
 }
