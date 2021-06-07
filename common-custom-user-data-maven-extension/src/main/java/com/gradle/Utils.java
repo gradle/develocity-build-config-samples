@@ -7,10 +7,12 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
@@ -51,6 +53,12 @@ final class Utils {
 
     static String stripPrefix(String prefix, String string) {
         return string.startsWith(prefix) ? string.substring(prefix.length()) : string;
+    }
+
+    static URI appendPath(URI uri, String path) {
+        String normalizedPath = appendIfMissing(stripPrefix("/", path), "/");
+        String originalPath = appendIfMissing(Objects.requireNonNullElse(uri.getPath(), "/"), "/");
+        return uri.resolve(originalPath).resolve(normalizedPath);
     }
 
     static String urlEncode(String str) {
