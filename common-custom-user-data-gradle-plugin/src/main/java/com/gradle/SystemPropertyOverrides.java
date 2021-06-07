@@ -50,10 +50,8 @@ final class SystemPropertyOverrides {
         // null check required to avoid creating a remote build cache instance when none was already present in the build
         if (buildCache.getRemote() != null) {
             buildCache.remote(HttpBuildCache.class, remote -> {
+                sysProperty(REMOTE_CACHE_SHARD, providers).ifPresent(v -> remote.setUrl(Utils.appendPath(remote.getUrl(), v)));
                 sysProperty(REMOTE_CACHE_URL, providers).ifPresent(remote::setUrl);
-                if (remote.getUrl() != null) {
-                    sysProperty(REMOTE_CACHE_SHARD, providers).ifPresent(v -> remote.setUrl(Utils.appendPath(remote.getUrl(), v)));
-                }
                 booleanSysProperty(REMOTE_CACHE_ALLOW_UNTRUSTED_SERVER, providers).ifPresent(remote::setAllowUntrustedServer);
                 booleanSysProperty(REMOTE_CACHE_ENABLED, providers).ifPresent(remote::setEnabled);
                 booleanSysProperty(REMOTE_CACHE_PUSH, providers).ifPresent(remote::setPush);
