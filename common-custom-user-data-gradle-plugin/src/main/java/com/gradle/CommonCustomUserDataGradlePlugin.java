@@ -6,10 +6,21 @@ import org.gradle.api.GradleException;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.initialization.Settings;
+import org.gradle.api.provider.ProviderFactory;
 import org.gradle.caching.configuration.BuildCacheConfiguration;
 import org.gradle.util.GradleVersion;
 
+import javax.inject.Inject;
+
 public class CommonCustomUserDataGradlePlugin implements Plugin<Object> {
+
+    private final ProviderFactory providers;
+
+    @Inject
+    public CommonCustomUserDataGradlePlugin(ProviderFactory providers) {
+        this.providers = providers;
+    }
+
     public void apply(Object target) {
         if (target instanceof Settings) {
             if (!isGradle6OrNewer()) {
@@ -31,10 +42,17 @@ public class CommonCustomUserDataGradlePlugin implements Plugin<Object> {
 
             BuildScanExtension buildScan = gradleEnterprise.getBuildScan();
             CustomGradleEnterpriseConfig.configureBuildScanPublishing(buildScan);
-            CustomBuildScanEnhancements.configureBuildScan(buildScan, settings.getGradle());
+            CustomBuildScanEnhancements.configureBuildScan(buildScan, providers, settings.getGradle());
 
             BuildCacheConfiguration buildCache = settings.getBuildCache();
             CustomGradleEnterpriseConfig.configureBuildCache(buildCache);
+
+            // configuration changes applied in this block will override earlier configuration settings,
+            // including those set in the settings.gradle(.kts)
+            settings.getGradle().settingsEvaluated(___ -> {
+                SystemPropertyOverrides.configureGradleEnterprise(gradleEnterprise, providers);
+                SystemPropertyOverrides.configureBuildCache(buildCache, providers);
+            });
         });
     }
 
@@ -48,13 +66,20 @@ public class CommonCustomUserDataGradlePlugin implements Plugin<Object> {
 
             BuildScanExtension buildScan = gradleEnterprise.getBuildScan();
             CustomGradleEnterpriseConfig.configureBuildScanPublishing(buildScan);
-            CustomBuildScanEnhancements.configureBuildScan(buildScan, project.getGradle());
+            CustomBuildScanEnhancements.configureBuildScan(buildScan, providers, project.getGradle());
 
             // Build cache configuration cannot be accessed from a project plugin
+
+            // configuration changes applied within this block will override earlier configuration settings,
+            // including those set in the root project's build.gradle(.kts)
+            project.afterEvaluate(___ -> {
+                SystemPropertyOverrides.configureGradleEnterprise(gradleEnterprise, providers);
+            });
         });
     }
 
-    private boolean isGradle6OrNewer() {
+    private static boolean isGradle6OrNewer() {
         return GradleVersion.current().compareTo(GradleVersion.version("6.0")) >= 0;
     }
+
 }

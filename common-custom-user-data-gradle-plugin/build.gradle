@@ -14,7 +14,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly 'com.gradle:gradle-enterprise-gradle-plugin:3.6.1'
+    compileOnly 'com.gradle:gradle-enterprise-gradle-plugin:3.6.2'
 }
 
 gradlePlugin {
@@ -39,7 +39,7 @@ When using this project as a template for your own plugin to publish internally,
 You may also remove `plugin-publish`, `signing` and `grgit` from the `plugins {}` block above.
  */
 
-version = System.getenv("RELEASE_OVERRIDE_VERSION") ?: version
+version = providers.environmentVariable("RELEASE_OVERRIDE_VERSION").forUseAtConfigurationTime().getOrElse(version)
 
 pluginBundle {
     website = "https://github.com/gradle/gradle-enterprise-build-config-samples/tree/master/common-custom-user-data-gradle-plugin"
@@ -49,9 +49,11 @@ pluginBundle {
 
 signing {
     // Require publications to be signed on CI. Otherwise, publication will be signed only if keys are provided.
-    required System.getenv().containsKey("CI")
+    required providers.environmentVariable("CI").forUseAtConfigurationTime().isPresent()
 
-    useInMemoryPgpKeys(System.getenv("PGP_SIGNING_KEY"), System.getenv("PGP_SIGNING_KEY_PASSPHRASE"))
+    useInMemoryPgpKeys(
+        providers.environmentVariable("PGP_SINGING_KEY").forUseAtConfigurationTime().orNull,
+        providers.environmentVariable("PGP_SIGNING_KEY_PASSPHRASE").forUseAtConfigurationTime().orNull)
 
     sign(configurations.archives)
 }

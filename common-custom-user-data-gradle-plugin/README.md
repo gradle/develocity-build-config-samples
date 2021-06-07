@@ -3,17 +3,33 @@
 ### Overview
 
 The Common Custom User Data Gradle Plugin for Gradle Enterprise enhances published build scans
-by adding a set of tags, links and custom values that have proven to be useful for many users of Gradle Enterprise.
+by adding a set of tags, links and custom values that have proven to be useful for many projects building with Gradle Enterprise.
 
 You can leverage this plugin for your project in one of two ways:
-1. Apply the published plugin directly in your build and immediately benefit from enhanced build scans.
-2. Copy this repository and develop a customized version of the plugin which will standardize Gradle Enterprise usage across multiple projects.
+1. Apply the published plugin directly in your build and immediately benefit from enhanced build scans
+2. Copy this repository and develop a customized version of the plugin to standardize Gradle Enterprise usage across multiple projects
 
-Out of the box, this plugin enhances all build scans published with additional tags, links and custom values. These include:
-- A tag representing the operating system.
-- A tag representing how the build was invoked, be that from your IDE (IDEA, Eclipse, Android Studio) or from the command-line.
-- A tag representing builds run on CI, together with a set of tags, links and custom values specific to the CI server running the build.
-- For `git` repositories, information on the commit id, branch name, status, and whether the checkout is dirty or not.
+The additional tags, links and custom values captured by this plugin include:
+- A tag representing the operating system
+- A tag representing how the build was invoked, be that from your IDE (IDEA, Eclipse, Android Studio) or from the command-line
+- A tag representing builds run on CI, together with a set of tags, links and custom values specific to the CI server running the build
+- For Git repositories, information on the commit id, branch name, status, and whether the checkout is dirty or not
+
+See [CustomBuildScanEnhancements.java](./src/main/java/com/gradle/CustomBuildScanEnhancements.java) for details on what data is
+captured and under which conditions.
+
+This plugin also allows overriding various Gradle Enterprise related settings via system properties:
+- Gradle Enterprise general configuration
+- Remote build cache configuration
+- Local build cache configuration
+
+See [SystemPropertyOverrides.java](./src/main/java/com/gradle/SystemPropertyOverrides.java) for the complete set of available
+system properties. You can use the system properties to override Gradle Enterprise related settings temporarily without having
+to modify the build scripts. For example, to disable the local build cache when running a build:
+
+```bash
+./gradlew -Dgradle.cache.local.enabled=false build
+```
 
 ### Applying the published plugin
 
@@ -27,7 +43,7 @@ The plugin needs to be applied in `settings.gradle`, alongside the `com.gradle.e
 ```groovy
 plugins {
     // …
-    id 'com.gradle.enterprise' version '3.6.1'
+    id 'com.gradle.enterprise' version '3.6.2'
     id 'com.gradle.common-custom-user-data-gradle-plugin' version '1.3'
     // …
 }
@@ -40,7 +56,7 @@ The plugin needs to be applied in `build.gradle` of the root project, alongside 
 ```groovy
 plugins {
     // …
-    id 'com.gradle.build-scan' version '3.6.1'
+    id 'com.gradle.build-scan' version '3.6.2'
     id 'com.gradle.common-custom-user-data-gradle-plugin' version '1.3'
     // …
 }
@@ -51,8 +67,8 @@ plugins {
 For more flexibility, we recommend creating a copy of this repository so that you may develop a customized version of the plugin and publish it internally for your projects to consume.
 
 This approach has a number of benefits:
-- Tailor the build scan enhancements to exactly the set of tags, links and custom values you require.
-- Standardize the configuration for connecting to Gradle Enterprise and the remote build cache in your organization, removing the need for each project to specify this configuration.
+- Tailor the build scan enhancements to exactly the set of tags, links and custom values you require
+- Standardize the configuration for connecting to Gradle Enterprise and the remote build cache in your organization, removing the need for each project to specify this configuration
 
 If your customized plugin provides all required Gradle Enterprise configuration, then a consumer project will get all the benefits of Gradle Enterprise simply by applying the plugin. The
 project sources provide a good template to get started with your own plugin.

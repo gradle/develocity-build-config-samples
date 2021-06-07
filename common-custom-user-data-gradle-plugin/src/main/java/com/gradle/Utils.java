@@ -1,7 +1,15 @@
 package com.gradle;
 
+import org.gradle.api.file.RegularFile;
+import org.gradle.api.invocation.Gradle;
+import org.gradle.api.provider.Provider;
+import org.gradle.api.provider.ProviderFactory;
+import org.gradle.util.GradleVersion;
+
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -10,42 +18,71 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 final class Utils {
 
+    static Optional<String> envVariable(String name, ProviderFactory providers) {
+        if (isGradle65OrNewer()) {
+            Provider<String> variable = providers.environmentVariable(name).forUseAtConfigurationTime();
+            return Optional.ofNullable(variable.getOrNull());
+        }
+        return Optional.ofNullable(System.getenv(name));
+    }
+
+    static Optional<String> projectProperty(String name, ProviderFactory providers, Gradle gradle) {
+        if (isGradle65OrNewer()) {
+            Provider<String> property = providers.provider(() -> (String) gradle.getRootProject().findProperty(name)).forUseAtConfigurationTime();
+            return Optional.ofNullable(property.getOrNull());
+        }
+        return Optional.ofNullable((String) gradle.getRootProject().findProperty(name));
+    }
+
+    static Optional<String> sysProperty(String name, ProviderFactory providers) {
+        if (isGradle65OrNewer()) {
+            Provider<String> property = providers.systemProperty(name).forUseAtConfigurationTime();
+            return Optional.ofNullable(property.getOrNull());
+        }
+        return Optional.ofNullable(System.getProperty(name));
+    }
+
+    static Optional<Boolean> booleanSysProperty(String name, ProviderFactory providers) {
+        return sysProperty(name, providers).map(Boolean::parseBoolean);
+    }
+
+    static Optional<Duration> durationSysProperty(String name, ProviderFactory providers) {
+        return sysProperty(name, providers).map(Duration::parse);
+    }
+
+    static Optional<String> firstSysPropertyKeyStartingWith(String keyPrefix, ProviderFactory providers) {
+        Optional<String> key = firstKeyStartingWith(keyPrefix, System.getProperties());
+        if (isGradle65OrNewer()) {
+            key.ifPresent(k -> providers.systemProperty(k).forUseAtConfigurationTime());
+        }
+        return key;
+    }
+
+    private static Optional<String> firstKeyStartingWith(String keyPrefix, Properties properties) {
+        return properties.keySet().stream()
+            .filter(s -> s instanceof String)
+            .map(s -> (String) s)
+            .filter(s -> s.startsWith(keyPrefix))
+            .findFirst();
+    }
+
     static boolean isNotEmpty(String value) {
         return value != null && !value.isEmpty();
     }
 
-    static Optional<String> sysProperty(String name) {
-        return Optional.ofNullable(System.getProperty(name));
-    }
-
-    static boolean sysPropertyKeyStartingWith(String keyPrefix) {
-        for (Object key : System.getProperties().keySet()) {
-            if (key instanceof String) {
-                String stringKey = (String) key;
-                if (stringKey.startsWith(keyPrefix)) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    static Optional<String> envVariable(String name) {
-        String value = System.getenv(name);
-        if (isNotEmpty(value)) {
-            return Optional.of(value);
-        }
-        return Optional.empty();
-    }
-
     static String appendIfMissing(String str, String suffix) {
         return str.endsWith(suffix) ? str : str + suffix;
+    }
+
+    static String stripPrefix(String prefix, String string) {
+        return string.startsWith(prefix) ? string.substring(prefix.length()) : string;
     }
 
     static String urlEncode(String str) {
@@ -56,14 +93,23 @@ final class Utils {
         }
     }
 
-    static Properties readPropertiesFile(String name) {
-        try (InputStream input = new FileInputStream(name)) {
+    static Properties readPropertiesFile(String name, ProviderFactory providers, Gradle gradle) {
+        try (InputStream input = readFile(name, providers, gradle)) {
             Properties properties = new Properties();
             properties.load(input);
             return properties;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    static InputStream readFile(String name, ProviderFactory providers, Gradle gradle) throws FileNotFoundException {
+        if (isGradle65OrNewer()) {
+            RegularFile file = gradle.getRootProject().getLayout().getProjectDirectory().file(name);
+            Provider<byte[]> fileContent = providers.fileContents(file).getAsBytes().forUseAtConfigurationTime();
+            return new ByteArrayInputStream(fileContent.getOrElse(new byte[0]));
+        }
+        return new FileInputStream(name);
     }
 
     static boolean execAndCheckSuccess(String... args) {
@@ -118,6 +164,10 @@ final class Utils {
 
     private static String trimAtEnd(String str) {
         return ('x' + str).trim().substring(1);
+    }
+
+    private static boolean isGradle65OrNewer() {
+        return GradleVersion.current().compareTo(GradleVersion.version("6.5")) >= 0;
     }
 
     private Utils() {

@@ -10,42 +10,47 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 final class Utils {
 
-    static boolean isNotEmpty(String value) {
-        return value != null && !value.isEmpty();
+    static Optional<String> envVariable(String name) {
+        return Optional.ofNullable(System.getenv(name));
     }
 
     static Optional<String> sysProperty(String name) {
         return Optional.ofNullable(System.getProperty(name));
     }
 
-    static boolean sysPropertyKeyStartingWith(String keyPrefix) {
-        for (Object key : System.getProperties().keySet()) {
-            if (key instanceof String) {
-                String stringKey = (String) key;
-                if (stringKey.startsWith(keyPrefix)) {
-                    return true;
-                }
-            }
-        }
-        return false;
+    static Optional<Boolean> booleanSysProperty(String name) {
+        return sysProperty(name).map(Boolean::parseBoolean);
     }
 
-    static Optional<String> envVariable(String name) {
-        String value = System.getenv(name);
-        if (isNotEmpty(value)) {
-            return Optional.of(value);
-        }
-        return Optional.empty();
+    static Optional<Duration> durationSysProperty(String name) {
+        return sysProperty(name).map(Duration::parse);
+    }
+
+    static Optional<String> firstSysPropertyKeyStartingWith(String keyPrefix) {
+        return System.getProperties().keySet().stream()
+            .filter(s -> s instanceof String)
+            .map(s -> (String) s)
+            .filter(s -> s.startsWith(keyPrefix))
+            .findFirst();
+    }
+
+    static boolean isNotEmpty(String value) {
+        return value != null && !value.isEmpty();
     }
 
     static String appendIfMissing(String str, String suffix) {
         return str.endsWith(suffix) ? str : str + suffix;
+    }
+
+    static String stripPrefix(String prefix, String string) {
+        return string.startsWith(prefix) ? string.substring(prefix.length()) : string;
     }
 
     static String urlEncode(String str) {
