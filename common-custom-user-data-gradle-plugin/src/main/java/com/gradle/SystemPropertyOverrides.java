@@ -5,6 +5,10 @@ import org.gradle.api.provider.ProviderFactory;
 import org.gradle.caching.configuration.BuildCacheConfiguration;
 import org.gradle.caching.http.HttpBuildCache;
 
+import java.net.URI;
+import java.util.Objects;
+
+import static com.gradle.Utils.appendIfMissing;
 import static com.gradle.Utils.booleanSysProperty;
 import static com.gradle.Utils.durationSysProperty;
 import static com.gradle.Utils.sysProperty;
@@ -26,6 +30,7 @@ final class SystemPropertyOverrides {
 
     // system properties to override remote build cache configuration
     public static final String REMOTE_CACHE_URL = "gradle.cache.remote.url";
+    public static final String REMOTE_CACHE_SHARD = "gradle.cache.remote.shard";
     public static final String REMOTE_CACHE_ALLOW_UNTRUSTED_SERVER = "gradle.cache.remote.allowUntrustedServer";
     public static final String REMOTE_CACHE_ENABLED = "gradle.cache.remote.enabled";
     public static final String REMOTE_CACHE_PUSH = "gradle.cache.remote.push";
@@ -46,6 +51,9 @@ final class SystemPropertyOverrides {
         if (buildCache.getRemote() != null) {
             buildCache.remote(HttpBuildCache.class, remote -> {
                 sysProperty(REMOTE_CACHE_URL, providers).ifPresent(remote::setUrl);
+                if (remote.getUrl() != null) {
+                    sysProperty(REMOTE_CACHE_SHARD, providers).ifPresent(v -> remote.setUrl(Utils.appendPath(remote.getUrl(), v)));
+                }
                 booleanSysProperty(REMOTE_CACHE_ALLOW_UNTRUSTED_SERVER, providers).ifPresent(remote::setAllowUntrustedServer);
                 booleanSysProperty(REMOTE_CACHE_ENABLED, providers).ifPresent(remote::setEnabled);
                 booleanSysProperty(REMOTE_CACHE_PUSH, providers).ifPresent(remote::setPush);
