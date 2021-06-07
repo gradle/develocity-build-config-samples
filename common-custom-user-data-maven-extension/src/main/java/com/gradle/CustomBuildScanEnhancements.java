@@ -216,33 +216,19 @@ final class CustomBuildScanEnhancements {
             }
 
             String gitRepo = execAndGetStdOut("git", "config", "--get", "remote.origin.url");
-            String gitCommitId = execAndGetStdOut("git", "rev-parse", "--short=8", "--verify", "HEAD");
+            String gitCommitId = execAndGetStdOut("git", "rev-parse", "--verify", "HEAD");
+            String gitCommitShortId = execAndGetStdOut("git", "rev-parse", "--short=8", "--verify", "HEAD");
             String gitBranchName = execAndGetStdOut("git", "rev-parse", "--abbrev-ref", "HEAD");
             String gitStatus = execAndGetStdOut("git", "status", "--porcelain");
 
-            if (gitCommitId != null) {
-                addCustomValueAndSearchLink(buildScan, "Git commit id", gitCommitId);
-
-                if (isNotEmpty(gitRepo)) {
-                    if (gitRepo.contains("github.com/") || gitRepo.contains("github.com:")) {
-                        Matcher matcher = Pattern.compile("(.*)github\\.com[/|:](.*)").matcher(gitRepo);
-                        if (matcher.matches()) {
-                            String rawRepoPath = matcher.group(2);
-                            String repoPath = rawRepoPath.endsWith(".git") ? rawRepoPath.substring(0, rawRepoPath.length() - 4) : rawRepoPath;
-                            api.link("Github source", "https://github.com/" + repoPath + "/tree/" + gitCommitId);
-                        }
-                    } else if (gitRepo.contains("gitlab.com/") || gitRepo.contains("gitlab.com:")) {
-                        Matcher matcher = Pattern.compile("(.*)gitlab\\.com[/|:](.*)").matcher(gitRepo);
-                        if (matcher.matches()) {
-                            String rawRepoPath = matcher.group(2);
-                            String repoPath = rawRepoPath.endsWith(".git") ? rawRepoPath.substring(0, rawRepoPath.length() - 4) : rawRepoPath;
-                            api.link("GitLab Source", "https://gitlab.com/" + repoPath + "/-/commit/" + gitCommitId);
-                        }
-                    }
-                }
-            }
             if (isNotEmpty(gitRepo)) {
                 api.value("Git repository", gitRepo);
+            }
+            if (isNotEmpty(gitCommitId)) {
+                buildScan.value("Git commit id", gitCommitId);
+            }
+            if (isNotEmpty(gitCommitShortId)) {
+                addCustomValueAndSearchLink(buildScan, "Git commit id short", gitCommitShortId);
             }
             if (isNotEmpty(gitBranchName)) {
                 api.tag(gitBranchName);
@@ -251,6 +237,24 @@ final class CustomBuildScanEnhancements {
             if (isNotEmpty(gitStatus)) {
                 api.tag("Dirty");
                 api.value("Git status", gitStatus);
+            }
+
+            if (isNotEmpty(gitRepo) && isNotEmpty(gitCommitId)) {
+                if (gitRepo.contains("github.com/") || gitRepo.contains("github.com:")) {
+                    Matcher matcher = Pattern.compile("(.*)github\\.com[/|:](.*)").matcher(gitRepo);
+                    if (matcher.matches()) {
+                        String rawRepoPath = matcher.group(2);
+                        String repoPath = rawRepoPath.endsWith(".git") ? rawRepoPath.substring(0, rawRepoPath.length() - 4) : rawRepoPath;
+                        api.link("Github source", "https://github.com/" + repoPath + "/tree/" + gitCommitId);
+                    }
+                } else if (gitRepo.contains("gitlab.com/") || gitRepo.contains("gitlab.com:")) {
+                    Matcher matcher = Pattern.compile("(.*)gitlab\\.com[/|:](.*)").matcher(gitRepo);
+                    if (matcher.matches()) {
+                        String rawRepoPath = matcher.group(2);
+                        String repoPath = rawRepoPath.endsWith(".git") ? rawRepoPath.substring(0, rawRepoPath.length() - 4) : rawRepoPath;
+                        api.link("GitLab Source", "https://gitlab.com/" + repoPath + "/-/commit/" + gitCommitId);
+                    }
+                }
             }
         });
     }

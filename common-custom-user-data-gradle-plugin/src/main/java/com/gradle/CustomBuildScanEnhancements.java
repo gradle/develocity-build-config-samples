@@ -228,7 +228,8 @@ final class CustomBuildScanEnhancements {
             }
 
             String gitRepo = execAndGetStdOut("git", "config", "--get", "remote.origin.url");
-            String gitCommitId = execAndGetStdOut("git", "rev-parse", "--short=8", "--verify", "HEAD");
+            String gitCommitId = execAndGetStdOut("git", "rev-parse", "--verify", "HEAD");
+            String gitCommitShortId = execAndGetStdOut("git", "rev-parse", "--short=8", "--verify", "HEAD");
             String gitBranchName = execAndGetStdOut("git", "rev-parse", "--abbrev-ref", "HEAD");
             String gitStatus = execAndGetStdOut("git", "status", "--porcelain");
 
@@ -236,7 +237,10 @@ final class CustomBuildScanEnhancements {
                 api.value("Git repository", gitRepo);
             }
             if (isNotEmpty(gitCommitId)) {
-                addCustomValueAndSearchLink(buildScan, "Git commit id", gitCommitId);
+                buildScan.value("Git commit id", gitCommitId);
+            }
+            if (isNotEmpty(gitCommitShortId)) {
+                addCustomValueAndSearchLink(buildScan, "Git commit id short", gitCommitShortId);
             }
             if (isNotEmpty(gitBranchName)) {
                 api.tag(gitBranchName);
