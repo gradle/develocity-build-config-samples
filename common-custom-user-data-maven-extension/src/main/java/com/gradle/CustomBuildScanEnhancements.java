@@ -225,10 +225,10 @@ final class CustomBuildScanEnhancements {
                 api.value("Git repository", gitRepo);
             }
             if (isNotEmpty(gitCommitId)) {
-                buildScan.value("Git commit id", gitCommitId);
+                api.value("Git commit id", gitCommitId);
             }
             if (isNotEmpty(gitCommitShortId)) {
-                addCustomValueAndSearchLink(buildScan, "Git commit id short", gitCommitShortId);
+                addCustomValueAndSearchLink(api, "Git commit id", "Git commit id short", gitCommitShortId);
             }
             if (isNotEmpty(gitBranchName)) {
                 api.tag(gitBranchName);
@@ -263,13 +263,18 @@ final class CustomBuildScanEnhancements {
         return execAndCheckSuccess("git", "--version");
     }
 
-    private static void addCustomValueAndSearchLink(BuildScanApi buildScan, String label, String value) {
-        buildScan.value(label, value);
+    private static void addCustomValueAndSearchLink(BuildScanExtension buildScan, String name, String value) {
+        addCustomValueAndSearchLink(buildScan, name, name, value);
+    }
+
+    private static void addCustomValueAndSearchLink(BuildScanExtension buildScan, String linkLabel, String name, String value) {
+        buildScan.value(name, value);
         String server = buildScan.getServer();
         if (server != null) {
-            String searchParams = "search.names=" + urlEncode(label) + "&search.values=" + urlEncode(value);
+            String searchParams = "search.names=" + urlEncode(name) + "&search.values=" + urlEncode(value);
             String url = appendIfMissing(server, "/") + "scans?" + searchParams + "#selection.buildScanB=" + urlEncode("{SCAN_ID}");
-            buildScan.link(label + " build scans", url);
+            buildScan.link(linkLabel + " build scans", url);
         }
     }
+
 }
