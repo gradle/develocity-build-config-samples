@@ -25,7 +25,8 @@ This table details the version compatibility of the Common Custom User Data Mave
 | Common Custom User Data Maven extension versions | Gradle Enterprise Maven extension versions |
 | ------------------------------------------------ | ------------------------------------------ |
 | `1.5.1`                                          | `1.10.1+`                                  |
-| `1.0` - `1.5.0`                                  | `1.0.0` - `1.10`                           |
+| `1.3` - `1.5.0`                                  | `1.6.5+`                                   |
+| `1.0` - `1.3`                                    | `1.0+`                                     |
 
 ### Applying the published extension
 
