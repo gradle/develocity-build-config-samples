@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
+- Store the full Git commit ID in "Git commit id" custom value and the short ID in "Git commit id short"
+- Add custom values for IntelliJ and Eclipse versions
+- Add `gradle.cache.remote.shard` System property to add an additional path segment to the remote build cache URL
 
 ## [1.5] - 2021-05-11
 - Add the Git repository URL as a custom value
