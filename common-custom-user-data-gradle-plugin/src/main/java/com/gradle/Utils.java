@@ -37,10 +37,10 @@ final class Utils {
 
     static Optional<String> projectProperty(String name, ProviderFactory providers, Gradle gradle) {
         if (isGradle65OrNewer()) {
-            // Declare that if the user sets this property on the command line, that the configuration cache should be invalidated
+            // invalidate configuration cache if different Gradle property value is set on the cmd line,
+            // but in any case access Gradle property directly since project properties set in a build script or
+            // init script are not fetched by ProviderFactory.gradleProperty
             providers.gradleProperty(name).forUseAtConfigurationTime();
-            // Otherwise still access the property directly because it could be set on the project in a build script or init script
-            // (and ProviderFactory.gradleProperty only fetches properties that have been set on the commandline).
         }
         return Optional.ofNullable((String) gradle.getRootProject().findProperty(name));
     }
