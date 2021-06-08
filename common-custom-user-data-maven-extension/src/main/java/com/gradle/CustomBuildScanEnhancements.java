@@ -263,11 +263,11 @@ final class CustomBuildScanEnhancements {
         return execAndCheckSuccess("git", "--version");
     }
 
-    private static void addCustomValueAndSearchLink(BuildScanExtension buildScan, String name, String value) {
+    private static void addCustomValueAndSearchLink(BuildScanApi buildScan, String name, String value) {
         addCustomValueAndSearchLink(buildScan, name, name, value);
     }
 
-    private static void addCustomValueAndSearchLink(BuildScanExtension buildScan, String linkLabel, String name, String value) {
+    private static void addCustomValueAndSearchLink(BuildScanApi buildScan, String linkLabel, String name, String value) {
         buildScan.value(name, value);
         String server = buildScan.getServer();
         if (server != null) {
