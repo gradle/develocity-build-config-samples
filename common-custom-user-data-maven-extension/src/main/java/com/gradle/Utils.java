@@ -12,7 +12,6 @@ import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
@@ -55,10 +54,13 @@ final class Utils {
         return str.endsWith(suffix) ? str : str + suffix;
     }
 
-    static URI appendPath(URI uri, String path) {
-        String normalizedPath = appendIfMissing(stripPrefix("/", path), "/");
-        String originalPath = appendIfMissing(uri.getPath(), "/");
-        return uri.resolve(originalPath).resolve(normalizedPath);
+    static URI appendPathAndTrailingSlash(URI baseUri, String path) {
+        if (isNotEmpty(path)) {
+            String normalizedBasePath = appendIfMissing(baseUri.getPath(), "/");
+            String normalizedPath = appendIfMissing(stripPrefix("/", path), "/");
+            return baseUri.resolve(normalizedBasePath).resolve(normalizedPath);
+        }
+        return baseUri;
     }
 
     static String urlEncode(String str) {

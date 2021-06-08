@@ -5,7 +5,7 @@ import org.gradle.api.provider.ProviderFactory;
 import org.gradle.caching.configuration.BuildCacheConfiguration;
 import org.gradle.caching.http.HttpBuildCache;
 
-import static com.gradle.Utils.appendPath;
+import static com.gradle.Utils.appendPathAndTrailingSlash;
 import static com.gradle.Utils.booleanSysProperty;
 import static com.gradle.Utils.durationSysProperty;
 import static com.gradle.Utils.sysProperty;
@@ -54,7 +54,7 @@ final class SystemPropertyOverrides {
                 booleanSysProperty(REMOTE_CACHE_ENABLED, providers).ifPresent(remote::setEnabled);
                 booleanSysProperty(REMOTE_CACHE_PUSH, providers).ifPresent(remote::setPush);
 
-                sysProperty(REMOTE_CACHE_SHARD, providers).ifPresent(shard -> remote.setUrl(appendPath(remote.getUrl(), shard)));
+                sysProperty(REMOTE_CACHE_SHARD, providers).ifPresent(shard -> remote.setUrl(appendPathAndTrailingSlash(remote.getUrl(), shard)));
             });
         }
     }
