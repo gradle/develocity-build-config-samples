@@ -20,7 +20,6 @@ import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
@@ -81,17 +80,17 @@ final class Utils {
         return value != null && !value.isEmpty();
     }
 
-    static String appendIfMissing(String str, String suffix) {
-        return str.endsWith(suffix) ? str : str + suffix;
-    }
-
     static String stripPrefix(String prefix, String string) {
         return string.startsWith(prefix) ? string.substring(prefix.length()) : string;
     }
 
+    static String appendIfMissing(String str, String suffix) {
+        return str.endsWith(suffix) ? str : str + suffix;
+    }
+    
     static URI appendPath(URI uri, String path) {
         String normalizedPath = appendIfMissing(stripPrefix("/", path), "/");
-        String originalPath = appendIfMissing(Objects.requireNonNullElse(uri.getPath(), "/"), "/");
+        String originalPath = appendIfMissing(uri.getPath(), "/");
         return uri.resolve(originalPath).resolve(normalizedPath);
     }
 
