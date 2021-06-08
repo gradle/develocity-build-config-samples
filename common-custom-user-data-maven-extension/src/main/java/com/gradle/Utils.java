@@ -1,5 +1,7 @@
 package com.gradle;
 
+import org.apache.maven.execution.MavenSession;
+
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -7,6 +9,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -21,6 +24,11 @@ final class Utils {
         return Optional.ofNullable(System.getenv(name));
     }
 
+    static Optional<String> projectProperty(MavenSession mavenSession, String name) {
+        String value = mavenSession.getSystemProperties().getProperty(name);
+        return Optional.ofNullable(value);
+    }
+    
     static Optional<String> sysProperty(String name) {
         return Optional.ofNullable(System.getProperty(name));
     }
@@ -45,12 +53,21 @@ final class Utils {
         return value != null && !value.isEmpty();
     }
 
+    static String stripPrefix(String prefix, String string) {
+        return string.startsWith(prefix) ? string.substring(prefix.length()) : string;
+    }
+
     static String appendIfMissing(String str, String suffix) {
         return str.endsWith(suffix) ? str : str + suffix;
     }
 
-    static String stripPrefix(String prefix, String string) {
-        return string.startsWith(prefix) ? string.substring(prefix.length()) : string;
+    static URI appendPathAndTrailingSlash(URI baseUri, String path) {
+        if (isNotEmpty(path)) {
+            String normalizedBasePath = appendIfMissing(baseUri.getPath(), "/");
+            String normalizedPath = appendIfMissing(stripPrefix("/", path), "/");
+            return baseUri.resolve(normalizedBasePath).resolve(normalizedPath);
+        }
+        return baseUri;
     }
 
     static String urlEncode(String str) {

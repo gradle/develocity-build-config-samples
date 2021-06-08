@@ -3,6 +3,12 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [1.4] - 2021-06-08
+- Fully support the [Gradle configuration cache](https://docs.gradle.org/current/userguide/configuration_cache.html)
+- Add the ability to override various Gradle Enterprise configuration settings via system properties
+- Store the full Git commit ID in "Git commit id" custom value and the short ID in "Git commit id short"
+- Add custom values for IntelliJ IDEA and Eclipse IDE versions
+
 ## [1.3] - 2021-05-11
 - Add the Git repository URL as a custom value
 
@@ -33,7 +39,8 @@ All notable changes to this project will be documented in this file.
 ## [1.0] - 2021-01-14
 Initial release.
 
-[Unreleased]: https://github.com/gradle/gradle-enterprise-build-config-samples/compare/common-custom-user-data-gradle-plugin-1.3...HEAD
+[Unreleased]: https://github.com/gradle/gradle-enterprise-build-config-samples/compare/common-custom-user-data-gradle-plugin-1.4...HEAD
+[1.4]: https://github.com/gradle/gradle-enterprise-build-config-samples/compare/common-custom-user-data-gradle-plugin-1.3...common-custom-user-data-gradle-plugin-1.4
 [1.3]: https://github.com/gradle/gradle-enterprise-build-config-samples/compare/common-custom-user-data-gradle-plugin-1.2.1...common-custom-user-data-gradle-plugin-1.3
 [1.2.1]: https://github.com/gradle/gradle-enterprise-build-config-samples/compare/common-custom-user-data-gradle-plugin-1.2...common-custom-user-data-gradle-plugin-1.2.1
 [1.2]: https://github.com/gradle/gradle-enterprise-build-config-samples/compare/common-custom-user-data-gradle-plugin-1.1.2...common-custom-user-data-gradle-plugin-1.2
