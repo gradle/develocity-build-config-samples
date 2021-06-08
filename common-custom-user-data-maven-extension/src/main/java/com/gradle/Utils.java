@@ -1,5 +1,7 @@
 package com.gradle;
 
+import org.apache.maven.execution.MavenSession;
+
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -22,6 +24,11 @@ final class Utils {
         return Optional.ofNullable(System.getenv(name));
     }
 
+    static Optional<String> projectProperty(MavenSession mavenSession, String name) {
+        String value = mavenSession.getSystemProperties().getProperty(name);
+        return Optional.ofNullable(value);
+    }
+    
     static Optional<String> sysProperty(String name) {
         return Optional.ofNullable(System.getProperty(name));
     }

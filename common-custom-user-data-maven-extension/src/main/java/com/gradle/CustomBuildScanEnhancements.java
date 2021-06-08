@@ -14,6 +14,7 @@ import static com.gradle.Utils.execAndCheckSuccess;
 import static com.gradle.Utils.execAndGetStdOut;
 import static com.gradle.Utils.firstSysPropertyKeyStartingWith;
 import static com.gradle.Utils.isNotEmpty;
+import static com.gradle.Utils.projectProperty;
 import static com.gradle.Utils.readPropertiesFile;
 import static com.gradle.Utils.stripPrefix;
 import static com.gradle.Utils.sysProperty;
@@ -30,11 +31,6 @@ final class CustomBuildScanEnhancements {
         captureCiOrLocal(buildScan);
         captureCiMetadata(buildScan, mavenSession);
         captureGitMetadata(buildScan);
-    }
-
-    private static Optional<String> projectProperty(MavenSession mavenSession, String name) {
-        String value = mavenSession.getSystemProperties().getProperty(name);
-        return Optional.ofNullable(value);
     }
 
     private static void captureOs(BuildScanApi buildScan) {
