@@ -26,13 +26,11 @@ final class SystemPropertyOverrides {
     public static final String LOCAL_CACHE_PUSH = "gradle.cache.local.push";
 
     // system properties to override remote build cache configuration
+    public static final String REMOTE_CACHE_SHARD = "gradle.cache.remote.shard";
     public static final String REMOTE_CACHE_URL = "gradle.cache.remote.url";
     public static final String REMOTE_CACHE_ALLOW_UNTRUSTED_SERVER = "gradle.cache.remote.allowUntrustedServer";
     public static final String REMOTE_CACHE_ENABLED = "gradle.cache.remote.enabled";
     public static final String REMOTE_CACHE_PUSH = "gradle.cache.remote.push";
-
-    // system properties that further affect the remote build cache configuration
-    public static final String REMOTE_CACHE_SHARD = "gradle.cache.remote.shard";
 
     static void configureGradleEnterprise(GradleEnterpriseExtension gradleEnterprise, ProviderFactory providers) {
         sysProperty(GRADLE_ENTERPRISE_URL, providers).ifPresent(gradleEnterprise::setServer);
@@ -49,12 +47,11 @@ final class SystemPropertyOverrides {
         // null check required to avoid creating a remote build cache instance when none was already present in the build
         if (buildCache.getRemote() != null) {
             buildCache.remote(HttpBuildCache.class, remote -> {
+                sysProperty(REMOTE_CACHE_SHARD, providers).ifPresent(shard -> remote.setUrl(appendPathAndTrailingSlash(remote.getUrl(), shard)));
                 sysProperty(REMOTE_CACHE_URL, providers).ifPresent(remote::setUrl);
                 booleanSysProperty(REMOTE_CACHE_ALLOW_UNTRUSTED_SERVER, providers).ifPresent(remote::setAllowUntrustedServer);
                 booleanSysProperty(REMOTE_CACHE_ENABLED, providers).ifPresent(remote::setEnabled);
                 booleanSysProperty(REMOTE_CACHE_PUSH, providers).ifPresent(remote::setPush);
-
-                sysProperty(REMOTE_CACHE_SHARD, providers).ifPresent(shard -> remote.setUrl(appendPathAndTrailingSlash(remote.getUrl(), shard)));
             });
         }
     }
