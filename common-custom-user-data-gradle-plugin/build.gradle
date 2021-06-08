@@ -39,7 +39,7 @@ When using this project as a template for your own plugin to publish internally,
 You may also remove `plugin-publish`, `signing` and `grgit` from the `plugins {}` block above.
  */
 
-version = providers.environmentVariable("RELEASE_OVERRIDE_VERSION").forUseAtConfigurationTime().getOrNull() :? version
+version = providers.environmentVariable("RELEASE_OVERRIDE_VERSION").forUseAtConfigurationTime().getOrNull() ?: version
 
 pluginBundle {
     website = "https://github.com/gradle/gradle-enterprise-build-config-samples/tree/master/common-custom-user-data-gradle-plugin"
