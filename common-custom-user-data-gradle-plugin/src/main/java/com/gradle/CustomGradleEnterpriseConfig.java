@@ -4,6 +4,8 @@ import com.gradle.enterprise.gradleplugin.GradleEnterpriseExtension;
 import com.gradle.scan.plugin.BuildScanExtension;
 import org.gradle.caching.configuration.BuildCacheConfiguration;
 
+import java.net.URI;
+
 /**
  * Provide standardized Gradle Enterprise configuration.
  * By applying the plugin, these settings will automatically be applied.
@@ -14,6 +16,7 @@ final class CustomGradleEnterpriseConfig {
         /* Example of Gradle Enterprise configuration
 
         gradleEnterprise.setServer("https://enterprise-samples.gradle.com");
+        gradleEnterprise.setAllowUntrustedServer(false);
 
         */
     }
