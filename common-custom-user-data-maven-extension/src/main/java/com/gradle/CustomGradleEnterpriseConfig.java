@@ -13,9 +13,8 @@ final class CustomGradleEnterpriseConfig {
     static void configureGradleEnterprise(GradleEnterpriseApi gradleEnterprise) {
         /* Example of Gradle Enterprise configuration
 
-        // Set a different storage directory.
-        // See https://docs.gradle.com/enterprise/maven-extension/#anatomy_of_the_gradle_enterprise_directory
-        gradleEnterprise.setStorageDirectory(Paths.get("/path/to/new/storage/directory"));
+        gradleEnterprise.setServer("https://enterprise-samples.gradle.com");
+        gradleEnterprise.setAllowUntrustedServer(false);
 
         */
     }
