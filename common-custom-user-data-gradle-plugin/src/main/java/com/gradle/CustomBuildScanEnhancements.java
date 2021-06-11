@@ -29,7 +29,7 @@ import static com.gradle.Utils.urlEncode;
  */
 final class CustomBuildScanEnhancements {
 
-    static void configureBuildScan(BuildScanExtension buildScan, ProviderFactory providers, Gradle gradle) {
+    static void apply(BuildScanExtension buildScan, ProviderFactory providers, Gradle gradle) {
         captureOs(buildScan, providers);
         captureIde(buildScan, providers, gradle);
         captureCiOrLocal(buildScan, providers);

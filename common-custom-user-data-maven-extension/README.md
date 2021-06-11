@@ -18,6 +18,16 @@ The additional tags, links and custom values captured by this extension include:
 See [CustomBuildScanEnhancements.java](./src/main/java/com/gradle/CustomBuildScanEnhancements.java) for details on what data is
 captured and under which conditions.
 
+#### Version compatibility
+
+This table details the version compatibility of the Common Custom User Data Maven extension with the Gradle Enterprise Maven extension.
+
+| Common Custom User Data Maven extension versions | Gradle Enterprise Maven extension versions |
+| ------------------------------------------------ | ------------------------------------------ |
+| `1.7`                                            | `1.10.1+`                                  |
+| `1.3` - `1.6`                                    | `1.6.5+`                                   |
+| `1.0` - `1.2`                                    | `1.0+`                                     |
+
 ### Applying the published extension
 
 The Common Custom User Data Maven extension is available in [Maven Central](https://search.maven.org/artifact/com.gradle/common-custom-user-data-maven-extension). This extension
@@ -34,7 +44,8 @@ Groovy script. This is a good intermediate step before creating your own extensi
 The Common Custom User Data Maven extension checks for a `.mvn/gradle-enterprise-custom-user-data.groovy` Groovy script in your root project. If the file exists, it evaluates
 the script with the following bindings:
 
-- `buildScan` (type: [BuildScanApi](https://docs.gradle.com/enterprise/maven-extension/api/com/gradle/maven/extension/api/scan/BuildScanApi.html)): _enhance build scans and configure build scan publishing_
+- `gradleEnterprise` (type: [GradleEnterpriseApi](https://docs.gradle.com/enterprise/maven-extension/api/com/gradle/maven/extension/api/GradleEnterpriseApi.html)): _configure Gradle Enterprise_
+- `buildScan` (type: [BuildScanApi](https://docs.gradle.com/enterprise/maven-extension/api/com/gradle/maven/extension/api/scan/BuildScanApi.html)): _configure build scan publishing and enhance build scans_
 - `buildCache` (type: [BuildCacheApi](https://docs.gradle.com/enterprise/maven-extension/api/com/gradle/maven/extension/api/cache/BuildCacheApi.html)): _configure build cache_
 - `log` (type: [`Log`](https://maven.apache.org/ref/current/maven-plugin-api/apidocs/org/apache/maven/plugin/logging/Log.html)): _write to the build log_
 - `project` (type: [`MavenProject`](https://maven.apache.org/ref/current/maven-core/apidocs/org/apache/maven/project/MavenProject.html)): _the top-level Maven project_
