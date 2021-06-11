@@ -13,9 +13,9 @@ import org.codehaus.plexus.logging.Logger;
 import javax.inject.Inject;
 
 @Component(
-        role = AbstractMavenLifecycleParticipant.class,
-        hint = "common-custom-user-data",
-        description = "Captures common custom user data in Maven build scans"
+    role = AbstractMavenLifecycleParticipant.class,
+    hint = "common-custom-user-data",
+    description = "Captures common custom user data in Maven build scans"
 )
 public final class CommonCustomUserDataMavenExtension extends AbstractMavenLifecycleParticipant {
 
@@ -37,31 +37,22 @@ public final class CommonCustomUserDataMavenExtension extends AbstractMavenLifec
             logger.debug("Configuring Gradle Enterprise");
             CustomGradleEnterpriseConfig.configureGradleEnterprise(gradleEnterprise);
             logger.debug("Finished configuring Gradle Enterprise");
-        }
 
-        BuildScanApi buildScan = ApiAccessor.lookupBuildScanApi(container, getClass());
-        if (buildScan != null) {
-            logger.debug("Configuring build scan publishing");
+            logger.debug("Configuring build scan publishing and applying build scan enhancements");
+            BuildScanApi buildScan = gradleEnterprise.getBuildScan();
             CustomGradleEnterpriseConfig.configureBuildScanPublishing(buildScan);
-            logger.debug("Finished configuring build scan publishing");
-
-            logger.debug("Applying build scan enhancements");
             CustomBuildScanEnhancements.configureBuildScan(buildScan, session);
-            logger.debug("Finished applying build scan enhancements");
-        }
+            logger.debug("Finished configuring build scan publishing and applying build scan enhancements");
 
-        BuildCacheApi buildCache = ApiAccessor.lookupBuildCacheApi(container, getClass());
-        if (buildCache != null) {
             logger.debug("Configuring build cache");
+            BuildCacheApi buildCache = gradleEnterprise.getBuildCache();
             CustomGradleEnterpriseConfig.configureBuildCache(buildCache);
             SystemPropertyOverrides.configureBuildCache(buildCache);
             logger.debug("Finished configuring build cache");
-        }
 
-        if (gradleEnterprise != null || buildScan != null || buildCache != null) {
-            GroovyScriptUserData.addToApis(session, gradleEnterprise, buildScan, buildCache, logger);
+            GroovyScriptUserData.addToApis(session, gradleEnterprise, logger);
         } else {
-            logger.debug("Skipping evaluation of custom user data Groovy script because BuildScanApi and BuildCacheApi are both not available");
+            logger.debug("Could not find GradleEnterpriseApi component in Plexus container");
         }
     }
 

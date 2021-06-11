@@ -1,8 +1,6 @@
 package com.gradle;
 
 import com.gradle.maven.extension.api.GradleEnterpriseApi;
-import com.gradle.maven.extension.api.cache.BuildCacheApi;
-import com.gradle.maven.extension.api.scan.BuildScanApi;
 import org.apache.maven.MavenExecutionException;
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.classworlds.realm.ClassRealm;
@@ -17,25 +15,9 @@ final class ApiAccessor {
     private static final String GRADLE_ENTERPRISE_API_PACKAGE = "com.gradle.maven.extension.api";
     private static final String GRADLE_ENTERPRISE_API_CONTAINER_OBJECT = GRADLE_ENTERPRISE_API_PACKAGE + ".GradleEnterpriseApi";
 
-    private static final String BUILD_SCAN_API_PACKAGE = "com.gradle.maven.extension.api.scan";
-    private static final String BUILD_SCAN_API_CONTAINER_OBJECT = BUILD_SCAN_API_PACKAGE + ".BuildScanApi";
-
-    private static final String BUILD_CACHE_API_PACKAGE = "com.gradle.maven.extension.api.cache";
-    private static final String BUILD_CACHE_API_CONTAINER_OBJECT = BUILD_CACHE_API_PACKAGE + ".BuildCacheApi";
-
     static GradleEnterpriseApi lookupGradleEnterpriseApi(PlexusContainer container, Class<?> extensionClass) throws MavenExecutionException {
         ensureClassIsAccessible(extensionClass, GRADLE_ENTERPRISE_API_PACKAGE);
         return componentExists(GRADLE_ENTERPRISE_API_CONTAINER_OBJECT, container) ? lookupClass(GradleEnterpriseApi.class, container) : null;
-    }
-
-    static BuildScanApi lookupBuildScanApi(PlexusContainer container, Class<?> extensionClass) throws MavenExecutionException {
-        ensureClassIsAccessible(extensionClass, BUILD_SCAN_API_PACKAGE);
-        return componentExists(BUILD_SCAN_API_CONTAINER_OBJECT, container) ? lookupClass(BuildScanApi.class, container) : null;
-    }
-
-    static BuildCacheApi lookupBuildCacheApi(PlexusContainer container, Class<?> extensionClass) throws MavenExecutionException {
-        ensureClassIsAccessible(extensionClass, BUILD_CACHE_API_PACKAGE);
-        return componentExists(BUILD_CACHE_API_CONTAINER_OBJECT, container) ? lookupClass(BuildCacheApi.class, container) : null;
     }
 
     /**
@@ -47,8 +29,8 @@ final class ApiAccessor {
             ClassRealm extensionRealm = (ClassRealm) classLoader;
             if (!"maven.ext".equals(extensionRealm.getId())) {
                 Optional<ClassRealm> sourceRealm = extensionRealm.getWorld().getRealms().stream()
-                        .filter(realm -> realm.getId().contains("com.gradle:gradle-enterprise-maven-extension") || realm.getId().equals("maven.ext"))
-                        .max(comparing((ClassRealm realm) -> realm.getId().length()));
+                    .filter(realm -> realm.getId().contains("com.gradle:gradle-enterprise-maven-extension") || realm.getId().equals("maven.ext"))
+                    .max(comparing((ClassRealm realm) -> realm.getId().length()));
                 if (sourceRealm.isPresent()) {
                     String sourceRealmId = sourceRealm.get().getId();
                     try {
@@ -69,7 +51,7 @@ final class ApiAccessor {
         try {
             return container.lookup(componentClass);
         } catch (ComponentLookupException e) {
-            throw new MavenExecutionException(String.format("Cannot look up object in container: %s",  componentClass), e);
+            throw new MavenExecutionException(String.format("Cannot look up object in container: %s", componentClass), e);
         }
     }
 
