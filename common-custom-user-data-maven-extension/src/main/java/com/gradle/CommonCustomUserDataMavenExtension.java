@@ -54,6 +54,7 @@ public final class CommonCustomUserDataMavenExtension extends AbstractMavenLifec
         if (buildCache != null) {
             logger.debug("Configuring build cache");
             CustomGradleEnterpriseConfig.configureBuildCache(buildCache);
+            SystemPropertyOverrides.configureBuildCache(buildCache);
             logger.debug("Finished configuring build cache");
         }
 

@@ -6,6 +6,11 @@ All notable changes to this project will be documented in this file.
 ## [1.7] - 2021-06-11
 - Add access to the `GradleEnterpriseApi` to configure Gradle Enterprise
 
+## [1.6] - 2021-06-08
+- Add custom values for IntelliJ IDEA and Eclipse versions
+- Store the full Git commit ID in "Git commit id" custom value and the short ID in "Git commit id short" custom value
+- Add `gradle.cache.remote.shard` system property to add an additional path segment to the remote build cache URL
+
 ## [1.5] - 2021-05-11
 - Add the Git repository URL as a custom value
 
@@ -61,7 +66,8 @@ All notable changes to this project will be documented in this file.
 ## [1.0] - 2020-05-25
 Initial release.
 
-[Unreleased]: https://github.com/gradle/gradle-enterprise-build-config-samples/compare/common-custom-user-data-maven-extension-1.5...HEAD
+[Unreleased]: https://github.com/gradle/gradle-enterprise-build-config-samples/compare/common-custom-user-data-maven-extension-1.6...HEAD
+[1.6]: https://github.com/gradle/gradle-enterprise-build-config-samples/compare/common-custom-user-data-maven-extension-1.5...common-custom-user-data-maven-extension-1.6
 [1.5]: https://github.com/gradle/gradle-enterprise-build-config-samples/compare/common-custom-user-data-maven-extension-1.4.1...common-custom-user-data-maven-extension-1.5
 [1.4.1]: https://github.com/gradle/gradle-enterprise-build-config-samples/compare/common-custom-user-data-maven-extension-1.4...common-custom-user-data-maven-extension-1.4.1
 [1.4]: https://github.com/gradle/gradle-enterprise-build-config-samples/compare/common-custom-user-data-maven-extension-1.3.2...common-custom-user-data-maven-extension-1.4
