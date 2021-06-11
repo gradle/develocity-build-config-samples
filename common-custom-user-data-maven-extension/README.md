@@ -1,4 +1,4 @@
-## Common Custom User Data Maven extension [![Maven Central](https://img.shields.io/maven-central/v/com.gradle/common-custom-user-data-maven-extension)](https://search.maven.org/artifact/com.gradle/common-custom-user-data-maven-extension) [![Revved up by Gradle Enterprise](https://img.shields.io/badge/Revved%20up%20by-Gradle%20Enterprise-06A0CE?logo=Gradle&labelColor=02303A)](https://ge.gradle.org/scans)
+## Common Custom User Data Maven Extension [![Maven Central](https://img.shields.io/maven-central/v/com.gradle/common-custom-user-data-maven-extension)](https://search.maven.org/artifact/com.gradle/common-custom-user-data-maven-extension) [![Revved up by Gradle Enterprise](https://img.shields.io/badge/Revved%20up%20by-Gradle%20Enterprise-06A0CE?logo=Gradle&labelColor=02303A)](https://ge.gradle.org/scans)
 
 ### Overview
 
@@ -24,9 +24,9 @@ This table details the version compatibility of the Common Custom User Data Mave
 
 | Common Custom User Data Maven extension versions | Gradle Enterprise Maven extension versions |
 | ------------------------------------------------ | ------------------------------------------ |
-| `1.5.1`                                          | `1.10.1+`                                  |
-| `1.3` - `1.5.0`                                  | `1.6.5+`                                   |
-| `1.0` - `1.3`                                    | `1.0+`                                     |
+| `1.7`                                            | `1.10.1+`                                  |
+| `1.3` - `1.6`                                    | `1.6.5+`                                   |
+| `1.0` - `1.2`                                    | `1.0+`                                     |
 
 ### Applying the published extension
 
@@ -44,8 +44,8 @@ Groovy script. This is a good intermediate step before creating your own extensi
 The Common Custom User Data Maven extension checks for a `.mvn/gradle-enterprise-custom-user-data.groovy` Groovy script in your root project. If the file exists, it evaluates
 the script with the following bindings:
 
-- `gradleEnterprise` (type: [GradleEnterpriseApi](https://docs.gradle.com/enterprise/maven-extension/api/com/gradle/maven/extension/api/GradleEnterpriseApi.html)): _use as API entry point and configure the Gradle Enterprise Maven extension_
-- `buildScan` (type: [BuildScanApi](https://docs.gradle.com/enterprise/maven-extension/api/com/gradle/maven/extension/api/scan/BuildScanApi.html)): _enhance build scans and configure build scan publishing_
+- `gradleEnterprise` (type: [GradleEnterpriseApi](https://docs.gradle.com/enterprise/maven-extension/api/com/gradle/maven/extension/api/GradleEnterpriseApi.html)): _configure Gradle Enterprise_
+- `buildScan` (type: [BuildScanApi](https://docs.gradle.com/enterprise/maven-extension/api/com/gradle/maven/extension/api/scan/BuildScanApi.html)): _configure build scan publishing and enhance build scans_
 - `buildCache` (type: [BuildCacheApi](https://docs.gradle.com/enterprise/maven-extension/api/com/gradle/maven/extension/api/cache/BuildCacheApi.html)): _configure build cache_
 - `log` (type: [`Log`](https://maven.apache.org/ref/current/maven-plugin-api/apidocs/org/apache/maven/plugin/logging/Log.html)): _write to the build log_
 - `project` (type: [`MavenProject`](https://maven.apache.org/ref/current/maven-core/apidocs/org/apache/maven/project/MavenProject.html)): _the top-level Maven project_
