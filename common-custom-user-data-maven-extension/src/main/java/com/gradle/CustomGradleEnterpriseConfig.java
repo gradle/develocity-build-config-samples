@@ -1,13 +1,25 @@
 package com.gradle;
 
+import com.gradle.maven.extension.api.GradleEnterpriseApi;
 import com.gradle.maven.extension.api.cache.BuildCacheApi;
 import com.gradle.maven.extension.api.scan.BuildScanApi;
+
+import java.net.URI;
 
 /**
  * Provide standardized Gradle Enterprise configuration.
  * By applying the extension, these settings will automatically be applied.
  */
 final class CustomGradleEnterpriseConfig {
+
+    static void configureGradleEnterprise(GradleEnterpriseApi gradleEnterprise) {
+        /* Example of Gradle Enterprise configuration
+
+        gradleEnterprise.setServer("https://enterprise-samples.gradle.com");
+        gradleEnterprise.setAllowUntrustedServer(false);
+
+        */
+    }
 
     static void configureBuildScanPublishing(BuildScanApi buildScans) {
         /* Example of build scan publishing configuration
@@ -32,6 +44,7 @@ final class CustomGradleEnterpriseConfig {
 
         // Only permit store operations to the remote build cache for CI builds
         // Local builds will only read from the remote build cache
+        buildCache.getRemote().getServer().setUrl(URI.create("https://enterprise-samples.gradle.com/cache/"));
         buildCache.getRemote().setEnabled(true);
         buildCache.getRemote().setStoreEnabled(isCiServer);
 
