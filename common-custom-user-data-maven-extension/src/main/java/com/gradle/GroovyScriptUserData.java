@@ -12,7 +12,7 @@ import java.io.File;
 
 final class GroovyScriptUserData {
 
-    static void addToApis(MavenSession session, GradleEnterpriseApi gradleEnterprise, Logger logger) throws MavenExecutionException {
+    static void evaluate(MavenSession session, GradleEnterpriseApi gradleEnterprise, Logger logger) throws MavenExecutionException {
         File groovyScript = getGroovyScript(session);
         if (groovyScript.exists()) {
             logger.debug("Evaluating custom user data Groovy script: " + groovyScript);

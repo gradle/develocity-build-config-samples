@@ -50,7 +50,7 @@ public final class CommonCustomUserDataMavenExtension extends AbstractMavenLifec
             SystemPropertyOverrides.configureBuildCache(buildCache);
             logger.debug("Finished configuring build cache");
 
-            GroovyScriptUserData.addToApis(session, gradleEnterprise, logger);
+            GroovyScriptUserData.evaluate(session, gradleEnterprise, logger);
         } else {
             logger.debug("Could not find GradleEnterpriseApi component in Plexus container");
         }
