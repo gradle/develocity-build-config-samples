@@ -41,7 +41,7 @@ public final class CommonCustomUserDataMavenExtension extends AbstractMavenLifec
             logger.debug("Configuring build scan publishing and applying build scan enhancements");
             BuildScanApi buildScan = gradleEnterprise.getBuildScan();
             CustomGradleEnterpriseConfig.configureBuildScanPublishing(buildScan);
-            CustomBuildScanEnhancements.configureBuildScan(buildScan, session);
+            CustomBuildScanEnhancements.apply(buildScan, session);
             logger.debug("Finished configuring build scan publishing and applying build scan enhancements");
 
             logger.debug("Configuring build cache");

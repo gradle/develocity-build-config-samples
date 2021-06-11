@@ -25,7 +25,7 @@ import static com.gradle.Utils.urlEncode;
  */
 final class CustomBuildScanEnhancements {
 
-    static void configureBuildScan(BuildScanApi buildScan, MavenSession mavenSession) {
+    static void apply(BuildScanApi buildScan, MavenSession mavenSession) {
         captureOs(buildScan);
         captureIde(buildScan);
         captureCiOrLocal(buildScan);
