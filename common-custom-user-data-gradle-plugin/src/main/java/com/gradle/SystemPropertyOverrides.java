@@ -18,6 +18,7 @@ final class SystemPropertyOverrides {
 
     // system properties to override Gradle Enterprise configuration
     public static final String GRADLE_ENTERPRISE_URL = "gradle.enterprise.url";
+    public static final String GRADLE_ENTERPRISE_ALLOW_UNTRUSTED_SERVER = "gradle.enterprise.allowUntrustedServer";
 
     // system properties to override local build cache configuration
     public static final String LOCAL_CACHE_DIRECTORY = "gradle.cache.local.directory";
@@ -34,6 +35,7 @@ final class SystemPropertyOverrides {
 
     static void configureGradleEnterprise(GradleEnterpriseExtension gradleEnterprise, ProviderFactory providers) {
         sysProperty(GRADLE_ENTERPRISE_URL, providers).ifPresent(gradleEnterprise::setServer);
+        booleanSysProperty(GRADLE_ENTERPRISE_ALLOW_UNTRUSTED_SERVER, providers).ifPresent(gradleEnterprise::setAllowUntrustedServer);
     }
 
     static void configureBuildCache(BuildCacheConfiguration buildCache, ProviderFactory providers) {
