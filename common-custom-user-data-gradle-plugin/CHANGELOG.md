@@ -5,9 +5,9 @@ All notable changes to this project will be documented in this file.
 
 ## [1.4] - 2021-06-08
 - Fully support the [Gradle configuration cache](https://docs.gradle.org/current/userguide/configuration_cache.html)
+- Add custom values for IntelliJ IDEA and Eclipse versions
+- Store the full Git commit ID in "Git commit id" custom value and the short ID in "Git commit id short" custom value
 - Add the ability to override various Gradle Enterprise configuration settings via system properties
-- Store the full Git commit ID in "Git commit id" custom value and the short ID in "Git commit id short"
-- Add custom values for IntelliJ IDEA and Eclipse IDE versions
 
 ## [1.3] - 2021-05-11
 - Add the Git repository URL as a custom value
