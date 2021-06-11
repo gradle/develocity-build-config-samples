@@ -13,7 +13,7 @@ final class CustomGradleEnterpriseConfig {
     static void configureGradleEnterprise(GradleEnterpriseExtension gradleEnterprise) {
         /* Example of Gradle Enterprise configuration
 
-        gradleEnterprise.setServer("https://your-gradle-enterprise-server.com");
+        gradleEnterprise.setServer("https://enterprise-samples.gradle.com");
 
         */
     }
@@ -44,7 +44,7 @@ final class CustomGradleEnterpriseConfig {
         // Only permit store operations to the remote build cache for CI builds
         // Local builds will only read from the remote build cache
         buildCache.remote(HttpBuildCache.class, remote -> {
-            remote.setUrl("https://your-gradle-enterprise-server.com/cache/");
+            remote.setUrl("https://enterprise-samples.gradle.com/cache/");
             remote.setEnabled(true);
             remote.setPush(isCiServer);
         });
