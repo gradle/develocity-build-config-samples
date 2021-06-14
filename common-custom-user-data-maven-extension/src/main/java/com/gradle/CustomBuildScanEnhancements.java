@@ -78,15 +78,15 @@ final class CustomBuildScanEnhancements {
 
         if (isTeamCity()) {
             Optional<String> teamCityConfigFile = projectProperty(mavenSession, "teamcity.configuration.properties.file");
-            Optional<String> buildNumber = projectProperty(mavenSession, "build.number");
+            Optional<String> buildId = projectProperty(mavenSession, "teamcity.build.id");
             Optional<String> buildTypeId = projectProperty(mavenSession, "teamcity.buildType.id");
             if (teamCityConfigFile.isPresent()
-                && buildNumber.isPresent()
+                && buildId.isPresent()
                 && buildTypeId.isPresent()) {
                 Properties properties = readPropertiesFile(teamCityConfigFile.get());
                 String teamCityServerUrl = properties.getProperty("teamcity.serverUrl");
                 if (teamCityServerUrl != null) {
-                    String buildUrl = appendIfMissing(teamCityServerUrl, "/") + "viewLog.html?buildNumber=" + buildNumber.get() + "&buildTypeId=" + buildTypeId.get();
+                    String buildUrl = appendIfMissing(teamCityServerUrl, "/") + "viewLog.html?buildId=" + buildId.get() + "&buildTypeId=" + buildTypeId.get();
                     buildScan.link("TeamCity build", buildUrl);
                 }
             }
