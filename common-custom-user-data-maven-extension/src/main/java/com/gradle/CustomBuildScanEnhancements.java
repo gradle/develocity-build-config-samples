@@ -79,6 +79,7 @@ final class CustomBuildScanEnhancements {
         if (isTeamCity()) {
             Optional<String> teamCityConfigFile = projectProperty(mavenSession, "teamcity.configuration.properties.file");
             Optional<String> buildId = projectProperty(mavenSession, "teamcity.build.id");
+            Optional<String> buildNumber = projectProperty(mavenSession, "build.number");
             Optional<String> buildTypeId = projectProperty(mavenSession, "teamcity.buildType.id");
             if (teamCityConfigFile.isPresent()
                 && buildId.isPresent()
