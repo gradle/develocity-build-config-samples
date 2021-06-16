@@ -37,15 +37,17 @@ public class CommonCustomUserDataGradlePlugin implements Plugin<Object> {
 
     private void applySettingsPlugin(Settings settings) {
         settings.getPluginManager().withPlugin("com.gradle.enterprise", __ -> {
+            CustomGradleEnterpriseConfig customGradleEnterpriseConfig = new CustomGradleEnterpriseConfig();
+
             GradleEnterpriseExtension gradleEnterprise = settings.getExtensions().getByType(GradleEnterpriseExtension.class);
-            CustomGradleEnterpriseConfig.configureGradleEnterprise(gradleEnterprise);
+            customGradleEnterpriseConfig.configureGradleEnterprise(gradleEnterprise);
 
             BuildScanExtension buildScan = gradleEnterprise.getBuildScan();
-            CustomGradleEnterpriseConfig.configureBuildScanPublishing(buildScan);
+            customGradleEnterpriseConfig.configureBuildScanPublishing(buildScan);
             new CustomBuildScanEnhancements(buildScan, providers, settings.getGradle()).apply();
 
             BuildCacheConfiguration buildCache = settings.getBuildCache();
-            CustomGradleEnterpriseConfig.configureBuildCache(buildCache);
+            customGradleEnterpriseConfig.configureBuildCache(buildCache);
 
             // configuration changes applied in this block will override earlier configuration settings,
             // including those set in the settings.gradle(.kts)
@@ -62,11 +64,13 @@ public class CommonCustomUserDataGradlePlugin implements Plugin<Object> {
             throw new GradleException("Common custom user data plugin may only be applied to root project");
         }
         project.getPluginManager().withPlugin("com.gradle.build-scan", __ -> {
+            CustomGradleEnterpriseConfig customGradleEnterpriseConfig = new CustomGradleEnterpriseConfig();
+
             GradleEnterpriseExtension gradleEnterprise = project.getExtensions().getByType(GradleEnterpriseExtension.class);
-            CustomGradleEnterpriseConfig.configureGradleEnterprise(gradleEnterprise);
+            customGradleEnterpriseConfig.configureGradleEnterprise(gradleEnterprise);
 
             BuildScanExtension buildScan = gradleEnterprise.getBuildScan();
-            CustomGradleEnterpriseConfig.configureBuildScanPublishing(buildScan);
+            customGradleEnterpriseConfig.configureBuildScanPublishing(buildScan);
             new CustomBuildScanEnhancements(buildScan, providers, project.getGradle()).apply();
 
             // Build cache configuration cannot be accessed from a project plugin
