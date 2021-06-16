@@ -212,7 +212,7 @@ final class CustomBuildScanEnhancements {
         return envVariable("BITRISE_BUILD_URL").isPresent();
     }
 
-    private void captureGitMetadata() {
+    private static void captureGitMetadata(BuildScanApi buildScan) {
         buildScan.background(api -> {
             if (!isGitInstalled()) {
                 return;
@@ -262,7 +262,7 @@ final class CustomBuildScanEnhancements {
         });
     }
 
-    private boolean isGitInstalled() {
+    private static boolean isGitInstalled() {
         return execAndCheckSuccess("git", "--version");
     }
 
@@ -271,6 +271,10 @@ final class CustomBuildScanEnhancements {
     }
 
     private void addCustomValueAndSearchLink(String linkLabel, String name, String value) {
+        addCustomValueAndSearchLink(buildScan, linkLabel, name, value);
+    }
+
+    private static void addCustomValueAndSearchLink(BuildScanApi buildScan, String linkLabel, String name, String value) {
         buildScan.value(name, value);
         String server = buildScan.getServer();
         if (server != null) {
