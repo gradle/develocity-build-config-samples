@@ -12,7 +12,7 @@ import java.net.URI;
  */
 final class CustomGradleEnterpriseConfig {
 
-    static void configureGradleEnterprise(GradleEnterpriseApi gradleEnterprise) {
+    void configureGradleEnterprise(GradleEnterpriseApi gradleEnterprise) {
         /* Example of Gradle Enterprise configuration
 
         gradleEnterprise.setServer("https://enterprise-samples.gradle.com");
@@ -21,7 +21,7 @@ final class CustomGradleEnterpriseConfig {
         */
     }
 
-    static void configureBuildScanPublishing(BuildScanApi buildScans) {
+    void configureBuildScanPublishing(BuildScanApi buildScans) {
         /* Example of build scan publishing configuration
 
         boolean isCiServer = System.getenv().containsKey("CI");
@@ -33,7 +33,7 @@ final class CustomGradleEnterpriseConfig {
         */
     }
 
-    static void configureBuildCache(BuildCacheApi buildCache) {
+    void configureBuildCache(BuildCacheApi buildCache) {
         /* Example of build cache configuration
 
         boolean isCiServer = System.getenv().containsKey("CI");
@@ -50,8 +50,4 @@ final class CustomGradleEnterpriseConfig {
 
         */
     }
-
-    private CustomGradleEnterpriseConfig() {
-    }
-
 }

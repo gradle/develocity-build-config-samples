@@ -33,12 +33,18 @@ final class SystemPropertyOverrides {
     public static final String REMOTE_CACHE_ENABLED = "gradle.cache.remote.enabled";
     public static final String REMOTE_CACHE_PUSH = "gradle.cache.remote.push";
 
-    static void configureGradleEnterprise(GradleEnterpriseExtension gradleEnterprise, ProviderFactory providers) {
+    private final ProviderFactory providers;
+
+    SystemPropertyOverrides(ProviderFactory providers) {
+        this.providers = providers;
+    }
+
+    void configureGradleEnterprise(GradleEnterpriseExtension gradleEnterprise) {
         sysProperty(GRADLE_ENTERPRISE_URL, providers).ifPresent(gradleEnterprise::setServer);
         booleanSysProperty(GRADLE_ENTERPRISE_ALLOW_UNTRUSTED_SERVER, providers).ifPresent(gradleEnterprise::setAllowUntrustedServer);
     }
 
-    static void configureBuildCache(BuildCacheConfiguration buildCache, ProviderFactory providers) {
+    void configureBuildCache(BuildCacheConfiguration buildCache) {
         buildCache.local(local -> {
             sysProperty(LOCAL_CACHE_DIRECTORY, providers).ifPresent(local::setDirectory);
             durationSysProperty(LOCAL_CACHE_REMOVE_UNUSED_ENTRIES_AFTER_DAYS, providers).ifPresent(v -> local.setRemoveUnusedEntriesAfterDays((int) v.toDays()));
@@ -57,8 +63,4 @@ final class SystemPropertyOverrides {
             });
         }
     }
-
-    private SystemPropertyOverrides() {
-    }
-
 }
