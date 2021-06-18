@@ -28,7 +28,7 @@ final class Utils {
         String value = mavenSession.getSystemProperties().getProperty(name);
         return Optional.ofNullable(value);
     }
-    
+
     static Optional<String> sysProperty(String name) {
         return Optional.ofNullable(System.getProperty(name));
     }
