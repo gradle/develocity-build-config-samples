@@ -334,4 +334,5 @@ final class CustomBuildScanEnhancements {
     private Properties readPropertiesFile(String fileName) {
         return Utils.readPropertiesFile(fileName, providers, gradle);
     }
+    
 }
