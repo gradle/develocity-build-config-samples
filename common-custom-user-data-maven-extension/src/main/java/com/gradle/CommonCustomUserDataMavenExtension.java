@@ -35,6 +35,7 @@ public final class CommonCustomUserDataMavenExtension extends AbstractMavenLifec
         GradleEnterpriseApi gradleEnterprise = ApiAccessor.lookupGradleEnterpriseApi(container, getClass());
         if (gradleEnterprise != null) {
             CustomGradleEnterpriseConfig customGradleEnterpriseConfig = new CustomGradleEnterpriseConfig();
+
             logger.debug("Configuring Gradle Enterprise");
             customGradleEnterpriseConfig.configureGradleEnterprise(gradleEnterprise);
             logger.debug("Finished configuring Gradle Enterprise");
