@@ -2,6 +2,7 @@
 All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
+- Encode (escape) the TeamCity build number when creating a link to the TeamCity build (fixes Issue #101).
 
 ## [1.4] - 2021-06-08
 - Fully support the [Gradle configuration cache](https://docs.gradle.org/current/userguide/configuration_cache.html)

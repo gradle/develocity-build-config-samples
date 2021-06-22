@@ -2,6 +2,7 @@
 All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
+- Encode (escape) the TeamCity build number when creating a link to the TeamCity build (fixes Issue #101).
 
 ## [1.7] - 2021-06-11
 - Add access to the `GradleEnterpriseApi` to configure Gradle Enterprise
