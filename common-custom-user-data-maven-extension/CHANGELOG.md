@@ -2,6 +2,7 @@
 All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
+- Publish a "fat" jar that contains all of the extension's dependencies (to make it easier to use the extension in certian scenarios).
 
 ## [1.7.1] - 2021-06-22
 - Encode (escape) the TeamCity build number when creating a link to the TeamCity build (fixes Issue #101).
