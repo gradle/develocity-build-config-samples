@@ -3,6 +3,9 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [1.4.1] - 2021-06-22
+- Encode (escape) the TeamCity build number when creating a link to the TeamCity build (fixes Issue #101).
+
 ## [1.4] - 2021-06-08
 - Fully support the [Gradle configuration cache](https://docs.gradle.org/current/userguide/configuration_cache.html)
 - Add custom values for IntelliJ IDEA and Eclipse versions
@@ -39,7 +42,8 @@ All notable changes to this project will be documented in this file.
 ## [1.0] - 2021-01-14
 Initial release.
 
-[Unreleased]: https://github.com/gradle/gradle-enterprise-build-config-samples/compare/common-custom-user-data-gradle-plugin-1.4...HEAD
+[Unreleased]: https://github.com/gradle/gradle-enterprise-build-config-samples/compare/common-custom-user-data-gradle-plugin-1.4.1...HEAD
+[1.4.1]: https://github.com/gradle/gradle-enterprise-build-config-samples/compare/common-custom-user-data-gradle-plugin-1.4...common-custom-user-data-gradle-plugin-1.4.1
 [1.4]: https://github.com/gradle/gradle-enterprise-build-config-samples/compare/common-custom-user-data-gradle-plugin-1.3...common-custom-user-data-gradle-plugin-1.4
 [1.3]: https://github.com/gradle/gradle-enterprise-build-config-samples/compare/common-custom-user-data-gradle-plugin-1.2.1...common-custom-user-data-gradle-plugin-1.3
 [1.2.1]: https://github.com/gradle/gradle-enterprise-build-config-samples/compare/common-custom-user-data-gradle-plugin-1.2...common-custom-user-data-gradle-plugin-1.2.1

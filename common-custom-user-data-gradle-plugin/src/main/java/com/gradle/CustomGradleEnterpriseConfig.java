@@ -11,7 +11,7 @@ import org.gradle.caching.http.HttpBuildCache;
  */
 final class CustomGradleEnterpriseConfig {
 
-    static void configureGradleEnterprise(GradleEnterpriseExtension gradleEnterprise) {
+    void configureGradleEnterprise(GradleEnterpriseExtension gradleEnterprise) {
         /* Example of Gradle Enterprise configuration
 
         gradleEnterprise.setServer("https://enterprise-samples.gradle.com");
@@ -20,7 +20,7 @@ final class CustomGradleEnterpriseConfig {
         */
     }
 
-    static void configureBuildScanPublishing(BuildScanExtension buildScan) {
+    void configureBuildScanPublishing(BuildScanExtension buildScan) {
         /* Example of build scan publishing configuration
 
         boolean isCiServer = System.getenv().containsKey("CI");
@@ -32,7 +32,7 @@ final class CustomGradleEnterpriseConfig {
         */
     }
 
-    static void configureBuildCache(BuildCacheConfiguration buildCache) {
+    void configureBuildCache(BuildCacheConfiguration buildCache) {
         /* Example of build cache configuration
 
         boolean isCiServer = System.getenv().containsKey("CI");
@@ -52,9 +52,6 @@ final class CustomGradleEnterpriseConfig {
         });
 
         */
-    }
-
-    private CustomGradleEnterpriseConfig() {
     }
 
 }
