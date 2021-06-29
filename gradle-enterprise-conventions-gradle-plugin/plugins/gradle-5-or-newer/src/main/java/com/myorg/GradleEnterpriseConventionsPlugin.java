@@ -1,6 +1,5 @@
 package com.myorg;
 
-import com.gradle.CommonCustomUserDataGradlePlugin;
 import com.gradle.enterprise.gradleplugin.GradleEnterpriseExtension;
 import com.gradle.enterprise.gradleplugin.GradleEnterprisePlugin;
 import com.gradle.scan.plugin.BuildScanExtension;
