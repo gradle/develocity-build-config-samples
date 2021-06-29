@@ -48,7 +48,7 @@ public class GradleEnterpriseConventionsPlugin implements Plugin<Object> {
     }
 
     private void configureGradleEnterprise(GradleEnterpriseExtension gradleEnterprise) {
-        /* Example of how to configure Gradle Enterprise from the plugin. */
+        // CHANGE ME: Apply your Gradle Enterprise Configuration here
         gradleEnterprise.setServer("https://ge.myorg.com");
 
         BuildScanExtension buildScan = gradleEnterprise.getBuildScan();
@@ -57,14 +57,10 @@ public class GradleEnterpriseConventionsPlugin implements Plugin<Object> {
     }
 
     private void configureBuildCache(BuildCacheConfiguration buildCache) {
-        // Enable the local build cache for all local and CI builds
-        // For short-lived CI agents, it makes sense to disable the local build cache
+        // CHANGE ME: Apply your build cache configuration here
         buildCache.local(local -> {
             local.setEnabled(true);
         });
-
-        // Only permit store operations to the remote build cache for CI builds
-        // Local builds will only read from the remote build cache
         boolean isCiServer = System.getenv().containsKey("CI");
         buildCache.remote(HttpBuildCache.class, remote -> {
             remote.setUrl("https://ge.myorg.com/cache/");

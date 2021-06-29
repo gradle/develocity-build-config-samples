@@ -1,5 +1,6 @@
 
 initscript {
+    // CHANGE ME: change to match your convention plugin's version
     def pluginVersion = "1.0.0-SNAPSHOT"
 
     def isTopLevelBuild = gradle.getParent() == null
@@ -20,6 +21,7 @@ initscript {
             gradlePluginPortal()
         }
         dependencies {
+            // CHANGE ME: change to match your convention plugin's name
             classpath("com.myorg:gradle-enterprise-conventions-gradle-plugin:${pluginVersion}")
         }
     } else if (majorGradleVersion >= 2) {
@@ -28,6 +30,7 @@ initscript {
             maven { url "https://plugins.gradle.org/m2" }
         }
         dependencies {
+            // CHANGE ME: change to match your convention plugin's name
             classpath("com.myorg:gradle-enterprise-conventions-for-gradle-2-through-4:${pluginVersion}")
         }
     }
@@ -46,6 +49,7 @@ try {
     majorGradleVersion = 0
 }
 
+// CHANGE ME: change to match your convention plugin class names
 def gradleEnterpriseConventionsPluginClassName = "com.myorg.GradleEnterpriseConventionsPlugin"
 def buildScanConventionsPluginClassName = "com.myorg.BuildScansConventionsPlugin"
 
