@@ -56,9 +56,8 @@ public class GradleEnterpriseConventionsPlugin implements Plugin<Object> {
         gradleEnterprise.setServer("https://ge.myorg.com");
 
         BuildScanExtension buildScan = gradleEnterprise.getBuildScan();
+        buildScan.publishAlways();
         buildScan.setCaptureTaskInputFiles(true);
-        buildScan.setUploadInBackground(true);
-        buildScan.tag("Configured with gradle-enterprise-conventions");
     }
 
     private void configureBuildCache(BuildCacheConfiguration buildCache) {

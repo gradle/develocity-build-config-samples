@@ -21,7 +21,6 @@ public class BuildScansConventionsPlugin implements Plugin<Project> {
         /* Example of how to configure build scan publishing from the plugin. */
         BuildScanExtension buildScan = project.getExtensions().getByType(BuildScanExtension.class);
         buildScan.setServer("https://ge.myorg.com");
-        buildScan.setAllowUntrustedServer(false);
         buildScan.publishAlways();
     }
 }
