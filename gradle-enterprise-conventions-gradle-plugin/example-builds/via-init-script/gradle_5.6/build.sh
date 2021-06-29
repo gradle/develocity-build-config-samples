@@ -1,2 +1,2 @@
 #!/bin/sh
-./gradlew -I ../../../init-script/add-gradle-enterprise-conventions.gradle --scan build
+./gradlew -I ../../../init-script/add-gradle-enterprise-conventions.gradle "$@"

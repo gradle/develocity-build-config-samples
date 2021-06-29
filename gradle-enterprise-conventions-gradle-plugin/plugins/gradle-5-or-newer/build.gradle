@@ -11,17 +11,19 @@ repositories {
     gradlePluginPortal()
 }
 
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
 dependencies {
     implementation 'com.gradle:gradle-enterprise-gradle-plugin:3.6.3'
     implementation 'com.gradle:common-custom-user-data-gradle-plugin:1.4.1'
 }
 
-// TODO Needed?
 gradlePlugin {
     plugins {
         gradleEnterpriseConvensions {
             // CHANGE ME: change for your organization
-            id = 'com.myorg.gradle-enterprise-convensions'
+            id = 'com.myorg.gradle-enterprise-conventions'
             displayName = 'Gradle Enterprise Convension Plugin'
             description = 'A Gradle plugin to apply and configure the Gradle Enterprise Gradle plugin for com.myorg'
             implementationClass = 'com.myorg.GradleEnterpriseConventionsPlugin'
@@ -29,8 +31,6 @@ gradlePlugin {
     }
 }
 
-
-// TODO Needed?
 tasks.withType(ValidatePlugins).configureEach {
     failOnWarning = true
     enableStricterValidation = true

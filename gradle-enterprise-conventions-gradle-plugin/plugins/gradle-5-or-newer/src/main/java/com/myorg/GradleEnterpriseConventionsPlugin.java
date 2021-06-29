@@ -58,7 +58,7 @@ public class GradleEnterpriseConventionsPlugin implements Plugin<Object> {
         BuildScanExtension buildScan = gradleEnterprise.getBuildScan();
         buildScan.setCaptureTaskInputFiles(true);
         buildScan.setUploadInBackground(true);
-        buildScan.tag("Configued with gradle-enterprise-conventions");
+        buildScan.tag("Configured with gradle-enterprise-conventions");
     }
 
     private void configureBuildCache(BuildCacheConfiguration buildCache) {

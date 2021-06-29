@@ -20,7 +20,7 @@ initscript {
             gradlePluginPortal()
         }
         dependencies {
-            classpath("com.myorg:gradle-enterprise-conventions:${pluginVersion}")
+            classpath("com.myorg:gradle-enterprise-conventions-gradle-plugin:${pluginVersion}")
         }
     } else if (majorGradleVersion >= 2) {
         repositories {
@@ -61,6 +61,6 @@ if (majorGradleVersion >= 6) {
     }
 } else if (majorGradleVersion >= 2) {
     rootProject {
-        project.apply(initscript.classLoader.loadClass(buildScanConventionsPluginClassName))
+        project.apply({ plugin(initscript.classLoader.loadClass(buildScanConventionsPluginClassName)) } )
     }
 }
