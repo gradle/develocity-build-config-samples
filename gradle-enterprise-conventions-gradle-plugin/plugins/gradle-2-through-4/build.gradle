@@ -18,7 +18,6 @@ dependencies {
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
-// TODO Needed?
 gradlePlugin {
     plugins {
         gradleEnterpriseConventions {
@@ -32,18 +31,7 @@ gradlePlugin {
 }
 
 
-// TODO Needed?
 tasks.withType(ValidatePlugins).configureEach {
     failOnWarning = true
     enableStricterValidation = true
 }
-
-publishing {
-    repositories {
-        maven {
-            // change to point to your repo, e.g. http://my.org/repo
-            url = layout.buildDirectory.dir("repo")
-        }
-    }
-}
-

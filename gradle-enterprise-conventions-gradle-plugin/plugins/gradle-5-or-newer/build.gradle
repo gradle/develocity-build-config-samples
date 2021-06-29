@@ -16,7 +16,6 @@ targetCompatibility = 1.8
 
 dependencies {
     implementation 'com.gradle:gradle-enterprise-gradle-plugin:3.6.3'
-    implementation 'com.gradle:common-custom-user-data-gradle-plugin:1.4.1'
 }
 
 gradlePlugin {
@@ -35,13 +34,3 @@ tasks.withType(ValidatePlugins).configureEach {
     failOnWarning = true
     enableStricterValidation = true
 }
-
-publishing {
-    repositories {
-        maven {
-            // change to point to your repo, e.g. http://my.org/repo
-            url = layout.buildDirectory.dir("repo")
-        }
-    }
-}
-

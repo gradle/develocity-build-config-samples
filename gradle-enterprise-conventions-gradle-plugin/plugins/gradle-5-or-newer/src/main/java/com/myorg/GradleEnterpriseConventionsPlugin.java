@@ -32,8 +32,6 @@ public class GradleEnterpriseConventionsPlugin implements Plugin<Object> {
 
     private void applySettingsPlugin(Settings settings) {
         settings.getPluginManager().apply(GradleEnterprisePlugin.class);
-        settings.getPluginManager().apply(CommonCustomUserDataGradlePlugin.class);
-
         configureGradleEnterprise(settings.getExtensions().getByType(GradleEnterpriseExtension.class));
         configureBuildCache(settings.getBuildCache());
     }
@@ -43,8 +41,6 @@ public class GradleEnterpriseConventionsPlugin implements Plugin<Object> {
             throw new GradleException("gradle-enterprise-conventions may only be applied to root project");
         }
         project.getPluginManager().apply(BuildScanPlugin.class);
-        project.getPluginManager().apply(CommonCustomUserDataGradlePlugin.class);
-
         project.getPluginManager().withPlugin("com.gradle.build-scan", __ -> {
             configureGradleEnterprise(project.getExtensions().getByType(GradleEnterpriseExtension.class));
             // Build cache configuration cannot be accessed from a project plugin
