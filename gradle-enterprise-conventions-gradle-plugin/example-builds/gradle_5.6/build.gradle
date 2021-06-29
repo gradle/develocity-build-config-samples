@@ -1,0 +1,4 @@
+plugins {
+  id "com.myorg.gradle-enterprise-convensions" version "1.0.0-SNAPSHOT"
+  id "java"
+}

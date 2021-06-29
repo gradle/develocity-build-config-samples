@@ -1,0 +1,14 @@
+buildscript {
+  repositories {
+      mavenLocal()
+      maven { url "https://plugins.gradle.org/m2/" }
+  }
+  dependencies {
+      classpath "com.myorg:gradle-enterprise-conventions-for-gradle-2-through-4:1.0.0-SNAPSHOT"
+  }
+}
+
+apply plugin: "com.myorg.gradle-enterprise-conventions-for-gradle-2-through-4"
+apply plugin: "java"
+
+buildScan { termsOfServiceUrl = 'https://gradle.com/terms-of-service'; termsOfServiceAgree = 'yes' }
