@@ -12,6 +12,9 @@ import org.gradle.caching.configuration.BuildCacheConfiguration;
 import org.gradle.caching.http.HttpBuildCache;
 import org.gradle.util.GradleVersion;
 
+/**
+ * An example plugin for enabling and configuring Gradle Enterprise features for Gradle versions 5.x and higher.
+ */
 public class GradleEnterpriseConventionsPlugin implements Plugin<Object> {
 
     @Override
@@ -20,29 +23,29 @@ public class GradleEnterpriseConventionsPlugin implements Plugin<Object> {
             if (!isGradle6OrNewer()) {
                 throw new GradleException("For Gradle versions prior to 6.0, gradle-enterprise-conventions must be applied to the Root project");
             }
-            applySettingsPlugin((Settings) target);
+            configureGradle60OrNewer((Settings) target);
         } else if (target instanceof Project) {
             if (isGradle6OrNewer()) {
                 throw new GradleException("For Gradle versions 6.0 and newer, gradle-enterprise-conventions must be applied to Settings");
             }
-            applyProjectPlugin((Project) target);
+            configureGradle5((Project) target);
         }
     }
 
-    private void applySettingsPlugin(Settings settings) {
+    private void configureGradle60OrNewer(Settings settings) {
         settings.getPluginManager().apply(GradleEnterprisePlugin.class);
         configureGradleEnterprise(settings.getExtensions().getByType(GradleEnterpriseExtension.class));
         configureBuildCache(settings.getBuildCache());
     }
 
-    private void applyProjectPlugin(Project project) {
+    private void configureGradle5(Project project) {
         if (!project.equals(project.getRootProject())) {
             throw new GradleException("gradle-enterprise-conventions may only be applied to root project");
         }
         project.getPluginManager().apply(BuildScanPlugin.class);
         project.getPluginManager().withPlugin("com.gradle.build-scan", __ -> {
             configureGradleEnterprise(project.getExtensions().getByType(GradleEnterpriseExtension.class));
-            // Build cache configuration cannot be accessed from a project plugin
+            // configureBuildCache is not called because the build cache cannot be configured via a plugin prior to Gradle 6.0
         });
     }
 
@@ -57,9 +60,6 @@ public class GradleEnterpriseConventionsPlugin implements Plugin<Object> {
 
     private void configureBuildCache(BuildCacheConfiguration buildCache) {
         // CHANGE ME: Apply your build cache configuration here
-        buildCache.local(local -> {
-            local.setEnabled(true);
-        });
         boolean isCiServer = System.getenv().containsKey("CI");
         buildCache.remote(HttpBuildCache.class, remote -> {
             remote.setUrl("https://ge.myorg.com/cache/");

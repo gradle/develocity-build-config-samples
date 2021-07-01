@@ -17,6 +17,7 @@ initscript {
 
     if (majorGradleVersion >= 5) {
         repositories {
+            // CHANGE ME: replace with your organization's artifact repository
             mavenLocal()
             gradlePluginPortal()
         }
@@ -26,6 +27,7 @@ initscript {
         }
     } else if (majorGradleVersion >= 2) {
         repositories {
+            // CHANGE ME: replace with your organization's artifact repository
             mavenLocal()
             maven { url "https://plugins.gradle.org/m2" }
         }

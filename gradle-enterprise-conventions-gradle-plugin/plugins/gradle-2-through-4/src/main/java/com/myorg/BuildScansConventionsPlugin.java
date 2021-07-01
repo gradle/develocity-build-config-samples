@@ -8,6 +8,10 @@ import org.gradle.api.Project;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * An example Gradle plugin for enabling and configuring Gradle Enterprise features (build scans only) for Gradle v2.0
+ * through Gradle v4.10.2.
+ */
 public class BuildScansConventionsPlugin implements Plugin<Project> {
 
     @Override
