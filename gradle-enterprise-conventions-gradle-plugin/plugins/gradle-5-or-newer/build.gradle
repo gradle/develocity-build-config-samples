@@ -20,7 +20,7 @@ dependencies {
 
 gradlePlugin {
     plugins {
-        gradleEnterpriseConvensions {
+        gradleEnterpriseConventions {
             // CHANGE ME: change for your organization
             id = 'com.myorg.gradle-enterprise-conventions'
             displayName = 'Gradle Enterprise Convension Plugin'
