@@ -1,0 +1,72 @@
+
+initscript {
+    // CHANGE ME: change to match your convention plugin's version
+    def pluginVersion = "1.0.0-SNAPSHOT"
+
+    def isTopLevelBuild = gradle.getParent() == null
+    if (!isTopLevelBuild) {
+        return
+    }
+
+    def majorGradleVersion
+    try {
+        majorGradleVersion = Integer.parseInt(gradleVersion.split("\\.")[0])
+    } catch (any) {
+        majorGradleVersion = 0
+    }
+
+    if (majorGradleVersion >= 5) {
+        repositories {
+            // CHANGE ME: replace with your organization's artifact repository
+            mavenLocal()
+            gradlePluginPortal()
+        }
+        dependencies {
+            // CHANGE ME: change to match your convention plugin's name
+            classpath("com.myorg:gradle-enterprise-conventions-gradle-plugin:${pluginVersion}")
+        }
+    } else if (majorGradleVersion >= 2) {
+        repositories {
+            // CHANGE ME: replace with your organization's artifact repository
+            mavenLocal()
+            maven { url "https://plugins.gradle.org/m2" }
+        }
+        dependencies {
+            // CHANGE ME: change to match your convention plugin's name
+            classpath("com.myorg:gradle-enterprise-conventions-for-gradle-2-through-4:${pluginVersion}")
+        }
+    }
+}
+
+def isTopLevelBuild = gradle.getParent() == null
+if (!isTopLevelBuild) {
+    return
+}
+
+def majorGradleVersion
+try {
+    majorGradleVersion = Integer.parseInt(gradleVersion.split("\\.")[0])
+} catch (any) {
+    any.printStackTrace()
+    majorGradleVersion = 0
+}
+
+// CHANGE ME: change to match your convention plugin class names
+def gradleEnterpriseConventionsPluginClassName = "com.myorg.GradleEnterpriseConventionsPlugin"
+def buildScanConventionsPluginClassName = "com.myorg.BuildScansConventionsPlugin"
+
+if (majorGradleVersion >= 6) {
+    beforeSettings {
+        if (!it.pluginManager.hasPlugin("com.myorg.gradle-enterprise-conventions")) {
+            it.pluginManager.apply(initscript.classLoader.loadClass(gradleEnterpriseConventionsPluginClassName))
+        }
+    }
+} else if (majorGradleVersion >= 5) {
+    rootProject {
+        pluginManager.apply(initscript.classLoader.loadClass(gradleEnterpriseConventionsPluginClassName))
+    }
+} else if (majorGradleVersion >= 2) {
+    rootProject {
+        project.apply({ plugin(initscript.classLoader.loadClass(buildScanConventionsPluginClassName)) } )
+    }
+}
