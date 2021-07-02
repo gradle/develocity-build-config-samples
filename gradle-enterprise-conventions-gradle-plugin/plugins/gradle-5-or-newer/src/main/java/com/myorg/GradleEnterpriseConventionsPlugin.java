@@ -28,7 +28,13 @@ public class GradleEnterpriseConventionsPlugin implements Plugin<Object> {
             if (isGradle6OrNewer()) {
                 throw new GradleException("For Gradle versions 6.0 and newer, gradle-enterprise-conventions must be applied to Settings");
             }
-            configureGradle5((Project) target);
+
+            Project project = (Project) target;
+            if (!project.equals(project.getRootProject())) {
+                throw new GradleException("gradle-enterprise-conventions may only be applied to root project");
+            }
+
+            configureGradle5(project);
         }
     }
 
@@ -39,9 +45,6 @@ public class GradleEnterpriseConventionsPlugin implements Plugin<Object> {
     }
 
     private void configureGradle5(Project project) {
-        if (!project.equals(project.getRootProject())) {
-            throw new GradleException("gradle-enterprise-conventions may only be applied to root project");
-        }
         project.getPluginManager().apply(BuildScanPlugin.class);
         project.getPluginManager().withPlugin("com.gradle.build-scan", __ -> {
             configureGradleEnterprise(project.getExtensions().getByType(GradleEnterpriseExtension.class));
