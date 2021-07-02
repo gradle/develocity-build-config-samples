@@ -13,12 +13,12 @@ This project contains the following:
   * `example-builds` - A set of example builds that apply the convention plugins.
     * `via-build-script` - Example builds that apply the convention plugins directly in build scripts.
       * `gradle_2.0` - Example build that uses the convention plugin for Gradle 2.0 through Gradle 4.10.2.
-      * `gradle_5.6` - Example build that uses the convention plugin on a Gradle 5 project.
-      * `gradle_7.1` - Example build that uses the convention plugin on a Gradle 7.1 project.
+      * `gradle_5.1.1` - Example build that uses the convention plugin on a Gradle 5 project.
+      * `gradle_6.0.1` - Example build that uses the convention plugin on a Gradle 6 project.
     * `via-init-script` - Examples that apply the convention plugins using the init script. Each subfolder contains a build.sh that demonstrates how to apply the init script.
       * `gradle_2.0` - Example build that uses the convention plugin for Gradle 2.0 through Gradle 4.10.2 via the init script.
-      * `gradle_5.6` - Example build that uses the convention plugin on a Gradle 5 project via the init script.
-      * `gradle_7.1` - Example build that uses the convention plugin on a Gradle 7.1 project via the init script.
+      * `gradle_5.1.1` - Example build that uses the convention plugin on a Gradle 5 project via the init script.
+      * `gradle_6.0.1` - Example build that uses the convention plugin on a Gradle 6 project via the init script.
 
 ### Differences with the Common Custom User Data Gradle plugin
 These plugins differ from the Common Custom User Data Gradle Plugin in that they also apply the Gradle Enterprise plugins (the Common Custom User Data Gradle Plugin does not apply the plugins...it assumes the plugins have already been applied when it is used).
