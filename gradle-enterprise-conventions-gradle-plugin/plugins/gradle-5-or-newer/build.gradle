@@ -11,12 +11,12 @@ repositories {
     gradlePluginPortal()
 }
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
-
 dependencies {
     implementation 'com.gradle:gradle-enterprise-gradle-plugin:3.6.3'
 }
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 gradlePlugin {
     plugins {
