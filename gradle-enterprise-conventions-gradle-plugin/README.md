@@ -20,9 +20,6 @@ This project contains the following:
       * `gradle_5.1.1` - Applies the convention plugin on a Gradle 5 project via the init script
       * `gradle_6.0.1` - Applies the convention plugin on a Gradle 6 project via the init script
 
-### Differences with the Common Custom User Data Gradle plugin
-These plugins differ from the Common Custom User Data Gradle Plugin in that they also apply the Gradle Enterprise plugins (the Common Custom User Data Gradle Plugin does not apply the plugins...it assumes the plugins have already been applied when it is used).
-
 ### Running the example builds
 
 Before running the example builds, publish the two example Gradle plugins to your local Maven repository:
@@ -55,3 +52,5 @@ To run the Gradle 2.0 example builds, use Java 8. The Gradle 2.0 example builds 
 
 It is recommended to use Java 11 for the Gradle 5.1.1 and Gradle 6.0.1 example builds.
 
+### Differences with the Common Custom User Data Gradle plugin
+These plugins differ from the Common Custom User Data Gradle Plugin in that they also apply the Gradle Enterprise plugins (the Common Custom User Data Gradle Plugin does not apply the plugins...it assumes the plugins have already been applied when it is used).
