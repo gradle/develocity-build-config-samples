@@ -7,9 +7,9 @@ This project demonstrates how to share a common Gradle Enterprise configuration 
 This project contains the following:
 
   * `plugins` - Contains the example convention plugins
-    * `gradle-2-through-4` - Example convention plugin to apply and configure build scans on projects using Gradle 2.0 through Gradle 4.10.2
-    * `gradle-5-or-newer` - Example convention plugin to apply and configure Gradle Enterprise on projects using Gradle 5 or higher
-  * `init-script/add-gradle-enterprise-conventions.gradle` - Example Gradle init script that applies the appropriate convention plugin based on the Gradle version (works with all Gradle versions 2.0 and higher)
+    * `gradle-2-through-4` - Applies and configure build scans on projects using Gradle 2.0 through Gradle 4.10.2
+    * `gradle-5-or-newer` - Applies and configure Gradle Enterprise on projects using Gradle 5 or higher
+  * `init-script/add-gradle-enterprise-conventions.gradle` - Example Gradle init script that applies the appropriate convention plugin based on the Gradle version
   * `example-builds` - A set of example builds that apply the convention plugins
     * `via-build-script` - Example builds that apply the convention plugins directly in build scripts
       * `gradle_2.0` - Uses the convention plugin for Gradle 2.0 through Gradle 4.10.2
