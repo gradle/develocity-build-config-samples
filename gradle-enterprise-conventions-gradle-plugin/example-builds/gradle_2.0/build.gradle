@@ -11,4 +11,3 @@ buildscript {
 apply plugin: "com.myorg.gradle-enterprise-conventions-for-gradle-2-through-4"
 apply plugin: "java"
 
-buildScan { termsOfServiceUrl = 'https://gradle.com/terms-of-service'; termsOfServiceAgree = 'yes' }
