@@ -46,10 +46,8 @@ public class GradleEnterpriseConventionsPlugin implements Plugin<Object> {
 
     private void configureGradle5(Project project) {
         project.getPluginManager().apply(BuildScanPlugin.class);
-        project.getPluginManager().withPlugin("com.gradle.build-scan", __ -> {
-            configureGradleEnterprise(project.getExtensions().getByType(GradleEnterpriseExtension.class));
-            // configureBuildCache is not called because the build cache cannot be configured via a plugin prior to Gradle 6.0
-        });
+        configureGradleEnterprise(project.getExtensions().getByType(GradleEnterpriseExtension.class));
+        // configureBuildCache is not called because the build cache cannot be configured via a plugin prior to Gradle 6.0
     }
 
     private void configureGradleEnterprise(GradleEnterpriseExtension gradleEnterprise) {
