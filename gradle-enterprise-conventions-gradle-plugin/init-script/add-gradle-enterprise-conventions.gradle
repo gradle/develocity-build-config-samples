@@ -22,7 +22,7 @@ initscript {
         }
         dependencies {
             // CHANGE ME: change to match your convention plugin's name
-            classpath("com.myorg:gradle-enterprise-conventions-gradle-plugin:${pluginVersion}")
+            classpath("com.myorg:gradle-enterprise-conventions-gradle-plugin-gradle-5-or-newer:${pluginVersion}")
         }
     } else if (majorGradleVersion >= 2) {
         repositories {
@@ -32,7 +32,7 @@ initscript {
         }
         dependencies {
             // CHANGE ME: change to match your convention plugin's name
-            classpath("com.myorg:gradle-enterprise-conventions-for-gradle-2-through-4:${pluginVersion}")
+            classpath("com.myorg:gradle-enterprise-conventions-gradle-plugin-gradle-2-through-4:${pluginVersion}")
         }
     }
 }

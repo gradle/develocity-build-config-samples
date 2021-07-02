@@ -22,7 +22,7 @@ gradlePlugin {
     plugins {
         gradleEnterpriseConventions {
             // CHANGE ME: change for your organization
-            id = 'com.myorg.gradle-enterprise-conventions-for-gradle-2-through-4'
+            id = 'com.myorg.gradle-enterprise-conventions-gradle-2-through-4'
             displayName = 'Build Scans Convension Plugin for Gradle 2.0 through Gradle 4.10.2'
             description = 'A Gradle plugin to apply and configure the Gradle Enterprise Build Scans plugin for com.myorg'
             implementationClass = 'com.myorg.BuildScansConventionsPlugin'
