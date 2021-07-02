@@ -1,4 +1,4 @@
-## Example Gradle Enterprise Gradle Convention Plugin
+## Example Gradle Enterprise Conventions Gradle Plugin
 
 This project demonstrates how to share a common Gradle Enterprise configuration across multiple projects. It is intended to serve as a starting point for creating your own plugin to apply your specific Gradle Enterprise configuration. See inline comments for things to adjust specifically to your needs.
 
