@@ -239,8 +239,16 @@ final class CustomBuildScanEnhancements {
             String gitRepo = execAndGetStdOut("git", "config", "--get", "remote.origin.url");
             String gitCommitId = execAndGetStdOut("git", "rev-parse", "--verify", "HEAD");
             String gitCommitShortId = execAndGetStdOut("git", "rev-parse", "--short=8", "--verify", "HEAD");
-            String gitBranchName = execAndGetStdOut("git", "rev-parse", "--abbrev-ref", "HEAD");
             String gitStatus = execAndGetStdOut("git", "status", "--porcelain");
+
+            String gitBranchName;
+            // It is okay to call System.getenv directly here since this lambda is saved to the configuration cache
+            // and re-executed on every build.
+            if (isNotEmpty(System.getenv("BRANCH_NAME"))) {
+                gitBranchName = System.getenv("BRANCH_NAME");
+            } else {
+                gitBranchName = execAndGetStdOut("git", "rev-parse", "--abbrev-ref", "HEAD");
+            }
 
             if (isNotEmpty(gitRepo)) {
                 buildScan.value("Git repository", gitRepo);
