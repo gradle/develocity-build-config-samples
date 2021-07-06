@@ -3,7 +3,7 @@
     <groupId>com.gradle</groupId>
     <artifactId>common-custom-user-data-maven-extension</artifactId>
     <packaging>jar</packaging>
-    <version>1.7.2-SNAPSHOT</version>
+    <version>1.7.3-SNAPSHOT</version>
     <name>Gradle Enterprise Common Custom User Data Maven Extension</name>
     <description>A Maven extension to capture common custom user data used for Maven Build Scans in Gradle Enterprise</description>
     <url>https://github.com/gradle/gradle-build-scan-snippets/tree/master/common-custom-user-data-maven-extension</url>
@@ -65,7 +65,7 @@
         <dependency>
             <groupId>com.gradle</groupId>
             <artifactId>gradle-enterprise-maven-extension</artifactId>
-            <version>1.10.2</version>
+            <version>1.10.3</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -106,6 +106,29 @@
                     <execution>
                         <goals>
                             <goal>generate-metadata</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.2.4</version>
+                <configuration>
+                    <filters>
+                        <filter>
+                            <artifact>org.codehaus.groovy:groovy</artifact>
+                            <excludes>
+                                <exclude>META-INF/MANIFEST.MF</exclude>
+                            </excludes>
+                        </filter>
+                    </filters>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
                         </goals>
                     </execution>
                 </executions>
