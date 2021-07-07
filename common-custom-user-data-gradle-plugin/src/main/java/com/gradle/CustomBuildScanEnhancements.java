@@ -40,7 +40,7 @@ final class CustomBuildScanEnhancements {
         captureCiOrLocal();
         captureCiMetadata();
         captureGitMetadata();
-        captureTestParallelization();
+        captureTestParallelization(gradle, buildScan);
     }
 
     private void captureOs() {
@@ -301,7 +301,7 @@ final class CustomBuildScanEnhancements {
         }
     }
 
-    private void captureTestParallelization() {
+    private static void captureTestParallelization(Gradle gradle, BuildScanExtension buildScan) {
         gradle.allprojects(p ->
             p.getTasks().withType(Test.class).configureEach(test ->
                 test.doFirst(new Action<Task>() {
