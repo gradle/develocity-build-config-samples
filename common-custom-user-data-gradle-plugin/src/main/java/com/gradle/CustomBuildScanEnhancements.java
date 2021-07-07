@@ -227,11 +227,13 @@ final class CustomBuildScanEnhancements {
     }
 
     private void captureGitMetadata() {
-        buildScan.background(captureGitMetadataAction);
+        buildScan.background(new CaptureGitMetadataAction());
     }
 
-    private static final Action<BuildScanExtension> captureGitMetadataAction =
-        buildScan -> {
+    private static class CaptureGitMetadataAction implements Action<BuildScanExtension> {
+
+        @Override
+        public void execute(BuildScanExtension buildScan) {
             if (!isGitInstalled()) {
                 return;
             }
@@ -240,15 +242,7 @@ final class CustomBuildScanEnhancements {
             String gitCommitId = execAndGetStdOut("git", "rev-parse", "--verify", "HEAD");
             String gitCommitShortId = execAndGetStdOut("git", "rev-parse", "--short=8", "--verify", "HEAD");
             String gitStatus = execAndGetStdOut("git", "status", "--porcelain");
-
-            String gitBranchName;
-            // It is okay to call System.getenv directly here since this lambda is saved to the configuration cache
-            // and re-executed on every build.
-            if (isNotEmpty(System.getenv("BRANCH_NAME"))) {
-                gitBranchName = System.getenv("BRANCH_NAME");
-            } else {
-                gitBranchName = execAndGetStdOut("git", "rev-parse", "--abbrev-ref", "HEAD");
-            }
+            String gitBranchName = getGitBranchName();
 
             if (isNotEmpty(gitRepo)) {
                 buildScan.value("Git repository", gitRepo);
@@ -285,10 +279,29 @@ final class CustomBuildScanEnhancements {
                     }
                 }
             }
-        };
+        }
 
-    private static boolean isGitInstalled() {
-        return execAndCheckSuccess("git", "--version");
+        private boolean isGitInstalled() {
+            return execAndCheckSuccess("git", "--version");
+        }
+
+        private String getGitBranchName() {
+            if (isJenkins() || isHudson()) {
+                Optional<String> branch = Utils.envVariable("BRANCH_NAME", null);
+                if (branch.isPresent()) {
+                    return branch.get();
+                }
+            }
+            return execAndGetStdOut("git", "rev-parse", "--abbrev-ref", "HEAD");
+        }
+
+        private boolean isJenkins() {
+            return Utils.envVariable("JENKINS_URL", null).isPresent();
+        }
+
+        private boolean isHudson() {
+            return Utils.envVariable("HUDSON_URL", null).isPresent();
+        }
     }
 
     private void addCustomValueAndSearchLink(String name, String value) {
