@@ -309,9 +309,14 @@ final class CustomBuildScanEnhancements {
 
     private static Action<Test> captureMaxParallelForks(BuildScanExtension buildScan) {
         return test -> {
-            test.doFirst( task ->
-                buildScan.value(test.getIdentityPath() + "#maxParallelForks", String.valueOf(test.getMaxParallelForks()))
-            );
+            test.doFirst(new Action<Task>() {
+                // use anonymous inner class to keep Test task instance cacheable
+                // additionally, using lambdas as task actions is deprecated
+                @Override
+                public void execute(Task task) {
+                    buildScan.value(test.getIdentityPath() + "#maxParallelForks", String.valueOf(test.getMaxParallelForks()));
+                }
+            });
         };
     }
 
