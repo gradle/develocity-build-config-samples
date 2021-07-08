@@ -21,6 +21,7 @@
     <module>enforcer-project</module>
     <module>exec-yarn-project</module>
     <module>spring-cloud-contract-project</module>
+    <module>duplicate-finder-project</module>
   </modules>
 
   <properties>
@@ -33,7 +34,7 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.13.1</version>
+      <version>4.13.2</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
