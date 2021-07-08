@@ -27,7 +27,7 @@ import java.util.concurrent.TimeUnit;
 final class Utils {
 
     static Optional<String> envVariable(String name, ProviderFactory providers) {
-        if (isGradle65OrNewer() && providers != null) {
+        if (isGradle65OrNewer()) {
             Provider<String> variable = providers.environmentVariable(name).forUseAtConfigurationTime();
             return Optional.ofNullable(variable.getOrNull());
         }
@@ -35,7 +35,7 @@ final class Utils {
     }
 
     static Optional<String> projectProperty(String name, ProviderFactory providers, Gradle gradle) {
-        if (isGradle65OrNewer() && providers != null) {
+        if (isGradle65OrNewer()) {
             // invalidate configuration cache if different Gradle property value is set on the cmd line,
             // but in any case access Gradle property directly since project properties set in a build script or
             // init script are not fetched by ProviderFactory.gradleProperty
@@ -45,7 +45,7 @@ final class Utils {
     }
 
     static Optional<String> sysProperty(String name, ProviderFactory providers) {
-        if (isGradle65OrNewer() && providers != null) {
+        if (isGradle65OrNewer()) {
             Provider<String> property = providers.systemProperty(name).forUseAtConfigurationTime();
             return Optional.ofNullable(property.getOrNull());
         }
@@ -116,7 +116,7 @@ final class Utils {
     }
 
     static InputStream readFile(String name, ProviderFactory providers, Gradle gradle) throws FileNotFoundException {
-        if (isGradle65OrNewer() && providers != null && gradle != null) {
+        if (isGradle65OrNewer()) {
             RegularFile file = gradle.getRootProject().getLayout().getProjectDirectory().file(name);
             Provider<byte[]> fileContent = providers.fileContents(file).getAsBytes().forUseAtConfigurationTime();
             return new ByteArrayInputStream(fileContent.getOrElse(new byte[0]));

@@ -227,10 +227,16 @@ final class CustomBuildScanEnhancements {
     }
 
     private void captureGitMetadata() {
-        buildScan.background(new CaptureGitMetadataAction());
+        buildScan.background(new CaptureGitMetadataAction(providers));
     }
 
-    private static class CaptureGitMetadataAction implements Action<BuildScanExtension> {
+    private static final class CaptureGitMetadataAction implements Action<BuildScanExtension> {
+
+        private final ProviderFactory providers;
+
+        private CaptureGitMetadataAction(ProviderFactory providers) {
+            this.providers = providers;
+        }
 
         @Override
         public void execute(BuildScanExtension buildScan) {
@@ -287,7 +293,7 @@ final class CustomBuildScanEnhancements {
 
         private String getGitBranchName() {
             if (isJenkins() || isHudson()) {
-                Optional<String> branch = Utils.envVariable("BRANCH_NAME", null);
+                Optional<String> branch = Utils.envVariable("BRANCH_NAME", providers);
                 if (branch.isPresent()) {
                     return branch.get();
                 }
@@ -296,11 +302,11 @@ final class CustomBuildScanEnhancements {
         }
 
         private boolean isJenkins() {
-            return Utils.envVariable("JENKINS_URL", null).isPresent();
+            return Utils.envVariable("JENKINS_URL", providers).isPresent();
         }
 
         private boolean isHudson() {
-            return Utils.envVariable("HUDSON_URL", null).isPresent();
+            return Utils.envVariable("HUDSON_URL", providers).isPresent();
         }
     }
 
