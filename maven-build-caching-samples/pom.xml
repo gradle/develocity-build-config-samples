@@ -14,7 +14,6 @@
     <module>pmd-project</module>
     <module>spotbugs-project</module>
     <module>antlr3-project</module>
-    <module>webstart-project</module>
     <module>clojure-project</module>
     <module>asciidoctor-project</module>
     <module>animal-sniffer-project</module>
@@ -22,6 +21,9 @@
     <module>exec-yarn-project</module>
     <module>spring-cloud-contract-project</module>
     <module>duplicate-finder-project</module>
+
+    <!-- Webstart/JNLP only works when run with JDK 1.8 or earlier, so it is excluded by default. -->
+    <!-- <module>webstart-project</module> -->
   </modules>
 
   <properties>
