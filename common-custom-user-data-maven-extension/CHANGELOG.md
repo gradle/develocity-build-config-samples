@@ -2,7 +2,9 @@
 All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
-- Use the git branch name provided by Jenkins when the build is run on Jenkins (#109).
+
+## [1.7.3] - 2021-07-13
+- Fix the git branch detection on Jenkins by using the branch name provided by Jenkins (#109).
 
 ## [1.7.2] - 2021-06-28
 - Publish a "fat" jar that contains all of the extension's dependencies (to make it easier to use the extension in certian scenarios)
@@ -73,7 +75,8 @@ All notable changes to this project will be documented in this file.
 ## [1.0] - 2020-05-25
 Initial release.
 
-[Unreleased]: https://github.com/gradle/gradle-enterprise-build-config-samples/compare/common-custom-user-data-maven-extension-1.7.2...HEAD
+[Unreleased]: https://github.com/gradle/gradle-enterprise-build-config-samples/compare/common-custom-user-data-maven-extension-1.7.3...HEAD
+[1.7.3]: https://github.com/gradle/gradle-enterprise-build-config-samples/compare/common-custom-user-data-maven-extension-1.7.2...common-custom-user-data-maven-extension-1.7.3
 [1.7.2]: https://github.com/gradle/gradle-enterprise-build-config-samples/compare/common-custom-user-data-maven-extension-1.7.1...common-custom-user-data-maven-extension-1.7.2
 [1.7.1]: https://github.com/gradle/gradle-enterprise-build-config-samples/compare/common-custom-user-data-maven-extension-1.7...common-custom-user-data-maven-extension-1.7.1
 [1.7]: https://github.com/gradle/gradle-enterprise-build-config-samples/compare/common-custom-user-data-maven-extension-1.6...common-custom-user-data-maven-extension-1.7
