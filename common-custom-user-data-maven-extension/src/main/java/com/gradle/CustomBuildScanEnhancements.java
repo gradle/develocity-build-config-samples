@@ -275,7 +275,7 @@ final class CustomBuildScanEnhancements {
 
         private String getGitBranchName(Supplier<String> gitCommand) {
             if (isJenkins() || isHudson()) {
-                Optional<String> branch = Utils.envVariable("BRANCH_NAME", providers);
+                Optional<String> branch = Utils.envVariable("BRANCH_NAME");
                 if (branch.isPresent()) {
                     return branch.get();
                 }
