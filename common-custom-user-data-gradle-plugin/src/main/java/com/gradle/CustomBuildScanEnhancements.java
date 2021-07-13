@@ -9,6 +9,7 @@ import org.gradle.api.tasks.testing.Test;
 
 import java.util.Optional;
 import java.util.Properties;
+import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -247,8 +248,8 @@ final class CustomBuildScanEnhancements {
             String gitRepo = execAndGetStdOut("git", "config", "--get", "remote.origin.url");
             String gitCommitId = execAndGetStdOut("git", "rev-parse", "--verify", "HEAD");
             String gitCommitShortId = execAndGetStdOut("git", "rev-parse", "--short=8", "--verify", "HEAD");
+            String gitBranchName = getGitBranchName(() -> execAndGetStdOut("git", "rev-parse", "--abbrev-ref", "HEAD"));
             String gitStatus = execAndGetStdOut("git", "status", "--porcelain");
-            String gitBranchName = getGitBranchName();
 
             if (isNotEmpty(gitRepo)) {
                 buildScan.value("Git repository", gitRepo);
@@ -291,14 +292,14 @@ final class CustomBuildScanEnhancements {
             return execAndCheckSuccess("git", "--version");
         }
 
-        private String getGitBranchName() {
+        private String getGitBranchName(Supplier<String> gitCommand) {
             if (isJenkins() || isHudson()) {
                 Optional<String> branch = Utils.envVariable("BRANCH_NAME", providers);
                 if (branch.isPresent()) {
                     return branch.get();
                 }
             }
-            return execAndGetStdOut("git", "rev-parse", "--abbrev-ref", "HEAD");
+            return gitCommand.get();
         }
 
         private boolean isJenkins() {
@@ -308,6 +309,7 @@ final class CustomBuildScanEnhancements {
         private boolean isHudson() {
             return Utils.envVariable("HUDSON_URL", providers).isPresent();
         }
+
     }
 
     private void addCustomValueAndSearchLink(String name, String value) {
