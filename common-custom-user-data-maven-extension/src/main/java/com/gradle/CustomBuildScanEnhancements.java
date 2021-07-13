@@ -6,6 +6,7 @@ import org.apache.maven.execution.MavenSession;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -214,11 +215,13 @@ final class CustomBuildScanEnhancements {
     }
 
     private void captureGitMetadata() {
-        buildScan.background(captureGitMetadataAction);
+        buildScan.background(new CaptureGitMetadataAction());
     }
 
-    private static final Consumer<BuildScanApi> captureGitMetadataAction =
-        buildScan -> {
+    private static final class CaptureGitMetadataAction implements Consumer<BuildScanApi> {
+
+        @Override
+        public void accept(BuildScanApi buildScan) {
             if (!isGitInstalled()) {
                 return;
             }
@@ -226,7 +229,7 @@ final class CustomBuildScanEnhancements {
             String gitRepo = execAndGetStdOut("git", "config", "--get", "remote.origin.url");
             String gitCommitId = execAndGetStdOut("git", "rev-parse", "--verify", "HEAD");
             String gitCommitShortId = execAndGetStdOut("git", "rev-parse", "--short=8", "--verify", "HEAD");
-            String gitBranchName = execAndGetStdOut("git", "rev-parse", "--abbrev-ref", "HEAD");
+            String gitBranchName = getGitBranchName(() -> execAndGetStdOut("git", "rev-parse", "--abbrev-ref", "HEAD"));
             String gitStatus = execAndGetStdOut("git", "status", "--porcelain");
 
             if (isNotEmpty(gitRepo)) {
@@ -264,10 +267,30 @@ final class CustomBuildScanEnhancements {
                     }
                 }
             }
-        };
+        }
 
-    private static boolean isGitInstalled() {
-        return execAndCheckSuccess("git", "--version");
+        private boolean isGitInstalled() {
+            return execAndCheckSuccess("git", "--version");
+        }
+
+        private String getGitBranchName(Supplier<String> gitCommand) {
+            if (isJenkins() || isHudson()) {
+                Optional<String> branch = Utils.envVariable("BRANCH_NAME", providers);
+                if (branch.isPresent()) {
+                    return branch.get();
+                }
+            }
+            return gitCommand.get();
+        }
+
+        private boolean isJenkins() {
+            return Utils.envVariable("JENKINS_URL").isPresent();
+        }
+
+        private boolean isHudson() {
+            return Utils.envVariable("HUDSON_URL").isPresent();
+        }
+
     }
 
     private void addCustomValueAndSearchLink(String name, String value) {

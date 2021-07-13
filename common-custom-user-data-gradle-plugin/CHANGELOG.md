@@ -3,6 +3,7 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 - Fix configuration cache compatibility when capturing test maxParallelForks.
+- Use the git branch name provided by Jenkins when the build is run on Jenkins (#109).
 
 ## [1.4.1] - 2021-06-22
 - Encode (escape) the TeamCity build number when creating a link to the TeamCity build (fixes Issue #101).

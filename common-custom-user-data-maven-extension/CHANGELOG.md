@@ -2,6 +2,7 @@
 All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
+- Use the git branch name provided by Jenkins when the build is run on Jenkins (#109).
 
 ## [1.7.2] - 2021-06-28
 - Publish a "fat" jar that contains all of the extension's dependencies (to make it easier to use the extension in certian scenarios)
