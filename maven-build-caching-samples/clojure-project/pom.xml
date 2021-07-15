@@ -38,13 +38,13 @@
             </goals>
           </execution>
           <execution>
-            <id>add-sources</id>
+            <id>clojure-add-sources</id>
             <goals>
               <goal>add-source</goal>
             </goals>
           </execution>
           <execution>
-            <id>test-clojure</id>
+            <id>clojure-test</id>
             <phase>test</phase>
             <goals>
               <goal>test</goal>
@@ -82,7 +82,7 @@
                       </inputs>
                     </execution>
                     <execution>
-                      <id>test-clojure</id>
+                      <id>clojure-test</id>
                       <outputs>
                         <cacheableBecause>test results are consistent for declared inputs</cacheableBecause>
                       </outputs>
