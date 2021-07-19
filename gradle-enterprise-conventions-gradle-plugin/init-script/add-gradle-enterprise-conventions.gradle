@@ -37,6 +37,10 @@ initscript {
     }
 }
 
+// Enable build cache
+// Only available for Gradle 3.5+, so invoked defensively
+startParameter.metaClass.getMetaProperty("buildCacheEnabled")?.setProperty(startParameter, true)
+
 def isTopLevelBuild = gradle.getParent() == null
 if (!isTopLevelBuild) {
     return
@@ -46,7 +50,6 @@ def majorGradleVersion
 try {
     majorGradleVersion = Integer.parseInt(gradleVersion.split("\\.")[0])
 } catch (any) {
-    any.printStackTrace()
     majorGradleVersion = 0
 }
 

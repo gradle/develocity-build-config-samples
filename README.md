@@ -16,13 +16,6 @@ The samples can be roughly grouped into the following categories:
 
 Every sample contains some explanatory information on its purpose and how to make use of it.
 
-### Groovy scripts for Maven
-
-The easiest way to make use of the data capturing Groovy scripts for Maven is to
-
- - apply the [Common Custom User Data Maven Extension][common-custom-user-data-maven-extension]
- - move and rename the given Groovy script to .mvn/gradle-enterprise-custom-user-data.groovy in the root project directory
-
 ## Learn more
 
 Visit our website to learn more about [Gradle Enterprise][gradle-enterprise].

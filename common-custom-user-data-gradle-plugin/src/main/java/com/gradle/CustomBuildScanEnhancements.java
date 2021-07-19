@@ -9,6 +9,7 @@ import org.gradle.api.tasks.testing.Test;
 
 import java.util.Optional;
 import java.util.Properties;
+import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -227,11 +228,19 @@ final class CustomBuildScanEnhancements {
     }
 
     private void captureGitMetadata() {
-        buildScan.background(captureGitMetadataAction);
+        buildScan.background(new CaptureGitMetadataAction(providers));
     }
 
-    private static final Action<BuildScanExtension> captureGitMetadataAction =
-        buildScan -> {
+    private static final class CaptureGitMetadataAction implements Action<BuildScanExtension> {
+
+        private final ProviderFactory providers;
+
+        private CaptureGitMetadataAction(ProviderFactory providers) {
+            this.providers = providers;
+        }
+
+        @Override
+        public void execute(BuildScanExtension buildScan) {
             if (!isGitInstalled()) {
                 return;
             }
@@ -239,7 +248,7 @@ final class CustomBuildScanEnhancements {
             String gitRepo = execAndGetStdOut("git", "config", "--get", "remote.origin.url");
             String gitCommitId = execAndGetStdOut("git", "rev-parse", "--verify", "HEAD");
             String gitCommitShortId = execAndGetStdOut("git", "rev-parse", "--short=8", "--verify", "HEAD");
-            String gitBranchName = execAndGetStdOut("git", "rev-parse", "--abbrev-ref", "HEAD");
+            String gitBranchName = getGitBranchName(() -> execAndGetStdOut("git", "rev-parse", "--abbrev-ref", "HEAD"));
             String gitStatus = execAndGetStdOut("git", "status", "--porcelain");
 
             if (isNotEmpty(gitRepo)) {
@@ -277,10 +286,30 @@ final class CustomBuildScanEnhancements {
                     }
                 }
             }
-        };
+        }
 
-    private static boolean isGitInstalled() {
-        return execAndCheckSuccess("git", "--version");
+        private boolean isGitInstalled() {
+            return execAndCheckSuccess("git", "--version");
+        }
+
+        private String getGitBranchName(Supplier<String> gitCommand) {
+            if (isJenkins() || isHudson()) {
+                Optional<String> branch = Utils.envVariable("BRANCH_NAME", providers);
+                if (branch.isPresent()) {
+                    return branch.get();
+                }
+            }
+            return gitCommand.get();
+        }
+
+        private boolean isJenkins() {
+            return Utils.envVariable("JENKINS_URL", providers).isPresent();
+        }
+
+        private boolean isHudson() {
+            return Utils.envVariable("HUDSON_URL", providers).isPresent();
+        }
+
     }
 
     private void addCustomValueAndSearchLink(String name, String value) {
@@ -303,16 +332,21 @@ final class CustomBuildScanEnhancements {
 
     private void captureTestParallelization() {
         gradle.allprojects(p ->
-            p.getTasks().withType(Test.class).configureEach(test ->
-                test.doFirst(new Action<Task>() {
-                    // use anonymous inner class to keep Test task instance cacheable
-                    @Override
-                    public void execute(Task task) {
-                        buildScan.value(test.getIdentityPath() + "#maxParallelForks", String.valueOf(test.getMaxParallelForks()));
-                    }
-                })
-            )
+            p.getTasks().withType(Test.class).configureEach(captureMaxParallelForks(buildScan))
         );
+    }
+
+    private static Action<Test> captureMaxParallelForks(BuildScanExtension buildScan) {
+        return test -> {
+            test.doFirst(new Action<Task>() {
+                // use anonymous inner class to keep Test task instance cacheable
+                // additionally, using lambdas as task actions is deprecated
+                @Override
+                public void execute(Task task) {
+                    buildScan.value(test.getIdentityPath() + "#maxParallelForks", String.valueOf(test.getMaxParallelForks()));
+                }
+            });
+        };
     }
 
     private Optional<String> envVariable(String name) {

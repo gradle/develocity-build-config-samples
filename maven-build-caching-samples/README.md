@@ -12,10 +12,11 @@ The following Maven plugins are demonstrated:
 - Apache Avro: `org.apache.avro:avro-maven-plugi`
 - Protobuf: `com.github.os72:protoc-jar-maven-plugin`
 - Antlr3: `org.antlr:antlr3-maven-plugin`
-- Webstart: `org.codehaus.mojo:webstart-maven-plugin` (Java 1.8 only)
 - Clojure: `com.theoryinpractise:clojure-maven-plugin`
 - AsciiDoctor: `org.asciidoctor:asciidoctor-maven-plugin`
 - Animal Sniffer: `org.codehaus.mojo:animal-sniffer-maven-plugin`
-- Enforcer (enforceBytecodeVersion): `org.apache.maven.plugins:maven-enforcer-plugin`
+- Enforcer: `org.apache.maven.plugins:maven-enforcer-plugin`
 - Exec (driving Yarn Package Manager): `org.codehaus.mojo:exec-maven-plugin`
 - Spring Cloud Contract: `org.springframework.cloud:spring-cloud-contract-maven-plugin`
+- Duplicate Finder Plugin: `org.basepom.maven:duplicate-finder-maven-plugin`
+- Webstart: `org.codehaus.mojo:webstart-maven-plugin` (Java 1.8 only)

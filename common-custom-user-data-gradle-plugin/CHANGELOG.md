@@ -3,6 +3,10 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [1.4.2] - 2021-07-13
+- Fix configuration cache compatibility when capturing test maxParallelForks.
+- Fix the git branch detection on Jenkins by using the branch name provided by Jenkins (#109).
+
 ## [1.4.1] - 2021-06-22
 - Encode (escape) the TeamCity build number when creating a link to the TeamCity build (fixes Issue #101).
 
@@ -42,7 +46,8 @@ All notable changes to this project will be documented in this file.
 ## [1.0] - 2021-01-14
 Initial release.
 
-[Unreleased]: https://github.com/gradle/gradle-enterprise-build-config-samples/compare/common-custom-user-data-gradle-plugin-1.4.1...HEAD
+[Unreleased]: https://github.com/gradle/gradle-enterprise-build-config-samples/compare/common-custom-user-data-gradle-plugin-1.4.2...HEAD
+[1.4.2]: https://github.com/gradle/gradle-enterprise-build-config-samples/compare/common-custom-user-data-gradle-plugin-1.4.1...common-custom-user-data-gradle-plugin-1.4.2
 [1.4.1]: https://github.com/gradle/gradle-enterprise-build-config-samples/compare/common-custom-user-data-gradle-plugin-1.4...common-custom-user-data-gradle-plugin-1.4.1
 [1.4]: https://github.com/gradle/gradle-enterprise-build-config-samples/compare/common-custom-user-data-gradle-plugin-1.3...common-custom-user-data-gradle-plugin-1.4
 [1.3]: https://github.com/gradle/gradle-enterprise-build-config-samples/compare/common-custom-user-data-gradle-plugin-1.2.1...common-custom-user-data-gradle-plugin-1.3

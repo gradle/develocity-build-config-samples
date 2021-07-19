@@ -1,0 +1,124 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <artifactId>duplicate-finder-project</artifactId>
+  <packaging>jar</packaging>
+
+  <parent>
+    <groupId>com.example</groupId>
+    <artifactId>gradle-enterprise-maven-caching-sample</artifactId>
+    <version>1.0-SNAPSHOT</version>
+  </parent>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.basepom.maven</groupId>
+        <artifactId>duplicate-finder-maven-plugin</artifactId>
+        <version>1.3.0</version>
+        <executions>
+          <execution>
+            <id>default</id>
+            <phase>verify</phase>
+            <goals>
+              <goal>check</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <checkCompileClasspath>true</checkCompileClasspath>
+          <checkRuntimeClasspath>true</checkRuntimeClasspath>
+          <checkTestClasspath>true</checkTestClasspath>
+          <failBuildInCaseOfDifferentContentConflict>false</failBuildInCaseOfDifferentContentConflict>
+          <failBuildInCaseOfEqualContentConflict>false</failBuildInCaseOfEqualContentConflict>
+          <failBuildInCaseOfConflict>false</failBuildInCaseOfConflict>
+          <printEqualFiles>false</printEqualFiles>
+          <preferLocal>true</preferLocal>
+      </configuration>
+      </plugin>
+    </plugins>
+
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>com.gradle</groupId>
+          <artifactId>gradle-enterprise-maven-extension</artifactId>
+          <configuration>
+            <gradleEnterprise>
+              <plugins>
+                <plugin>
+                  <groupId>org.basepom.maven</groupId>
+                  <artifactId>duplicate-finder-maven-plugin</artifactId>
+                  <inputs>
+                    <fileSets>
+                    </fileSets>
+                    <properties>
+                      <property><name>skip</name></property>
+                      <property><name>quiet</name></property>
+                      <property><name>preferLocal</name></property>
+                      <property><name>printEqualFiles</name></property>
+                    
+                      <property><name>checkCompileClasspath</name></property>
+                      <property><name>checkRuntimeClasspath</name></property>
+                      <property><name>checkTestClasspath</name></property>
+                      <property><name>failBuildInCaseOfDifferentContentConflict</name></property>
+                      <property><name>failBuildInCaseOfEqualContentConflict</name></property>
+                      <property><name>failBuildInCaseOfConflict</name></property>
+
+                      <property><name>includePomProjects</name></property>
+                      <property><name>includeBootClasspath</name></property>
+                      <property><name>bootClasspathProperty</name></property>
+
+                      <property><name>useDefaultResourceIgnoreList</name></property>
+                      <property><name>useDefaultClassIgnoreList</name></property>
+
+                      <property><name>ignoredResourcePatterns</name></property>
+                      <property><name>ignoredClassPatterns</name></property>
+
+                      <property><name>useResultFile</name></property>
+                      <property><name>resultFileMinClasspathCount</name></property>
+
+                      <!-- 
+                        These complex types cannot be automatically handled, and are difficult to map.
+                        If these properties are non-empty, caching will be disabled. 
+                      -->
+                      <property><name>ignoredDependencies</name></property>
+                      <property><name>conflictingDependencies</name></property>
+                    </properties>
+                  </inputs>
+                  <nestedProperties>
+                    <!-- All dependency artifacts are inputs to the check-->
+                    <property>
+                      <name>project</name>
+                      <iteratedProperties>
+                        <property>
+                          <name>artifacts</name>
+                          <inputs>
+                            <fileSets>
+                              <fileSet>
+                                <name>file</name>
+                                <normalization>CLASSPATH</normalization>
+                              </fileSet>
+                            </fileSets>
+                          </inputs>
+                        </property>
+                      </iteratedProperties>
+                    </property>
+                  </nestedProperties>
+                  <outputs>
+                    <files>
+                      <file>
+                        <name>resultFile</name>
+                      </file>
+                    </files>
+                    <cacheableBecause>generates consistent outputs for declared inputs</cacheableBecause>
+                  </outputs>
+                </plugin>
+              </plugins>
+            </gradleEnterprise>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+</project>
