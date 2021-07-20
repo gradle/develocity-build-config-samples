@@ -24,7 +24,7 @@
           <sourceDirectory>src/docs/asciidoc</sourceDirectory>
           <attributes>
             <endpoint-url>http://example.org</endpoint-url>
-            <sourcedir>${project.build.sourceDirectory}</sourcedir>
+            <sourcedir>src/main/java</sourcedir>
             <project-version>${project.version}</project-version>
           </attributes>
         </configuration>
