@@ -1,0 +1,17 @@
+version: 2
+updates:
+  - package-ecosystem: "maven"
+    directory: "common-custom-user-data-maven-extension"
+    schedule:
+      interval: "daily"
+    target-branch: "dependabot-updates"
+  - package-ecosystem: "maven"
+    directory: "common-gradle-enterprise-maven-configuration"
+    schedule:
+      interval: "daily"
+    target-branch: "dependabot-updates"
+  - package-ecosystem: "maven"
+    directory: "maven-build-caching-samples"
+    schedule:
+      interval: "daily"
+    target-branch: "dependabot-updates"
