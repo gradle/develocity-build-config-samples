@@ -1,4 +1,10 @@
 version: 2
+registries:
+  gradle-plugin-portal:
+    type: maven-repository
+    url: https://plugins.gradle.org/m2
+    username: dummy # Required by dependabot
+    password: dummy # Required by dependabot
 updates:
   - package-ecosystem: "maven"
     directory: "common-custom-user-data-maven-extension"
@@ -12,6 +18,13 @@ updates:
     target-branch: "dependabot-updates"
   - package-ecosystem: "maven"
     directory: "maven-build-caching-samples"
+    schedule:
+      interval: "daily"
+    target-branch: "dependabot-updates"
+  - package-ecosystem: "gradle"
+    directory: "common-custom-user-data-gradle-plugin"
+    registries:
+      - gradle-plugin-portal
     schedule:
       interval: "daily"
     target-branch: "dependabot-updates"
