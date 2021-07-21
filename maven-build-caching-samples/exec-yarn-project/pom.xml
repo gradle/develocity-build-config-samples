@@ -15,7 +15,7 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>exec-maven-plugin</artifactId>
-        <version>1.6.0</version>
+        <version>3.0.0</version>
         <executions>
           <execution>
             <id>yarn-install</id>
@@ -124,6 +124,9 @@
                             <name>testSourceRoot</name>
                           </property>
                           <property>
+                            <name>timeout</name>
+                          </property>
+                          <property>
                             <name>toolchain</name>
                           </property>
                           <property>
@@ -135,14 +138,16 @@
                           <ignore>executableDependency</ignore>
                           <ignore>longClasspath</ignore>
                           <ignore>longModulepath</ignore>
-                          <!-- Whether to send logs to a file or not -->
+                          <!-- Logging configuration -->
                           <ignore>outputFile</ignore>
+                          <ignore>quietLogs</ignore>
+                          <ignore>useMavenLogger</ignore>
                           <!-- internal mojo properties -->
                           <ignore>basedir</ignore>
-                          <ignore>localRepository</ignore>
+                          <ignore>buildDirectory</ignore>
+                          <ignore>plugin</ignore>
                           <ignore>pluginDependencies</ignore>
                           <ignore>project</ignore>
-                          <ignore>remoteRepositories</ignore>
                           <ignore>session</ignore>
                         </ignoredProperties>
                       </inputs>
