@@ -17,14 +17,14 @@
       <plugin>
         <groupId>org.asciidoctor</groupId>
         <artifactId>asciidoctor-maven-plugin</artifactId>
-        <version>2.1.0</version>
+        <version>2.2.0</version>
         <dependencies>
         </dependencies>
         <configuration>
           <sourceDirectory>src/docs/asciidoc</sourceDirectory>
           <attributes>
             <endpoint-url>http://example.org</endpoint-url>
-            <sourcedir>${project.build.sourceDirectory}</sourcedir>
+            <sourcedir>src/main/java</sourcedir>
             <project-version>${project.version}</project-version>
           </attributes>
         </configuration>

@@ -14,7 +14,7 @@
     <dependency>
       <groupId>org.springframework.cloud</groupId>
       <artifactId>spring-cloud-starter-contract-verifier</artifactId>
-      <version>3.0.2</version>
+      <version>3.0.3</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -24,10 +24,30 @@
       <plugin>
         <groupId>org.springframework.cloud</groupId>
         <artifactId>spring-cloud-contract-maven-plugin</artifactId>
-        <version>3.0.2</version>
+        <version>3.0.3</version>
         <extensions>true</extensions>
         <configuration></configuration>
       </plugin>
+      <!-- When resolving from cache, need to explicitly register generated test sources -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <version>3.2.0</version>
+        <executions>
+          <execution>
+            <phase>generate-test-sources</phase>
+            <goals>
+              <goal>add-test-source</goal>
+            </goals>
+            <configuration>
+              <sources>
+                <source>target/generated-test-sources/contracts</source>
+              </sources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
       <!-- We don't have a real app, so generate the contract tests, but skip running them -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
