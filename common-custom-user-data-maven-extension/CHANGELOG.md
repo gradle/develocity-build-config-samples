@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
+- Updated dependency versions: 
+  - org.codehaus.groovy:3.0.7 -> 3.0.8
+  - org.codehaus.plexus:plexus-component-annotations:2.0.0 -> 2.1.0
 
 ## [1.7.3] - 2021-07-13
 - Fix the git branch detection on Jenkins by using the branch name provided by Jenkins (#109).
