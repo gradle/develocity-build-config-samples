@@ -65,7 +65,7 @@
         <dependency>
             <groupId>com.gradle</groupId>
             <artifactId>gradle-enterprise-maven-extension</artifactId>
-            <version>1.10.3</version>
+            <version>1.10.4</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
