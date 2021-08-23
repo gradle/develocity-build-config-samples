@@ -1,10 +1,12 @@
+import java.nio.charset.StandardCharsets
 import java.security.MessageDigest
 
 /**
  * This Gradle script captures the system properties available to each Test task, hashes the properties' values,
  * and adds these as custom values.
+ * This should be applied to the root project since it configures all projects:
+ * <code> apply from: file('gradle-test-execution-system-properties.gradle') </code>
  */
-
 def buildScanApi = project.extensions.findByName('buildScan')
 if (!buildScanApi) {
     return
@@ -13,12 +15,13 @@ if (!buildScanApi) {
 allprojects {
     tasks.withType(Test).configureEach { t ->
         doFirst {
-            t.systemProperties.forEach { key, val -> buildScan.value(t.identityPath + "#sysProps-" + key, hash(val)) }
+            t.systemProperties.forEach { key, val -> buildScan.value("${t.identityPath}#sysProps-$key", hash(val)) }
         }
     }
 }
 
 ext.MESSAGE_DIGEST = MessageDigest.getInstance('SHA-256')
+
 String hash(Object value) {
     if (value == null) {
         null
