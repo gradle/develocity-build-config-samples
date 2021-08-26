@@ -1,6 +1,8 @@
 /**
  * This Gradle script captures all tasks of a given type taking longer to execute than a certain threshold,
  * and adds these as custom values.
+ * This should be applied to the root project:
+ * <code> apply from: file('gradle-slow-task-executions.gradle') </code>
  */
 
 def buildScanApi = project.extensions.findByName('buildScan')
