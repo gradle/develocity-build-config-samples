@@ -1,6 +1,8 @@
 /**
  * This Gradle script captures issues found by reporting tasks,
  * and adds these as custom values.
+ * This should be applied to the root project:
+ * <code> apply from: file('gradle-quality-check-issues.gradle') </code>
  */
 
 def buildScanApi = project.extensions.findByName('buildScan')
