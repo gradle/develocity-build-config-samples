@@ -20,3 +20,4 @@ The following Maven plugins are demonstrated:
 - Spring Cloud Contract: `org.springframework.cloud:spring-cloud-contract-maven-plugin`
 - Duplicate Finder Plugin: `org.basepom.maven:duplicate-finder-maven-plugin`
 - Webstart: `org.codehaus.mojo:webstart-maven-plugin` (Java 1.8 only)
+- Kotlin: `org.jetbrains.kotlin:kotlin-maven-plugin`
