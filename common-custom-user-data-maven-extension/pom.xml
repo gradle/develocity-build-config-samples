@@ -3,7 +3,7 @@
     <groupId>com.gradle</groupId>
     <artifactId>common-custom-user-data-maven-extension</artifactId>
     <packaging>jar</packaging>
-    <version>1.8</version>
+    <version>1.8.1-SNAPSHOT</version>
     <name>Gradle Enterprise Common Custom User Data Maven Extension</name>
     <description>A Maven extension to capture common custom user data used for Maven Build Scans in Gradle Enterprise</description>
     <url>https://github.com/gradle/gradle-build-scan-snippets/tree/master/common-custom-user-data-maven-extension</url>
@@ -16,7 +16,7 @@
     <scm>
         <developerConnection>scm:git:https://github.com/gradle/gradle-enterprise-build-config-samples.git</developerConnection>
         <url>https://github.com/gradle/gradle-enterprise-build-config-samples</url>
-        <tag>common-custom-user-data-maven-extension-1.8</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <licenses>
