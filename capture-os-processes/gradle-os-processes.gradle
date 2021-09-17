@@ -4,6 +4,8 @@ import java.util.concurrent.TimeUnit
 /**
  * This Gradle script captures the OS processes as reported by the OS 'ps' command,
  * and adds these as a custom value.
+ * This should be applied to the root project:
+ * <code> apply from: file('gradle-os-processes.gradle') </code>
  */
 
 def buildScanApi = project.extensions.findByName('buildScan')

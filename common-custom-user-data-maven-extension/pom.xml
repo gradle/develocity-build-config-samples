@@ -3,7 +3,7 @@
     <groupId>com.gradle</groupId>
     <artifactId>common-custom-user-data-maven-extension</artifactId>
     <packaging>jar</packaging>
-    <version>1.7.4-SNAPSHOT</version>
+    <version>1.8.1-SNAPSHOT</version>
     <name>Gradle Enterprise Common Custom User Data Maven Extension</name>
     <description>A Maven extension to capture common custom user data used for Maven Build Scans in Gradle Enterprise</description>
     <url>https://github.com/gradle/gradle-build-scan-snippets/tree/master/common-custom-user-data-maven-extension</url>
@@ -53,7 +53,7 @@
         <dependency>
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-core</artifactId>
-            <version>3.8.1</version>
+            <version>3.8.2</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -65,13 +65,13 @@
         <dependency>
             <groupId>com.gradle</groupId>
             <artifactId>gradle-enterprise-maven-extension</artifactId>
-            <version>1.10.3</version>
+            <version>1.11</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy</artifactId>
-            <version>3.0.8</version>
+            <version>3.0.9</version>
         </dependency>
     </dependencies>
 
@@ -165,7 +165,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
-                        <version>3.3.0</version>
+                        <version>3.3.1</version>
                         <executions>
                             <execution>
                                 <id>attach-javadocs</id>

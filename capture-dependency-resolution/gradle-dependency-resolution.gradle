@@ -2,6 +2,8 @@
 /**
  * This Gradle script captures any dependency configurations that are resolved early to build the task graph,
  * and adds these as custom values.
+ * This should be applied to the root project:
+ * <code> apply from: file('gradle-dependency-resolution.gradle') </code>
  */
 
 def buildScanApi = project.extensions.findByName('buildScan')

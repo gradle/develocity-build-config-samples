@@ -3,6 +3,10 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [1.8] - 2021-09-16
+- Declare extension as a `GradleEnterpriseListener` component
+- Update dependency versions
+
 ## [1.7.3] - 2021-07-13
 - Fix the git branch detection on Jenkins by using the branch name provided by Jenkins (#109).
 
@@ -75,7 +79,8 @@ All notable changes to this project will be documented in this file.
 ## [1.0] - 2020-05-25
 Initial release.
 
-[Unreleased]: https://github.com/gradle/gradle-enterprise-build-config-samples/compare/common-custom-user-data-maven-extension-1.7.3...HEAD
+[Unreleased]: https://github.com/gradle/gradle-enterprise-build-config-samples/compare/common-custom-user-data-maven-extension-1.8...HEAD
+[1.8]: https://github.com/gradle/gradle-enterprise-build-config-samples/compare/common-custom-user-data-maven-extension-1.7.3...1.8
 [1.7.3]: https://github.com/gradle/gradle-enterprise-build-config-samples/compare/common-custom-user-data-maven-extension-1.7.2...common-custom-user-data-maven-extension-1.7.3
 [1.7.2]: https://github.com/gradle/gradle-enterprise-build-config-samples/compare/common-custom-user-data-maven-extension-1.7.1...common-custom-user-data-maven-extension-1.7.2
 [1.7.1]: https://github.com/gradle/gradle-enterprise-build-config-samples/compare/common-custom-user-data-maven-extension-1.7...common-custom-user-data-maven-extension-1.7.1
