@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
 ## [1.8] - 2021-09-16
-- Add compatibility with Gradle Enterprise Maven Extension 1.11, see README for version compatibility
+- Declare extension as a `GradleEnterpriseListener` component
 - Update dependency versions
 
 ## [1.7.3] - 2021-07-13
