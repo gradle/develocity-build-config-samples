@@ -3,7 +3,7 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
-## [1.8]
+## [1.8] - 2021-09-16
 - Add compatibility with Gradle Enterprise Maven Extension 1.11, see README for version compatibility
 - Update dependency versions
 
