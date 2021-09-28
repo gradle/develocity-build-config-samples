@@ -105,6 +105,16 @@ final class Utils {
         }
     }
 
+    static URI stripUserInfo(URI uri) {
+        if (uri.getUserInfo() == null) {
+            return uri;
+        } else {
+            String userInfoPart = uri.getUserInfo() + '@';
+            String stripped = uri.toString().replace(userInfoPart, "");
+            return URI.create(stripped);
+        }
+    }
+
     static Properties readPropertiesFile(String name, ProviderFactory providers, Gradle gradle) {
         try (InputStream input = readFile(name, providers, gradle)) {
             Properties properties = new Properties();

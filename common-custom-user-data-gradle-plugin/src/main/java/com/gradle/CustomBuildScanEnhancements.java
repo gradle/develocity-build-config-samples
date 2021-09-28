@@ -7,18 +7,15 @@ import org.gradle.api.invocation.Gradle;
 import org.gradle.api.provider.ProviderFactory;
 import org.gradle.api.tasks.testing.Test;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.gradle.Utils.appendIfMissing;
-import static com.gradle.Utils.execAndCheckSuccess;
-import static com.gradle.Utils.execAndGetStdOut;
-import static com.gradle.Utils.isNotEmpty;
-import static com.gradle.Utils.stripPrefix;
-import static com.gradle.Utils.urlEncode;
+import static com.gradle.Utils.*;
 
 /**
  * Adds a standard set of useful tags, links and custom values to all build scans published.
@@ -252,7 +249,7 @@ final class CustomBuildScanEnhancements {
             String gitStatus = execAndGetStdOut("git", "status", "--porcelain");
 
             if (isNotEmpty(gitRepo)) {
-                buildScan.value("Git repository", gitRepo);
+                buildScan.value("Git repository", sanitizeUrl(gitRepo));
             }
             if (isNotEmpty(gitCommitId)) {
                 buildScan.value("Git commit id", gitCommitId);
@@ -290,6 +287,15 @@ final class CustomBuildScanEnhancements {
 
         private boolean isGitInstalled() {
             return execAndCheckSuccess("git", "--version");
+        }
+
+        private String sanitizeUrl(String url) {
+            try {
+                URI parsedUrl = new URI(url);
+                return stripUserInfo(parsedUrl).toString();
+            } catch (URISyntaxException e) {
+                return url;
+            }
         }
 
         private String getGitBranchName(Supplier<String> gitCommand) {
