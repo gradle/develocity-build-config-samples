@@ -15,7 +15,13 @@ import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.gradle.Utils.*;
+import static com.gradle.Utils.appendIfMissing;
+import static com.gradle.Utils.execAndCheckSuccess;
+import static com.gradle.Utils.execAndGetStdOut;
+import static com.gradle.Utils.isNotEmpty;
+import static com.gradle.Utils.stripPrefix;
+import static com.gradle.Utils.stripUserInfo;
+import static com.gradle.Utils.urlEncode;
 
 /**
  * Adds a standard set of useful tags, links and custom values to all build scans published.
