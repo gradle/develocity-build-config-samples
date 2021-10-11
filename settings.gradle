@@ -1,0 +1,16 @@
+rootProject.name = "gradle-enterprise-build-config-samples"
+
+include "capture-dependency-resolution"
+include "capture-git-diffs"
+include "capture-os-processes"
+include "capture-quality-check-issues"
+include "capture-slow-workunit-executions"
+include "capture-test-execution-system-properties"
+include "capture-test-execution-system-properties"
+
+rootProject.children.each {
+    String sampleName = it.name.substring(it.name.indexOf('-'))
+    it.buildFileName = 'gradle' + sampleName + '.gradle'
+    println('custom build name: ' + it.buildFileName)
+}
+
