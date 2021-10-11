@@ -43,7 +43,7 @@ jobs:
               with:
                   java-version: '11'
                   distribution: 'adopt'
-            - name: Run Gradle smoke test on sample
+            - name: Integrates sample scripts in order to validate them
               env:
                   FOLDER: ${{ matrix.sample-folder }}
                   GRADLE_BUILD_FILE: ${{ matrix.sample-build-file }}
