@@ -14,11 +14,12 @@ jobs:
                   java-version: '11'
                   distribution: 'adopt'
             - name: Build CCUD Gradle plugin
-              run: ./gradlew build -x signArchives
-              working-directory: common-custom-user-data-gradle-plugin
+              uses: gradle/gradle-build-action@v2
+              with:
+                  arguments: build -x signArchives
+                  build-root-directory: common-custom-user-data-gradle-plugin
 
     verify-samples:
-        needs: build-ccud
         runs-on: ubuntu-latest
         strategy:
             matrix:
@@ -47,5 +48,7 @@ jobs:
               env:
                   FOLDER: ${{ matrix.sample-folder }}
                   GRADLE_BUILD_FILE: ${{ matrix.sample-build-file }}
-              run: ./gradlew tasks -b ../$FOLDER/$GRADLE_BUILD_FILE
-              working-directory: common-custom-user-data-gradle-plugin
+              uses: gradle/gradle-build-action@v2
+              with:
+                  arguments: tasks -b ../$FOLDER/$GRADLE_BUILD_FILE
+                  build-root-directory: common-custom-user-data-gradle-plugin
