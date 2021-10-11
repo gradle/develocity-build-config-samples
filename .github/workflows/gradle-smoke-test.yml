@@ -24,18 +24,12 @@ jobs:
         strategy:
             matrix:
                 include:
-                    - sample-folder: "capture-dependency-resolution"
-                      sample-build-file: "gradle-dependency-resolution.gradle"
-                    - sample-folder: "capture-git-diffs"
-                      sample-build-file: "gradle-git-diffs.gradle"
-                    - sample-folder: "capture-os-processes"
-                      sample-build-file: "gradle-os-processes.gradle"
-                    - sample-folder: "capture-quality-check-issues"
-                      sample-build-file: "gradle-quality-check-issues.gradle"
-                    - sample-folder: "capture-slow-workunit-executions"
-                      sample-build-file: "gradle-slow-task-executions.gradle"
-                    - sample-folder: "capture-test-execution-system-properties"
-                      sample-build-file: "gradle-test-execution-system-properties.gradle"
+                    - relative-path-to-sample-build-file: "../capture-dependency-resolution/gradle-dependency-resolution.gradle"
+                    - relative-path-to-sample-build-file: "../capture-git-diffs/gradle-git-diffs.gradle"
+                    - relative-path-to-sample-build-file: "../capture-os-processes/gradle-os-processes.gradle"
+                    - relative-path-to-sample-build-file: "../capture-quality-check-issues/gradle-quality-check-issues.gradle"
+                    - relative-path-to-sample-build-file: "../capture-slow-workunit-executions/gradle-slow-task-executions.gradle"
+                    - relative-path-to-sample-build-file: "../capture-test-execution-system-properties/gradle-test-execution-system-properties.gradle"
 
         steps:
             - uses: actions/checkout@v2
@@ -47,5 +41,5 @@ jobs:
             - name: Integrates sample scripts in order to validate them
               uses: gradle/gradle-build-action@v2
               with:
-                  arguments: tasks -b ../${{ matrix.sample-folder }}/${{ matrix.sample-build-file }}
+                  arguments: tasks -b ${{ matrix.relative-path-to-sample-build-file }}
                   build-root-directory: common-custom-user-data-gradle-plugin
