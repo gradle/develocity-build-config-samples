@@ -13,7 +13,27 @@ jobs:
               with:
                   java-version: '11'
                   distribution: 'adopt'
-            - name: Validate Gradle wrapper
-              uses: gradle/wrapper-validation-action@e6e38bacfdf1a337459f332974bb2327a31aaf4b
-            - name: Run Gradle smoke test
-              run: ./gradlew tasks
+            - name: Build CCUD Gradle plugin
+              run: ./gradlew build
+              working-directory: common-custom-user-data-gradle-plugin
+            - name: Run Gradle smoke test on capture-dependency-resolution sample
+              run: ./gradlew tasks -b ../capture-dependency-resolution/gradle-dependency-resolution.gradle
+              working-directory: common-custom-user-data-gradle-plugin
+            - name: Run Gradle smoke test on capture-git-diffs
+              run: ./gradlew tasks -b ../capture-git-diffs/gradle-git-diffs.gradle
+              working-directory: common-custom-user-data-gradle-plugin
+            - name: Run Gradle smoke test on capture-os-processes
+              run: ./gradlew tasks -b ../capture-os-processes/gradle-os-processes.gradle
+              working-directory: common-custom-user-data-gradle-plugin
+            - name: Run Gradle smoke test on capture-quality-check-issues
+              run: ./gradlew tasks -b ../capture-quality-check-issues/gradle-quality-check-issues.gradle
+              working-directory: common-custom-user-data-gradle-plugin
+            - name: Run Gradle smoke test on capture-slow-workunit-executions
+              run: ./gradlew tasks -b ../capture-slow-workunit-executions/gradle-slow-task-executions.gradle
+              working-directory: common-custom-user-data-gradle-plugin
+            - name: Run Gradle smoke test on capture-test-execution-system-properties
+              run: ./gradlew tasks -b ../capture-test-execution-system-properties/gradle-test-execution-system-properties.gradle
+              working-directory: common-custom-user-data-gradle-plugin
+            - name: Run Gradle smoke test on capture-top-level-project
+              run: ./gradlew tasks -b ../capture-top-level-project/gradle-top-level-project.gradle
+              working-directory: common-custom-user-data-gradle-plugin
