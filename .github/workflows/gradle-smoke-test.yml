@@ -45,10 +45,7 @@ jobs:
                   java-version: '11'
                   distribution: 'adopt'
             - name: Integrates sample scripts in order to validate them
-              env:
-                  FOLDER: ${{ matrix.sample-folder }}
-                  GRADLE_BUILD_FILE: ${{ matrix.sample-build-file }}
               uses: gradle/gradle-build-action@v2
               with:
-                  arguments: tasks -b ../$FOLDER/$GRADLE_BUILD_FILE
+                  arguments: tasks -b ../${{ matrix.sample-folder }}/${{ matrix.sample-build-file }}
                   build-root-directory: common-custom-user-data-gradle-plugin
