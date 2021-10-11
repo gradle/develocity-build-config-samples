@@ -14,7 +14,7 @@ jobs:
                   java-version: '11'
                   distribution: 'adopt'
             - name: Build CCUD Gradle plugin
-              run: ./gradlew build
+              run: ./gradlew build -x signArchives
               working-directory: common-custom-user-data-gradle-plugin
             - name: Run Gradle smoke test on capture-dependency-resolution sample
               run: ./gradlew tasks -b ../capture-dependency-resolution/gradle-dependency-resolution.gradle
