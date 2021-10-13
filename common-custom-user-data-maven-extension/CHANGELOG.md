@@ -3,6 +3,9 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [1.8.1] - 2021-10-13
+- Avoid use of `org.apache.maven.monitor.logging.DefaultLog` since this type has been renamed in Maven 4 (#165)
+
 ## [1.8] - 2021-09-16
 - Declare extension as a `GradleEnterpriseListener` component
 - Update dependency versions
