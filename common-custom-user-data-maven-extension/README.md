@@ -48,7 +48,7 @@ the script with the following bindings:
 - `gradleEnterprise` (type: [GradleEnterpriseApi](https://docs.gradle.com/enterprise/maven-extension/api/com/gradle/maven/extension/api/GradleEnterpriseApi.html)): _configure Gradle Enterprise_
 - `buildScan` (type: [BuildScanApi](https://docs.gradle.com/enterprise/maven-extension/api/com/gradle/maven/extension/api/scan/BuildScanApi.html)): _configure build scan publishing and enhance build scans_
 - `buildCache` (type: [BuildCacheApi](https://docs.gradle.com/enterprise/maven-extension/api/com/gradle/maven/extension/api/cache/BuildCacheApi.html)): _configure build cache_
-- `log` (type: [`Log`](https://maven.apache.org/ref/current/maven-plugin-api/apidocs/org/apache/maven/plugin/logging/Log.html)): _write to the build log_
+- `log` (type: [`Logger`](http://www.slf4j.org/apidocs/org/slf4j/Logger.html)): _write to the build log_
 - `project` (type: [`MavenProject`](https://maven.apache.org/ref/current/maven-core/apidocs/org/apache/maven/project/MavenProject.html)): _the top-level Maven project_
 - `session` (type: [`MavenSession`](https://maven.apache.org/ref/current/maven-core/apidocs/org/apache/maven/execution/MavenSession.html)): _the Maven session_
 

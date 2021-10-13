@@ -5,8 +5,7 @@ import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import org.apache.maven.MavenExecutionException;
 import org.apache.maven.execution.MavenSession;
-import org.apache.maven.plugin.logging.Log;
-import org.codehaus.plexus.logging.Logger;
+import org.slf4j.Logger;
 
 import java.io.File;
 
@@ -43,91 +42,11 @@ final class GroovyScriptUserData {
         binding.setVariable("gradleEnterprise", gradleEnterprise);
         binding.setVariable("buildScan", gradleEnterprise.getBuildScan());
         binding.setVariable("buildCache", gradleEnterprise.getBuildCache());
-        binding.setVariable("log", new MavenLogger(logger));
+        binding.setVariable("log", logger);
         return binding;
     }
 
     private GroovyScriptUserData() {
-    }
-
-    /**
-     * Since there's no consistent implementation type across different versions of Maven,
-     * we use an internal implementation of Maven {@link Log} that wraps the Plexus {@link Logger}.
-     */
-    private static final class MavenLogger implements Log {
-        private final Logger plexusLogger;
-
-        private MavenLogger(Logger plexusLogger) {
-            this.plexusLogger = plexusLogger;
-        }
-
-        public void debug(CharSequence content) {
-            plexusLogger.debug(toString(content));
-        }
-
-        private String toString(CharSequence content) {
-            return content == null ? "" : content.toString();
-        }
-
-        public void debug(CharSequence content, Throwable error) {
-            plexusLogger.debug(toString(content), error);
-        }
-
-        public void debug(Throwable error) {
-            plexusLogger.debug("", error);
-        }
-
-        public void info(CharSequence content) {
-            plexusLogger.info(toString(content));
-        }
-
-        public void info(CharSequence content, Throwable error) {
-            plexusLogger.info(toString(content), error);
-        }
-
-        public void info(Throwable error) {
-            plexusLogger.info("", error);
-        }
-
-        public void warn(CharSequence content) {
-            plexusLogger.warn(toString(content));
-        }
-
-        public void warn(CharSequence content, Throwable error) {
-            plexusLogger.warn(toString(content), error);
-        }
-
-        public void warn(Throwable error) {
-            plexusLogger.warn("", error);
-        }
-
-        public void error(CharSequence content) {
-            plexusLogger.error(toString(content));
-        }
-
-        public void error(CharSequence content, Throwable error) {
-            plexusLogger.error(toString(content), error);
-        }
-
-        public void error(Throwable error) {
-            plexusLogger.error("", error);
-        }
-
-        public boolean isDebugEnabled() {
-            return plexusLogger.isDebugEnabled();
-        }
-
-        public boolean isInfoEnabled() {
-            return plexusLogger.isInfoEnabled();
-        }
-
-        public boolean isWarnEnabled() {
-            return plexusLogger.isWarnEnabled();
-        }
-
-        public boolean isErrorEnabled() {
-            return plexusLogger.isErrorEnabled();
-        }
     }
 
 }

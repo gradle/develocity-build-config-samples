@@ -2,6 +2,7 @@
 All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
+- Change the type of the `log` variable bound for custom Groovy scripts to `org.slf4j.Logger`. This change may require changes in custom Groovy scripts.
 
 ## [1.8.1] - 2021-10-13
 - Avoid use of `org.apache.maven.monitor.logging.DefaultLog` since this type has been renamed in Maven 4 (#165)
