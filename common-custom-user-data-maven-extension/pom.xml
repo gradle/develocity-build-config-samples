@@ -73,6 +73,11 @@
             <artifactId>groovy</artifactId>
             <version>3.0.9</version>
         </dependency>
+        <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy-xml</artifactId>
+            <version>3.0.9</version>
+        </dependency>
     </dependencies>
 
     <build>

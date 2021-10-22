@@ -24,6 +24,9 @@ jobs:
               with:
                   java-version: '11'
                   distribution: 'adopt'
+            - name: Install current version
+              run: |
+                  mvn -f common-custom-user-data-maven-extension/pom.xml install
             - name: Copy current sample
               run: |
                   # default uses the original gradle-enterprise-custom-user-data.groovy
