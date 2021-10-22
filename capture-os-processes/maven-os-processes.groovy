@@ -7,11 +7,6 @@ import com.gradle.maven.extension.api.scan.BuildScanApi
  * and adds these as a custom value.
  */
 
-BuildScanApi buildScan = session.lookup('com.gradle.maven.extension.api.scan.BuildScanApi')
-if (!buildScan) {
-    return
-}
-
 buildScan.executeOnce('os-processes') { BuildScanApi buildScanApi ->
     buildScanApi.background { api ->
         captureOsProcesses(api)

@@ -7,11 +7,6 @@ import groovy.util.XmlSlurper
  * and adds these as custom values.
  */
 
-BuildScanApi buildScan = session.lookup('com.gradle.maven.extension.api.scan.BuildScanApi')
-if (!buildScan) {
-    return
-}
-
 buildScan.executeOnce('reporting-issues') { BuildScanApi buildScanApi ->
     captureReportingIssues(buildScanApi)
 }
