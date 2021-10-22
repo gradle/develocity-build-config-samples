@@ -1,3 +1,5 @@
+import com.gradle.maven.extension.api.scan.BuildScanApi
+
 /**
  * This Groovy script captures the top-level project name and artifact id,
  * and adds these as custom values.

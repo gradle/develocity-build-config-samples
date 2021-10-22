@@ -1,4 +1,6 @@
 import java.nio.file.Paths
+import com.gradle.maven.extension.api.scan.BuildScanApi
+import groovy.util.XmlSlurper
 
 /**
  * This Groovy script captures issues found by reporting goals,
@@ -23,7 +25,7 @@ void captureReportingIssues(def api) {
         def topLevelProjectPath = Paths.get(topLevelProject.basedir.absolutePath as String)
         session.projectDependencyGraph.sortedProjects.each { project ->
             session.currentProject = project
-            def lifecycleExecutor = container.lookup('org.apache.maven.lifecycle.LifecycleExecutor')
+            def lifecycleExecutor = session.container.lookup('org.apache.maven.lifecycle.LifecycleExecutor')
             def mojoExecutions = lifecycleExecutor.calculateExecutionPlan(session, *session.goals).getMojoExecutions()
             def reportingMojoExecutions = mojoExecutions.findAll { ReportingPlugin.isSupported(it.plugin) }
             if (!reportingMojoExecutions) {

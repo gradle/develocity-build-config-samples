@@ -1,5 +1,6 @@
 import java.nio.charset.Charset
 import java.util.concurrent.TimeUnit
+import com.gradle.maven.extension.api.scan.BuildScanApi
 
 /**
  * This Groovy script captures the OS processes as reported by the OS 'ps' command,
