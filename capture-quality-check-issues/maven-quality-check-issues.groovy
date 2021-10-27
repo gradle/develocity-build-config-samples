@@ -1,5 +1,6 @@
 import java.nio.file.Paths
 import com.gradle.maven.extension.api.scan.BuildScanApi
+@Grab(group='org.codehaus.groovy', module='groovy-xml', version='3.0.9')
 import groovy.util.XmlSlurper
 
 /**
