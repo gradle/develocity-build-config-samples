@@ -8,25 +8,36 @@ jobs:
         env:
             LOG_CCUD_EXTENSION_LOADED: "Build operation 'Gradle Enterprise mojo execution' completed"
             LOG_CCUD_EXECUTION_FAILURE: "Error executing a GradleEnterpriseListener callback"
-            # set GITHUB_TOKEN to avoid maven security error
+            # set GITHUB_TOKEN to avoid Maven security error
             GITHUB_TOKEN: "foo"
 
         steps:
-            - uses: actions/checkout@v2
+            - name: Checkout
+              uses: actions/checkout@v2
             - name: Set up JDK 11
               uses: actions/setup-java@v2
               with:
                   java-version: '11'
                   distribution: 'adopt'
+            - name: Install current version of CCUD Maven extension
+              run: |
+                  mvn -f common-custom-user-data-maven-extension/pom.xml install -Dgradle.scan.disabled=true
+            - name: Use current version of CCUD Maven extension in extension
+              run: |
+                  sudo apt-get install -y xmlstarlet
+                  # fetching current project version
+                  CURRENT_VERSION=$(mvn -f common-custom-user-data-maven-extension/pom.xml -Dexec.executable='echo' -Dexec.args='${project.version}' -Dgradle.scan.disabled=true exec:exec -q)
+                  # inplace replacement of the snippet version (latest release) with current version (snapshot)
+                  xmlstarlet edit --inplace --update "//extensions/extension[artifactId='common-custom-user-data-maven-extension']/version" --value $CURRENT_VERSION  common-gradle-enterprise-maven-configuration/.mvn/extensions.xml
             - name: Run Maven build using CCUD extension
               run: |
                   echo 'MAVEN_OUTPUT<<EOF' >> $GITHUB_ENV
-                  mvn -f common-gradle-enterprise-maven-configuration/pom.xml -X --batch-mode clean validate -Dgradle.cache.remote.enabled=false -Dgradle.scan.disabled=true >> $GITHUB_ENV
+                  mvn -f common-gradle-enterprise-maven-configuration/pom.xml -X --batch-mode clean validate -Dgradle.scan.disabled=true >> $GITHUB_ENV
                   echo 'EOF' >> $GITHUB_ENV
-            - name: Validate extension load
+            - name: Validate extension loaded
               run: |
                   echo $MAVEN_OUTPUT | grep "$LOG_CCUD_EXTENSION_LOADED"
-            - name: Validate extension execution
+            - name: Validate extension executed
               run: |
                   echo $MAVEN_OUTPUT | grep -L "$LOG_CCUD_EXECUTION_FAILURE"
 
@@ -47,19 +58,22 @@ jobs:
                     - relative-path-to-sample-build-file: "capture-top-level-project/maven-top-level-project.groovy"
 
         steps:
-            - uses: actions/checkout@v2
+            - name: Checkout
+              uses: actions/checkout@v2
             - name: Set up JDK 11
               uses: actions/setup-java@v2
               with:
                   java-version: '11'
                   distribution: 'adopt'
-            - name: Install current version
+            - name: Install current version of CCUD Maven extension
               run: |
                   mvn -f common-custom-user-data-maven-extension/pom.xml install -Dgradle.scan.disabled=true
-            - name: Use current version in extension
+            - name: Use current version of CCUD Maven extension in extension
               run: |
                   sudo apt-get install -y xmlstarlet
-                  CURRENT_VERSION=$(mvn -f common-custom-user-data-maven-extension/pom.xml -Dexec.executable='echo' -Dexec.args='${project.version}' -Dgradle.scan.disabled=true --non-recursive exec:exec -q)
+                  # fetching current project version
+                  CURRENT_VERSION=$(mvn -f common-custom-user-data-maven-extension/pom.xml -Dexec.executable='echo' -Dexec.args='${project.version}' -Dgradle.scan.disabled=true exec:exec -q)
+                  # inplace replacement of the snippet version (latest release) with current version (snapshot)
                   xmlstarlet edit --inplace --update "//extensions/extension[artifactId='common-custom-user-data-maven-extension']/version" --value $CURRENT_VERSION  common-custom-user-data-maven-extension/.mvn/extensions.xml
             - name: Copy current sample
               run: |
@@ -72,9 +86,11 @@ jobs:
                   echo 'MAVEN_OUTPUT<<EOF' >> $GITHUB_ENV
                   mvn -f common-custom-user-data-maven-extension/pom.xml -X --batch-mode clean validate -Dgradle.scan.disabled=true >> $GITHUB_ENV
                   echo 'EOF' >> $GITHUB_ENV
-            - name: Validate extension load
+            - name: Validate extension loaded
               run: |
+                  # Asserting that extension was loaded checking a log entry
                   echo $MAVEN_OUTPUT | grep "$LOG_CCUD_EXTENSION_LOADED"
-            - name: Validate extension execution
+            - name: Validate extension executed
               run: |
+                  # Asserting that extension was run successfully checking absence of an error log entry
                   echo $MAVEN_OUTPUT | grep -L "$LOG_CCUD_EXECUTION_FAILURE"
