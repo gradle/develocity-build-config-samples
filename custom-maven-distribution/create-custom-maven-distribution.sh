@@ -32,10 +32,10 @@ maven_conf=${maven_dir}/conf
 custom_maven_version=1.0.0
 custom_maven_zip=${maven_dir}-sample-${custom_maven_version}-bin.zip
 
-ge_ext_version=1.11
+ge_ext_version=1.11.1
 ge_ext_jar=gradle-enterprise-maven-extension-${ge_ext_version}.jar
 
-ge_sample_ext_version=1.8
+ge_sample_ext_version=1.8.1
 ge_sample_ext_jar=common-custom-user-data-maven-extension-${ge_sample_ext_version}.jar
 
 ge_sample_ext_xml=gradle-enterprise.xml

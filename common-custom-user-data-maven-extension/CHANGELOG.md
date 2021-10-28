@@ -3,6 +3,9 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [1.8.1] - 2021-10-13
+- Avoid use of `org.apache.maven.monitor.logging.DefaultLog` since this type has been renamed in Maven 4 (#165)
+
 ## [1.8] - 2021-09-16
 - Declare extension as a `GradleEnterpriseListener` component
 - Update dependency versions
@@ -79,8 +82,9 @@ All notable changes to this project will be documented in this file.
 ## [1.0] - 2020-05-25
 Initial release.
 
-[Unreleased]: https://github.com/gradle/gradle-enterprise-build-config-samples/compare/common-custom-user-data-maven-extension-1.8...HEAD
-[1.8]: https://github.com/gradle/gradle-enterprise-build-config-samples/compare/common-custom-user-data-maven-extension-1.7.3...1.8
+[Unreleased]: https://github.com/gradle/gradle-enterprise-build-config-samples/compare/common-custom-user-data-maven-extension-1.8.1...HEAD
+[1.8.1]: https://github.com/gradle/gradle-enterprise-build-config-samples/compare/common-custom-user-data-maven-extension-1.8...common-custom-user-data-maven-extension-1.8.1
+[1.8]: https://github.com/gradle/gradle-enterprise-build-config-samples/compare/common-custom-user-data-maven-extension-1.7.3...common-custom-user-data-maven-extension-1.8
 [1.7.3]: https://github.com/gradle/gradle-enterprise-build-config-samples/compare/common-custom-user-data-maven-extension-1.7.2...common-custom-user-data-maven-extension-1.7.3
 [1.7.2]: https://github.com/gradle/gradle-enterprise-build-config-samples/compare/common-custom-user-data-maven-extension-1.7.1...common-custom-user-data-maven-extension-1.7.2
 [1.7.1]: https://github.com/gradle/gradle-enterprise-build-config-samples/compare/common-custom-user-data-maven-extension-1.7...common-custom-user-data-maven-extension-1.7.1
