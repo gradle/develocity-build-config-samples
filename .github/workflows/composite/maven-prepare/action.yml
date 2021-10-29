@@ -1,0 +1,30 @@
+name: 'Prepare environment'
+description: 'Prepare Maven environment with current version of CCUD Maven extension'
+
+inputs:
+    project-basedir:
+        description: 'Base directory of project to test'
+        default: 'None'
+
+runs:
+    using: "composite"
+    steps:
+        - name: Set up JDK 11
+          uses: actions/setup-java@v2
+          with:
+              java-version: '11'
+              distribution: 'adopt'
+        - name: Install current version of CCUD Maven extension
+          shell: bash
+          run: |
+              mvn -f common-custom-user-data-maven-extension/pom.xml install -Dgradle.scan.disabled=true
+        - name: Use current version of CCUD Maven extension in extension
+          shell: bash
+          run: |
+              sudo apt-get install -y xmlstarlet
+              # fetching current project version
+              CURRENT_VERSION=$(mvn -f common-custom-user-data-maven-extension/pom.xml -Dexec.executable='echo' -Dexec.args='${project.version}' -Dgradle.scan.disabled=true exec:exec -q)
+              # inplace replacement of the snippet version (latest release) with current version (snapshot)
+              xmlstarlet edit --inplace --update "//extensions/extension[artifactId='common-custom-user-data-maven-extension']/version" --value $CURRENT_VERSION  ${{ inputs.project-basedir }}/.mvn/extensions.xml
+
+
