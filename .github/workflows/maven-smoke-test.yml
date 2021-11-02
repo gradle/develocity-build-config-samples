@@ -23,6 +23,8 @@ jobs:
                       relative-path-to-sample-build-file: "capture-quality-check-issues/maven-quality-check-issues.groovy"
                     - project-basedir: common-custom-user-data-maven-extension
                       relative-path-to-sample-build-file: "capture-top-level-project/maven-top-level-project.groovy"
+                    - project-basedir: common-custom-user-data-maven-extension
+                      relative-path-to-sample-build-file: "capture-profiles/maven-profiles.groovy"
 
         steps:
             - name: Checkout
