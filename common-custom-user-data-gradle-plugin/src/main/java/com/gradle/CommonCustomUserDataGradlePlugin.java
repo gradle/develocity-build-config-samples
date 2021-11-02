@@ -42,10 +42,6 @@ public class CommonCustomUserDataGradlePlugin implements Plugin<Object> {
             GradleEnterpriseExtension gradleEnterprise = settings.getExtensions().getByType(GradleEnterpriseExtension.class);
             customGradleEnterpriseConfig.configureGradleEnterprise(gradleEnterprise);
 
-            BuildScanExtension buildScan = gradleEnterprise.getBuildScan();
-            customGradleEnterpriseConfig.configureBuildScanPublishing(buildScan);
-            new CustomBuildScanEnhancements(buildScan, providers, settings.getGradle()).apply();
-
             BuildCacheConfiguration buildCache = settings.getBuildCache();
             customGradleEnterpriseConfig.configureBuildCache(buildCache);
 
@@ -55,6 +51,12 @@ public class CommonCustomUserDataGradlePlugin implements Plugin<Object> {
                 SystemPropertyOverrides overrides = new SystemPropertyOverrides(providers);
                 overrides.configureGradleEnterprise(gradleEnterprise);
                 overrides.configureBuildCache(buildCache);
+
+                // Build scan enhancements depend on the finalized configuration of the gradleEnterprise extension,
+                // so must be executed after the `Settings` has been completely evaluated.
+                BuildScanExtension buildScan = gradleEnterprise.getBuildScan();
+                customGradleEnterpriseConfig.configureBuildScanPublishing(buildScan);
+                new CustomBuildScanEnhancements(buildScan, providers, settings.getGradle()).apply();
             });
         });
     }
