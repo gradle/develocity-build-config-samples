@@ -241,7 +241,10 @@ final class CustomBuildScanEnhancements {
     }
 
     private void captureGitMetadata() {
-        buildScan.background(new CaptureGitMetadataAction(providers));
+        // Do not start capturing Git metadata until settings have been evaluated since
+        // creating the "Git Commit id build scans" link requires the server url to be set.
+        postEvaluateActions.add(buildScan ->
+            buildScan.background(new CaptureGitMetadataAction(providers)));
     }
 
     private static final class CaptureGitMetadataAction implements Action<BuildScanExtension> {
