@@ -138,7 +138,9 @@ final class CustomBuildScanEnhancements {
                 buildScan.link("GitHub Actions build", "https://github.com/" + gitHubRepository.get() + "/actions/runs/" + gitHubRunId.get());
             }
             envVariable("GITHUB_WORKFLOW").ifPresent(value ->
-                addCustomValueAndSearchLink("GitHub workflow", value));
+                addCustomValueAndSearchLink("CI workflow", value));
+            envVariable("GITHUB_RUN_ID").ifPresent(value ->
+                addCustomValueAndSearchLink("CI run", value));
         }
 
         if (isGitLab()) {
