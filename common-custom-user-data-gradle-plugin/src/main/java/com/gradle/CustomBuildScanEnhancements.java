@@ -57,7 +57,10 @@ final class CustomBuildScanEnhancements {
                 Optional<String> newIdeaVersion = sysProperty("idea.version");
                 Optional<String> oldIdeaVersion = firstSysPropertyKeyStartingWith("idea.version");
                 Optional<String> eclipseVersion = sysProperty("eclipse.buildId");
-
+                Optional<String> ideaSync = sysProperty("idea.sync.active");
+                if (ideaSync.isPresent()) {
+                    buildScan.tag("IDE sync");
+                }
                 if (invokedFromAndroidStudio.isPresent()) {
                     buildScan.tag("Android Studio");
                     androidStudioVersion.ifPresent(v -> buildScan.value("Android Studio version", v));
