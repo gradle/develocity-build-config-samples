@@ -46,12 +46,10 @@ final class CustomBuildScanEnhancements {
         captureCiMetadata();
         captureGitMetadata();
         captureTestParallelization();
-
-        gradle.settingsEvaluated(settings -> runPostEvaluateActions());
     }
 
     // Run any actions that require the `gradleEnterprise` extension to be fully configured.
-    private void runPostEvaluateActions() {
+    void runPostEvaluateActions() {
         for (Action<BuildScanExtension> postEvaluateAction : postEvaluateActions) {
             postEvaluateAction.execute(buildScan);
         }

@@ -44,7 +44,8 @@ public class CommonCustomUserDataGradlePlugin implements Plugin<Object> {
 
             BuildScanExtension buildScan = gradleEnterprise.getBuildScan();
             customGradleEnterpriseConfig.configureBuildScanPublishing(buildScan);
-            new CustomBuildScanEnhancements(buildScan, providers, settings.getGradle()).apply();
+            CustomBuildScanEnhancements buildScanEnhancements = new CustomBuildScanEnhancements(buildScan, providers, settings.getGradle());
+            buildScanEnhancements.apply();
 
             BuildCacheConfiguration buildCache = settings.getBuildCache();
             customGradleEnterpriseConfig.configureBuildCache(buildCache);
@@ -55,6 +56,8 @@ public class CommonCustomUserDataGradlePlugin implements Plugin<Object> {
                 SystemPropertyOverrides overrides = new SystemPropertyOverrides(providers);
                 overrides.configureGradleEnterprise(gradleEnterprise);
                 overrides.configureBuildCache(buildCache);
+
+                buildScanEnhancements.runPostEvaluateActions();
             });
         });
     }
@@ -71,7 +74,8 @@ public class CommonCustomUserDataGradlePlugin implements Plugin<Object> {
 
             BuildScanExtension buildScan = gradleEnterprise.getBuildScan();
             customGradleEnterpriseConfig.configureBuildScanPublishing(buildScan);
-            new CustomBuildScanEnhancements(buildScan, providers, project.getGradle()).apply();
+            CustomBuildScanEnhancements buildScanEnhancements = new CustomBuildScanEnhancements(buildScan, providers, project.getGradle());
+            buildScanEnhancements.apply();
 
             // Build cache configuration cannot be accessed from a project plugin
 
@@ -80,6 +84,8 @@ public class CommonCustomUserDataGradlePlugin implements Plugin<Object> {
             project.afterEvaluate(___ -> {
                 SystemPropertyOverrides overrides = new SystemPropertyOverrides(providers);
                 overrides.configureGradleEnterprise(gradleEnterprise);
+
+                buildScanEnhancements.runPostEvaluateActions();
             });
         });
     }
