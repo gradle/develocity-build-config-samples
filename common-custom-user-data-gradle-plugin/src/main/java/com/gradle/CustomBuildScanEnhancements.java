@@ -7,6 +7,8 @@ import org.gradle.api.invocation.Gradle;
 import org.gradle.api.provider.ProviderFactory;
 import org.gradle.api.tasks.testing.Test;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.function.Supplier;
@@ -29,6 +31,8 @@ final class CustomBuildScanEnhancements {
     private final ProviderFactory providers;
     private final Gradle gradle;
 
+    private final List<Action<BuildScanExtension>> postEvaluateActions = new ArrayList<>();
+
     CustomBuildScanEnhancements(BuildScanExtension buildScan, ProviderFactory providers, Gradle gradle) {
         this.buildScan = buildScan;
         this.providers = providers;
@@ -42,6 +46,15 @@ final class CustomBuildScanEnhancements {
         captureCiMetadata();
         captureGitMetadata();
         captureTestParallelization();
+
+        gradle.settingsEvaluated(settings -> runPostEvaluateActions());
+    }
+
+    // Run any actions that require the `gradleEnterprise` extension to be fully configured.
+    private void runPostEvaluateActions() {
+        for (Action<BuildScanExtension> postEvaluateAction : postEvaluateActions) {
+            postEvaluateAction.execute(buildScan);
+        }
     }
 
     private void captureOs() {
@@ -260,7 +273,8 @@ final class CustomBuildScanEnhancements {
                 buildScan.value("Git commit id", gitCommitId);
             }
             if (isNotEmpty(gitCommitShortId)) {
-                addCustomValueAndSearchLink(buildScan, "Git commit id", "Git commit id short", gitCommitShortId);
+                buildScan.value("Git commit id short", gitCommitShortId);
+                addSearchLinkForCustomValue(buildScan, "Git commit id", "Git commit id short", gitCommitShortId);
             }
             if (isNotEmpty(gitBranchName)) {
                 buildScan.tag(gitBranchName);
@@ -319,11 +333,12 @@ final class CustomBuildScanEnhancements {
     }
 
     private void addCustomValueAndSearchLink(String linkLabel, String name, String value) {
-        addCustomValueAndSearchLink(buildScan, linkLabel, name, value);
+        buildScan.value(name, value);
+        // Need to generate the link after settings evaluated, to ensure the server URL has been configured.
+        postEvaluateActions.add(buildScan -> addSearchLinkForCustomValue(buildScan, linkLabel, name, value));
     }
 
-    private static void addCustomValueAndSearchLink(BuildScanExtension buildScan, String linkLabel, String name, String value) {
-        buildScan.value(name, value);
+    private static void addSearchLinkForCustomValue(BuildScanExtension buildScan, String linkLabel, String name, String value) {
         String server = buildScan.getServer();
         if (server != null) {
             String searchParams = "search.names=" + urlEncode(name) + "&search.values=" + urlEncode(value);
