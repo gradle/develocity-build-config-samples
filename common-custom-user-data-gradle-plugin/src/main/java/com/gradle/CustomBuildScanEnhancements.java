@@ -39,6 +39,7 @@ final class CustomBuildScanEnhancements {
         this.gradle = gradle;
     }
 
+    // Apply all build scan enhancements via custom tags, links, and values
     void apply() {
         captureOs();
         captureIde();
@@ -48,10 +49,10 @@ final class CustomBuildScanEnhancements {
         captureTestParallelization();
     }
 
-    // Run any actions that require the `gradleEnterprise` extension to be fully configured.
+    // Run any actions that require the `gradleEnterprise` extension to be fully configured
     void runPostEvaluateActions() {
-        for (Action<BuildScanExtension> postEvaluateAction : postEvaluateActions) {
-            postEvaluateAction.execute(buildScan);
+        for (Action<BuildScanExtension> action : postEvaluateActions) {
+            action.execute(buildScan);
         }
     }
 
@@ -242,7 +243,7 @@ final class CustomBuildScanEnhancements {
 
     private void captureGitMetadata() {
         // Do not start capturing Git metadata until settings have been evaluated since
-        // creating the "Git Commit id build scans" link requires the server url to be set.
+        // creating customs links requires the server url to be set
         postEvaluateActions.add(buildScan ->
             buildScan.background(new CaptureGitMetadataAction(providers)));
     }
@@ -334,8 +335,9 @@ final class CustomBuildScanEnhancements {
     }
 
     private void addCustomValueAndSearchLink(String linkLabel, String name, String value) {
+        // Set custom values immediately, but do not add custom links until settings have been evaluated since
+        // creating customs links requires the server url to be set
         buildScan.value(name, value);
-        // Need to generate the link after settings evaluated, to ensure the server URL has been configured.
         postEvaluateActions.add(buildScan -> addSearchLinkForCustomValue(buildScan, linkLabel, name, value));
     }
 
