@@ -17,6 +17,12 @@ dependencies {
     compileOnly 'com.gradle:gradle-enterprise-gradle-plugin:3.7.1'
 }
 
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(8)
+    }
+}
+
 gradlePlugin {
     plugins {
         commonCustomUserData {
