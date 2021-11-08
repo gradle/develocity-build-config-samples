@@ -17,6 +17,7 @@ import static com.gradle.Utils.execAndGetStdOut;
 import static com.gradle.Utils.firstSysPropertyKeyStartingWith;
 import static com.gradle.Utils.isNotEmpty;
 import static com.gradle.Utils.readPropertiesFile;
+import static com.gradle.Utils.redactUserInfo;
 import static com.gradle.Utils.stripPrefix;
 import static com.gradle.Utils.sysProperty;
 import static com.gradle.Utils.urlEncode;
@@ -235,7 +236,7 @@ final class CustomBuildScanEnhancements {
             String gitStatus = execAndGetStdOut("git", "status", "--porcelain");
 
             if (isNotEmpty(gitRepo)) {
-                buildScan.value("Git repository", gitRepo);
+                buildScan.value("Git repository", redactUserInfo(gitRepo));
             }
             if (isNotEmpty(gitCommitId)) {
                 buildScan.value("Git commit id", gitCommitId);
