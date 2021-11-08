@@ -56,9 +56,6 @@ public class CommonCustomUserDataGradlePlugin implements Plugin<Object> {
                 SystemPropertyOverrides overrides = new SystemPropertyOverrides(providers);
                 overrides.configureGradleEnterprise(gradleEnterprise);
                 overrides.configureBuildCache(buildCache);
-
-                // do the enhancements that can only be done once all configuration has been fully applied
-                buildScanEnhancements.runPostEvaluateActions();
             });
         });
     }
@@ -85,9 +82,6 @@ public class CommonCustomUserDataGradlePlugin implements Plugin<Object> {
             project.afterEvaluate(___ -> {
                 SystemPropertyOverrides overrides = new SystemPropertyOverrides(providers);
                 overrides.configureGradleEnterprise(gradleEnterprise);
-
-                // do the enhancements that can only be done once all configuration has been fully applied
-                buildScanEnhancements.runPostEvaluateActions();
             });
         });
     }
