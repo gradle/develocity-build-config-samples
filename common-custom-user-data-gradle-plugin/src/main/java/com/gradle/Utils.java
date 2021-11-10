@@ -106,14 +106,12 @@ final class Utils {
         }
     }
 
-    /**
-     * Redact any `user:password` that is part of the URL.
-     */
     static String redactUserInfo(String url) {
         try {
-            URI uri = new URI(url);
-            String userInfoPart = uri.getUserInfo() + '@';
-            return url.replace(userInfoPart, "******@");
+            String userInfo = new URI(url).getUserInfo();
+            return userInfo == null
+                ? url
+                : url.replace(userInfo + '@', "******@");
         } catch (URISyntaxException e) {
             return url;
         }
