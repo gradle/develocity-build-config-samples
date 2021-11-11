@@ -2,6 +2,8 @@
 All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
+
+## [1.9] - 2021-11-11
 - Change the type of the `log` variable bound for custom Groovy scripts to `org.slf4j.Logger`. This change may require changes in custom Groovy scripts.
 - Add custom value and search link for GitHub Actions run ID.
 - Redact any `user:password@` portion of the 'Git repository' custom value.
@@ -85,7 +87,8 @@ All notable changes to this project will be documented in this file.
 ## [1.0] - 2020-05-25
 Initial release.
 
-[Unreleased]: https://github.com/gradle/gradle-enterprise-build-config-samples/compare/common-custom-user-data-maven-extension-1.8.1...HEAD
+[Unreleased]: https://github.com/gradle/gradle-enterprise-build-config-samples/compare/common-custom-user-data-maven-extension-1.9...HEAD
+[1.9]: https://github.com/gradle/gradle-enterprise-build-config-samples/compare/common-custom-user-data-maven-extension-1.8.1...common-custom-user-data-maven-extension-1.9
 [1.8.1]: https://github.com/gradle/gradle-enterprise-build-config-samples/compare/common-custom-user-data-maven-extension-1.8...common-custom-user-data-maven-extension-1.8.1
 [1.8]: https://github.com/gradle/gradle-enterprise-build-config-samples/compare/common-custom-user-data-maven-extension-1.7.3...common-custom-user-data-maven-extension-1.8
 [1.7.3]: https://github.com/gradle/gradle-enterprise-build-config-samples/compare/common-custom-user-data-maven-extension-1.7.2...common-custom-user-data-maven-extension-1.7.3
