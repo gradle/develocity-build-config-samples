@@ -297,15 +297,17 @@ final class CustomBuildScanEnhancements {
     }
 
     private void addCustomValueAndSearchLink(String name, String value) {
-        addCustomValueAndSearchLink(name, name, value);
-    }
-
-    private void addCustomValueAndSearchLink(String linkLabel, String name, String value) {
-        addCustomValueAndSearchLink(buildScan, linkLabel, name, value);
+        addCustomValueAndSearchLink(buildScan, name, name, value);
     }
 
     private static void addCustomValueAndSearchLink(BuildScanApi buildScan, String linkLabel, String name, String value) {
+        // Set custom values immediately, but do not add custom links until 'buildFinished' since
+        // creating customs links requires the server url to be fully configured
         buildScan.value(name, value);
+        buildScan.buildFinished(result -> addSearchLinkForCustomValue(buildScan, linkLabel, name, value));
+    }
+
+    private static void addSearchLinkForCustomValue(BuildScanApi buildScan, String linkLabel, String name, String value) {
         String server = buildScan.getServer();
         if (server != null) {
             String searchParams = "search.names=" + urlEncode(name) + "&search.values=" + urlEncode(value);

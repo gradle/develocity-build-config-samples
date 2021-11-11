@@ -7,8 +7,6 @@ import org.gradle.api.invocation.Gradle;
 import org.gradle.api.provider.ProviderFactory;
 import org.gradle.api.tasks.testing.Test;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.function.Supplier;
@@ -32,8 +30,6 @@ final class CustomBuildScanEnhancements {
     private final ProviderFactory providers;
     private final Gradle gradle;
 
-    private final List<Action<BuildScanExtension>> postEvaluateActions = new ArrayList<>();
-
     CustomBuildScanEnhancements(BuildScanExtension buildScan, ProviderFactory providers, Gradle gradle) {
         this.buildScan = buildScan;
         this.providers = providers;
@@ -48,13 +44,6 @@ final class CustomBuildScanEnhancements {
         captureCiMetadata();
         captureGitMetadata();
         captureTestParallelization();
-    }
-
-    // Run any actions that require the `gradleEnterprise` extension to be fully configured
-    void runPostEvaluateActions() {
-        for (Action<BuildScanExtension> action : postEvaluateActions) {
-            action.execute(buildScan);
-        }
     }
 
     private void captureOs() {
@@ -243,10 +232,7 @@ final class CustomBuildScanEnhancements {
     }
 
     private void captureGitMetadata() {
-        // Do not start capturing Git metadata until settings have been evaluated since
-        // creating customs links requires the server url to be set
-        postEvaluateActions.add(buildScan ->
-            buildScan.background(new CaptureGitMetadataAction(providers)));
+        buildScan.background(new CaptureGitMetadataAction(providers));
     }
 
     private static final class CaptureGitMetadataAction implements Action<BuildScanExtension> {
@@ -276,8 +262,7 @@ final class CustomBuildScanEnhancements {
                 buildScan.value("Git commit id", gitCommitId);
             }
             if (isNotEmpty(gitCommitShortId)) {
-                buildScan.value("Git commit id short", gitCommitShortId);
-                addSearchLinkForCustomValue(buildScan, "Git commit id", "Git commit id short", gitCommitShortId);
+                addCustomValueAndSearchLink(buildScan, "Git commit id", "Git commit id short", gitCommitShortId);
             }
             if (isNotEmpty(gitBranchName)) {
                 buildScan.tag(gitBranchName);
@@ -332,14 +317,14 @@ final class CustomBuildScanEnhancements {
     }
 
     private void addCustomValueAndSearchLink(String name, String value) {
-        addCustomValueAndSearchLink(name, name, value);
+        addCustomValueAndSearchLink(buildScan, name, name, value);
     }
 
-    private void addCustomValueAndSearchLink(String linkLabel, String name, String value) {
-        // Set custom values immediately, but do not add custom links until settings have been evaluated since
-        // creating customs links requires the server url to be set
+    private static void addCustomValueAndSearchLink(BuildScanExtension buildScan, String linkLabel, String name, String value) {
+        // Set custom values immediately, but do not add custom links until 'buildFinished' since
+        // creating customs links requires the server url to be fully configured
         buildScan.value(name, value);
-        postEvaluateActions.add(buildScan -> addSearchLinkForCustomValue(buildScan, linkLabel, name, value));
+        buildScan.buildFinished(result -> addSearchLinkForCustomValue(buildScan, linkLabel, name, value));
     }
 
     private static void addSearchLinkForCustomValue(BuildScanExtension buildScan, String linkLabel, String name, String value) {
