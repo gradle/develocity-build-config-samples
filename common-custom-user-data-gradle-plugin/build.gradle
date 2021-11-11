@@ -2,7 +2,7 @@ plugins {
     id 'java-gradle-plugin'
     id 'maven-publish'
     id 'signing'
-    id 'com.gradle.plugin-publish' version '0.16.0'
+    id 'com.gradle.plugin-publish' version '0.17.0'
     id "org.ajoberstar.grgit" version "4.1.0"
 }
 
