@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
 ## [1.9] - 2021-11-11
-- Change the type of the `log` variable bound for custom Groovy scripts to `org.slf4j.Logger` (this change may require changes in custom Groovy scripts)
+- Change the type of the `log` variable bound for custom Groovy scripts to `org.slf4j.Logger` (may affect custom Groovy scripts)
 - Add custom value and search link for GitHub Actions run ID
 - Fix generation of search links for custom values
 - Redact any `user:password@` portion of the 'Git repository' custom value
