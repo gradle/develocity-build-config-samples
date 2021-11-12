@@ -4,19 +4,20 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
 ## [1.9] - 2021-11-11
-- Change the type of the `log` variable bound for custom Groovy scripts to `org.slf4j.Logger`. This change may require changes in custom Groovy scripts.
-- Add custom value and search link for GitHub Actions run ID.
-- Redact any `user:password@` portion of the 'Git repository' custom value.
+- Change the type of the `log` variable bound for custom Groovy scripts to `org.slf4j.Logger` (this change may require changes in custom Groovy scripts)
+- Add custom value and search link for GitHub Actions run ID
+- Fix generation of search links for custom values
+- Redact any `user:password@` portion of the 'Git repository' custom value
 
 ## [1.8.1] - 2021-10-13
-- Avoid use of `org.apache.maven.monitor.logging.DefaultLog` since this type has been renamed in Maven 4 (#165)
+- Avoid use of `org.apache.maven.monitor.logging.DefaultLog` since this type has been renamed in Maven 4
 
 ## [1.8] - 2021-09-16
 - Declare extension as a `GradleEnterpriseListener` component
 - Update dependency versions
 
 ## [1.7.3] - 2021-07-13
-- Fix the git branch detection on Jenkins by using the branch name provided by Jenkins (#109).
+- Fix the git branch detection on Jenkins by using the branch name provided by Jenkins (#109)
 
 ## [1.7.2] - 2021-06-28
 - Publish a "fat" jar that contains all of the extension's dependencies (to make it easier to use the extension in certian scenarios)
