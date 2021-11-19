@@ -52,8 +52,8 @@ final class SystemPropertyOverrides {
             booleanSysProperty(LOCAL_CACHE_PUSH, providers).ifPresent(local::setPush);
         });
 
-        // We need to ensure that this is the HttpBuildCache and not another build cache type like AWS S3.
-        // We don't configure or add a build cache configuration if none is already present.
+        // Only touch remote build cache configuration if it is already present and of type HttpBuildCache
+        // Do nothing in case of another build cache type like AWS S3 being used
         if (buildCache.getRemote() instanceof HttpBuildCache) {
             buildCache.remote(HttpBuildCache.class, remote -> {
                 sysProperty(REMOTE_CACHE_SHARD, providers).ifPresent(shard -> remote.setUrl(appendPathAndTrailingSlash(remote.getUrl(), shard)));
