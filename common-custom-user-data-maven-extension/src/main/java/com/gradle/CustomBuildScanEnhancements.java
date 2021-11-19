@@ -17,6 +17,7 @@ import static com.gradle.Utils.execAndGetStdOut;
 import static com.gradle.Utils.firstSysPropertyKeyStartingWith;
 import static com.gradle.Utils.isNotEmpty;
 import static com.gradle.Utils.readPropertiesFile;
+import static com.gradle.Utils.redactUserInfo;
 import static com.gradle.Utils.stripPrefix;
 import static com.gradle.Utils.sysProperty;
 import static com.gradle.Utils.urlEncode;
@@ -138,7 +139,9 @@ final class CustomBuildScanEnhancements {
                 buildScan.link("GitHub Actions build", "https://github.com/" + gitHubRepository.get() + "/actions/runs/" + gitHubRunId.get());
             }
             envVariable("GITHUB_WORKFLOW").ifPresent(value ->
-                addCustomValueAndSearchLink("GitHub workflow", value));
+                addCustomValueAndSearchLink("CI workflow", value));
+            envVariable("GITHUB_RUN_ID").ifPresent(value ->
+                addCustomValueAndSearchLink("CI run", value));
         }
 
         if (isGitLab()) {
@@ -233,7 +236,7 @@ final class CustomBuildScanEnhancements {
             String gitStatus = execAndGetStdOut("git", "status", "--porcelain");
 
             if (isNotEmpty(gitRepo)) {
-                buildScan.value("Git repository", gitRepo);
+                buildScan.value("Git repository", redactUserInfo(gitRepo));
             }
             if (isNotEmpty(gitCommitId)) {
                 buildScan.value("Git commit id", gitCommitId);
@@ -294,15 +297,17 @@ final class CustomBuildScanEnhancements {
     }
 
     private void addCustomValueAndSearchLink(String name, String value) {
-        addCustomValueAndSearchLink(name, name, value);
-    }
-
-    private void addCustomValueAndSearchLink(String linkLabel, String name, String value) {
-        addCustomValueAndSearchLink(buildScan, linkLabel, name, value);
+        addCustomValueAndSearchLink(buildScan, name, name, value);
     }
 
     private static void addCustomValueAndSearchLink(BuildScanApi buildScan, String linkLabel, String name, String value) {
+        // Set custom values immediately, but do not add custom links until 'buildFinished' since
+        // creating customs links requires the server url to be fully configured
         buildScan.value(name, value);
+        buildScan.buildFinished(result -> addSearchLinkForCustomValue(buildScan, linkLabel, name, value));
+    }
+
+    private static void addSearchLinkForCustomValue(BuildScanApi buildScan, String linkLabel, String name, String value) {
         String server = buildScan.getServer();
         if (server != null) {
             String searchParams = "search.names=" + urlEncode(name) + "&search.values=" + urlEncode(value);

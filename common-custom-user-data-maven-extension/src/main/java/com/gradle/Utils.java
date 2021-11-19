@@ -10,6 +10,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -75,6 +76,17 @@ final class Utils {
             return URLEncoder.encode(str, StandardCharsets.UTF_8.name());
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    static String redactUserInfo(String url) {
+        try {
+            String userInfo = new URI(url).getUserInfo();
+            return userInfo == null
+                ? url
+                : url.replace(userInfo + '@', "******@");
+        } catch (URISyntaxException e) {
+            return url;
         }
     }
 

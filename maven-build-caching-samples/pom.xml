@@ -21,6 +21,7 @@
     <module>exec-yarn-project</module>
     <module>spring-cloud-contract-project</module>
     <module>duplicate-finder-project</module>
+    <module>kotlin-project</module>
 
     <!-- Webstart/JNLP only works when run with JDK 1.8 or earlier, so it is excluded by default. -->
     <!-- <module>webstart-project</module> -->

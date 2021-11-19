@@ -5,8 +5,7 @@ import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import org.apache.maven.MavenExecutionException;
 import org.apache.maven.execution.MavenSession;
-import org.apache.maven.monitor.logging.DefaultLog;
-import org.codehaus.plexus.logging.Logger;
+import org.slf4j.Logger;
 
 import java.io.File;
 
@@ -43,7 +42,7 @@ final class GroovyScriptUserData {
         binding.setVariable("gradleEnterprise", gradleEnterprise);
         binding.setVariable("buildScan", gradleEnterprise.getBuildScan());
         binding.setVariable("buildCache", gradleEnterprise.getBuildCache());
-        binding.setVariable("log", new DefaultLog(logger));
+        binding.setVariable("log", logger);
         return binding;
     }
 

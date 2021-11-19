@@ -6,8 +6,8 @@ import com.gradle.maven.extension.api.cache.BuildCacheApi;
 import com.gradle.maven.extension.api.scan.BuildScanApi;
 import org.apache.maven.execution.MavenSession;
 import org.codehaus.plexus.component.annotations.Component;
-import org.codehaus.plexus.component.annotations.Requirement;
-import org.codehaus.plexus.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @SuppressWarnings("unused")
 @Component(
@@ -17,8 +17,7 @@ import org.codehaus.plexus.logging.Logger;
 )
 public final class CommonCustomUserDataGradleEnterpriseListener implements GradleEnterpriseListener {
 
-    @Requirement
-    private Logger logger;
+    private final Logger logger = LoggerFactory.getLogger(CommonCustomUserDataGradleEnterpriseListener.class);
 
     @Override
     public void configure(GradleEnterpriseApi api, MavenSession session) throws Exception {
