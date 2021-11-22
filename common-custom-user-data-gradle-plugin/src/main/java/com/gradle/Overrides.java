@@ -14,7 +14,7 @@ import static com.gradle.Utils.sysProperty;
  * Provide standardized Gradle Enterprise configuration.
  * By applying the plugin, these settings will automatically be applied.
  */
-final class SystemPropertyOverrides {
+final class Overrides {
 
     // system properties to override Gradle Enterprise configuration
     public static final String GRADLE_ENTERPRISE_URL = "gradle.enterprise.url";
@@ -35,7 +35,7 @@ final class SystemPropertyOverrides {
 
     private final ProviderFactory providers;
 
-    SystemPropertyOverrides(ProviderFactory providers) {
+    Overrides(ProviderFactory providers) {
         this.providers = providers;
     }
 
