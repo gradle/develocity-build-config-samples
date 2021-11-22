@@ -32,6 +32,11 @@ final class Utils {
         return sysProperty.isPresent() ? sysProperty : envVariable(envVarName, providers);
     }
 
+    static Optional<Boolean> booleanSysPropertyOrEnvVariable(String sysPropertyName, String envVarName, ProviderFactory providers) {
+        Optional<Boolean> sysProperty = booleanSysProperty(sysPropertyName, providers);
+        return sysProperty.isPresent() ? sysProperty : booleanEnvVariable(envVarName, providers);
+    }
+
     static Optional<String> projectProperty(String name, ProviderFactory providers, Gradle gradle) {
         if (isGradle65OrNewer()) {
             // invalidate configuration cache if different Gradle property value is set on the cmd line,
@@ -48,6 +53,10 @@ final class Utils {
             return Optional.ofNullable(variable.getOrNull());
         }
         return Optional.ofNullable(System.getenv(name));
+    }
+
+    static Optional<Boolean> booleanEnvVariable(String name, ProviderFactory providers) {
+        return envVariable(name, providers).map(Boolean::parseBoolean);
     }
 
     static Optional<String> sysProperty(String name, ProviderFactory providers) {
