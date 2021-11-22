@@ -27,6 +27,16 @@ import java.util.concurrent.TimeUnit;
 
 final class Utils {
 
+    static Optional<String> projectProperty(String name, ProviderFactory providers, Gradle gradle) {
+        if (isGradle65OrNewer()) {
+            // invalidate configuration cache if different Gradle property value is set on the cmd line,
+            // but in any case access Gradle property directly since project properties set in a build script or
+            // init script are not fetched by ProviderFactory.gradleProperty
+            providers.gradleProperty(name).forUseAtConfigurationTime();
+        }
+        return Optional.ofNullable((String) gradle.getRootProject().findProperty(name));
+    }
+
     static Optional<String> sysPropertyOrEnvVariable(String sysPropertyName, String envVarName, ProviderFactory providers) {
         Optional<String> sysProperty = sysProperty(sysPropertyName, providers);
         return sysProperty.isPresent() ? sysProperty : envVariable(envVarName, providers);
@@ -40,16 +50,6 @@ final class Utils {
     static Optional<Duration> durationSysPropertyOrEnvVariable(String sysPropertyName, String envVarName, ProviderFactory providers) {
         Optional<Duration> sysProperty = durationSysProperty(sysPropertyName, providers);
         return sysProperty.isPresent() ? sysProperty : durationEnvVariable(envVarName, providers);
-    }
-
-    static Optional<String> projectProperty(String name, ProviderFactory providers, Gradle gradle) {
-        if (isGradle65OrNewer()) {
-            // invalidate configuration cache if different Gradle property value is set on the cmd line,
-            // but in any case access Gradle property directly since project properties set in a build script or
-            // init script are not fetched by ProviderFactory.gradleProperty
-            providers.gradleProperty(name).forUseAtConfigurationTime();
-        }
-        return Optional.ofNullable((String) gradle.getRootProject().findProperty(name));
     }
 
     static Optional<String> envVariable(String name, ProviderFactory providers) {
