@@ -8,12 +8,10 @@ import org.gradle.caching.http.HttpBuildCache;
 import java.util.Optional;
 
 import static com.gradle.Utils.appendPathAndTrailingSlash;
-import static com.gradle.Utils.booleanSysProperty;
 import static com.gradle.Utils.durationSysProperty;
 
 /**
- * Provide standardized Gradle Enterprise configuration.
- * By applying the plugin, these settings will automatically be applied.
+ * Provide standardized Gradle Enterprise configuration. By applying the plugin, these settings will automatically be applied.
  */
 final class Overrides {
 
@@ -42,15 +40,15 @@ final class Overrides {
 
     void configureGradleEnterprise(GradleEnterpriseExtension gradleEnterprise) {
         sysPropertyOrEnvVariable(GRADLE_ENTERPRISE_URL, providers).ifPresent(gradleEnterprise::setServer);
-        booleanSysProperty(GRADLE_ENTERPRISE_ALLOW_UNTRUSTED_SERVER, providers).ifPresent(gradleEnterprise::setAllowUntrustedServer);
+        booleanSysPropertyOrEnvVariable(GRADLE_ENTERPRISE_ALLOW_UNTRUSTED_SERVER, providers).ifPresent(gradleEnterprise::setAllowUntrustedServer);
     }
 
     void configureBuildCache(BuildCacheConfiguration buildCache) {
         buildCache.local(local -> {
             sysPropertyOrEnvVariable(LOCAL_CACHE_DIRECTORY, providers).ifPresent(local::setDirectory);
             durationSysProperty(LOCAL_CACHE_REMOVE_UNUSED_ENTRIES_AFTER_DAYS, providers).ifPresent(v -> local.setRemoveUnusedEntriesAfterDays((int) v.toDays()));
-            booleanSysProperty(LOCAL_CACHE_ENABLED, providers).ifPresent(local::setEnabled);
-            booleanSysProperty(LOCAL_CACHE_PUSH, providers).ifPresent(local::setPush);
+            booleanSysPropertyOrEnvVariable(LOCAL_CACHE_ENABLED, providers).ifPresent(local::setEnabled);
+            booleanSysPropertyOrEnvVariable(LOCAL_CACHE_PUSH, providers).ifPresent(local::setPush);
         });
 
         // Only touch remote build cache configuration if it is already present and of type HttpBuildCache
@@ -59,16 +57,23 @@ final class Overrides {
             buildCache.remote(HttpBuildCache.class, remote -> {
                 sysPropertyOrEnvVariable(REMOTE_CACHE_SHARD, providers).ifPresent(shard -> remote.setUrl(appendPathAndTrailingSlash(remote.getUrl(), shard)));
                 sysPropertyOrEnvVariable(REMOTE_CACHE_URL, providers).ifPresent(remote::setUrl);
-                booleanSysProperty(REMOTE_CACHE_ALLOW_UNTRUSTED_SERVER, providers).ifPresent(remote::setAllowUntrustedServer);
-                booleanSysProperty(REMOTE_CACHE_ENABLED, providers).ifPresent(remote::setEnabled);
-                booleanSysProperty(REMOTE_CACHE_PUSH, providers).ifPresent(remote::setPush);
+                booleanSysPropertyOrEnvVariable(REMOTE_CACHE_ALLOW_UNTRUSTED_SERVER, providers).ifPresent(remote::setAllowUntrustedServer);
+                booleanSysPropertyOrEnvVariable(REMOTE_CACHE_ENABLED, providers).ifPresent(remote::setEnabled);
+                booleanSysPropertyOrEnvVariable(REMOTE_CACHE_PUSH, providers).ifPresent(remote::setPush);
             });
         }
     }
 
     static Optional<String> sysPropertyOrEnvVariable(String sysPropertyName, ProviderFactory providers) {
-        String envVarName = sysPropertyName.toUpperCase().replace('.', '_');
-        return Utils.sysPropertyOrEnvVariable(sysPropertyName, envVarName, providers);
+        return Utils.sysPropertyOrEnvVariable(sysPropertyName, toEnvVarName(sysPropertyName), providers);
+    }
+
+    static Optional<Boolean> booleanSysPropertyOrEnvVariable(String sysPropertyName, ProviderFactory providers) {
+        return Utils.booleanSysPropertyOrEnvVariable(sysPropertyName, toEnvVarName(sysPropertyName), providers);
+    }
+
+    private static String toEnvVarName(String sysPropertyName) {
+        return sysPropertyName.toUpperCase().replace('.', '_');
     }
 
 }
