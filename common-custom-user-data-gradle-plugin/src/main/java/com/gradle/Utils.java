@@ -27,14 +27,6 @@ import java.util.concurrent.TimeUnit;
 
 final class Utils {
 
-    static Optional<String> envVariable(String name, ProviderFactory providers) {
-        if (isGradle65OrNewer()) {
-            Provider<String> variable = providers.environmentVariable(name).forUseAtConfigurationTime();
-            return Optional.ofNullable(variable.getOrNull());
-        }
-        return Optional.ofNullable(System.getenv(name));
-    }
-
     static Optional<String> projectProperty(String name, ProviderFactory providers, Gradle gradle) {
         if (isGradle65OrNewer()) {
             // invalidate configuration cache if different Gradle property value is set on the cmd line,
@@ -43,6 +35,37 @@ final class Utils {
             providers.gradleProperty(name).forUseAtConfigurationTime();
         }
         return Optional.ofNullable((String) gradle.getRootProject().findProperty(name));
+    }
+
+    static Optional<String> sysPropertyOrEnvVariable(String sysPropertyName, String envVarName, ProviderFactory providers) {
+        Optional<String> sysProperty = sysProperty(sysPropertyName, providers);
+        return sysProperty.isPresent() ? sysProperty : envVariable(envVarName, providers);
+    }
+
+    static Optional<Boolean> booleanSysPropertyOrEnvVariable(String sysPropertyName, String envVarName, ProviderFactory providers) {
+        Optional<Boolean> sysProperty = booleanSysProperty(sysPropertyName, providers);
+        return sysProperty.isPresent() ? sysProperty : booleanEnvVariable(envVarName, providers);
+    }
+
+    static Optional<Duration> durationSysPropertyOrEnvVariable(String sysPropertyName, String envVarName, ProviderFactory providers) {
+        Optional<Duration> sysProperty = durationSysProperty(sysPropertyName, providers);
+        return sysProperty.isPresent() ? sysProperty : durationEnvVariable(envVarName, providers);
+    }
+
+    static Optional<String> envVariable(String name, ProviderFactory providers) {
+        if (isGradle65OrNewer()) {
+            Provider<String> variable = providers.environmentVariable(name).forUseAtConfigurationTime();
+            return Optional.ofNullable(variable.getOrNull());
+        }
+        return Optional.ofNullable(System.getenv(name));
+    }
+
+    static Optional<Boolean> booleanEnvVariable(String name, ProviderFactory providers) {
+        return envVariable(name, providers).map(Boolean::parseBoolean);
+    }
+
+    static Optional<Duration> durationEnvVariable(String name, ProviderFactory providers) {
+        return envVariable(name, providers).map(Duration::parse);
     }
 
     static Optional<String> sysProperty(String name, ProviderFactory providers) {
