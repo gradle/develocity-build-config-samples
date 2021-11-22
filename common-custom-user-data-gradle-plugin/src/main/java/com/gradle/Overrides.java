@@ -5,10 +5,10 @@ import org.gradle.api.provider.ProviderFactory;
 import org.gradle.caching.configuration.BuildCacheConfiguration;
 import org.gradle.caching.http.HttpBuildCache;
 
+import java.time.Duration;
 import java.util.Optional;
 
 import static com.gradle.Utils.appendPathAndTrailingSlash;
-import static com.gradle.Utils.durationSysProperty;
 
 /**
  * Provide standardized Gradle Enterprise configuration. By applying the plugin, these settings will automatically be applied.
@@ -46,7 +46,7 @@ final class Overrides {
     void configureBuildCache(BuildCacheConfiguration buildCache) {
         buildCache.local(local -> {
             sysPropertyOrEnvVariable(LOCAL_CACHE_DIRECTORY, providers).ifPresent(local::setDirectory);
-            durationSysProperty(LOCAL_CACHE_REMOVE_UNUSED_ENTRIES_AFTER_DAYS, providers).ifPresent(v -> local.setRemoveUnusedEntriesAfterDays((int) v.toDays()));
+            durationSysPropertyOrEnvVariable(LOCAL_CACHE_REMOVE_UNUSED_ENTRIES_AFTER_DAYS, providers).ifPresent(v -> local.setRemoveUnusedEntriesAfterDays((int) v.toDays()));
             booleanSysPropertyOrEnvVariable(LOCAL_CACHE_ENABLED, providers).ifPresent(local::setEnabled);
             booleanSysPropertyOrEnvVariable(LOCAL_CACHE_PUSH, providers).ifPresent(local::setPush);
         });
@@ -70,6 +70,10 @@ final class Overrides {
 
     static Optional<Boolean> booleanSysPropertyOrEnvVariable(String sysPropertyName, ProviderFactory providers) {
         return Utils.booleanSysPropertyOrEnvVariable(sysPropertyName, toEnvVarName(sysPropertyName), providers);
+    }
+
+    static Optional<Duration> durationSysPropertyOrEnvVariable(String sysPropertyName, ProviderFactory providers) {
+        return Utils.durationSysPropertyOrEnvVariable(sysPropertyName, toEnvVarName(sysPropertyName), providers);
     }
 
     private static String toEnvVarName(String sysPropertyName) {
