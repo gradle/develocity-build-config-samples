@@ -53,7 +53,7 @@ public class CommonCustomUserDataGradlePlugin implements Plugin<Object> {
             // configuration changes applied in this block will override earlier configuration settings,
             // including those set in the settings.gradle(.kts)
             settings.getGradle().settingsEvaluated(___ -> {
-                SystemPropertyOverrides overrides = new SystemPropertyOverrides(providers);
+                Overrides overrides = new Overrides(providers);
                 overrides.configureGradleEnterprise(gradleEnterprise);
                 overrides.configureBuildCache(buildCache);
             });
@@ -80,7 +80,7 @@ public class CommonCustomUserDataGradlePlugin implements Plugin<Object> {
             // configuration changes applied within this block will override earlier configuration settings,
             // including those set in the root project's build.gradle(.kts)
             project.afterEvaluate(___ -> {
-                SystemPropertyOverrides overrides = new SystemPropertyOverrides(providers);
+                Overrides overrides = new Overrides(providers);
                 overrides.configureGradleEnterprise(gradleEnterprise);
             });
         });
