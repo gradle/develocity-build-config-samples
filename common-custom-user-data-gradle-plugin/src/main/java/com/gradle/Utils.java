@@ -27,6 +27,11 @@ import java.util.concurrent.TimeUnit;
 
 final class Utils {
 
+    static Optional<String> sysPropertyOrEnvVariable(String sysPropertyName, String envVarName, ProviderFactory providers) {
+        Optional<String> sysProperty = sysProperty(sysPropertyName, providers);
+        return sysProperty.isPresent() ? sysProperty : envVariable(envVarName, providers);
+    }
+
     static Optional<String> projectProperty(String name, ProviderFactory providers, Gradle gradle) {
         if (isGradle65OrNewer()) {
             // invalidate configuration cache if different Gradle property value is set on the cmd line,
