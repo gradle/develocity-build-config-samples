@@ -17,21 +17,21 @@ import static com.gradle.Utils.sysProperty;
 final class Overrides {
 
     // system properties to override Gradle Enterprise configuration
-    public static final String GRADLE_ENTERPRISE_URL = "gradle.enterprise.url";
-    public static final String GRADLE_ENTERPRISE_ALLOW_UNTRUSTED_SERVER = "gradle.enterprise.allowUntrustedServer";
+    static final String GRADLE_ENTERPRISE_URL = "gradle.enterprise.url";
+    static final String GRADLE_ENTERPRISE_ALLOW_UNTRUSTED_SERVER = "gradle.enterprise.allowUntrustedServer";
 
     // system properties to override local build cache configuration
-    public static final String LOCAL_CACHE_DIRECTORY = "gradle.cache.local.directory";
-    public static final String LOCAL_CACHE_REMOVE_UNUSED_ENTRIES_AFTER_DAYS = "gradle.cache.local.removeUnusedEntriesAfterDays";
-    public static final String LOCAL_CACHE_ENABLED = "gradle.cache.local.enabled";
-    public static final String LOCAL_CACHE_PUSH = "gradle.cache.local.push";
+    static final String LOCAL_CACHE_DIRECTORY = "gradle.cache.local.directory";
+    static final String LOCAL_CACHE_REMOVE_UNUSED_ENTRIES_AFTER_DAYS = "gradle.cache.local.removeUnusedEntriesAfterDays";
+    static final String LOCAL_CACHE_ENABLED = "gradle.cache.local.enabled";
+    static final String LOCAL_CACHE_PUSH = "gradle.cache.local.push";
 
     // system properties to override remote build cache configuration
-    public static final String REMOTE_CACHE_SHARD = "gradle.cache.remote.shard";
-    public static final String REMOTE_CACHE_URL = "gradle.cache.remote.url";
-    public static final String REMOTE_CACHE_ALLOW_UNTRUSTED_SERVER = "gradle.cache.remote.allowUntrustedServer";
-    public static final String REMOTE_CACHE_ENABLED = "gradle.cache.remote.enabled";
-    public static final String REMOTE_CACHE_PUSH = "gradle.cache.remote.push";
+    static final String REMOTE_CACHE_SHARD = "gradle.cache.remote.shard";
+    static final String REMOTE_CACHE_URL = "gradle.cache.remote.url";
+    static final String REMOTE_CACHE_ALLOW_UNTRUSTED_SERVER = "gradle.cache.remote.allowUntrustedServer";
+    static final String REMOTE_CACHE_ENABLED = "gradle.cache.remote.enabled";
+    static final String REMOTE_CACHE_PUSH = "gradle.cache.remote.push";
 
     private final ProviderFactory providers;
 
