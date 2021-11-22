@@ -27,14 +27,6 @@ import java.util.concurrent.TimeUnit;
 
 final class Utils {
 
-    static Optional<String> envVariable(String name, ProviderFactory providers) {
-        if (isGradle65OrNewer()) {
-            Provider<String> variable = providers.environmentVariable(name).forUseAtConfigurationTime();
-            return Optional.ofNullable(variable.getOrNull());
-        }
-        return Optional.ofNullable(System.getenv(name));
-    }
-
     static Optional<String> projectProperty(String name, ProviderFactory providers, Gradle gradle) {
         if (isGradle65OrNewer()) {
             // invalidate configuration cache if different Gradle property value is set on the cmd line,
@@ -43,6 +35,14 @@ final class Utils {
             providers.gradleProperty(name).forUseAtConfigurationTime();
         }
         return Optional.ofNullable((String) gradle.getRootProject().findProperty(name));
+    }
+
+    static Optional<String> envVariable(String name, ProviderFactory providers) {
+        if (isGradle65OrNewer()) {
+            Provider<String> variable = providers.environmentVariable(name).forUseAtConfigurationTime();
+            return Optional.ofNullable(variable.getOrNull());
+        }
+        return Optional.ofNullable(System.getenv(name));
     }
 
     static Optional<String> sysProperty(String name, ProviderFactory providers) {
