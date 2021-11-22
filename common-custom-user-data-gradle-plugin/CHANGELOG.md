@@ -2,6 +2,7 @@
 All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
+- Add the ability to override various Gradle Enterprise configuraiton settings via environment variables (in addition to system properties)
 
 ## [1.5] - 2021-11-11
 - Add custom value and search link for GitHub Actions run ID
