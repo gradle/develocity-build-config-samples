@@ -4,8 +4,12 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
 
+## [1.6.1] - 2021-11-23
+- Enable the ability to override various Gradle Enterprise configuration settings via environment variables (in addition to system properties)
+
 ## [1.6] - 2021-11-22
-- Add the ability to override various Gradle Enterprise configuraiton settings via environment variables (in addition to system properties)
+- Prepare for the ability to override various Gradle Enterprise configuration settings via environment variables (in addition to system properties)
+- Fix exception when using non-`HttpBuildCache` remote build cache types.
 
 ## [1.5] - 2021-11-11
 - Add custom value and search link for GitHub Actions run ID
@@ -56,6 +60,7 @@ All notable changes to this project will be documented in this file.
 Initial release.
 
 [Unreleased]: https://github.com/gradle/gradle-enterprise-build-config-samples/compare/common-custom-user-data-gradle-plugin-1.6...HEAD
+[1.6.1]: https://github.com/gradle/gradle-enterprise-build-config-samples/compare/common-custom-user-data-gradle-plugin-1.6...common-custom-user-data-gradle-plugin-1.6.1
 [1.6]: https://github.com/gradle/gradle-enterprise-build-config-samples/compare/common-custom-user-data-gradle-plugin-1.5...common-custom-user-data-gradle-plugin-1.6
 [1.5]: https://github.com/gradle/gradle-enterprise-build-config-samples/compare/common-custom-user-data-gradle-plugin-1.4.2...common-custom-user-data-gradle-plugin-1.5
 [1.4.2]: https://github.com/gradle/gradle-enterprise-build-config-samples/compare/common-custom-user-data-gradle-plugin-1.4.1...common-custom-user-data-gradle-plugin-1.4.2

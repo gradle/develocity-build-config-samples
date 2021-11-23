@@ -7,14 +7,14 @@ plugins {
 }
 
 group = 'com.gradle'
-version = '1.6.1-SNAPSHOT'
+version = '1.6.2-SNAPSHOT'
 
 repositories {
     gradlePluginPortal()
 }
 
 dependencies {
-    compileOnly 'com.gradle:gradle-enterprise-gradle-plugin:3.7.1'
+    compileOnly 'com.gradle:gradle-enterprise-gradle-plugin:3.7.2'
 }
 
 java {
