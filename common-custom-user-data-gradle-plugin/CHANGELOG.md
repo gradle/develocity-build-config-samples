@@ -15,6 +15,7 @@ All notable changes to this project will be documented in this file.
 - Add custom value and search link for GitHub Actions run ID
 - Fix generation of search links for custom values
 - Redact any `user:password@` portion of the 'Git repository' custom value
+- Add tag `IDE sync` when a `Reload All Gradle Projects` from Intellij IDEA is detected
 
 ## [1.4.2] - 2021-07-13
 - Fix configuration cache compatibility when capturing test maxParallelForks
