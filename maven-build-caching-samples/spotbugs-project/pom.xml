@@ -78,6 +78,10 @@
                           <property><name>skipEmptyReport</name></property>
                           <property><name>userPrefs</name></property>
 
+                          <property><name>sarifOutput</name></property>
+                          <property><name>sarifFullPath</name></property>
+                          <property><name>systemPropertyVariables</name></property>
+
                           <!-- Not quite right: These should be input files so we track the content in the cache key. -->
                           <!-- Since filter files are loaded from the classpath they cannot be easily added as inputs. -->
                           <property><name>includeFilterFile</name></property>
