@@ -23,8 +23,15 @@ This plugin also allows overriding various Gradle Enterprise related settings vi
 - Remote build cache configuration
 - Local build cache configuration
 
-See [Overrides.java](./src/main/java/com/gradle/Overrides.java) for the complete set of available
-system properties. You can use the system properties to override Gradle Enterprise related settings temporarily without having
+See [Overrides.java](./src/main/java/com/gradle/Overrides.java) for the override behavior. You can find the complete set of available
+system properties and environment variables in the table below. 
+
+| Build Cache API | System property | Environment variable |
+| --------------- | --------------- | -------------------- |
+|buildCache.local.setEnabled|gradle.cache.local.enabled|GRADLE_CACHE_LOCAL_ENABLED|
+
+
+You can use the system properties and environment variables to override Gradle Enterprise related settings temporarily without having
 to modify the build scripts. For example, to disable the local build cache when running a build:
 
 ```bash
