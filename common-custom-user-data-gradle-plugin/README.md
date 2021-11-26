@@ -27,9 +27,18 @@ See [Overrides.java](./src/main/java/com/gradle/Overrides.java) for the override
 system properties and environment variables in the table below. 
 
 | Build Cache API | System property | Environment variable |
-| --------------- | --------------- | -------------------- |
+| :-------------- | :-------------  | :------------------- |
+|gradleEnterprise.server|gradle.enterprise.url|GRADLE_ENTERPRISE_URL|
+|gradleEnterprise.allowUntrustedServer|gradle.enterprise.allowUntrustedServer|GRADLE_ENTERPRISE_ALLOWUNTRUSTEDSERVER|
+|buildCache.local.setDirectory|gradle.cache.local.directory|GRADLE_CACHE_LOCAL_DIRECTORY|
+|buildCache.local.setRemoveUnusedEntriesAfterDays|gradle.cache.local.removeUnusedEntriesAfterDays|GRADLE_CACHE_LOCAL_REMOVEUNUSEDENTRIESAFTERDAYS|
 |buildCache.local.setEnabled|gradle.cache.local.enabled|GRADLE_CACHE_LOCAL_ENABLED|
-
+|buildCache.local.setPush|gradle.cache.local.push|GRADLE_CACHE_LOCAL_PUSH|
+|---|gradle.cache.remote.shard|GRADLE_CACHE_REMOTE_SHARD|
+|buildCache.remote.setUrl|gradle.cache.remote.url|GRADLE_CACHE_REMOTE_URL|
+|buildCache.remote.setAllowUntrustedServer|gradle.cache.remote.allowUntrustedServer|GRADLE_CACHE_REMOTE_ALLOWUNTRUSTEDSERVER|
+|buildCache.remote.setEnabled|gradle.cache.remote.enabled|GRADLE_CACHE_REMOTE_ENABLED|
+|buildCache.remote.setPush|gradle.cache.remote.push|GRADLE_CACHE_REMOTE_PUSH|
 
 You can use the system properties and environment variables to override Gradle Enterprise related settings temporarily without having
 to modify the build scripts. For example, to disable the local build cache when running a build:
