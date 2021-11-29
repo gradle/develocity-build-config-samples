@@ -2,7 +2,7 @@
 All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
-
+- Detect GoCD CI and add respective custom CI tag, values and links
 
 ## [1.6.1] - 2021-11-23
 - Enable the ability to override various Gradle Enterprise configuration settings via environment variables (in addition to system properties)
