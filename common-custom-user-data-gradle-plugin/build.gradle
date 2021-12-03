@@ -7,7 +7,7 @@ plugins {
 }
 
 group = 'com.gradle'
-version = '1.6.2'
+version = '1.6.3-SNAPSHOT'
 
 repositories {
     gradlePluginPortal()
