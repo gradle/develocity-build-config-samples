@@ -3,7 +3,7 @@ name: Pre-release Build Validation Scripts
 on: 
   push:
     branches:
-      - jhurne/experiment-automation
+      - master
     paths:
       - 'build-validation/**'
   workflow_dispatch:
