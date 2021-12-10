@@ -9,6 +9,7 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 import static com.gradle.Utils.appendIfMissing;
 import static com.gradle.Utils.envVariable;
@@ -171,10 +172,34 @@ final class CustomBuildScanEnhancements {
             envVariable("BITRISE_BUILD_NUMBER").ifPresent(value ->
                 buildScan.value("CI build number", value));
         }
+
+        if (isGoCD()) {
+            Optional<String> pipelineName = envVariable("GO_PIPELINE_NAME");
+            Optional<String> pipelineNumber = envVariable("GO_PIPELINE_COUNTER");
+            Optional<String> stageName = envVariable("GO_STAGE_NAME");
+            Optional<String> stageNumber = envVariable("GO_STAGE_COUNTER");
+            Optional<String> jobName = envVariable("GO_JOB_NAME");
+            Optional<String> goServerUrl = envVariable("GO_SERVER_URL");
+            if (Stream.of(pipelineName, pipelineNumber, stageName, stageNumber, jobName, goServerUrl).allMatch(Optional::isPresent)) {
+                //noinspection OptionalGetWithoutIsPresent
+                String buildUrl = String.format("%s/tab/build/detail/%s/%s/%s/%s/%s",
+                    goServerUrl.get(), pipelineName.get(),
+                    pipelineNumber.get(), stageName.get(), stageNumber.get(), jobName.get());
+                buildScan.link("GoCD build", buildUrl);
+            } else if (goServerUrl.isPresent()) {
+                buildScan.link("GoCD", goServerUrl.get());
+            }
+            pipelineName.ifPresent(value ->
+                addCustomValueAndSearchLink("CI pipeline", value));
+            jobName.ifPresent(value ->
+                addCustomValueAndSearchLink("CI job", value));
+            stageName.ifPresent(value ->
+                addCustomValueAndSearchLink("CI stage", value));
+        }
     }
 
     private boolean isCi() {
-        return isGenericCI() || isJenkins() || isHudson() || isTeamCity() || isCircleCI() || isBamboo() || isGitHubActions() || isGitLab() || isTravis() || isBitrise();
+        return isGenericCI() || isJenkins() || isHudson() || isTeamCity() || isCircleCI() || isBamboo() || isGitHubActions() || isGitLab() || isTravis() || isBitrise() || isGoCD();
     }
 
     private boolean isGenericCI() {
@@ -215,6 +240,10 @@ final class CustomBuildScanEnhancements {
 
     private boolean isBitrise() {
         return envVariable("BITRISE_BUILD_URL").isPresent();
+    }
+
+    private boolean isGoCD() {
+        return envVariable("GO_SERVER_URL").isPresent();
     }
 
     private void captureGitMetadata() {

@@ -9,6 +9,8 @@ You can leverage this plugin for your project in one of two ways:
 1. Apply the published plugin directly in your build and immediately benefit from enhanced build scans
 2. Copy this repository and develop a customized version of the plugin to standardize Gradle Enterprise usage across multiple projects
 
+#### Captured data
+
 The additional tags, links and custom values captured by this plugin include:
 - A tag representing the operating system
 - A tag representing how the build was invoked, be that from your IDE (IDEA, Eclipse, Android Studio) or from the command-line
@@ -18,18 +20,39 @@ The additional tags, links and custom values captured by this plugin include:
 See [CustomBuildScanEnhancements.java](./src/main/java/com/gradle/CustomBuildScanEnhancements.java) for details on what data is
 captured and under which conditions.
 
-This plugin also allows overriding various Gradle Enterprise related settings via system properties:
+#### Configuration overrides
+
+This plugin also allows overriding various Gradle Enterprise related settings via system properties and environment variables:
 - Gradle Enterprise general configuration
 - Remote build cache configuration
 - Local build cache configuration
 
-See [SystemPropertyOverrides.java](./src/main/java/com/gradle/SystemPropertyOverrides.java) for the complete set of available
-system properties. You can use the system properties to override Gradle Enterprise related settings temporarily without having
+See [Overrides.java](./src/main/java/com/gradle/Overrides.java) for the override behavior.
+
+You can use the system properties and environment variables to override Gradle Enterprise related settings temporarily without having
 to modify the build scripts. For example, to disable the local build cache when running a build:
 
 ```bash
 ./gradlew -Dgradle.cache.local.enabled=false build
 ```
+
+<details>
+  <summary>Click to see the complete set of available system properties and environment variables in the table below. </summary>
+
+| Gradle Enterprise / Build Cache API | System property | Environment variable |
+| :-------------- | :-------------  | :------------------- |
+|gradleEnterprise.server|gradle.enterprise.url|GRADLE_ENTERPRISE_URL|
+|gradleEnterprise.allowUntrustedServer|gradle.enterprise.allowUntrustedServer|GRADLE_ENTERPRISE_ALLOWUNTRUSTEDSERVER|
+|buildCache.local.setEnabled|gradle.cache.local.enabled|GRADLE_CACHE_LOCAL_ENABLED|
+|buildCache.local.setPush|gradle.cache.local.push|GRADLE_CACHE_LOCAL_PUSH|
+|buildCache.local.setDirectory|gradle.cache.local.directory|GRADLE_CACHE_LOCAL_DIRECTORY|
+|buildCache.local.setRemoveUnusedEntriesAfterDays|gradle.cache.local.removeUnusedEntriesAfterDays|GRADLE_CACHE_LOCAL_REMOVEUNUSEDENTRIESAFTERDAYS|
+|buildCache.remote.setEnabled|gradle.cache.remote.enabled|GRADLE_CACHE_REMOTE_ENABLED|
+|buildCache.remote.setPush|gradle.cache.remote.push|GRADLE_CACHE_REMOTE_PUSH|
+|buildCache.remote.setUrl|gradle.cache.remote.url|GRADLE_CACHE_REMOTE_URL|
+|buildCache.remote.setAllowUntrustedServer|gradle.cache.remote.allowUntrustedServer|GRADLE_CACHE_REMOTE_ALLOWUNTRUSTEDSERVER|
+|---|gradle.cache.remote.shard|GRADLE_CACHE_REMOTE_SHARD|
+</details>
 
 ### Applying the published plugin
 
@@ -44,7 +67,7 @@ The plugin needs to be applied in `settings.gradle`, alongside the `com.gradle.e
 plugins {
     // …
     id 'com.gradle.enterprise' version '3.7.2'
-    id 'com.gradle.common-custom-user-data-gradle-plugin' version '1.6.1'
+    id 'com.gradle.common-custom-user-data-gradle-plugin' version '1.6.2'
     // …
 }
 ```
@@ -57,7 +80,7 @@ The plugin needs to be applied in `build.gradle` of the root project, alongside 
 plugins {
     // …
     id 'com.gradle.build-scan' version '3.7.2'
-    id 'com.gradle.common-custom-user-data-gradle-plugin' version '1.6.1'
+    id 'com.gradle.common-custom-user-data-gradle-plugin' version '1.6.2'
     // …
 }
 ```
