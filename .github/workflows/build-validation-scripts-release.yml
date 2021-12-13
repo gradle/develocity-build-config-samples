@@ -20,10 +20,10 @@ jobs:
           java-version: '11'
           distribution: 'adopt'
       - name: Build with Gradle
-         uses: gradle/gradle-build-action@v2
-         with:
-           arguments: build
-           build-root-directory: build-validation-scripts/distribution-build
+        uses: gradle/gradle-build-action@v2
+        with:
+          arguments: build
+          build-root-directory: build-validation-scripts/distribution-build
       - name: Create GitHub Release
         uses: "marvinpinto/action-automatic-releases@v1.2.0"
         with:
