@@ -1,10 +1,10 @@
-## Examples of Gradle Enterprise cache configuration for Maven
+## Examples of Gradle Enterprise build cache configuration for Maven
 
-This Maven project provides example configuration for enabling caching for certain Maven plugins that are not supported out of the box by Gradle Enterprise.
+This Maven project provides example configuration for enabling build caching for certain Maven plugins that are not supported out of the box by Gradle Enterprise.
 Although the cache configuration does not cover all possible plugin uses, most standard/default plugin settings should work.
 
-NOTE: These code snippets serve as examples only. It is imperative that you test the cache configuration with your own project.
-Misconfigured caching can lead to incorrect cache hits, resulting in incorrect goal outputs.
+NOTE: These code snippets serve as examples only. It is imperative that you test the build caching configuration with your own project.
+Misconfigured build caching can lead to incorrect cache hits, resulting in incorrect goal outputs.
 
 The following Maven plugins are demonstrated:
 - Spotbugs: `com.github.spotbugs:spotbugs-maven-plugin`
