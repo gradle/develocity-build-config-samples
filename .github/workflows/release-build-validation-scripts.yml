@@ -5,7 +5,7 @@ on:
     branches:
       - master
     paths:
-      - 'build-validation/**'
+      - 'build-validation-scripts/**'
   workflow_dispatch:
 
 jobs:
@@ -24,7 +24,7 @@ jobs:
          uses: gradle/gradle-build-action@v2
          with:
            arguments: build
-           build-root-directory: build-validation/distribution-build
+           build-root-directory: build-validation-scripts/distribution-build
       - name: Create GitHub Release
         uses: "marvinpinto/action-automatic-releases@v1.2.0"
         with:
@@ -32,5 +32,5 @@ jobs:
           automatic_release_tag: "build-validation-development-latest"
           prerelease: true
           title: "Build Validation - Development Build"
-          files: "build-validation/distribution-build/build/distributions/*.zip"
+          files: "build-validation-scripts/distribution-build/build/distributions/*.zip"
 
