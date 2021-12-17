@@ -5,14 +5,14 @@ All notable changes to this project will be documented in this file.
 
 
 ## [1.6.2] - 2021-12-03
-- Detect GoCD CI and add respective custom CI tag, values and links
+- Detect GoCD CI and add respective custom tags, values and links
 
 ## [1.6.1] - 2021-11-23
 - Enable the ability to override various Gradle Enterprise configuration settings via environment variables (in addition to system properties)
 
 ## [1.6] - 2021-11-22
 - Prepare for the ability to override various Gradle Enterprise configuration settings via environment variables (in addition to system properties)
-- Fix exception when using non-`HttpBuildCache` remote build cache types.
+- Fix exception when using remote build cache that is not of type `HttpBuildCache`
 
 ## [1.5] - 2021-11-11
 - Add custom value and search link for GitHub Actions run ID
