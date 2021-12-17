@@ -25,12 +25,12 @@ jobs:
         strategy:
             matrix:
                 include:
-                    - path-to-sample-build-file: "capture-dependency-resolution/gradle-dependency-resolution.gradle"
-                    - path-to-sample-build-file: "capture-git-diffs/gradle-git-diffs.gradle"
-                    - path-to-sample-build-file: "capture-os-processes/gradle-os-processes.gradle"
-                    - path-to-sample-build-file: "capture-quality-check-issues/gradle-quality-check-issues.gradle"
-                    - path-to-sample-build-file: "capture-slow-workunit-executions/gradle-slow-task-executions.gradle"
-                    - path-to-sample-build-file: "capture-test-execution-system-properties/gradle-test-execution-system-properties.gradle"
+                    - path-to-sample-build-file: "build-data-capturing-gradle-samples/capture-dependency-resolution/gradle-dependency-resolution.gradle"
+                    - path-to-sample-build-file: "build-data-capturing-gradle-samples/capture-git-diffs/gradle-git-diffs.gradle"
+                    - path-to-sample-build-file: "build-data-capturing-gradle-samples/capture-os-processes/gradle-os-processes.gradle"
+                    - path-to-sample-build-file: "build-data-capturing-gradle-samples/capture-quality-check-issues/gradle-quality-check-issues.gradle"
+                    - path-to-sample-build-file: "build-data-capturing-gradle-samples/capture-slow-workunit-executions/gradle-slow-task-executions.gradle"
+                    - path-to-sample-build-file: "build-data-capturing-gradle-samples/capture-test-execution-system-properties/gradle-test-execution-system-properties.gradle"
 
         steps:
             - name: Checkout
