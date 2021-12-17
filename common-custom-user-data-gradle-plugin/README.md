@@ -67,7 +67,7 @@ The plugin needs to be applied in `settings.gradle`, alongside the `com.gradle.e
 plugins {
     // …
     id 'com.gradle.enterprise' version '3.7.2'
-    id 'com.gradle.common-custom-user-data-gradle-plugin' version '1.6.1'
+    id 'com.gradle.common-custom-user-data-gradle-plugin' version '1.6.2'
     // …
 }
 ```
@@ -80,7 +80,7 @@ The plugin needs to be applied in `build.gradle` of the root project, alongside 
 plugins {
     // …
     id 'com.gradle.build-scan' version '3.7.2'
-    id 'com.gradle.common-custom-user-data-gradle-plugin' version '1.6.1'
+    id 'com.gradle.common-custom-user-data-gradle-plugin' version '1.6.2'
     // …
 }
 ```
