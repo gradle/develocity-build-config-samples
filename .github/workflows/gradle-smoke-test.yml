@@ -10,17 +10,17 @@ jobs:
         strategy:
             matrix:
                 include:
-                    - project-dir: "common-custom-user-data-gradle-plugin"
+                    - build-dir: "common-gradle-enterprise-gradle-configuration"
                       sample-file: "../build-data-capturing-gradle-samples/capture-dependency-resolution/gradle-dependency-resolution.gradle"
-                    - project-dir: "common-custom-user-data-gradle-plugin"
+                    - build-dir: "common-gradle-enterprise-gradle-configuration"
                       sample-file: "../build-data-capturing-gradle-samples/capture-git-diffs/gradle-git-diffs.gradle"
-                    - project-dir: "common-custom-user-data-gradle-plugin"
+                    - build-dir: "common-gradle-enterprise-gradle-configuration"
                       sample-file: "../build-data-capturing-gradle-samples/capture-os-processes/gradle-os-processes.gradle"
-                    - project-dir: "common-custom-user-data-gradle-plugin"
+                    - build-dir: "common-gradle-enterprise-gradle-configuration"
                       sample-file: "../build-data-capturing-gradle-samples/capture-quality-check-issues/gradle-quality-check-issues.gradle"
-                    - project-dir: "common-custom-user-data-gradle-plugin"
+                    - build-dir: "common-gradle-enterprise-gradle-configuration"
                       sample-file: "../build-data-capturing-gradle-samples/capture-slow-workunit-executions/gradle-slow-task-executions.gradle"
-                    - project-dir: "common-custom-user-data-gradle-plugin"
+                    - build-dir: "common-gradle-enterprise-gradle-configuration"
                       sample-file: "../build-data-capturing-gradle-samples/capture-test-execution-system-properties/gradle-test-execution-system-properties.gradle"
 
         steps:
@@ -31,16 +31,34 @@ jobs:
               with:
                   java-version: '11'
                   distribution: 'adopt'
-            - name: Build current snapshot of CCUD Gradle plugin
+            - name: Publish current snapshot of CCUD Gradle plugin to Maven local repository
               uses: gradle/gradle-build-action@v2
               with:
-                  arguments: build -x signArchives
-                  build-root-directory: ${{ matrix.project-dir }}
+                  arguments: publishToMavenLocal -x signArchives
+                  build-root-directory: common-custom-user-data-gradle-plugin
+            - name: Replace version in build configuration
+              run: |
+                  # fetching current snapshot version
+                  CURRENT_SNAPSHOT_VERSION=$(awk '/version =/ {print $3;exit;}' common-custom-user-data-gradle-plugin/build.gradle)
+                  PLUGIN_DECLARATION=$(echo "id \"com.gradle.common-custom-user-data-gradle-plugin\" version $CURRENT_SNAPSHOT_VERSION")
+                  # inplace replacement to use snapshot version
+                  sed -i "s/.*common-custom-user-data-gradle-plugin.*/$PLUGIN_DECLARATION/" ${{matrix.build-dir}}/settings.gradle
             - name: Prepare build directory
               run: |
-                echo "apply from: file(\"${{matrix.sample-file}}\")" >> ${{matrix.project-dir}}/build.gradle
+                # add maven local repository
+                echo -e "pluginManagement {\n
+                                 repositories {\n
+                                     mavenLocal()\n
+                                     maven {\n
+                                         url \"https://plugins.gradle.org/m2/\"\n
+                                     }\n
+                                 }\n
+                             }\n
+                             \n$(cat ${{matrix.build-dir}}/settings.gradle)" > ${{matrix.build-dir}}/settings.gradle
+                # apply sample file
+                echo "apply from: file(\"${{matrix.sample-file}}\")" >> ${{matrix.build-dir}}/build.gradle
             - name: Run Gradle build
               uses: gradle/gradle-build-action@v2
               with:
                   arguments: tasks
-                  build-root-directory: ${{matrix.project-dir}}
+                  build-root-directory: ${{matrix.build-dir}}
