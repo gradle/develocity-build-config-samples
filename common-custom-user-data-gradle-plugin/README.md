@@ -104,7 +104,7 @@ See the [Gradle User Manual](https://docs.gradle.org/current/userguide/publishin
 
 Refer to the [changelog](https://github.com/gradle/gradle-enterprise-build-config-samples/blob/master/common-custom-user-data-gradle-plugin/CHANGELOG.md) to see detailed changes on the versions.
 
-## License
+### License
 
 The Gradle Enterprise Common Custom User Data Gradle Plugin is Open-source software released under the [Apache 2.0 License][apache-license].
 
