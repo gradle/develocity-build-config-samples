@@ -80,7 +80,7 @@ Refer to the [changelog](https://github.com/gradle/gradle-enterprise-build-confi
 
 ### License
 
-The Gradle Enterprise Common Custom User Data Maven Extension is Open-source software released under the [Apache 2.0 License][apache-license].
+The Gradle Enterprise Common Custom User Data Maven Extension is open-source software released under the [Apache 2.0 License][apache-license].
 
 [apache-license]: https://www.apache.org/licenses/LICENSE-2.0.html
 

@@ -22,7 +22,7 @@ Visit our website to learn more about [Gradle Enterprise][gradle-enterprise].
 
 ## License
 
-The Gradle Enterprise build configuration samples are Open-source software released under the [Apache 2.0 License][apache-license].
+The Gradle Enterprise build configuration samples are open-source software released under the [Apache 2.0 License][apache-license].
 
 [gradle-enterprise]: https://gradle.com/enterprise
 [apache-license]: https://www.apache.org/licenses/LICENSE-2.0.html
