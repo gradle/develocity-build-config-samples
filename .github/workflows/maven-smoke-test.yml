@@ -34,7 +34,7 @@ jobs:
               with:
                   java-version: '11'
                   distribution: 'adopt'
-            - name: Publish current snapshot of CCUD Maven extension to Maven local repository
+            - name: Publish current snapshot of the CCUD Maven extension to local Maven repository
               run: |
                   mvn -f common-custom-user-data-maven-extension/pom.xml install -Dgradle.scan.disabled=true
             - name: Replace version in build configuration
