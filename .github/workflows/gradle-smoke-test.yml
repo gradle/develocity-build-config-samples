@@ -31,7 +31,7 @@ jobs:
               with:
                   java-version: '11'
                   distribution: 'adopt'
-            - name: Publish current snapshot of CCUD Gradle plugin to Maven local repository
+            - name: Publish current snapshot of the CCUD Gradle plugin to local Maven repository
               uses: gradle/gradle-build-action@v2
               with:
                   arguments: publishToMavenLocal -x signArchives
