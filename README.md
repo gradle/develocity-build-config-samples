@@ -1,7 +1,5 @@
 # Gradle Enterprise build configuration samples
 
-<img src="http://bit.ly/2JSSCT0" align="right" width="280" />
-
 This repository contains code samples that demonstrate how to optimize and customize your Gradle Enterprise build configuration using Gradle or Maven.
 
 The samples aim to demonstrate optimizations, customizations, API usages, as well as patterns for reusing Gradle Enterprise build configuration across multiple projects. While we do invest in keeping the code current and working, none of the code in this repository has gone through the same rigorous, continuous, and automated testing as our commercial components of Gradle Enterprise.
