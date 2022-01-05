@@ -31,30 +31,13 @@ jobs:
               with:
                   java-version: '11'
                   distribution: 'adopt'
-            - name: Publish current snapshot of the CCUD Gradle plugin to local Maven repository
-              uses: gradle/gradle-build-action@v2
-              with:
-                  arguments: publishToMavenLocal -x signArchives
-                  build-root-directory: common-custom-user-data-gradle-plugin
-            - name: Replace version in build configuration
-              run: |
-                  # fetching current snapshot version
-                  CURRENT_SNAPSHOT_VERSION=$(awk '/version =/ {print $3;exit;}' common-custom-user-data-gradle-plugin/build.gradle)
-                  PLUGIN_DECLARATION=$(echo "id \"com.gradle.common-custom-user-data-gradle-plugin\" version $CURRENT_SNAPSHOT_VERSION")
-                  # inplace replacement to use snapshot version
-                  sed -i "s/.*common-custom-user-data-gradle-plugin.*/$PLUGIN_DECLARATION/" ${{matrix.build-dir}}/settings.gradle
             - name: Prepare build directory
               run: |
-                # add maven local repository
+                # include CCUD plugin
                 echo -e "pluginManagement {\n
-                                 repositories {\n
-                                     mavenLocal()\n
-                                     maven {\n
-                                         url \"https://plugins.gradle.org/m2/\"\n
-                                     }\n
-                                 }\n
-                             }\n
-                             \n$(cat ${{matrix.build-dir}}/settings.gradle)" > ${{matrix.build-dir}}/settings.gradle
+                            includeBuild \"../common-custom-user-data-gradle-plugin\"\n
+                         }\n
+                         $(cat ${{matrix.build-dir}}/settings.gradle)" > ${{matrix.build-dir}}/settings.gradle
                 # apply sample file
                 echo "apply from: file(\"${{matrix.sample-file}}\")" >> ${{matrix.build-dir}}/build.gradle
             - name: Run Gradle build
