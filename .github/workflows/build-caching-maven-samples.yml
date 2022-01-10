@@ -23,4 +23,4 @@ jobs:
               run: npm install -g yarn
             - name: Run Maven verify
               working-directory: ./build-caching-maven-samples
-              run: ./mvnw clean verify -Dorg.slf4j.simpleLogger.log.gradle.goal.cache=debug -Dgradle.scan.disabled=true
+              run: ./mvnw clean verify -Dgradle.scan.disabled=true
