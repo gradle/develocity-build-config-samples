@@ -3,34 +3,25 @@ name: Gradle smoke test
 on: [push]
 
 jobs:
-    build-ccud:
+
+    verify-gradle-samples:
         runs-on: ubuntu-latest
 
-        steps:
-            - name: Checkout
-              uses: actions/checkout@v2
-            - name: Set up JDK 11
-              uses: actions/setup-java@v2
-              with:
-                  java-version: '11'
-                  distribution: 'adopt'
-            - name: Build CCUD Gradle plugin
-              uses: gradle/gradle-build-action@v2
-              with:
-                  arguments: build -x signArchives
-                  build-root-directory: common-custom-user-data-gradle-plugin
-
-    verify-samples:
-        runs-on: ubuntu-latest
         strategy:
             matrix:
                 include:
-                    - path-to-sample-build-file: "build-data-capturing-gradle-samples/capture-dependency-resolution/gradle-dependency-resolution.gradle"
-                    - path-to-sample-build-file: "build-data-capturing-gradle-samples/capture-git-diffs/gradle-git-diffs.gradle"
-                    - path-to-sample-build-file: "build-data-capturing-gradle-samples/capture-os-processes/gradle-os-processes.gradle"
-                    - path-to-sample-build-file: "build-data-capturing-gradle-samples/capture-quality-check-issues/gradle-quality-check-issues.gradle"
-                    - path-to-sample-build-file: "build-data-capturing-gradle-samples/capture-slow-workunit-executions/gradle-slow-task-executions.gradle"
-                    - path-to-sample-build-file: "build-data-capturing-gradle-samples/capture-test-execution-system-properties/gradle-test-execution-system-properties.gradle"
+                    - build-dir: "common-gradle-enterprise-gradle-configuration"
+                      sample-file: "../build-data-capturing-gradle-samples/capture-dependency-resolution/gradle-dependency-resolution.gradle"
+                    - build-dir: "common-gradle-enterprise-gradle-configuration"
+                      sample-file: "../build-data-capturing-gradle-samples/capture-git-diffs/gradle-git-diffs.gradle"
+                    - build-dir: "common-gradle-enterprise-gradle-configuration"
+                      sample-file: "../build-data-capturing-gradle-samples/capture-os-processes/gradle-os-processes.gradle"
+                    - build-dir: "common-gradle-enterprise-gradle-configuration"
+                      sample-file: "../build-data-capturing-gradle-samples/capture-quality-check-issues/gradle-quality-check-issues.gradle"
+                    - build-dir: "common-gradle-enterprise-gradle-configuration"
+                      sample-file: "../build-data-capturing-gradle-samples/capture-slow-workunit-executions/gradle-slow-task-executions.gradle"
+                    - build-dir: "common-gradle-enterprise-gradle-configuration"
+                      sample-file: "../build-data-capturing-gradle-samples/capture-test-execution-system-properties/gradle-test-execution-system-properties.gradle"
 
         steps:
             - name: Checkout
@@ -40,19 +31,17 @@ jobs:
               with:
                   java-version: '11'
                   distribution: 'adopt'
-            - name: Prepare sample builds
-              id: prepare
-              # Convert the sample script into a build that can be invoked by Gradle
-              # - Rename the script to build.gradle
-              # - Add a settings.gradle
+            - name: Prepare build directory
               run: |
-                PROJECT_DIR=$(dirname ${{matrix.path-to-sample-build-file}})
-                mv ${{matrix.path-to-sample-build-file}} $PROJECT_DIR/build.gradle
-                touch $PROJECT_DIR/settings.gradle
-                echo "::set-output name=project-dir::$PROJECT_DIR"
-            - name: Integrates sample scripts in order to validate them
+                # include CCUD plugin
+                echo -e "pluginManagement {\n
+                            includeBuild \"../common-custom-user-data-gradle-plugin\"\n
+                         }\n
+                         $(cat ${{matrix.build-dir}}/settings.gradle)" > ${{matrix.build-dir}}/settings.gradle
+                # apply sample file
+                echo "apply from: file(\"${{matrix.sample-file}}\")" >> ${{matrix.build-dir}}/build.gradle
+            - name: Run Gradle build
               uses: gradle/gradle-build-action@v2
               with:
                   arguments: tasks
-                  build-root-directory: ${{ steps.prepare.outputs.project-dir }}
-                  gradle-executable: common-custom-user-data-gradle-plugin/gradlew
+                  build-root-directory: ${{matrix.build-dir}}
