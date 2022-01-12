@@ -335,7 +335,7 @@ final class CustomBuildScanEnhancements {
     private void addCustomValueWhenProjectPropertyResolvesToTrue(String property) {
         projectProperty(property).ifPresent(value -> {
             if (value.isEmpty() || Boolean.valueOf(value).equals(Boolean.TRUE)) {
-                buildScan.value("maven.switches." + property, "On");
+                buildScan.value("switches." + property, "On");
             }
         });
     }
