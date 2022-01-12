@@ -42,21 +42,7 @@ final class CustomBuildScanEnhancements {
         captureCiOrLocal();
         captureCiMetadata();
         captureGitMetadata();
-        captureSkipTests();
-    }
-
-    private void captureSkipTests() {
-        customValueWhenTrueOrEmpty("skipTests");
-        customValueWhenTrueOrEmpty("maven.test.skip");
-        customValueWhenTrueOrEmpty("skipITs");
-    }
-
-    private void customValueWhenTrueOrEmpty(String property) {
-        projectProperty(property).ifPresent(value -> {
-            if (Boolean.TRUE.toString().equals(value) || value.isEmpty()) {
-                buildScan.value("maven.switches", property);
-            }
-        });
+        captureSkipTestsFlags();
     }
 
     private void captureOs() {
@@ -340,6 +326,19 @@ final class CustomBuildScanEnhancements {
 
     }
 
+    private void captureSkipTestsFlags() {
+        customValueWhenTrueOrEmpty("skipTests");
+        customValueWhenTrueOrEmpty("maven.test.skip");
+        customValueWhenTrueOrEmpty("skipITs");
+    }
+
+    private void customValueWhenTrueOrEmpty(String property) {
+        projectProperty(property).ifPresent(value -> {
+            if (Boolean.TRUE.toString().equals(value) || value.isEmpty()) {
+                buildScan.value("maven.switches", property);
+            }
+        });
+    }
     private void addCustomValueAndSearchLink(String name, String value) {
         addCustomValueAndSearchLink(buildScan, name, name, value);
     }
