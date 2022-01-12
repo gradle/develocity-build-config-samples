@@ -6,6 +6,7 @@ jobs:
 
     verify-maven-samples:
         runs-on: ubuntu-latest
+
         env:
             LOG_MSG_EXTENSION_LOADED: "Build operation 'Gradle Enterprise mojo execution' completed"
             LOG_MSG_EXECUTION_FAILED: "Error executing a GradleEnterpriseListener callback"
