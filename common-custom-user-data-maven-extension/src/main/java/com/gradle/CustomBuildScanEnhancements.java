@@ -327,18 +327,19 @@ final class CustomBuildScanEnhancements {
     }
 
     private void captureSkipTestsFlags() {
-        customValueWhenTrueOrEmpty("skipTests");
-        customValueWhenTrueOrEmpty("maven.test.skip");
-        customValueWhenTrueOrEmpty("skipITs");
+        addCustomValueWhenProjectPropertyResolvesToTrue("skipITs");
+        addCustomValueWhenProjectPropertyResolvesToTrue("skipTests");
+        addCustomValueWhenProjectPropertyResolvesToTrue("maven.test.skip");
     }
 
-    private void customValueWhenTrueOrEmpty(String property) {
+    private void addCustomValueWhenProjectPropertyResolvesToTrue(String property) {
         projectProperty(property).ifPresent(value -> {
-            if (Boolean.TRUE.toString().equals(value) || value.isEmpty()) {
-                buildScan.value("maven.switches", property);
+            if (value.isEmpty() || Boolean.valueOf(value).equals(Boolean.TRUE)) {
+                buildScan.value("maven.switches." + property, "On");
             }
         });
     }
+
     private void addCustomValueAndSearchLink(String name, String value) {
         addCustomValueAndSearchLink(buildScan, name, name, value);
     }
