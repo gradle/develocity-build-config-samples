@@ -7,7 +7,7 @@ registries:
     password: dummy # Required by dependabot
 updates:
   - package-ecosystem: "maven"
-    directory: "maven-build-caching-samples"
+    directory: "build-caching-maven-samples"
     schedule:
       interval: "daily"
   - package-ecosystem: "maven"
@@ -18,6 +18,10 @@ updates:
     directory: "common-gradle-enterprise-maven-configuration"
     schedule:
       interval: "daily"
+  - package-ecosystem: "maven"
+    directory: "rollout-maven-extension"
+    schedule:
+        interval: "daily"
   - package-ecosystem: "gradle"
     directory: "common-custom-user-data-gradle-plugin"
     registries:
@@ -30,3 +34,9 @@ updates:
       - gradle-plugin-portal
     schedule:
       interval: "daily"
+  - package-ecosystem: "gradle"
+    directory: "gradle-enterprise-conventions-gradle-plugin"
+    registries:
+        - gradle-plugin-portal
+    schedule:
+        interval: "daily"
