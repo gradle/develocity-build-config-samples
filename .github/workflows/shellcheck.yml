@@ -1,20 +1,15 @@
-name: 'Shellcheck'
+name: Validate Shell Scripts
 
-on:
-  push:
-  pull_request:
-    types: [synchronize]
+on: [ push, pull_request, workflow_dispatch ]
 
 jobs:
-
   shellcheck:
     name: Shellcheck
     runs-on: ubuntu-latest
-
     steps:
     - name: Checkout
       uses: actions/checkout@v2
-    - name: Run shell checks
+    - name: Validate
       uses: luizm/action-sh-checker@v0.1.12
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
