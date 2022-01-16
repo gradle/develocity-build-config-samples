@@ -25,11 +25,6 @@ jobs:
             distribution: 'adopt'
       - name: Prepare build directory
         run: |
-          # include CCUD plugin
-          echo -e "pluginManagement {\n
-                      includeBuild \"../common-custom-user-data-gradle-plugin\"\n
-                   }\n
-                   $(cat common-gradle-enterprise-gradle-configuration/settings.gradle)" > common-gradle-enterprise-gradle-configuration/settings.gradle
           # apply sample file
           echo "apply from: file(\"${{matrix.sample-file}}\")" >> common-gradle-enterprise-gradle-configuration/build.gradle
       - name: Run Gradle build
