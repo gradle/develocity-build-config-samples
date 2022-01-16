@@ -4,7 +4,7 @@ on: [ push, pull_request, workflow_dispatch ]
 
 jobs:
   verification:
-    name: Verification of TODO
+    name: Verification of ${{ matrix.name }}
     runs-on: ubuntu-latest
     env:
       LOG_MSG_EXTENSION_LOADED: "Build operation 'Gradle Enterprise mojo execution' completed"
