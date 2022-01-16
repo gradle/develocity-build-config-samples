@@ -11,10 +11,6 @@ updates:
     schedule:
       interval: "daily"
   - package-ecosystem: "maven"
-    directory: "common-custom-user-data-maven-extension"
-    schedule:
-      interval: "daily"
-  - package-ecosystem: "maven"
     directory: "common-gradle-enterprise-maven-configuration"
     schedule:
       interval: "daily"
@@ -23,20 +19,8 @@ updates:
     schedule:
         interval: "daily"
   - package-ecosystem: "gradle"
-    directory: "common-custom-user-data-gradle-plugin"
-    registries:
-      - gradle-plugin-portal
-    schedule:
-      interval: "daily"
-  - package-ecosystem: "gradle"
     directory: "common-gradle-enterprise-gradle-configuration"
     registries:
       - gradle-plugin-portal
     schedule:
       interval: "daily"
-  - package-ecosystem: "gradle"
-    directory: "gradle-enterprise-conventions-gradle-plugin"
-    registries:
-        - gradle-plugin-portal
-    schedule:
-        interval: "daily"
