@@ -28,7 +28,7 @@ jobs:
         with:
           java-version: '11'
           distribution: 'adopt'
-      - name: Prepare build directory
+      - name: Provide data capture script to Maven build
         run: |
             # copy over sample script such that it gets pulled in by the GE extension
             cp build-data-capturing-maven-samples/${{ matrix.sample-file }} common-gradle-enterprise-maven-configuration/.mvn/gradle-enterprise-custom-user-data.groovy
