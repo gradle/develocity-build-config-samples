@@ -41,7 +41,7 @@ jobs:
       - name: Prepare build directory
         run: |
             # default uses the original gradle-enterprise-custom-user-data.groovy
-            cp build-data-capturing-maven-samples/${{ matrix.sample-file }} common-gradle-enterprise-maven-configuration/.mvn/gradle-enterprise-custom-user-data.groovy      -
+            cp build-data-capturing-maven-samples/${{ matrix.sample-file }} common-gradle-enterprise-maven-configuration/.mvn/gradle-enterprise-custom-user-data.groovy
       - name: Run Maven build
         run: |
             echo 'MAVEN_OUTPUT<<EOF' >> $GITHUB_ENV
