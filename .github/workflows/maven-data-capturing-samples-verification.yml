@@ -13,13 +13,13 @@ jobs:
       matrix:
         include:
           - name: 'OS processes'
-            sample-file: 'build-data-capturing-maven-samples/capture-os-processes/maven-os-processes.groovy'
+            sample-file: 'capture-os-processes/maven-os-processes.groovy'
           - name: 'Quality checks'
-            sample-file: 'build-data-capturing-maven-samples/capture-quality-check-issues/maven-quality-check-issues.groovy'
+            sample-file: 'capture-quality-check-issues/maven-quality-check-issues.groovy'
           - name: 'Top-level project'
-            sample-file: 'build-data-capturing-maven-samples/capture-top-level-project/maven-top-level-project.groovy'
+            sample-file: 'capture-top-level-project/maven-top-level-project.groovy'
           - name: 'Profiles'
-            sample-file: 'build-data-capturing-maven-samples/capture-profiles/maven-profiles.groovy'
+            sample-file: 'capture-profiles/maven-profiles.groovy'
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -41,7 +41,7 @@ jobs:
       - name: Prepare build directory
         run: |
             # default uses the original gradle-enterprise-custom-user-data.groovy
-            cp ${{ matrix.sample-file }} common-gradle-enterprise-maven-configuration/.mvn/gradle-enterprise-custom-user-data.groovy      - name: Run Maven build
+            cp build-data-capturing-maven-samples/${{ matrix.sample-file }} common-gradle-enterprise-maven-configuration/.mvn/gradle-enterprise-custom-user-data.groovy      -
       - name: Run Maven build
         run: |
             echo 'MAVEN_OUTPUT<<EOF' >> $GITHUB_ENV
