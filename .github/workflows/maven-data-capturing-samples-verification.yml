@@ -14,13 +14,13 @@ jobs:
         include:
           - build-dir: "common-gradle-enterprise-maven-configuration"
             sample-file: "default"
-          - build-dir: "common-custom-user-data-maven-extension"
+          - build-dir: "common-gradle-enterprise-maven-configuration"
             sample-file: "build-data-capturing-maven-samples/capture-os-processes/maven-os-processes.groovy"
-          - build-dir: "common-custom-user-data-maven-extension"
+          - build-dir: "common-gradle-enterprise-maven-configuration"
             sample-file: "build-data-capturing-maven-samples/capture-quality-check-issues/maven-quality-check-issues.groovy"
-          - build-dir: "common-custom-user-data-maven-extension"
+          - build-dir: "common-gradle-enterprise-maven-configuration"
             sample-file: "build-data-capturing-maven-samples/capture-top-level-project/maven-top-level-project.groovy"
-          - build-dir: "common-custom-user-data-maven-extension"
+          - build-dir: "common-gradle-enterprise-maven-configuration"
             sample-file: "build-data-capturing-maven-samples/capture-profiles/maven-profiles.groovy"
     steps:
       - name: Checkout
