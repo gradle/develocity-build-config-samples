@@ -30,7 +30,7 @@ jobs:
           distribution: 'adopt'
       - name: Prepare build directory
         run: |
-            # default uses the original gradle-enterprise-custom-user-data.groovy
+            # copy over sample script such that it gets pulled in by the GE extension
             cp build-data-capturing-maven-samples/${{ matrix.sample-file }} common-gradle-enterprise-maven-configuration/.mvn/gradle-enterprise-custom-user-data.groovy
       - name: Run Maven build
         run: |
