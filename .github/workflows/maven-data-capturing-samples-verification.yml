@@ -28,16 +28,6 @@ jobs:
         with:
           java-version: '11'
           distribution: 'adopt'
-      - name: Publish current snapshot of the CCUD Maven extension to local Maven repository
-        run: |
-            mvn -f common-custom-user-data-maven-extension/pom.xml install -Dgradle.scan.disabled=true
-      - name: Replace version in build configuration
-        run: |
-            sudo apt-get install -y xmlstarlet
-            # fetching current snapshot version
-            CURRENT_SNAPSHOT_VERSION=$(mvn -f common-custom-user-data-maven-extension/pom.xml -Dexec.executable='echo' -Dexec.args='${project.version}' -Dgradle.scan.disabled=true exec:exec -q)
-            # inplace replacement to use snapshot version
-            xmlstarlet edit --inplace --update "//extensions/extension[artifactId='common-custom-user-data-maven-extension']/version" --value $CURRENT_SNAPSHOT_VERSION common-gradle-enterprise-maven-configuration/.mvn/extensions.xml
       - name: Prepare build directory
         run: |
             # default uses the original gradle-enterprise-custom-user-data.groovy
