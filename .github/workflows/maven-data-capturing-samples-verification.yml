@@ -12,13 +12,13 @@ jobs:
     strategy:
       matrix:
         include:
-          - build-dir: "common-gradle-enterprise-maven-configuration"
+          - name: 'OS processes'
             sample-file: "build-data-capturing-maven-samples/capture-os-processes/maven-os-processes.groovy"
-          - build-dir: "common-gradle-enterprise-maven-configuration"
+          - name: 'Quality checks'
             sample-file: "build-data-capturing-maven-samples/capture-quality-check-issues/maven-quality-check-issues.groovy"
-          - build-dir: "common-gradle-enterprise-maven-configuration"
+          - name: 'Top-level project'
             sample-file: "build-data-capturing-maven-samples/capture-top-level-project/maven-top-level-project.groovy"
-          - build-dir: "common-gradle-enterprise-maven-configuration"
+          - name: 'Profiles'
             sample-file: "build-data-capturing-maven-samples/capture-profiles/maven-profiles.groovy"
     steps:
       - name: Checkout
@@ -37,17 +37,17 @@ jobs:
             # fetching current snapshot version
             CURRENT_SNAPSHOT_VERSION=$(mvn -f common-custom-user-data-maven-extension/pom.xml -Dexec.executable='echo' -Dexec.args='${project.version}' -Dgradle.scan.disabled=true exec:exec -q)
             # inplace replacement to use snapshot version
-            xmlstarlet edit --inplace --update "//extensions/extension[artifactId='common-custom-user-data-maven-extension']/version" --value $CURRENT_SNAPSHOT_VERSION ${{ matrix.build-dir }}/.mvn/extensions.xml
+            xmlstarlet edit --inplace --update "//extensions/extension[artifactId='common-custom-user-data-maven-extension']/version" --value $CURRENT_SNAPSHOT_VERSION common-gradle-enterprise-maven-configuration/.mvn/extensions.xml
       - name: Prepare build directory
         run: |
             # default uses the original gradle-enterprise-custom-user-data.groovy
             if [[ ${{ matrix.sample-file }} != "default" ]]; then
-                cp ${{ matrix.sample-file }} ${{ matrix.build-dir }}/.mvn/gradle-enterprise-custom-user-data.groovy
+                cp ${{ matrix.sample-file }} common-gradle-enterprise-maven-configuration/.mvn/gradle-enterprise-custom-user-data.groovy
             fi
       - name: Run Maven build
         run: |
             echo 'MAVEN_OUTPUT<<EOF' >> $GITHUB_ENV
-            mvn -f ${{ matrix.build-dir }}/pom.xml -X --batch-mode clean validate -Dgradle.scan.disabled=true >> $GITHUB_ENV
+            mvn -f common-gradle-enterprise-maven-configuration/pom.xml -X --batch-mode clean validate -Dgradle.scan.disabled=true >> $GITHUB_ENV
             echo 'EOF' >> $GITHUB_ENV
       - name: Validate extension loaded
         run: |
