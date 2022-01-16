@@ -29,7 +29,7 @@ jobs:
         with:
           java-version: '11'
           distribution: 'adopt'
-      - name: Prepare build directory
+      - name: Inject data capture script into Gradle build
         run: |
           # apply sample file
           echo "apply from: file(\"../build-data-capturing-gradle-samples/${{matrix.sample-file}}\")" >> common-gradle-enterprise-gradle-configuration/build.gradle
