@@ -10,31 +10,31 @@ jobs:
       matrix:
         include:
           - name: 'Dependency resolution'
-            sample-file: '../build-data-capturing-gradle-samples/capture-dependency-resolution/gradle-dependency-resolution.gradle'
+            sample-file: 'capture-dependency-resolution/gradle-dependency-resolution.gradle'
           - name: 'Git diffs'
-            sample-file: '../build-data-capturing-gradle-samples/capture-git-diffs/gradle-git-diffs.gradle'
-          - name: 'OS Processes'
-            sample-file: '../build-data-capturing-gradle-samples/capture-os-processes/gradle-os-processes.gradle'
+            sample-file: 'capture-git-diffs/gradle-git-diffs.gradle'
+          - name: 'OS processes'
+            sample-file: 'capture-os-processes/gradle-os-processes.gradle'
           - name: 'Quality checks'
-            sample-file: '../build-data-capturing-gradle-samples/capture-quality-check-issues/gradle-quality-check-issues.gradle'
+            sample-file: 'capture-quality-check-issues/gradle-quality-check-issues.gradle'
           - name: 'Slow tasks'
-            sample-file: '../build-data-capturing-gradle-samples/capture-slow-workunit-executions/gradle-slow-task-executions.gradle'
-          - name: 'Test task sys props'
-            sample-file: '../build-data-capturing-gradle-samples/capture-test-execution-system-properties/gradle-test-execution-system-properties.gradle'
+            sample-file: 'capture-slow-workunit-executions/gradle-slow-task-executions.gradle'
+          - name: 'Test task system properties'
+            sample-file: 'capture-test-execution-system-properties/gradle-test-execution-system-properties.gradle'
     steps:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Set up JDK 11
         uses: actions/setup-java@v2
         with:
-            java-version: '11'
-            distribution: 'adopt'
+          java-version: '11'
+          distribution: 'adopt'
       - name: Prepare build directory
         run: |
           # apply sample file
-          echo "apply from: file(\"${{matrix.sample-file}}\")" >> common-gradle-enterprise-gradle-configuration/build.gradle
+          echo "apply from: file(\"../build-data-capturing-gradle-samples/${{matrix.sample-file}}\")" >> common-gradle-enterprise-gradle-configuration/build.gradle
       - name: Run Gradle build
         uses: gradle/gradle-build-action@v2
         with:
-            arguments: tasks
-            build-root-directory: 'common-gradle-enterprise-gradle-configuration'
+          arguments: tasks
+          build-root-directory: 'common-gradle-enterprise-gradle-configuration'
