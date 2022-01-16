@@ -11,13 +11,13 @@ updates:
     schedule:
       interval: "daily"
   - package-ecosystem: "maven"
-    directory: "common-gradle-enterprise-maven-configuration"
+    directory: "rollout-maven-extension"
     schedule:
       interval: "daily"
   - package-ecosystem: "maven"
-    directory: "rollout-maven-extension"
+    directory: "common-gradle-enterprise-maven-configuration"
     schedule:
-        interval: "daily"
+      interval: "daily"
   - package-ecosystem: "gradle"
     directory: "common-gradle-enterprise-gradle-configuration"
     registries:
