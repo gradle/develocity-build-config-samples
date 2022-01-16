@@ -4,17 +4,23 @@ on: [ push, pull_request, workflow_dispatch ]
 
 jobs:
   verification:
-    name: Verification
+    name: Verification of ${{ matrix.name }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
         include:
-          - sample-file: '../build-data-capturing-gradle-samples/capture-dependency-resolution/gradle-dependency-resolution.gradle'
-          - sample-file: '../build-data-capturing-gradle-samples/capture-git-diffs/gradle-git-diffs.gradle'
-          - sample-file: '../build-data-capturing-gradle-samples/capture-os-processes/gradle-os-processes.gradle'
-          - sample-file: '../build-data-capturing-gradle-samples/capture-quality-check-issues/gradle-quality-check-issues.gradle'
-          - sample-file: '../build-data-capturing-gradle-samples/capture-slow-workunit-executions/gradle-slow-task-executions.gradle'
-          - sample-file: '../build-data-capturing-gradle-samples/capture-test-execution-system-properties/gradle-test-execution-system-properties.gradle'
+          - name: 'Dependency resolution'
+            sample-file: '../build-data-capturing-gradle-samples/capture-dependency-resolution/gradle-dependency-resolution.gradle'
+          - name: 'Git diffs'
+            sample-file: '../build-data-capturing-gradle-samples/capture-git-diffs/gradle-git-diffs.gradle'
+          - name: 'OS Processes'
+            sample-file: '../build-data-capturing-gradle-samples/capture-os-processes/gradle-os-processes.gradle'
+          - name: 'Quality checks'
+            sample-file: '../build-data-capturing-gradle-samples/capture-quality-check-issues/gradle-quality-check-issues.gradle'
+          - name: 'Slow tasks'
+            sample-file: '../build-data-capturing-gradle-samples/capture-slow-workunit-executions/gradle-slow-task-executions.gradle'
+          - name: 'Test task sys props'
+            sample-file: '../build-data-capturing-gradle-samples/capture-test-execution-system-properties/gradle-test-execution-system-properties.gradle'
     steps:
       - name: Checkout
         uses: actions/checkout@v2
