@@ -1,4 +1,11 @@
-# Gradle Enterprise build configuration samples
+> _This repository is maintained by the Gradle Enterprise Solutions team, as one of several publicly available repositories:_
+> - _[Gradle Enterprise Build Configuration Samples][ge-build-config-samples] (this repository)_
+> - _[Gradle Enterprise Build Validation Scripts][ge-build-validation-scripts]_
+> - _[Gradle Enterprise Build Optimization Experiments][ge-build-optimization-experiments]_
+> - _[Common Custom User Data Gradle Plugin][ccud-gradle-plugin]_
+> - _[Common Custom User Data Maven Extension][ccud-maven-extension]_
+ 
+# Gradle Enterprise Build Configuration Samples
 
 This repository contains samples that demonstrate how to customize and optimize your Gradle Enterprise build configuration using Gradle or Maven.
 
@@ -9,8 +16,8 @@ The samples aim to demonstrate customizations, optimizations, API usages, as wel
 The samples can be grouped into the following categories:
 
  - Configuration snippets to capture additional data in build scans
- - Configuration snippets to improve and optimize build performance
- - Template projects when using Gradle or Maven with Gradle Enterprise
+ - Configuration snippets to optimize build performance
+ - Template projects for Gradle and Maven when using Gradle Enterprise
  - Scripts and code to apply and reuse Gradle Enterprise across multiple projects
 
 ## Learn more
@@ -21,5 +28,10 @@ Visit our website to learn more about [Gradle Enterprise][gradle-enterprise].
 
 The Gradle Enterprise build configuration samples are open-source software released under the [Apache 2.0 License][apache-license].
 
+[ge-build-config-samples]: https://github.com/gradle/gradle-enterprise-build-config-samples
+[ge-build-validation-scripts]: https://github.com/gradle/gradle-enterprise-build-validation-scripts
+[ge-build-optimization-experiments]: https://github.com/gradle/gradle-enterprise-build-optimization-experiments
+[ccud-gradle-plugin]: https://github.com/gradle/common-custom-user-data-gradle-plugin
+[ccud-maven-extension]: https://github.com/gradle/common-custom-user-data-maven-extension
 [gradle-enterprise]: https://gradle.com/enterprise
 [apache-license]: https://www.apache.org/licenses/LICENSE-2.0.html
