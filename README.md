@@ -1,18 +1,17 @@
 # Gradle Enterprise build configuration samples
 
-This repository contains code samples that demonstrate how to optimize and customize your Gradle Enterprise build configuration using Gradle or Maven.
+This repository contains samples that demonstrate how to customize and optimize your Gradle Enterprise build configuration using Gradle or Maven.
 
-The samples aim to demonstrate optimizations, customizations, API usages, as well as patterns for reusing Gradle Enterprise build configuration across multiple projects. While we do invest in keeping the code current and working, none of the code in this repository has gone through the same rigorous, continuous, and automated testing as our commercial components of Gradle Enterprise.
+The samples aim to demonstrate customizations, optimizations, API usages, as well as patterns for applying and reusing Gradle Enterprise build configuration across multiple projects.
 
 ## Samples
 
-The samples can be roughly grouped into the following categories:
+The samples can be grouped into the following categories:
 
+ - Configuration snippets to capture additional data in build scans
  - Configuration snippets to improve and optimize build performance
- - Data capturing code and scripts that demonstrate how to gather specific data
- - Bundles for build configuration and data capturing that can be applied on multiple projects
-
-Every sample contains some explanatory information on its purpose and how to make use of it.
+ - Template projects when using Gradle or Maven with Gradle Enterprise
+ - Scripts and code to apply and reuse Gradle Enterprise across multiple projects
 
 ## Learn more
 
