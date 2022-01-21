@@ -25,14 +25,18 @@ updates:
     schedule:
       interval: "daily"
   - package-ecosystem: "gradle"
-    directory: "gradle-enterprise-conventions-gradle-plugin/plugins/gradle-2-through-4"
-    registries:
-      - gradle-plugin-portal
-    schedule:
-      interval: "daily"
-  - package-ecosystem: "gradle"
     directory: "gradle-enterprise-conventions-gradle-plugin/plugins/gradle-5-or-newer"
     registries:
       - gradle-plugin-portal
     schedule:
       interval: "daily"
+  - package-ecosystem: "gradle"
+    directory: "gradle-enterprise-conventions-gradle-plugin/plugins/gradle-2-through-4"
+    registries:
+      - gradle-plugin-portal
+    schedule:
+      interval: "daily"
+    ignore:
+      - dependency-name: "com.gradle:build-scan-plugin"
+        versions: [ "1.16" ]
+        update-types: [ "version-update:semver-major", "version-update:semver-minor" ]
