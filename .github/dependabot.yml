@@ -40,3 +40,4 @@ updates:
       - dependency-name: "com.gradle:build-scan-plugin"
         versions: [ "1.16" ]
         update-types: [ "version-update:semver-major", "version-update:semver-minor" ]
+        
