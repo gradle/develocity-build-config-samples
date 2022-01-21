@@ -7,12 +7,15 @@ plugins {
 group = 'com.myorg'
 version = '1.0.0-SNAPSHOT'
 
+// must not be newer than 1.16 to be compatible with Gradle 2.x - 4.x
+def buildScanPluginVersion = '1.16'
+
 repositories {
     gradlePluginPortal()
 }
 
 dependencies {
-    implementation "com.gradle:build-scan-plugin:1.16"
+    implementation "com.gradle:build-scan-plugin:${buildScanPluginVersion}"
 }
 
 sourceCompatibility = 1.8
