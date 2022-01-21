@@ -36,3 +36,4 @@ updates:
       - gradle-plugin-portal
     schedule:
       interval: "daily"
+
