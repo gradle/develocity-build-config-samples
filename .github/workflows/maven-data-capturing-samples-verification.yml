@@ -18,8 +18,10 @@ jobs:
             sample-file: 'capture-quality-check-issues/maven-quality-check-issues.groovy'
           - name: 'Top-level project'
             sample-file: 'capture-top-level-project/maven-top-level-project.groovy'
-          - name: 'Profiles'
+          - name: 'Capture Maven Profiles'
             sample-file: 'capture-profiles/maven-profiles.groovy'
+          - name: 'Capture Gradle Enterprise Maven Extension plugin version'
+            sample-file: 'capture-extension-version/maven-capture-extension-version.groovy'
     steps:
       - name: Checkout
         uses: actions/checkout@v2
