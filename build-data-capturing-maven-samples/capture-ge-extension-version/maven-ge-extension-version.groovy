@@ -1,5 +1,5 @@
 /**
- * This Groovy script captures the Gradle Enterprise Maven Extension version as a custom value.
+ * This Groovy script captures the Gradle Enterprise Maven extension version as a custom value.
  */
 
 InputStream stream = buildScan.class.classLoader.getResourceAsStream("com.gradle.scan.plugin.internal.meta.buildAgentVersion.txt")

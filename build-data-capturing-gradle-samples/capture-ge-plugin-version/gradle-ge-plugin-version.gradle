@@ -1,5 +1,5 @@
 /**
- * This Groovy script captures the Gradle Enterprise Maven Extension version as a custom value.
+ * This Groovy script captures the Gradle Enterprise Gradle plugin version as a custom value.
  *
  * <code> apply from: file('gradle-ge-plugin-version.gradle') </code>
  */
