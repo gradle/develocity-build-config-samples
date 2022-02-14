@@ -4,7 +4,7 @@ on: [ push, pull_request, workflow_dispatch ]
 
 jobs:
   verification:
-    name: Verifiction
+    name: Verification
     runs-on: ubuntu-latest
     steps:
       - name: Checkout

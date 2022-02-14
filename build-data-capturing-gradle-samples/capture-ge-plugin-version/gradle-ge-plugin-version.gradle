@@ -1,0 +1,15 @@
+/**
+ * This Groovy script captures the Gradle Enterprise Gradle plugin version as a custom value.
+ *
+ * <code> apply from: file('gradle-ge-plugin-version.gradle') </code>
+ */
+
+def buildScanApi = project.extensions.findByName('buildScan')
+if (!buildScanApi) {
+    return
+}
+
+URL url = buildScanApi.class.classLoader.getResource("com.gradle.scan.plugin.internal.meta.buildAgentVersion.txt")
+String buildAgentVersion = url.text
+buildScan.value("GE Gradle plugin version", buildAgentVersion)
+
