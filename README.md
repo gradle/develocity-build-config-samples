@@ -7,6 +7,8 @@
  
 # Gradle Enterprise Build Configuration Samples
 
+[![Revved up by Gradle Enterprise](https://img.shields.io/badge/Revved%20up%20by-Gradle%20Enterprise-06A0CE?logo=Gradle&labelColor=02303A)](https://ge.solutions-team.gradle.com/scans)
+
 This repository contains samples that demonstrate how to customize and optimize your Gradle Enterprise build configuration using Gradle or Maven.
 
 The samples aim to demonstrate customizations, optimizations, API usages, as well as patterns for applying and reusing Gradle Enterprise build configuration across multiple projects.
