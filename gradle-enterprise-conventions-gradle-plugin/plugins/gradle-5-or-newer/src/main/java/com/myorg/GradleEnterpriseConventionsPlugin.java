@@ -52,7 +52,7 @@ public class GradleEnterpriseConventionsPlugin implements Plugin<Object> {
 
     private void configureGradleEnterprise(GradleEnterpriseExtension gradleEnterprise) {
         // CHANGE ME: Apply your Gradle Enterprise Configuration here
-        gradleEnterprise.setServer("https://enterprise-samples.gradle.com");
+        gradleEnterprise.setServer("https://ge.solutions-team.gradle.com");
 
         BuildScanExtension buildScan = gradleEnterprise.getBuildScan();
         buildScan.publishAlways();
@@ -62,7 +62,7 @@ public class GradleEnterpriseConventionsPlugin implements Plugin<Object> {
         // CHANGE ME: Apply your build cache configuration here
         boolean isCiServer = System.getenv().containsKey("CI");
         buildCache.remote(HttpBuildCache.class, remote -> {
-            remote.setUrl("https://enterprise-samples.gradle.com/cache/");
+            remote.setUrl("https://ge.solutions-team.gradle.com/cache/");
             remote.setEnabled(true);
             remote.setPush(isCiServer);
         });
