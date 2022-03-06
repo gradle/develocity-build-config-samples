@@ -10,7 +10,7 @@ gradleEnterprise {
     allowUntrustedServer = false // ensure a trusted certificate is configured
 
     buildScan {
-        captureTaskInputFiles = true
+        capture { taskInputFiles = true }
         uploadInBackground = !isCI
         publishAlways()
     }
