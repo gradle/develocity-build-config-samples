@@ -2,10 +2,11 @@
 > - _[Gradle Enterprise Build Configuration Samples][ge-build-config-samples] (this repository)_
 > - _[Gradle Enterprise Build Optimization Experiments][ge-build-optimization-experiments]_
 > - _[Gradle Enterprise Build Validation Scripts][ge-build-validation-scripts]_
-> - _[Common Custom User Data Gradle Plugin][ccud-gradle-plugin]_
 > - _[Common Custom User Data Maven Extension][ccud-maven-extension]_
+> - _[Common Custom User Data Gradle Plugin][ccud-gradle-plugin]_
 > - _[Android Cache Fix Gradle Plugin][android-cache-fix-plugin]_
-  
+> - _[Wrapper Upgrade Gradle Plugin][wrapper-upgrade-gradle-plugin]_
+
 # Gradle Enterprise Build Configuration Samples
 
 [![Revved up by Gradle Enterprise](https://img.shields.io/badge/Revved%20up%20by-Gradle%20Enterprise-06A0CE?logo=Gradle&labelColor=02303A)](https://ge.solutions-team.gradle.com/scans)
@@ -37,5 +38,6 @@ The Gradle Enterprise build configuration samples are open-source software relea
 [ccud-gradle-plugin]: https://github.com/gradle/common-custom-user-data-gradle-plugin
 [ccud-maven-extension]: https://github.com/gradle/common-custom-user-data-maven-extension
 [android-cache-fix-plugin]: https://github.com/gradle/android-cache-fix-gradle-plugin
+[wrapper-upgrade-gradle-plugin]: https://github.com/gradle/wrapper-upgrade-gradle-plugin
 [gradle-enterprise]: https://gradle.com/enterprise
 [apache-license]: https://www.apache.org/licenses/LICENSE-2.0.html
