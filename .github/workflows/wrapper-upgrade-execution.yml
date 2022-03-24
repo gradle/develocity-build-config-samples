@@ -12,8 +12,10 @@ jobs:
     env:
       GRADLE_ENTERPRISE_ACCESS_KEY: ${{ secrets.GE_ACCESS_TOKEN }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
+      - name: Set up Git configuration
+        env:
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: git config --global url."https://unused-username:${TOKEN}@github.com/".insteadOf "https://github.com/"
       - name: Import GPG key
         uses: crazy-max/ghaction-import-gpg@cb4264d3319acaa2bea23d51ef67f80b4f775013
         with:
@@ -22,6 +24,8 @@ jobs:
           git_user_signingkey: true
           git_commit_gpgsign: true
           git_config_global: true
+      - name: Checkout
+        uses: actions/checkout@v2
       - name: Set up JDK 11
         uses: actions/setup-java@v2
         with:
