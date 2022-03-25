@@ -6,12 +6,6 @@ registries:
     username: dummy # Required by dependabot
     password: dummy # Required by dependabot
 updates:
-  - package-ecosystem: "gradle"
-    directory: "/"
-    registries:
-      - gradle-plugin-portal
-    schedule:
-      interval: "daily"
   - package-ecosystem: "maven"
     directory: "build-caching-maven-samples"
     schedule:
