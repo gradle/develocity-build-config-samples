@@ -6,6 +6,8 @@ jobs:
   verification:
     name: Verification
     runs-on: ubuntu-latest
+    env:
+      GRADLE_ENTERPRISE_ACCESS_KEY: ${{ secrets.GE_SOLUTIONS_ACCESS_TOKEN }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -21,5 +23,11 @@ jobs:
       - name: Set up Yarn
         run: npm install -g yarn
       - name: Build with Maven
+        id: mvn-build
         working-directory: ./build-caching-maven-samples
-        run: ./mvnw clean verify -Dgradle.scan.disabled=true
+        run: |
+          ./mvnw -B clean verify -Dgradle.enterprise.url=https://ge.solutions-team.gradle.com -Dorg.slf4j.simpleLogger.log.gradle.goal.cache=debug 2>&1 | tee -a /tmp/gradle-build.log
+          echo ::set-output name=hasUnknownParams::$(grep "Build caching was not enabled for this goal execution because the following parameters were not handled" /tmp/gradle-build.log | wc -l)    
+      - name: Fail if unmapped mojo parameters
+        run: exit 1
+        if:  steps.mvn-build.outputs.hasUnknownParams != '0'
