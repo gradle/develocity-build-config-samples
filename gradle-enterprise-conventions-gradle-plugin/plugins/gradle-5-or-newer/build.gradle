@@ -15,8 +15,11 @@ dependencies {
     implementation 'com.gradle:gradle-enterprise-gradle-plugin:3.9'
 }
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(11)
+    }
+}
 
 gradlePlugin {
     plugins {
