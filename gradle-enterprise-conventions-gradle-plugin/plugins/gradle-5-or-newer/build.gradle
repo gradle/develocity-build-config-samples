@@ -12,7 +12,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.gradle:gradle-enterprise-gradle-plugin:3.9'
+    implementation 'com.gradle:gradle-enterprise-gradle-plugin:3.10'
 }
 
 sourceCompatibility = 1.8
