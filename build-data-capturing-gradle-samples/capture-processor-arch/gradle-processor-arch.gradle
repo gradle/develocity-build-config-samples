@@ -25,15 +25,21 @@ static void captureProcessorArch(def api) {
   api.value("os.arch", osArch)
 
   if (isDarwin(osName)) {
-    if (execAndGetStdout("uname", "-p") == "arm") {
-      api.value("proc.arch", "M1")
+    if (isM1()) {
+      api.tag("M1")
     }
-    api.value("proc.translated", isTranslatedByRosetta().toString())
+    if (isTranslatedByRosetta()) {
+      api.tag("proc_translated")
+    }
   }
 }
 
 static boolean isDarwin(String osName) {
   return osName.contains("OS X") || osName.startsWith("Darwin")
+}
+
+static boolean isM1() {
+  return execAndGetStdout("uname", "-p") == "arm"
 }
 
 static boolean isTranslatedByRosetta() {
