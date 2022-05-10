@@ -29,7 +29,7 @@ static void captureProcessorArch(def api) {
       api.tag("M1")
     }
     if (isTranslatedByRosetta()) {
-      api.tag("proc_translated")
+      api.tag("M1-translated")
     }
   }
 }
