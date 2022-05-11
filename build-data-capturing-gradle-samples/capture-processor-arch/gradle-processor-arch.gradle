@@ -25,11 +25,10 @@ static void captureProcessorArch(def api) {
   api.value("os.arch", osArch)
 
   if (isDarwin(osName)) {
-    if (isM1()) {
-      api.tag("M1")
-    }
     if (isTranslatedByRosetta()) {
       api.tag("M1-translated")
+    } else if (isM1()) {
+      api.tag("M1")
     }
   }
 }
