@@ -14,6 +14,8 @@ jobs:
         include:
           - name: 'OS processes'
             sample-file: 'capture-os-processes/maven-os-processes.groovy'
+          - name: 'Processor arch'
+            sample-file: 'capture-processor-arch/maven-processor-arch.groovy'
           - name: 'Quality checks'
             sample-file: 'capture-quality-check-issues/maven-quality-check-issues.groovy'
           - name: 'Top-level project'
