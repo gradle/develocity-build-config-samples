@@ -82,6 +82,7 @@
                           <property><name>skipPmdError</name></property>
                           <property><name>renderProcessingErrors</name></property>
                           <property><name>renderRuleViolationPriority</name></property>
+                          <property><name>renderSuppressedViolations</name></property>
                           <property><name>renderViolationsByPriority</name></property>
                         </properties>
                         <ignoredProperties>
