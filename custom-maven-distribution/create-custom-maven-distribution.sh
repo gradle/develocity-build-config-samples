@@ -23,7 +23,7 @@
 #       ./create-custom-maven-distribution.sh https://gradle-enterprise.mycompany.com
 #
 
-maven_version=3.8.5
+maven_version=3.8.6
 maven_dir=apache-maven-${maven_version}
 maven_zip=${maven_dir}-bin.zip
 maven_lib_ext=${maven_dir}/lib/ext
