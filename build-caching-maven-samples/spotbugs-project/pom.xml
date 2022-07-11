@@ -87,6 +87,9 @@
                           <property><name>includeFilterFile</name></property>
                           <property><name>excludeFilterFile</name></property>
                           <property><name>excludeBugsFile</name></property>
+                          <property><name>includeFilterFiles</name></property>
+                          <property><name>excludeFilterFiles</name></property>
+                          <property><name>excludeBugsFiles</name></property>
                         </properties>
                         <ignoredProperties>
                           <!-- Ignore properties that control Mojo execution but do not influence outputs -->
