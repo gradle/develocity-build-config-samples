@@ -15,7 +15,7 @@
       <plugin>
         <groupId>com.github.spotbugs</groupId>
         <artifactId>spotbugs-maven-plugin</artifactId>
-        <version>4.7.0.0</version>
+        <version>4.7.1.0</version>
         <configuration>
           <effort>Max</effort>
           <threshold>Low</threshold>
@@ -87,6 +87,9 @@
                           <property><name>includeFilterFile</name></property>
                           <property><name>excludeFilterFile</name></property>
                           <property><name>excludeBugsFile</name></property>
+                          <property><name>includeFilterFiles</name></property>
+                          <property><name>excludeFilterFiles</name></property>
+                          <property><name>excludeBugsFiles</name></property>
                         </properties>
                         <ignoredProperties>
                           <!-- Ignore properties that control Mojo execution but do not influence outputs -->
