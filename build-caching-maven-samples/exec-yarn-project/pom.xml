@@ -146,6 +146,7 @@
                           <ignore>basedir</ignore>
                           <ignore>buildDirectory</ignore>
                           <ignore>pluginDependencies</ignore>
+                          <ignore>inheritIo</ignore>
                           <ignore>project</ignore>
                           <ignore>session</ignore>
                         </ignoredProperties>
