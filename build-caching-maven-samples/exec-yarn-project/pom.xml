@@ -145,7 +145,6 @@
                           <!-- internal mojo properties -->
                           <ignore>basedir</ignore>
                           <ignore>buildDirectory</ignore>
-                          <ignore>plugin</ignore>
                           <ignore>pluginDependencies</ignore>
                           <ignore>project</ignore>
                           <ignore>session</ignore>
