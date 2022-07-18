@@ -42,6 +42,10 @@ jobs:
       - name: Run Gradle build with Groovy scripts
         working-directory: common-gradle-enterprise-gradle-configuration
         run: ./gradlew tasks   
+      - name: Inject data capture Kotlin script into Gradle build
+        run: |
+          # apply sample file
+          echo "apply from: file(\"../build-data-capturing-gradle-samples/${{matrix.sample-file}}.kts\")" >> common-gradle-enterprise-gradle-configuration/build.gradle
       - name: Run Gradle build with Kotlin scripts
         working-directory: common-gradle-enterprise-gradle-configuration
         run: ./gradlew tasks -c settings.gradle.kts
