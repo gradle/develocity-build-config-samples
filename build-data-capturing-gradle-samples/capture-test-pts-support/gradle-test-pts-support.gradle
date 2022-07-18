@@ -1,12 +1,13 @@
+import com.gradle.scan.plugin.BuildScanExtension
 import java.nio.charset.StandardCharsets
+import java.util.Collections
 import java.util.Optional
 import java.util.jar.JarFile
 import java.util.stream.Stream
 import java.util.stream.Collectors
-import groovy.transform.Field
 
 /**
- * This Gradle script captures Predictive Test Selection and Test Distribution compatibility for each Test task, 
+ * This Gradle script captures Predictive Test Selection and Test Distribution compatibility for each Test task,
  * adding a flag as custom value.
  */
 
@@ -14,63 +15,73 @@ def buildScanApi = project.extensions.findByName('buildScan')
 if (!buildScanApi) {
     return
 }
-
-@Field
-final def supportedEngines = [
-    'org.junit.support.testng.engine.TestNGTestEngine' : 'testng',
-    'org.junit.jupiter.engine.JupiterTestEngine' : 'junit-jupiter', 
-    'org.junit.vintage.engine.VintageTestEngine' : 'junit-vintage', 
-    'org.spockframework.runtime.SpockEngine' : 'spock',
-    'net.jqwik.engine.JqwikTestEngine' : 'jqwik',
-    'com.tngtech.archunit.junit.ArchUnitTestEngine' : 'archunit',
-    'co.helmethair.scalatest.ScalatestEngine' : 'scalatest'
-    ]
-
+def capture = new Capture(gradle.rootProject.logger)
 allprojects {
     tasks.withType(Test).configureEach { t ->
         doFirst {
-            if (t.getTestFramework().getClass().getName() == 'org.gradle.api.internal.tasks.testing.junitplatform.JUnitPlatformTestFramework') {
-                def engines = testEngines(t) 
-                buildScanApi.value("${t.identityPath}#engines", "${engines}")
-                if (!engines.isEmpty() && engines.stream().allMatch { e -> supportedEngines.containsKey(e) }) {
-                    buildScanApi.value("${t.identityPath}#pts", 'SUPPORTED')
-                } else {
-                    buildScanApi.value("${t.identityPath}#pts", 'ENGINES_NOT_ALL_SUPPORTED')
-                }
-            } else {
-                buildScanApi.value("${t.identityPath}#pts", 'NO_JUNIT_PLATFORM')
-            }
+            capture.capturePts(t, buildScanApi)
         }
     }
 }
 
-Set<String> testEngines(Test t) {
-    try {
-        Stream<String> engines = t.classpath.files.stream()
+class Capture {
+    final def supportedEngines = [
+        'org.junit.support.testng.engine.TestNGTestEngine' : 'testng',
+        'org.junit.jupiter.engine.JupiterTestEngine' : 'junit-jupiter',
+        'org.junit.vintage.engine.VintageTestEngine' : 'junit-vintage',
+        'org.spockframework.runtime.SpockEngine' : 'spock',
+        'net.jqwik.engine.JqwikTestEngine' : 'jqwik',
+        'com.tngtech.archunit.junit.ArchUnitTestEngine' : 'archunit',
+        'co.helmethair.scalatest.ScalatestEngine' : 'scalatest'
+    ]
+    private Logger logger
+
+    Capture(Logger logger) {
+        this.logger = logger
+    }
+
+    void capturePts(Test t, BuildScanExtension buildScanApi) {
+        if (t.getTestFramework().getClass().getName() == 'org.gradle.api.internal.tasks.testing.junitplatform.JUnitPlatformTestFramework') {
+            def engines = testEngines(t)
+            buildScanApi.value("${t.identityPath}#engines", "${engines}")
+            if (!engines.isEmpty() && engines.stream().allMatch { e -> supportedEngines.containsKey(e) }) {
+                buildScanApi.value("${t.identityPath}#pts", 'SUPPORTED')
+            } else {
+                buildScanApi.value("${t.identityPath}#pts", 'ENGINES_NOT_ALL_SUPPORTED')
+            }
+        } else {
+            buildScanApi.value("${t.identityPath}#pts", 'NO_JUNIT_PLATFORM')
+        }
+    }
+
+    private Set<String> testEngines(Test t) {
+        try {
+            Stream<String> engines = t.classpath.files.stream()
                 .filter { f -> f.name.endsWith('.jar') }
                 .filter { f -> supportedEngines.values().stream().anyMatch { e -> f.name.contains(e) } }
                 .map { f -> findTestEngine(f) }
                 .flatMap { o -> o.isPresent() ? Stream.of(o.get()) : Stream.empty() }
 
-        // We take into account included/excluded engines (but only known ones)
-        def included = t.options.includeEngines
-        if (included) {
-            engines = engines.filter { e -> supportedEngines.get(e) == null || included.contains(supportedEngines.get(e)) }
+            // We take into account included/excluded engines (but only known ones)
+            def included = t.options.includeEngines
+            if (included) {
+                engines = engines.filter { e -> supportedEngines.get(e) == null || included.contains(supportedEngines.get(e)) }
+            }
+            def excluded = t.options.excludeEngines
+            if (excluded) {
+                engines = engines.filter { e -> supportedEngines.get(e) == null || !excluded.contains(supportedEngines.get(e)) }
+            }
+            return engines.collect(Collectors.toSet())
+        } catch (Exception e) {
+            logger.warn("Could not detect test engines", e)
         }
-        def excluded = t.options.excludeEngines  
-        if (excluded) {
-            engines = engines.filter { e -> supportedEngines.get(e) == null || !excluded.contains(supportedEngines.get(e)) }
-        }                  
-        return engines.collect(Collectors.toSet())
-    } catch (Exception e) {
-        gradle.rootProject.logger.warn("Could not detect test engines", e)
+        return Collections.emptySet()
     }
-    return false
-}
 
-Optional<String> findTestEngine(File jar) {
-    try (def jarFile = new JarFile(jar)) {
-        return Optional.ofNullable(jarFile.getEntry('META-INF/services/org.junit.platform.engine.TestEngine'))
+    private Optional<String> findTestEngine(File jar) {
+        try (def jarFile = new JarFile(jar)) {
+            return Optional.ofNullable(jarFile.getEntry('META-INF/services/org.junit.platform.engine.TestEngine'))
                 .map { e -> jarFile.getInputStream(e).withCloseable { it.getText(StandardCharsets.UTF_8.name()).trim() } }
+        }
     }
 }

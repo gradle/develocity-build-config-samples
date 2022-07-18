@@ -51,7 +51,7 @@ jobs:
         working-directory: common-gradle-enterprise-gradle-configuration-kotlin
         run: |
           # apply sample file
-          echo "apply(from = \"../build-data-capturing-gradle-samples/${{matrix.sample-file}}\")" >> build.gradle.kts
+          echo "apply(from = \"../build-data-capturing-gradle-samples/${{matrix.sample-file}}.kts\")" >> build.gradle.kts
       - name: Run Gradle build using Kotlin DSL
         working-directory: common-gradle-enterprise-gradle-configuration-kotlin
         run: ./gradlew tasks -Dgradle.enterprise.url=https://ge.solutions-team.gradle.com
