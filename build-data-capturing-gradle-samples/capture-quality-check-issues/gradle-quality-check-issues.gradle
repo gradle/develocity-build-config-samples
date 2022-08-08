@@ -8,8 +8,10 @@ if (!buildScanApi) {
     return
 }
 
+//def capture = new Capture()
+
 gradle.taskGraph.beforeTask { task ->
-    if (!ReportingTask.isSupported(task)) {
+    if (!Capture.ReportingTask.isSupported(task)) {
         return
     }
 
@@ -17,7 +19,7 @@ gradle.taskGraph.beforeTask { task ->
 }
 
 gradle.taskGraph.afterTask { task, TaskState state ->
-    if (!ReportingTask.isSupported(task)) {
+    if (!Capture.ReportingTask.isSupported(task)) {
         return
     }
 
@@ -30,26 +32,26 @@ gradle.taskGraph.afterTask { task, TaskState state ->
     def valueName = '' as String
     def errors = [] as List<String>
 
-    if (ReportingTask.CHECKSTYLE.isTask(task)) {
+    if (Capture.ReportingTask.CHECKSTYLE.isTask(task)) {
         valueName = 'Verification Checkstyle'
         errors = report.file.collect {
             String filePath = task.project.rootProject.relativePath(it.@name.text())
             it.error.collect { "${filePath}:${it.@line}:${it.@column} \u2192 ${it.@message}" }
         }.flatten() as List<String>
-    } else if (ReportingTask.CODENARC.isTask(task)) {
+    } else if (Capture.ReportingTask.CODENARC.isTask(task)) {
         valueName = 'Verification CodeNarc'
         errors = report.Package.collect {
-            def sourceDirectory = appendIfMissing(it.parent().Project.SourceDirectory.text() as String, '/')
+            def sourceDirectory = Capture.appendIfMissing(it.parent().Project.SourceDirectory.text() as String, '/')
             it.File.collect {
                 String filePath = task.project.rootProject.relativePath(sourceDirectory + (it.@name.text() as String))
                 it.Violation.collect { "${filePath}:${it.@lineNumber} \u2192 ${it.Message.text()}" }
             }.flatten()
         }.flatten() as List<String>
-    } else if (ReportingTask.FINDBUGS.isTask(task)) {
+    } else if (Capture.ReportingTask.FINDBUGS.isTask(task)) {
         valueName = 'Verification FindBugs'
         errors = report.BugInstance.collect { bugInstance ->
             String type = bugInstance.@type.text()
-            def error = bugInstance.breadthFirst().findAll { it.name() == 'SourceLine' }.sort(false) { it.parent().name() as SpotBugsParent }.first()
+            def error = bugInstance.breadthFirst().findAll { it.name() == 'SourceLine' }.sort(false) { it.parent().name() as Capture.SpotBugsParent }.first()
             String startLine = error.@start.text()
             String endLine = error.@end.text()
             String lineNumber = endLine == startLine ? startLine : "$startLine-$endLine"
@@ -57,11 +59,11 @@ gradle.taskGraph.afterTask { task, TaskState state ->
             String relativePath = task.project.rootProject.relativePath(absoluteFilePath)
             "${relativePath}:${lineNumber} \u2192 ${type}"
         }.flatten() as List<String>
-    } else if (ReportingTask.SPOTBUGS.isTask(task)) {
+    } else if (Capture.ReportingTask.SPOTBUGS.isTask(task)) {
         valueName = 'Verification SpotBugs'
         errors = report.BugInstance.collect { bugInstance ->
             String type = bugInstance.@type.text()
-            def error = bugInstance.breadthFirst().findAll { it.name() == 'SourceLine' }.sort(false) { it.parent().name() as SpotBugsParent }.first()
+            def error = bugInstance.breadthFirst().findAll { it.name() == 'SourceLine' }.sort(false) { it.parent().name() as Capture.SpotBugsParent }.first()
             String startLine = error.@start.text()
             String endLine = error.@end.text()
             String lineNumber = endLine == startLine ? startLine : "$startLine-$endLine"
@@ -74,34 +76,37 @@ gradle.taskGraph.afterTask { task, TaskState state ->
     errors.each { buildScan.value valueName, it }
 }
 
-static String appendIfMissing(String str, String suffix) {
-    str.endsWith(suffix) ? str : str + suffix
-}
+class Capture {
 
-enum SpotBugsParent {
-
-    BugInstance, Method, Class
-}
-
-enum ReportingTask {
-
-    CHECKSTYLE('org.gradle.api.plugins.quality.Checkstyle'),
-    CODENARC('org.gradle.api.plugins.quality.CodeNarc'),
-    FINDBUGS('org.gradle.api.plugins.quality.FindBugs'),
-    SPOTBUGS('com.github.spotbugs.SpotBugsTask')
-
-    String className
-
-    private ReportingTask(String className) {
-        this.className = className
+    String appendIfMissing(String str, String suffix) {
+        str.endsWith(suffix) ? str : str + suffix
     }
 
-    boolean isTask(task) {
-        task.class.name.contains(className)
+    enum SpotBugsParent {
+
+        BugInstance, Method, Class
     }
 
-    static boolean isSupported(task) {
-        values().any { it.isTask(task) }
-    }
+    enum ReportingTask {
 
+        CHECKSTYLE('org.gradle.api.plugins.quality.Checkstyle'),
+        CODENARC('org.gradle.api.plugins.quality.CodeNarc'),
+        FINDBUGS('org.gradle.api.plugins.quality.FindBugs'),
+        SPOTBUGS('com.github.spotbugs.SpotBugsTask')
+
+        String className
+
+        private ReportingTask(String className) {
+            this.className = className
+        }
+
+        boolean isTask(task) {
+            task.class.name.contains(className)
+        }
+
+        static boolean isSupported(task) {
+            values().any { it.isTask(task) }
+        }
+
+    }
 }

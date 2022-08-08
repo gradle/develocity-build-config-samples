@@ -8,34 +8,34 @@ import java.util.concurrent.TimeUnit
 
 def buildScanApi = project.extensions.findByName('buildScan')
 if (!buildScanApi) {
-    return
+  return
 }
 
 buildScan.background { api ->
-    Capture.captureOsProcesses(api)
+  Capture.captureOsProcesses(api)
 }
 
 class Capture {
 
-    static void captureOsProcesses(def api) {
-        def psOutput = execAndGetStdout('ps', '-o pid,ppid,time,command')
-        api.value 'OS processes', psOutput
-    }
+  static void captureOsProcesses(def api) {
+    def psOutput = execAndGetStdout('ps', '-o pid,ppid,time,command')
+    api.value 'OS processes', psOutput
+  }
 
-    static String execAndGetStdout(String... args) {
-        Process process = args.toList().execute()
-        try {
-            def standardText = process.inputStream.withStream { s -> s.getText(Charset.defaultCharset().name()) }
-            def ignore = process.errorStream.withStream { s -> s.getText(Charset.defaultCharset().name()) }
+  static String execAndGetStdout(String... args) {
+    Process process = args.toList().execute()
+    try {
+      def standardText = process.inputStream.withStream { s -> s.getText(Charset.defaultCharset().name()) }
+      def ignore = process.errorStream.withStream { s -> s.getText(Charset.defaultCharset().name()) }
 
-            def finished = process.waitFor(10, TimeUnit.SECONDS)
-            finished && process.exitValue() == 0 ? trimAtEnd(standardText) : null
-        } finally {
-            process.destroyForcibly()
-        }
+      def finished = process.waitFor(10, TimeUnit.SECONDS)
+      finished && process.exitValue() == 0 ? trimAtEnd(standardText) : null
+    } finally {
+      process.destroyForcibly()
     }
+  }
 
-    static String trimAtEnd(String str) {
-        ('x' + str).trim().substring(1)
-    }
+  static String trimAtEnd(String str) {
+    ('x' + str).trim().substring(1)
+  }
 }

@@ -4,10 +4,9 @@
 
 def buildScanApi = project.extensions.findByName('buildScan')
 if (!buildScanApi) {
-    return
+  return
 }
 
 URL url = buildScanApi.class.classLoader.getResource("com.gradle.scan.plugin.internal.meta.buildAgentVersion.txt")
 String buildAgentVersion = url.text
 buildScan.value("GE Gradle plugin version", buildAgentVersion)
-
