@@ -8,7 +8,7 @@ if (!buildScanApi) {
     return
 }
 
-//def capture = new Capture()
+//FIXME Make Configuration cache compatible
 
 gradle.taskGraph.beforeTask { task ->
     if (!Capture.ReportingTask.isSupported(task)) {
