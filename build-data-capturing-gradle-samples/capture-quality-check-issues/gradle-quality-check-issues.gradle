@@ -8,8 +8,6 @@ if (!buildScanApi) {
     return
 }
 
-//FIXME Make Configuration cache compatible
-
 gradle.taskGraph.beforeTask { task ->
     if (!Capture.ReportingTask.isSupported(task)) {
         return
