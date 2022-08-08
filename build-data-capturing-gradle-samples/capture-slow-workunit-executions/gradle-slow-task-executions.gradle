@@ -5,22 +5,30 @@
 
 def buildScanApi = project.extensions.findByName('buildScan')
 if (!buildScanApi) {
-    return
+  return
 }
 
 def THRESHOLD_MILLIS = 15 * 60 * 1000 // 15 min
 
 allprojects {
-    tasks.withType(JavaCompile).configureEach { t ->
-        long start
-        doFirst {
-            start = System.currentTimeMillis()
-        }
-        doLast {
-            long duration = System.currentTimeMillis() - start
-            if (duration > THRESHOLD_MILLIS) {
-                buildScan.value 'Slow task', t.identityPath as String
-            }
-        }
+  tasks.withType(JavaCompile).configureEach { t ->
+    long start
+    doFirst {
+      start = System.currentTimeMillis()
     }
+    doLast {
+      long duration = System.currentTimeMillis() - start
+      if (duration > THRESHOLD_MILLIS) {
+        Capture.addbuildScanValue buildScanApi, 'Slow task', t.identityPath as String
+      }
+    }
+  }
+}
+
+class Capture {
+
+  static void addbuildScanValue(api, key, value) {
+    api.value key, value
+  }
+
 }

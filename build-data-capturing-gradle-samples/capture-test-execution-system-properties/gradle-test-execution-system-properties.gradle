@@ -14,28 +14,34 @@ if (!buildScanApi) {
 allprojects {
     tasks.withType(Test).configureEach { t ->
         doFirst {
-            t.systemProperties.forEach { key, val -> buildScan.value("${t.identityPath}#sysProps-$key", hash(val)) }
+            t.systemProperties.forEach { key, val -> Capture.addBuildScanValue(buildScanApi, "${t.identityPath}#sysProps-$key", val) }
         }
     }
 }
 
-ext.MESSAGE_DIGEST = MessageDigest.getInstance('SHA-256')
+class Capture {
+    static MessageDigest MESSAGE_DIGEST = MessageDigest.getInstance ( 'SHA-256' )
 
-String hash(Object value) {
-    if (value == null) {
-        null
-    } else {
-        String string = String.valueOf(value)
-        byte[] encodedHash = MESSAGE_DIGEST.digest(string.getBytes(StandardCharsets.UTF_8))
-        StringBuilder hexString = new StringBuilder()
-        for (int i = 0; i < encodedHash.length / 4; i++) {
-            String hex = Integer.toHexString(0xff & encodedHash[i])
-            if (hex.length() == 1) {
-                hexString.append('0')
+    static void addBuildScanValue(api, key, value) {
+        api.value(key, hash(value))
+    }
+
+    static String hash(Object value) {
+        if (value == null) {
+            null
+        } else {
+            String string = String.valueOf(value)
+            byte[] encodedHash = MESSAGE_DIGEST.digest(string.getBytes(StandardCharsets.UTF_8))
+            StringBuilder hexString = new StringBuilder()
+            for (int i = 0; i < encodedHash.length / 4; i++) {
+                String hex = Integer.toHexString(0xff & encodedHash[i])
+                if (hex.length() == 1) {
+                    hexString.append('0')
+                }
+                hexString.append(hex)
             }
-            hexString.append(hex)
+            hexString.append('...')
+            hexString.toString()
         }
-        hexString.append('...')
-        hexString.toString()
     }
 }
