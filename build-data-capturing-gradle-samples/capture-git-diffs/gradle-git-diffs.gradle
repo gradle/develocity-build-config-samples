@@ -22,7 +22,9 @@ if (!buildScanApi) {
 def capture = new Capture(gradle.startParameter.offline, gradle.startParameter.continuous, gradle.rootProject.logger, getProviders().gradleProperty('gistToken'), project.name)
 
 buildScan.background {
+  if(capture.isEnabled()) {
     capture.captureGitDiffInGist(buildScanApi)
+  }
 }
 
 class Capture {
@@ -41,13 +43,16 @@ class Capture {
         this.projectName = projectName
     }
 
-    void captureGitDiffInGist(api) {
+  boolean isEnabled(){
         def isCapturingScan = !offline && !continuous
         if (!isCapturingScan) {
             logger.warn("Build is offline or continuous. Will not publish gist.")
             return
         }
+    return isCapturingScan
+  }
 
+  void captureGitDiffInGist(api) {
         def hasCredentials = gistTokenProvider.isPresent()
         if (!hasCredentials) {
             logger.warn("User has not set 'gistToken'. Cannot publish gist.")
