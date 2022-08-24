@@ -68,7 +68,7 @@
                           <property><name>linkXRef</name></property>
                           <property><name>includeTests</name></property>
                           <property><name>aggregate</name></property>
-                          <property><name>sourceEncoding</name></property>
+                          <property><name>inputEncoding</name></property>
                           <property><name>includeXmlInSite</name></property>
                           <property><name>skipEmptyReport</name></property>
                           <property><name>jdkToolchain</name></property>
@@ -118,6 +118,36 @@
                           <ignore>analysisCacheLocation</ignore>
                         </ignoredProperties>
                       </inputs>
+                      <nestedProperties>
+                        <property>
+                          <name>localRepository</name>
+                          <inputs>
+                            <properties>
+                              <property>
+                                <name>id</name>
+                              </property>
+                              <property>
+                                <name>url</name>
+                              </property>
+                            </properties>
+                          </inputs>
+                        </property>
+                      </nestedProperties>                      
+                      <iteratedProperties>
+                        <property>
+                          <name>remoteRepositories</name>
+                          <inputs>
+                            <properties>
+                              <property>
+                                <name>id</name>
+                              </property>
+                              <property>
+                                <name>url</name>
+                              </property>
+                            </properties>
+                          </inputs>
+                        </property>
+                      </iteratedProperties>
                       <outputs>
                         <!-- There's no single property for each output file, so we must compose the path.
                         These will need to be updated if <targetDirectory> is updated. -->
@@ -166,7 +196,7 @@
                           <property><name>linkXRef</name></property>
                           <property><name>includeTests</name></property>
                           <property><name>aggregate</name></property>
-                          <property><name>sourceEncoding</name></property>
+                          <property><name>inputEncoding</name></property>
                           <property><name>includeXmlInSite</name></property>
                           <property><name>skipEmptyReport</name></property>
                           <property><name>language</name></property>
@@ -204,6 +234,36 @@
                           <ignore>targetDirectory</ignore>
                         </ignoredProperties>
                       </inputs>
+                      <nestedProperties>
+                        <property>
+                          <name>localRepository</name>
+                          <inputs>
+                            <properties>
+                              <property>
+                                <name>id</name>
+                              </property>
+                              <property>
+                                <name>url</name>
+                              </property>
+                            </properties>
+                          </inputs>
+                        </property>
+                      </nestedProperties>                      
+                      <iteratedProperties>
+                        <property>
+                          <name>remoteRepositories</name>
+                          <inputs>
+                            <properties>
+                              <property>
+                                <name>id</name>
+                              </property>
+                              <property>
+                                <name>url</name>
+                              </property>
+                            </properties>
+                          </inputs>
+                        </property>
+                      </iteratedProperties>
                       <outputs>
                         <!-- There's no single property for each output file, so we must compose the path.
                         These will need to be updated if <targetDirectory> is updated. -->
