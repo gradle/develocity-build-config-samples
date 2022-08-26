@@ -35,14 +35,21 @@ jobs:
           distribution: 'adopt'
       - name: Set up Gradle
         uses: gradle/gradle-build-action@v2
+      - name: Checkout sample project
+        uses: actions/checkout@v3
+        with:
+          repository: gradle/gradle-build-scan-quickstart
+          path: gradle-build-scan-quickstart
+          fetch-depth: 1
+      - name: Inject settings 
+        run: cp common-gradle-enterprise-gradle-configuration/settings.gradle common-gradle-enterprise-gradle-configuration/settings.gradle.kts gradle-build-scan-quickstart/
       - name: Inject data capture script into Gradle build
         run: |
           # apply sample file
-          echo "apply from: file(\"../build-data-capturing-gradle-samples/${{matrix.sample-file}}\")" >> common-gradle-enterprise-gradle-configuration/build.gradle
-      - name: Run Gradle build
-        working-directory: common-gradle-enterprise-gradle-configuration
-        run: ./gradlew tasks   
-      - name: Run Gradle build with Kotlin scripts
-        if: ${{ matrix.name == 'Dependency resolution' }}
-        working-directory: common-gradle-enterprise-gradle-configuration
+          echo "apply from: file(\"../build-data-capturing-gradle-samples/${{matrix.sample-file}}\")" >> gradle-build-scan-quickstart/build.gradle
+      - name: Run Gradle build with Groovy script
+        working-directory: gradle-build-scan-quickstart
+        run: ./gradlew tasks
+      - name: Run Gradle build with Kotlin script
+        working-directory: gradle-build-scan-quickstart
         run: ./gradlew tasks -c settings.gradle.kts
