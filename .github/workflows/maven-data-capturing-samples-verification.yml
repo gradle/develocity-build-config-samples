@@ -32,14 +32,22 @@ jobs:
         with:
           java-version: '11'
           distribution: 'adopt'
+      - name: Checkout sample project
+        uses: actions/checkout@v3
+        with:
+          repository: gradle/maven-build-scan-quickstart
+          path: maven-build-scan-quickstart
+          fetch-depth: 1
+      - name: Inject settings 
+        run: cp common-gradle-enterprise-maven-configuration/extensions.xml common-gradle-enterprise-maven-configuration/gradle-enterprise.xml maven-build-scan-quickstart/.mvn/
       - name: Provide data capture script to Maven build
         run: |
             # copy over sample script such that it gets pulled in by the GE extension
-            cp build-data-capturing-maven-samples/${{ matrix.sample-file }} common-gradle-enterprise-maven-configuration/.mvn/gradle-enterprise-custom-user-data.groovy
+            cp build-data-capturing-maven-samples/${{ matrix.sample-file }} maven-build-scan-quickstart/.mvn/gradle-enterprise-custom-user-data.groovy
       - name: Run Maven build
         run: |
             echo 'MAVEN_OUTPUT<<EOF' >> $GITHUB_ENV
-            mvn -f common-gradle-enterprise-maven-configuration/pom.xml -X --batch-mode clean validate -Dgradle.scan.disabled=true >> $GITHUB_ENV
+            mvn -f maven-build-scan-quickstart/pom.xml -X --batch-mode clean validate -Dgradle.scan.disabled=true >> $GITHUB_ENV
             echo 'EOF' >> $GITHUB_ENV
       - name: Validate extension loaded
         run: |
