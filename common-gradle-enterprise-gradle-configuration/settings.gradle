@@ -21,8 +21,15 @@ buildCache {
         enabled = true
     }
 
-    remote(HttpBuildCache) {
-        url = 'https://enterprise-samples.gradle.com/cache/' // adjust to your GE server, and note the trailing slash
+    // Use the Gradle Enterprise connector's access key based authentication
+    remote(gradleEnterprise.buildCache) {
+        enabled = true
+        push = isCI
+    }
+
+    // Use Gradle's built-in HTTP connector
+    /* remote(HttpBuildCache) {
+        url = 'https://enterprise-samples.gradle.com/cache/' // adjust to your build cache node, and note the trailing slash
         allowUntrustedServer = false // ensure a trusted certificate is configured
         credentials { creds ->
             creds.username = System.getenv('GRADLE_ENTERPRISE_CACHE_USERNAME')
@@ -30,7 +37,7 @@ buildCache {
         }
         enabled = true
         push = isCI
-    }
+    } */
 }
 
 rootProject.name = 'common-gradle-enterprise-gradle-configuration' // adjust to your project
