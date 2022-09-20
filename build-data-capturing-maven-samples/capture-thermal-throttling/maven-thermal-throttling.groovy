@@ -7,9 +7,9 @@ import java.util.function.Function
 /**
  * This Groovy script captures the thermal throttling level and adds it as a tag.
  * Some parameters can be tweaked according to your build:
- * - SAMPLING_INTERVAL_IN_SECONDS
- * - THROTLLING_LEVEL
- * - DEBUG_ALL_VALUES
+ * - SAMPLING_INTERVAL_IN_SECONDS, frequency at which the capture command is run
+ * - THROTLLING_LEVEL, list of throttling levels and value ranges (to be compared with captured throttling average value)
+ * - DEBUG_ALL_VALUES, whether to dump all captured values or not (disabled by default)
  *
  * WARNING:
  * - This is supported on MacOS only.
