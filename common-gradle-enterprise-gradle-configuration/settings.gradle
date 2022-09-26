@@ -27,8 +27,9 @@ buildCache {
         push = isCI
     }
 
-    // Use Gradle's built-in HTTP connector
-    /* remote(HttpBuildCache) {
+    // Use Gradle's built-in access credentials
+    /**
+    remote(HttpBuildCache) {
         url = 'https://enterprise-samples.gradle.com/cache/' // adjust to your build cache node, and note the trailing slash
         allowUntrustedServer = false // ensure a trusted certificate is configured
         credentials { creds ->
@@ -37,7 +38,8 @@ buildCache {
         }
         enabled = true
         push = isCI
-    } */
+    }
+    */
 }
 
 rootProject.name = 'common-gradle-enterprise-gradle-configuration' // adjust to your project
