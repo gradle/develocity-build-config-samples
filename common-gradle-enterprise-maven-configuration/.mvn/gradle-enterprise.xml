@@ -32,16 +32,19 @@
       <enabled>true</enabled>
     </local>
     <remote>
+     <!-- Use the Gradle Enterprise connector's access key based authentication -->
+      <enabled>true</enabled>
+      <storeEnabled>#{isTrue(env['CI'])}</storeEnabled> <!-- adjust to your CI provider -->
+
+      <!-- Use build cache node credentials
       <server>
-        <url>https://enterprise-samples.gradle.com/cache/</url> <!-- adjust to your GE server, and note the trailing slash -->
-        <allowUntrusted>false</allowUntrusted> <!-- ensure a trusted certificate is configured -->
+        <url>https://enterprise-samples.gradle.com/cache/</url> 
+        <allowUntrusted>false</allowUntrusted>
         <credentials>
           <username>${env.GRADLE_ENTERPRISE_CACHE_USERNAME}</username>
           <password>${env.GRADLE_ENTERPRISE_CACHE_PASSWORD}</password>
         </credentials>
-      </server>
-      <enabled>true</enabled>
-      <storeEnabled>#{isTrue(env['CI'])}</storeEnabled> <!-- adjust to your CI provider -->
+      </server> -->
     </remote>
   </buildCache>
 </gradleEnterprise>
