@@ -9,7 +9,6 @@ import java.util.function.Function
  * Some parameters can be tweaked according to your build:
  * - SAMPLING_INTERVAL_IN_SECONDS, frequency at which the capture command is run
  * - THROTLLING_LEVEL, list of throttling levels and value ranges (to be compared with captured throttling average value)
- * - DEBUG_ALL_VALUES, whether to dump all captured values or not (disabled by default)
  *
  * WARNING:
  * - This is supported on MacOS only.
@@ -48,12 +47,6 @@ class ThermalThrottlingService {
                   [level: "THROTTLING_LOW", range: 80..100]
           ]
 
-  /**
-   * Flag to dump all captured values as custom values.
-   * Enable cautiously in case of very large sample collection, this can be adjusted with sampling interval.
-   */
-  def static final DEBUG_ALL_VALUES = false
-
   def static final COMMAND_ARGS = ["pmset", "-g", "therm"]
   def static final COMMAND_OUTPUT_PARSING_PATTERN = /CPU_Speed_Limit\s+=\s+/
 
@@ -86,7 +79,6 @@ class ThermalThrottlingService {
   void processResults(def buildScanApi) {
     if (!samples.isEmpty()) {
       def average = samples.stream().mapToInt(Integer::intValue).average().getAsDouble()
-
       if (average < 100) {
         buildScanApi.value "CPU Thermal Throttling Average", String.format("%.2f", average) + "%"
 
@@ -94,13 +86,6 @@ class ThermalThrottlingService {
           entry.range.from <= average && average < entry.range.to
         }.each { entry ->
           buildScanApi.tag entry.level
-        }
-
-        if (DEBUG_ALL_VALUES) {
-          def count = 1
-          samples.forEach {
-            buildScanApi.value "CPU Thermal Throttling Values " + String.format("%03d",count++), it.toString()
-          }
         }
       }
     }
@@ -113,7 +98,7 @@ class ProcessRunner implements Runnable {
   private final List<String> args
   Function<String, Integer> outputProcessor
 
-  ProcessRunner(ArrayList<String> args, Function<String, Integer> outputProcessor) {
+  ProcessRunner(List<String> args, Function<String, Integer> outputProcessor) {
     this.args = args
     this.outputProcessor = outputProcessor
   }
