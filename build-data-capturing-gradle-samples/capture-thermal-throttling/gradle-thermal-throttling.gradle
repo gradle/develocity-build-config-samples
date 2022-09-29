@@ -16,7 +16,6 @@ import java.util.function.Function
  *
  * WARNINGS:
  * - This is supported on MacOS only.
- * - This is not compatible with the configuration cache (use of buildFinished)
  *
  * This should be applied to the root project:
  * <code> apply from: file('gradle-thermal-throttling.gradle') </code>
@@ -27,12 +26,17 @@ if (!buildScanApi) {
   return
 }
 
-// Register and start Thermal throttling service
-def throttlingService = gradle.sharedServices.registerIfAbsent("thermalThrottling", ThermalThrottlingService.class) {}.get()
+// Register Thermal throttling service
+def throttlingServiceProvider = gradle.sharedServices.registerIfAbsent("thermalThrottling", ThermalThrottlingService.class) {}
+
+// Start Thermal throttling service
+throttlingServiceProvider.get()
 
 // Process results on build completion
-buildScan.buildFinished {
-  throttlingService.processResults(buildScanApi)
+buildScan {
+  buildFinished { def result ->
+    throttlingServiceProvider.get().processResults(buildScanApi)
+  }
 }
 
 // Thermal Throttling service implementation
