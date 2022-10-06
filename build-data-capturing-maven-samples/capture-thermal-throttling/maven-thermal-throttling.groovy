@@ -50,8 +50,13 @@ class ThermalThrottlingService {
   def static final COMMAND_ARGS = ["pmset", "-g", "therm"]
   def static final COMMAND_OUTPUT_PARSING_PATTERN = /CPU_Speed_Limit\s+=\s+/
 
-  def static final scheduler = Executors.newScheduledThreadPool(1)
-  def static final samples = new ConcurrentLinkedQueue<Integer>()
+  def final scheduler
+  def final samples
+
+  ThermalThrottlingService() {
+    scheduler = Executors.newScheduledThreadPool(1)
+    samples = new ConcurrentLinkedQueue<Integer>()
+  }
 
   void start() {
     def osName = System.getProperty("os.name")

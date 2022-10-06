@@ -58,12 +58,14 @@ abstract class ThermalThrottlingService implements BuildService<BuildServicePara
   def static final COMMAND_ARGS = ["pmset", "-g", "therm"]
   def static final COMMAND_OUTPUT_PARSING_PATTERN = /CPU_Speed_Limit\s+=\s+/
 
-  def static final scheduler = Executors.newScheduledThreadPool(1)
-  def static final samples = new ConcurrentLinkedQueue<Integer>()
+  def final scheduler
+  def final samples
 
-  static {
+  ThermalThrottlingService() {
+    scheduler = Executors.newScheduledThreadPool(1)
+    samples = new ConcurrentLinkedQueue<Integer>()
     if (OperatingSystem.current().macOsX) {
-      scheduler.scheduleAtFixedRate(new ProcessRunner(COMMAND_ARGS, ThermalThrottlingService::processCommandOutput), 0, SAMPLING_INTERVAL_IN_SECONDS, TimeUnit.SECONDS)
+      scheduler.scheduleAtFixedRate(new ProcessRunner(COMMAND_ARGS, this::processCommandOutput), 0, SAMPLING_INTERVAL_IN_SECONDS, TimeUnit.SECONDS)
     } else {
       println "WARNING - Not running on MacOS - no thermal throttling data will be captured"
     }
@@ -74,7 +76,7 @@ abstract class ThermalThrottlingService implements BuildService<BuildServicePara
     scheduler.shutdownNow()
   }
 
-  static void processCommandOutput(String commandOutput) {
+  void processCommandOutput(String commandOutput) {
     def tokens = commandOutput.split(COMMAND_OUTPUT_PARSING_PATTERN)
     if (tokens != null && tokens.length > 0) {
       def sample = tokens[1] as Integer
@@ -84,7 +86,7 @@ abstract class ThermalThrottlingService implements BuildService<BuildServicePara
     }
   }
 
-  static void processResults(def buildScanApi) {
+  void processResults(def buildScanApi) {
     if (!samples.isEmpty()) {
       def average = samples.stream().mapToInt(Integer::intValue).average().getAsDouble()
       if (average < 100) {
