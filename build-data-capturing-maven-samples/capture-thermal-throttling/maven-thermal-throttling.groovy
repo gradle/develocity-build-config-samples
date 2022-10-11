@@ -60,7 +60,7 @@ class ThermalThrottlingService {
 
   void start() {
     def osName = System.getProperty("os.name")
-    if(osName.contains("OS X") || osName.startsWith("Darwin")) {
+    if (osName.contains("OS X") || osName.startsWith("Darwin")) {
       scheduler.scheduleAtFixedRate(new ProcessRunner(COMMAND_ARGS, this::processCommandOutput), 0, SAMPLING_INTERVAL_IN_SECONDS, TimeUnit.SECONDS)
     } else {
       println "WARNING - Not running on MacOS - no thermal throttling data will be captured"
