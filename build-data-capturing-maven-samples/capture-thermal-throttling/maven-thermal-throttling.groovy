@@ -14,20 +14,25 @@ import java.util.function.Function
  * - This is supported on MacOS only.
  */
 
-def thermalThrottlingService = new ThermalThrottlingService()
+def osName = System.getProperty("os.name")
+if (osName.contains("OS X") || osName.startsWith("Darwin")) {
+  def thermalThrottlingService = new ThermalThrottlingService()
 
-// start service
-thermalThrottlingService.start()
+  // start service
+  thermalThrottlingService.start()
 
-buildScan.buildFinished(buildResult -> {
-  try {
-    // process results on build completion
-    thermalThrottlingService.processResults(buildScan)
-  } finally {
-    // stop service
-    thermalThrottlingService.stop()
-  }
-})
+  buildScan.buildFinished(buildResult -> {
+    try {
+      // process results on build completion
+      thermalThrottlingService.processResults(buildScan)
+    } finally {
+      // stop service
+      thermalThrottlingService.stop()
+    }
+  })
+} else {
+  println "INFO - Not running on MacOS - no thermal throttling data will be captured"
+}
 
 // Thermal Throttling service implementation
 class ThermalThrottlingService {
@@ -35,23 +40,23 @@ class ThermalThrottlingService {
   /**
    * Sampling interval can be adjusted according to total build time.
    */
-  def static final SAMPLING_INTERVAL_IN_SECONDS = 5
+  def SAMPLING_INTERVAL_IN_SECONDS = 5
 
   /**
    * Throttling levels by throttling average value.
    */
-  def static final THROTTLING_LEVEL =
+  def THROTTLING_LEVEL =
           [
                   [level: "THROTTLING_HIGH", range: 0..40],
                   [level: "THROTTLING_MEDIUM", range: 40..80],
                   [level: "THROTTLING_LOW", range: 80..100]
           ]
 
-  def static final COMMAND_ARGS = ["pmset", "-g", "therm"]
-  def static final COMMAND_OUTPUT_PARSING_PATTERN = /CPU_Speed_Limit\s+=\s+/
+  def COMMAND_ARGS = ["pmset", "-g", "therm"]
+  def COMMAND_OUTPUT_PARSING_PATTERN = /CPU_Speed_Limit\s+=\s+/
 
-  def final scheduler
-  def final samples
+  def scheduler
+  def samples
 
   ThermalThrottlingService() {
     scheduler = Executors.newScheduledThreadPool(1)
@@ -59,12 +64,7 @@ class ThermalThrottlingService {
   }
 
   void start() {
-    def osName = System.getProperty("os.name")
-    if (osName.contains("OS X") || osName.startsWith("Darwin")) {
-      scheduler.scheduleAtFixedRate(new ProcessRunner(COMMAND_ARGS, this::processCommandOutput), 0, SAMPLING_INTERVAL_IN_SECONDS, TimeUnit.SECONDS)
-    } else {
-      println "WARNING - Not running on MacOS - no thermal throttling data will be captured"
-    }
+    scheduler.scheduleAtFixedRate(new ProcessRunner(COMMAND_ARGS, this::processCommandOutput), 0, SAMPLING_INTERVAL_IN_SECONDS, TimeUnit.SECONDS)
   }
 
   void stop() {
@@ -100,8 +100,8 @@ class ThermalThrottlingService {
 // Process Runner implementation
 class ProcessRunner implements Runnable {
 
-  private final List<String> args
-  Function<String, Integer> outputProcessor
+  private List<String> args
+  private Function<String, Integer> outputProcessor
 
   ProcessRunner(List<String> args, Function<String, Integer> outputProcessor) {
     this.args = args
