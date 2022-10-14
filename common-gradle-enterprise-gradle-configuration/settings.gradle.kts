@@ -21,13 +21,15 @@ buildCache {
         isEnabled = true
     }
 
-    // Use the Gradle Enterprise connector's access key based authentication
+    // Use the Gradle Enterprise connector's access key based authentication.
+    // This is available in Gradle Enterprise 2022.3+ and Gradle Enterprise Plugin 3.11+.
     remote(gradleEnterprise.buildCache) {
         isEnabled = true
         isPush = isCI
     }
 
-    // Use Gradle's built-in access credentials
+    // Use Gradle's built-in access credentials.
+    // This is available in all Gradle Enterprise and Gradle Enterprise Plugin versions.
     /**
     remote(HttpBuildCache::class) {
         url = uri("https://enterprise-samples.gradle.com/cache/") // adjust to your GE server, and note the trailing slash
