@@ -30,12 +30,17 @@ if (OperatingSystem.current().macOsX) {
   // Register Thermal throttling service
   def throttlingServiceProvider = gradle.sharedServices.registerIfAbsent("thermalThrottling", ThermalThrottlingService.class) {}
 
-  // Start Thermal throttling service
-  throttlingServiceProvider.get()
+  buildScan.background {
+    // Start Thermal throttling service
+    throttlingServiceProvider.get()
+  }
 
-  // Process results on build completion
   buildScan.buildFinished { def result ->
+    // Process results on build completion
     throttlingServiceProvider.get().processResults(buildScanApi)
+
+    // Having an AutoCloseable service is not enough in some situations
+    throttlingServiceProvider.get().close()
   }
 } else {
   println "INFO - Not running on MacOS - no thermal throttling data will be captured"
