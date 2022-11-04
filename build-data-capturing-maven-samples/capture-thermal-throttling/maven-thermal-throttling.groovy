@@ -22,12 +22,9 @@ if (osName.contains("OS X") || osName.startsWith("Darwin")) {
   thermalThrottlingService.start()
 
   buildScan.buildFinished(buildResult -> {
-    try {
+    try (thermalThrottlingService) {
       // process results on build completion
       thermalThrottlingService.processResults(buildScan)
-    } finally {
-      // stop service
-      thermalThrottlingService.stop()
     }
   })
 } else {
@@ -35,7 +32,7 @@ if (osName.contains("OS X") || osName.startsWith("Darwin")) {
 }
 
 // Thermal Throttling service implementation
-class ThermalThrottlingService {
+class ThermalThrottlingService implements AutoCloseable {
 
   /**
    * Sampling interval can be adjusted according to total build time.
@@ -67,7 +64,8 @@ class ThermalThrottlingService {
     scheduler.scheduleAtFixedRate(new ProcessRunner(COMMAND_ARGS, this::processCommandOutput), 0, SAMPLING_INTERVAL_IN_SECONDS, TimeUnit.SECONDS)
   }
 
-  void stop() {
+  @Override
+  void close() throws Exception {
     scheduler.shutdownNow()
   }
 

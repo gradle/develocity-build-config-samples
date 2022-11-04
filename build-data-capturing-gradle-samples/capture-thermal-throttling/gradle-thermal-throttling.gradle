@@ -36,12 +36,9 @@ if (OperatingSystem.current().macOsX) {
   }
 
   buildScan.buildFinished { def result ->
-    try {
+    try (def service = throttlingServiceProvider.get()) {
       // process results on build completion
-      throttlingServiceProvider.get().processResults(buildScanApi)
-    } finally {
-      // stop service
-      throttlingServiceProvider.get().close()
+      service.processResults(buildScanApi)
     }
   }
 } else {
