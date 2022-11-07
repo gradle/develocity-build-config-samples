@@ -47,6 +47,7 @@ if (OperatingSystem.current().macOsX) {
 }
 
 // Thermal Throttling service implementation
+// OperationCompletionListener is a marker interface to get the service instantiated when configuration cache kicks in
 abstract class ThermalThrottlingService implements BuildService<BuildServiceParameters.None>, AutoCloseable, OperationCompletionListener {
 
   /**
@@ -82,8 +83,8 @@ abstract class ThermalThrottlingService implements BuildService<BuildServicePara
   }
 
   @Override
-  void onFinish(FinishEvent var1){
-    // OperationCompletionListener is a marker interface to get the service instantiated when configuration cache kicks in
+  void onFinish(FinishEvent ignored){
+    // ignored
   }
 
   void processCommandOutput(String commandOutput) {
