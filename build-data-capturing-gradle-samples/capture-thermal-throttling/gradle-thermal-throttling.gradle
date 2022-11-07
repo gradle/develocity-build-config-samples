@@ -8,6 +8,9 @@ import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import java.util.function.Function
 
+import org.gradle.tooling.events.OperationCompletionListener
+import org.gradle.tooling.events.FinishEvent
+
 /**
  * This Gradle script captures the thermal throttling level and adds it as a tag.
  * Some parameters can be tweaked according to your build:
@@ -30,10 +33,8 @@ if (OperatingSystem.current().macOsX) {
   // Register Thermal throttling service
   def throttlingServiceProvider = gradle.sharedServices.registerIfAbsent("thermalThrottling", ThermalThrottlingService.class) {}
 
-  buildScan.background {
-    // Start Thermal throttling service
-    throttlingServiceProvider.get()
-  }
+  // start service
+  gradle.services.get(BuildEventsListenerRegistry).onTaskCompletion(throttlingServiceProvider)
 
   buildScan.buildFinished { def result ->
     try (def service = throttlingServiceProvider.get()) {
@@ -46,7 +47,7 @@ if (OperatingSystem.current().macOsX) {
 }
 
 // Thermal Throttling service implementation
-abstract class ThermalThrottlingService implements BuildService<BuildServiceParameters.None>, AutoCloseable {
+abstract class ThermalThrottlingService implements BuildService<BuildServiceParameters.None>, AutoCloseable, OperationCompletionListener {
 
   /**
    * Sampling interval can be adjusted according to total build time.
@@ -78,6 +79,11 @@ abstract class ThermalThrottlingService implements BuildService<BuildServicePara
   @Override
   void close() {
     scheduler.shutdownNow()
+  }
+
+  @Override
+  void onFinish(FinishEvent var1){
+    // OperationCompletionListener is a marker interface to get the service instantiated when configuration cache kicks in
   }
 
   void processCommandOutput(String commandOutput) {
