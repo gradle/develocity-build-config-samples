@@ -39,15 +39,14 @@ jobs:
             # copy over sample script such that it gets pulled in by the GE extension
             cp build-data-capturing-maven-samples/${{ matrix.sample-file }} common-gradle-enterprise-maven-configuration/.mvn/gradle-enterprise-custom-user-data.groovy
       - name: Run Maven build
+        id: mvn-build
         run: |
-            echo 'MAVEN_OUTPUT<<EOF' >> $GITHUB_ENV
-            mvn -f common-gradle-enterprise-maven-configuration/pom.xml -X --batch-mode clean validate -Dgradle.scan.disabled=true >> $GITHUB_ENV
-            echo 'EOF' >> $GITHUB_ENV
+            echo ::set-output name=mavenOutput::$(mvn -f common-gradle-enterprise-maven-configuration/pom.xml -X --batch-mode clean validate -Dgradle.scan.disabled=true)
       - name: Validate extension loaded
-        run: |
-            # Asserting that extension was loaded checking a log entry
-            echo $MAVEN_OUTPUT | grep "$LOG_MSG_EXTENSION_LOADED"
+        # Asserting that extension was loaded checking a log entry
+        run: exit 1
+        if:  ${{ !contains(steps.mvn-build.outputs.mavenOutput, env.LOG_MSG_EXTENSION_LOADED) }}
       - name: Validate extension executed
-        run: |
-            # Asserting that extension was run successfully checking absence of an error log entry
-            echo $MAVEN_OUTPUT | grep -L "$LOG_MSG_EXECUTION_FAILED"
+        # Asserting that extension was run successfully checking absence of an error log entry
+        run: exit 1
+        if:  contains(steps.mvn-build.outputs.mavenOutput, env.LOG_MSG_EXECUTION_FAILED)

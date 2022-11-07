@@ -1,6 +1,6 @@
 plugins {
-    id 'com.gradle.enterprise' version '3.11.1'
-    id 'com.gradle.common-custom-user-data-gradle-plugin' version '1.8.1'
+    id 'com.gradle.enterprise' version '3.11.3'
+    id 'com.gradle.common-custom-user-data-gradle-plugin' version '1.8.2'
 }
 
 def isCI = System.getenv('CI') != null // adjust to your CI provider
@@ -21,8 +21,18 @@ buildCache {
         enabled = true
     }
 
+    // Use the Gradle Enterprise connector's access key based authentication.
+    // This is available in Gradle Enterprise 2022.3+ and Gradle Enterprise Plugin 3.11+.
+    remote(gradleEnterprise.buildCache) {
+        enabled = true
+        push = isCI
+    }
+
+    // Use Gradle's built-in access credentials.
+    // This is available in all Gradle Enterprise and Gradle Enterprise Plugin versions.
+    /**
     remote(HttpBuildCache) {
-        url = 'https://enterprise-samples.gradle.com/cache/' // adjust to your GE server, and note the trailing slash
+        url = 'https://enterprise-samples.gradle.com/cache/' // adjust to your build cache node, and note the trailing slash
         allowUntrustedServer = false // ensure a trusted certificate is configured
         credentials { creds ->
             creds.username = System.getenv('GRADLE_ENTERPRISE_CACHE_USERNAME')
@@ -31,6 +41,7 @@ buildCache {
         enabled = true
         push = isCI
     }
+    */
 }
 
 rootProject.name = 'common-gradle-enterprise-gradle-configuration' // adjust to your project
