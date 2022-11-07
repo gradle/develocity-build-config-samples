@@ -22,6 +22,8 @@ jobs:
             sample-file: 'capture-top-level-project/maven-top-level-project.groovy'
           - name: 'Profiles'
             sample-file: 'capture-profiles/maven-profiles.groovy'
+          - name: 'Thermal throttling'
+            sample-file: 'capture-thermal-throttling/maven-thermal-throttling.groovy'
           - name: 'GE Maven extension version'
             sample-file: 'capture-ge-extension-version/maven-ge-extension-version.groovy'
     steps:

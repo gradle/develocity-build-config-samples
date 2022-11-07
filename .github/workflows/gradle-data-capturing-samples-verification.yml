@@ -23,6 +23,8 @@ jobs:
             sample-file: 'capture-slow-workunit-executions/gradle-slow-task-executions.gradle'
           - name: 'Test task system properties'
             sample-file: 'capture-test-execution-system-properties/gradle-test-execution-system-properties.gradle'
+          - name: 'Thermal throttling'
+            sample-file: 'capture-thermal-throttling/gradle-thermal-throttling.gradle'
           - name: 'GE Gradle plugin version'
             sample-file: 'capture-ge-plugin-version/gradle-ge-plugin-version.gradle'
     steps:
