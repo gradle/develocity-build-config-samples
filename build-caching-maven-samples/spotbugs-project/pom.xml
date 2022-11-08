@@ -15,13 +15,14 @@
       <plugin>
         <groupId>com.github.spotbugs</groupId>
         <artifactId>spotbugs-maven-plugin</artifactId>
-        <version>4.7.2.1</version>
+        <version>4.7.3.0</version>
         <configuration>
           <effort>Max</effort>
           <threshold>Low</threshold>
           <omitVisitors>FindDeadLocalStores,UnreadFields</omitVisitors>
           <failThreshold>High</failThreshold>
           <xmlOutput>false</xmlOutput>
+          <sarifOutput>true</sarifOutput>
         </configuration>
         <executions>
           <execution>
@@ -116,6 +117,7 @@
                           <ignore>xmlOutputDirectory</ignore>
                           <ignore>spotbugsXmlOutputDirectory</ignore>
                           <ignore>spotbugsXmlOutputFilename</ignore>
+                          <ignore>sarifOutputDirectory</ignore>
 
                           <!-- NOTE: It's not quite correct to ignore these values. This means that if _only_ these values are changed,
                                      an invalid cache hit would result, producing the old report without the correct xref. -->
@@ -134,6 +136,10 @@
                           <file>
                             <name>spotbugsXmlOutputFile</name>
                             <path>${project.build.directory}/spotbugsXml.xml</path>
+                          </file>
+                          <file>
+                            <name>sarifOutputFilename</name>
+                            <path>${project.build.directory}/spotbugsSarif.json</path>
                           </file>
                         </files>
                         <cacheableBecause>check should only run when inputs change</cacheableBecause>
