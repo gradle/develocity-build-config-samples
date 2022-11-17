@@ -37,13 +37,17 @@ jobs:
           distribution: 'adopt'
       - name: Set up Gradle
         uses: gradle/gradle-build-action@v2
-      - name: Inject data capture script into Gradle build
+      - name: Inject data capture script into Gradle build for groovy
         run: |
           # apply sample file
-          echo "apply from: file(\"../build-data-capturing-gradle-samples/${{matrix.sample-file}}\")" >> common-gradle-enterprise-gradle-configuration/build.gradle
+          echo "apply from: file(\"../build-data-capturing-gradle-samples/${{matrix.sample-file}}\")" >> common-gradle-enterprise-gradle-configuration-groovy/build.gradle
       - name: Run Gradle build with Groovy scripts
-        working-directory: common-gradle-enterprise-gradle-configuration
+        working-directory: common-gradle-enterprise-gradle-configuration-groovy
         run: ./gradlew tasks
+      - name: Inject data capture script into Gradle build for kts
+        run: |
+          # apply sample file
+          echo "apply from: file(\"../build-data-capturing-gradle-samples/${{matrix.sample-file}}\")" >> common-gradle-enterprise-gradle-configuration-kts/build.gradle
       - name: Run Gradle build with Kotlin scripts
         working-directory: common-gradle-enterprise-gradle-configuration-kts
         run: ./gradlew tasks
