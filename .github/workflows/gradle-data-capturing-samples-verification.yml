@@ -43,7 +43,7 @@ jobs:
           echo "apply from: file(\"../build-data-capturing-gradle-samples/${{matrix.sample-file}}\")" >> common-gradle-enterprise-gradle-configuration/build.gradle
       - name: Run Gradle build with Groovy scripts
         working-directory: common-gradle-enterprise-gradle-configuration
-        run: ./gradlew tasks   
+        run: ./gradlew tasks
       - name: Run Gradle build with Kotlin scripts
-        working-directory: common-gradle-enterprise-gradle-configuration
-        run: ./gradlew tasks -c settings.gradle.kts
+        working-directory: common-gradle-enterprise-gradle-configuration-kts
+        run: ./gradlew tasks
