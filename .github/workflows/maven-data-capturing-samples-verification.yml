@@ -41,7 +41,10 @@ jobs:
       - name: Run Maven build
         id: mvn-build
         run: |
-            echo ::set-output name=mavenOutput::$(mvn -f common-gradle-enterprise-maven-configuration/pom.xml -X --batch-mode clean validate -Dgradle.scan.disabled=true)
+          delimiter="$(openssl rand -hex 8)"
+          echo "mavenOutput<<${delimiter}" >> $GITHUB_OUTPUT
+          echo "$(mvn -f common-gradle-enterprise-maven-configuration/pom.xml -X --batch-mode clean validate -Dgradle.scan.disabled=true)" >> $GITHUB_OUTPUT
+          echo "${delimiter}" >> $GITHUB_OUTPUT
       - name: Validate extension loaded
         # Asserting that extension was loaded checking a log entry
         run: exit 1
