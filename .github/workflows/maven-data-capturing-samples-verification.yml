@@ -30,7 +30,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       - name: Set up JDK 11
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v3
         with:
           java-version: '11'
           distribution: 'adopt'
@@ -41,7 +41,10 @@ jobs:
       - name: Run Maven build
         id: mvn-build
         run: |
-            echo ::set-output name=mavenOutput::$(mvn -f common-gradle-enterprise-maven-configuration/pom.xml -X --batch-mode clean validate -Dgradle.scan.disabled=true)
+          delimiter="$(openssl rand -hex 8)"
+          echo "mavenOutput<<${delimiter}" >> $GITHUB_OUTPUT
+          echo "$(mvn -f common-gradle-enterprise-maven-configuration/pom.xml -X --batch-mode clean validate -Dgradle.scan.disabled=true)" >> $GITHUB_OUTPUT
+          echo "${delimiter}" >> $GITHUB_OUTPUT
       - name: Validate extension loaded
         # Asserting that extension was loaded checking a log entry
         run: exit 1
