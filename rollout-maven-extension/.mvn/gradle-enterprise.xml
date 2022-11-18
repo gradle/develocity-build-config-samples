@@ -21,12 +21,6 @@
       <enabled>true</enabled>
     </local>
     <remote>
-      <server>
-        <credentials>
-          <username>${env.GRADLE_ENTERPRISE_CACHE_USERNAME}</username>
-          <password>${env.GRADLE_ENTERPRISE_CACHE_PASSWORD}</password>
-        </credentials>
-      </server>
       <enabled>true</enabled>
       <storeEnabled>#{isTrue(env['CI'])}</storeEnabled>
     </remote>
