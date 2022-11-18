@@ -19,7 +19,13 @@ updates:
     schedule:
       interval: "daily"
   - package-ecosystem: "gradle"
-    directory: "common-gradle-enterprise-gradle-configuration"
+    directory: "common-gradle-enterprise-gradle-configuration-groovy"
+    registries:
+      - gradle-plugin-portal
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "gradle"
+    directory: "common-gradle-enterprise-gradle-configuration-kts"
     registries:
       - gradle-plugin-portal
     schedule:
