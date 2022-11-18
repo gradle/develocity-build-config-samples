@@ -49,7 +49,7 @@ jobs:
       - name: Inject data capture script into Gradle build using Kotlin DSL
         run: |
           # apply sample file
-          echo "apply from: file(\"../build-data-capturing-gradle-samples/${{matrix.sample-file}}\")" >> common-gradle-enterprise-gradle-configuration-kts/build.gradle
+          echo "apply from: file(\"../build-data-capturing-gradle-samples/${{matrix.sample-file}}\")" >> common-gradle-enterprise-gradle-configuration-kotlin/build.gradle
       - name: Run Gradle build using Kotlin DSL
-        working-directory: common-gradle-enterprise-gradle-configuration-kts
+        working-directory: common-gradle-enterprise-gradle-configuration-kotlin
         run: ./gradlew tasks
