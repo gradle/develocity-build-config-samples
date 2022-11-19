@@ -45,11 +45,15 @@ jobs:
           echo "apply from: file(\"../build-data-capturing-gradle-samples/${{matrix.sample-file}}\")" >> common-gradle-enterprise-gradle-configuration-groovy/build.gradle
       - name: Run Gradle build using Groovy DSL
         working-directory: common-gradle-enterprise-gradle-configuration-groovy
-        run: ./gradlew tasks
+        run: ./gradlew tasks -Dgradle.enterprise.url=https://ge.solutions-team.gradle.com
+        env:
+          GRADLE_ENTERPRISE_ACCESS_KEY: ${{ secrets.GE_SOLUTIONS_ACCESS_TOKEN }}
       - name: Inject data capture script into Gradle build using Kotlin DSL
         run: |
           # apply sample file
           echo "apply from: file(\"../build-data-capturing-gradle-samples/${{matrix.sample-file}}\")" >> common-gradle-enterprise-gradle-configuration-kotlin/build.gradle
       - name: Run Gradle build using Kotlin DSL
         working-directory: common-gradle-enterprise-gradle-configuration-kotlin
-        run: ./gradlew tasks
+        run: ./gradlew tasks -Dgradle.enterprise.url=https://ge.solutions-team.gradle.com
+        env:
+          GRADLE_ENTERPRISE_ACCESS_KEY: ${{ secrets.GE_SOLUTIONS_ACCESS_TOKEN }}
