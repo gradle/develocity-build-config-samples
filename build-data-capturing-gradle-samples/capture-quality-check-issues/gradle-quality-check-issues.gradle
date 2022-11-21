@@ -15,7 +15,7 @@ gradle.taskGraph.beforeTask { task ->
         return
     }
 
-    task.configure { t -> t.reports.xml.enabled = true }
+    task.configure { t -> t.reports.xml.required = true }
 }
 
 gradle.taskGraph.afterTask { task, TaskState state ->
@@ -23,7 +23,7 @@ gradle.taskGraph.afterTask { task, TaskState state ->
         return
     }
 
-    def reportFile = task.reports.xml.destination as File
+    def reportFile = task.reports.xml.outputLocation.get().asFile
     if (!reportFile.exists()) {
         return
     }
