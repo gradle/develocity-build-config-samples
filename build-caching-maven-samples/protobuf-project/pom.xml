@@ -32,6 +32,9 @@
             </goals>
             <configuration>
               <outputDirectory>target/generated-sources/protobuf</outputDirectory>
+
+              <!-- The plugin's bundled version of protoc does not support M1 processors, so use a version that does -->
+              <protocArtifact>com.google.protobuf:protoc:3.17.3</protocArtifact>
             </configuration>
           </execution>
         </executions>
