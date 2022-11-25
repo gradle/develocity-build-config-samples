@@ -1,6 +1,3 @@
-import org.gradle.api.services.BuildService
-import org.gradle.api.services.BuildServiceParameters
-
 /**
  * This Gradle script captures issues found by reporting tasks,
  * and adds these as custom values.
@@ -11,10 +8,7 @@ if (!buildScanApi) {
     return
 }
 
-// Register Quality check service
-def qualityCheckServiceProvider = gradle.sharedServices.registerIfAbsent('qualityCheck', QualityCheckService.class) {
-    it.parameters.projectRootDir.set(project.rootDir.path)
-}
+def capture = new Capture(project.rootDir.path)
 
 // configure reporting tasks
 gradle.beforeProject { p ->
@@ -23,9 +17,8 @@ gradle.beforeProject { p ->
         p.tasks.withType(org.gradle.api.plugins.quality.CodeNarc).configureEach {
             it.ignoreFailures = true
             it.reports.xml.required = true
-            it.usesService(qualityCheckServiceProvider)
             doLast {
-                qualityCheckServiceProvider.get().addReport(it.reports.xml.outputLocation, QualityCheckService.ReportType.CODENARC)
+                capture.processResults(buildScanApi, it.reports.xml.outputLocation, Capture.ReportType.CODENARC)
             }
         }
     }
@@ -34,9 +27,8 @@ gradle.beforeProject { p ->
         p.tasks.withType(org.gradle.api.plugins.quality.Checkstyle).configureEach {
             it.ignoreFailures = true
             it.reports.xml.required = true
-            it.usesService(qualityCheckServiceProvider)
             doLast {
-                qualityCheckServiceProvider.get().addReport(it.reports.xml.outputLocation, QualityCheckService.ReportType.CHECKSTYLE)
+                capture.processResults(buildScanApi, it.reports.xml.outputLocation, Capture.ReportType.CHECKSTYLE)
             }
         }
 
@@ -44,40 +36,15 @@ gradle.beforeProject { p ->
             it.reports.create("xml")
             it.reports.getByName("xml").enabled = true
             it.ignoreFailures = true
-            it.usesService(qualityCheckServiceProvider)
             doLast {
-                qualityCheckServiceProvider.get().addReport(it.reports.getByName("xml").outputLocation, QualityCheckService.ReportType.SPOTBUGS)
+                capture.processResults(buildScanApi, it.reports.xml.outputLocation, Capture.ReportType.SPOTBUGS)
             }
         }
     }
 }
 
-// check if reporting tasks are present in the build
-def hasReportingTask = false
-gradle.taskGraph.whenReady { taskGraph ->
-    if(taskGraph.allTasks.findAll {
-        it.class.name.startsWith('org.gradle.api.plugins.quality.Checkstyle')
-            || it.class.name.startsWith('org.gradle.api.plugins.quality.CodeNarc')
-            || it.class.name.startsWith('org.gradle.api.plugins.quality.FindBugs')
-            || it.class.name.startsWith('com.github.spotbugs.SpotBugsTask')
-    }.size() > 0) {
-        hasReportingTask = true
-    }
-}
-
-// process results on build completion
-buildScan.buildFinished { def result ->
-    if(hasReportingTask) {
-        qualityCheckServiceProvider.get().processResults(buildScanApi)
-    }
-}
-
 // Quality check service
-abstract class QualityCheckService implements BuildService<QualityCheckService.Params> {
-
-    interface Params extends BuildServiceParameters {
-        Property<String> getProjectRootDir()
-    }
+class Capture {
 
     enum ReportType {
         CHECKSTYLE, CODENARC, FINDBUGS, SPOTBUGS
@@ -87,67 +54,63 @@ abstract class QualityCheckService implements BuildService<QualityCheckService.P
         BugInstance, Method, Class, Field
     }
 
-    Map<RegularFileProperty, ReportType> reports = new HashMap<>()
+    def projectRootDir
 
-    void addReport(RegularFileProperty reportPath, ReportType reportType) {
-        reports.put(reportPath, reportType)
+    Capture(def projectRootDir) {
+        this.projectRootDir = projectRootDir
     }
 
-    void processResults(def buildScanApi) {
-        def projectRootDir = getParameters().getProjectRootDir().get()
-
-        reports.each {
-            def reportFile = it.key.get().getAsFile()
-            if (!reportFile.exists()) {
-                return
-            }
-
-            def xmlReport = new XmlSlurper().parse(reportFile)
-            def valueName = ''
-            def errors = [] as List<String>
-
-            switch(it.value) {
-                case ReportType.CHECKSTYLE:
-                    valueName = 'Verification Checkstyle'
-                    errors = xmlReport.file.collect {
-                        def filePath = it.@name.text().minus(projectRootDir)
-                        it.error.collect { "${filePath}:${it.@line}:${it.@column} \u2192 ${it.@message}" }
-                    }.flatten() as List<String>
-                    break;
-                case ReportType.CODENARC:
-                    valueName = 'Verification CodeNarc'
-                    errors = xmlReport.Package.collect {
-                        def sourceDirectory = it.parent().Project.SourceDirectory.text()
-                        sourceDirectory = (sourceDirectory.endsWith('/') ? sourceDirectory : sourceDirectory + '/')
-                        it.File.collect {
-                            def filePath = sourceDirectory + it.@name.text().minus(projectRootDir)
-                            it.Violation.collect { "${filePath}:${it.@lineNumber} \u2192 ${it.Message.text()}" }
-                        }.flatten()
-                    }.flatten() as List<String>
-                    break;
-                case ReportType.SPOTBUGS:
-                case ReportType.FINDBUGS:
-                    if(ReportType.FINDBUGS == it.value) {
-                        valueName = 'Verification FindBugs'
-                    } else {
-                        valueName = 'Verification SpotBugs'
-                    }
-                    errors = xmlReport.BugInstance.collect { bugInstance ->
-                        def type = bugInstance.@type.text()
-                        def error = bugInstance.breadthFirst().findAll { it.name() == 'SourceLine' }.sort(false) { it.parent().name() as SpotBugsParent }.first()
-                        def startLine = error.@start.text()
-                        def endLine = error.@end.text()
-                        def lineNumber = endLine == startLine ? startLine : "$startLine-$endLine"
-                        def sourcePathType = error.@sourcepath.text().subSequence(error.@sourcepath.text().lastIndexOf(".") + 1, error.@sourcepath.text().length())
-                        def projectPath = bugInstance.parent().Project.SrcDir.find { it.text().endsWith(sourcePathType) }
-                        def absolutePath = "$projectPath/${error.@sourcepath.text()}"
-                        def relativePath = absolutePath.minus(projectRootDir)
-                        "${relativePath}:${lineNumber} \u2192 ${type}"
-                    }.flatten() as List<String>
-                    break;
-            }
-
-            errors.each { buildScanApi.value "${valueName}", "${it}" }
+    void processResults(def buildScanApi, def outputLocation, def reportType) {
+        def reportFile = outputLocation.get().getAsFile()
+        if (!reportFile.exists()) {
+            return
         }
+
+        def xmlReport = new XmlSlurper().parse(reportFile)
+        def valueName = ''
+        def errors = [] as List<String>
+
+        switch(reportType) {
+            case ReportType.CHECKSTYLE:
+                valueName = 'Verification Checkstyle'
+                errors = xmlReport.file.collect {
+                    def filePath = it.@name.text().minus(projectRootDir)
+                    it.error.collect { "${filePath}:${it.@line}:${it.@column} \u2192 ${it.@message}" }
+                }.flatten() as List<String>
+                break;
+            case ReportType.CODENARC:
+                valueName = 'Verification CodeNarc'
+                errors = xmlReport.Package.collect {
+                    def sourceDirectory = it.parent().Project.SourceDirectory.text()
+                    sourceDirectory = (sourceDirectory.endsWith('/') ? sourceDirectory : sourceDirectory + '/')
+                    it.File.collect {
+                        def filePath = sourceDirectory + it.@name.text().minus(projectRootDir)
+                        it.Violation.collect { "${filePath}:${it.@lineNumber} \u2192 ${it.Message.text()}" }
+                    }.flatten()
+                }.flatten() as List<String>
+                break;
+            case ReportType.SPOTBUGS:
+            case ReportType.FINDBUGS:
+                if(ReportType.FINDBUGS == reportType) {
+                    valueName = 'Verification FindBugs'
+                } else {
+                    valueName = 'Verification SpotBugs'
+                }
+                errors = xmlReport.BugInstance.collect { bugInstance ->
+                    def type = bugInstance.@type.text()
+                    def error = bugInstance.breadthFirst().findAll { it.name() == 'SourceLine' }.sort(false) { it.parent().name() as SpotBugsParent }.first()
+                    def startLine = error.@start.text()
+                    def endLine = error.@end.text()
+                    def lineNumber = endLine == startLine ? startLine : "$startLine-$endLine"
+                    def sourcePathType = error.@sourcepath.text().subSequence(error.@sourcepath.text().lastIndexOf(".") + 1, error.@sourcepath.text().length())
+                    def projectPath = bugInstance.parent().Project.SrcDir.find { it.text().endsWith(sourcePathType) }
+                    def absolutePath = "$projectPath/${error.@sourcepath.text()}"
+                    def relativePath = absolutePath.minus(projectRootDir)
+                    "${relativePath}:${lineNumber} \u2192 ${type}"
+                }.flatten() as List<String>
+                break;
+        }
+
+        errors.each { buildScanApi.value "${valueName}", "${it}" }
     }
 }
