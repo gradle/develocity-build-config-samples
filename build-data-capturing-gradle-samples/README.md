@@ -17,7 +17,7 @@ on [Extending build scans](https://docs.gradle.com/enterprise/gradle-plugin/#ext
 _Demonstrates: Custom values_
 
 This sample demonstrates how to capture the Gradle Enterprise Gradle plugin version as a custom value. This can be used
-to identify projects using a certain version of the plugin within the Build Scan dashboard.
+to identify and filter for projects using a certain version of the plugin within the Build Scan dashboard.
 
 ### Capture Git Diffs
 
@@ -77,14 +77,13 @@ _Demonstrates: Custom values, Custom tags_
 
 This sample adds a custom value for macOS builds that captures the average amount of thermal throttling that was 
 applied during the build, a technique where the CPU is throttled in an effort to reduce heat. It then applies a tag to 
-the Build Scan that maps the percentage to a "level of thermal throttling".
+the Build Scan that maps the percentage to a level of thermal throttling.
 
 ## Usage
 
-The purpose of these samples is to demonstrate different ways to capture custom data and use it to customize a Build
-Scan. However, each sample has been written as
-a [script plugin](https://docs.gradle.org/current/userguide/plugins.html#sec:script_plugins), allowing any sample to be 
-used directly within a build.
+Each sample has been written as
+a [script plugin](https://docs.gradle.org/current/userguide/plugins.html#sec:script_plugins). This means any sample can
+be downloaded and used directly within a build.
 
 ```groovy
 // build.gradle
