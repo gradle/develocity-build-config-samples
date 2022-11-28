@@ -58,4 +58,8 @@ This sample captures the top-level project name and artifact ID and adds these a
 
 ## Usage
 
-[//]: # (todo not sure how these are intended to be applied)
+Each sample has been written to be fully compatible with
+the [Common Custom User Data Maven extension](https://github.com/gradle/common-custom-user-data-maven-extension). This
+means any sample can be downloaded and included in a Maven build that uses the extension. See
+the [Capturing additional tags, links, and values in your build scans](https://github.com/gradle/common-custom-user-data-maven-extension#capturing-additional-tags-links-and-values-in-your-build-scans)
+section of the extension documentation for more information.
