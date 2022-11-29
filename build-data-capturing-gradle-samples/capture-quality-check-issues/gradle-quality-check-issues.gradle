@@ -15,7 +15,7 @@ gradle.taskGraph.beforeTask { task ->
         return
     }
 
-    task.configure { t -> t.reports.xml.required = true }
+    task.reports.xml.required = true
 }
 
 gradle.taskGraph.afterTask { task, TaskState state ->
