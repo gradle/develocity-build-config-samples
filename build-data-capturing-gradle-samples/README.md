@@ -1,5 +1,21 @@
 # Build Data Capturing Gradle Samples
 
+## Usage
+
+Each sample has been written as
+a [script plugin](https://docs.gradle.org/current/userguide/plugins.html#sec:script_plugins). This means any sample can
+be downloaded and used directly within a build.
+
+```groovy
+// build.gradle
+apply from: 'build-data-capturing-sample.gradle'
+```
+
+```kotlin
+// build.gradle.kts
+apply(from = "build-data-capturing-sample.gradle.kts")
+```
+
 ## Overview
 
 This directory contains samples demonstrating various ways to extend and customize a Build Scan with extra data using 
@@ -78,19 +94,3 @@ _Demonstrates: Custom values, Custom tags_
 This sample adds a custom value for macOS builds that captures the average amount of thermal throttling that was 
 applied during the build, a technique where the CPU is throttled in an effort to reduce heat. It then applies a tag to 
 the Build Scan that maps the percentage to a level of thermal throttling.
-
-## Usage
-
-Each sample has been written as
-a [script plugin](https://docs.gradle.org/current/userguide/plugins.html#sec:script_plugins). This means any sample can
-be downloaded and used directly within a build.
-
-```groovy
-// build.gradle
-apply from: 'build-data-capturing-sample.gradle'
-```
-
-```kotlin
-// build.gradle.kts
-apply(from = "build-data-capturing-sample.gradle.kts")
-```
