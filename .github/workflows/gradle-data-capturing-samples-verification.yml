@@ -9,8 +9,6 @@ jobs:
     strategy:
       matrix:
         include:
-          - name: 'Dependency resolution'
-            sample-file: 'capture-dependency-resolution/gradle-dependency-resolution.gradle'
           - name: 'GE Gradle plugin version'
             sample-file: 'capture-ge-plugin-version/gradle-ge-plugin-version.gradle'
           - name: 'Git diffs'
