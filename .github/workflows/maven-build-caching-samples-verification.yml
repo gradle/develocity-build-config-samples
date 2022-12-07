@@ -20,15 +20,27 @@ jobs:
           node-version: '14'
       - name: Set up Yarn
         run: npm install -g yarn
-      - name: Build with Maven
-        id: mvn-build
+      - name: First build
+        id: first-build
         working-directory: ./build-caching-maven-samples
         run: |
           set -o pipefail
-          ./mvnw clean verify -Dgradle.enterprise.url=https://ge.solutions-team.gradle.com -Dorg.slf4j.simpleLogger.log.gradle.goal.cache=debug -B 2>&1 | tee -a /tmp/gradle-build.log
-          echo "hasUnknownParams=$(grep "Build caching was not enabled for this goal execution because the following parameters were not handled" /tmp/gradle-build.log | wc -l)" >> $GITHUB_OUTPUT
+          ./mvnw clean verify -Dgradle.enterprise.url=https://ge.solutions-team.gradle.com -Dorg.slf4j.simpleLogger.log.gradle.goal.cache=debug -B 2>&1 | tee -a /tmp/first-build.log
+          echo "hasUnknownParams=$(grep "Build caching was not enabled for this goal execution because the following parameters were not handled" /tmp/first-build.log | wc -l)" >> $GITHUB_OUTPUT
         env:
           GRADLE_ENTERPRISE_ACCESS_KEY: ${{ secrets.GE_SOLUTIONS_ACCESS_TOKEN }}
-      - name: Fail if unmapped mojo parameters
-        run: exit 1
-        if:  steps.mvn-build.outputs.hasUnknownParams != '0'
+      - name: Second build
+        id: second-build
+        working-directory: ./build-caching-maven-samples
+        run: |
+          set -o pipefail
+          ./mvnw clean verify -Dgradle.enterprise.url=https://ge.solutions-team.gradle.com -Dorg.slf4j.simpleLogger.log.gradle.goal.cache=debug -B 2>&1 | tee -a /tmp/second-build.log
+          echo "executedCacheableGoals=$(grep "Local cache miss" /tmp/second-build.log | wc -l)" >> $GITHUB_OUTPUT
+        env:
+          GRADLE_ENTERPRISE_ACCESS_KEY: ${{ secrets.GE_SOLUTIONS_ACCESS_TOKEN }}
+      - name: Verify no unmapped mojo parameters
+        run: if [[ "${{ steps.first-build.outputs.hasUnknownParams }}" != "0" ]]; then exit 1; fi
+        if: success() || failure()
+      - name: Verify no executed cacheable goals
+        run: if [[ "${{ steps.second-build.outputs.executedCacheableGoals }}" != "0" ]]; then exit 1; fi
+        if: success() || failure()
