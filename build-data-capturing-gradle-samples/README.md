@@ -22,11 +22,7 @@ This directory contains samples demonstrating various ways to extend and customi
 tags, links, and custom values.
 
 To learn more, see the Gradle Enterprise documentation
-on [Extending build scans](https://docs.gradle.com/enterprise/gradle-plugin/#extending_build_scans). 
-
-### Capture Dependency Resolution
-
-[//]: # (todo figure out what this sample is doing)
+on [Extending build scans](https://docs.gradle.com/enterprise/gradle-plugin/#extending_build_scans).
 
 ### Capture GE Plugin Version
 
