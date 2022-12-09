@@ -28,7 +28,7 @@ jobs:
           set -o pipefail
           ./02-validate-local-build-caching-different-locations.sh \
             -r "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY.git" \
-            -c "${{ github.sha }}" \
+            -c "$GITHUB_SHA" \
             -p "build-caching-maven-samples" \
             -g "verify" \
             -a "-Dorg.slf4j.simpleLogger.log.gradle.goal.cache=debug -B" \
