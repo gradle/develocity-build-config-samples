@@ -29,7 +29,7 @@ on [Extending build scans](https://docs.gradle.com/enterprise/gradle-plugin/#ext
 _Demonstrates: Custom values_
 
 This sample demonstrates how to capture the Gradle Enterprise Gradle plugin version as a custom value. This can be used
-to identify and filter for projects using a certain version of the plugin within the Build Scan dashboard.
+to identify and filter for projects using a certain version of the plugin on the Gradle Enterprise dashboards.
 
 ### Capture Git Diffs
 
