@@ -19,9 +19,6 @@ import org.gradle.tooling.events.FinishEvent
  *
  * WARNINGS:
  * - This is supported on MacOS only.
- *
- * This should be applied to the root project:
- * <code> apply from: file('gradle-thermal-throttling.gradle') </code>
  */
 
 if (OperatingSystem.current().macOsX) {
