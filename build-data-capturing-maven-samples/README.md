@@ -21,7 +21,7 @@ on [Extending build scans](https://docs.gradle.com/enterprise/maven-extension/#e
 _Demonstrates: Custom values_
 
 This sample demonstrates how to capture the Gradle Enterprise Maven extension version as a custom value. This can be 
-used to identify and filter for projects using a certain version of the extension within the Build Scan dashboard.
+used to identify and filter for projects using a certain version of the extension on the Gradle Enterprise dashboards.
 
 ### Capture OS Processes
 
