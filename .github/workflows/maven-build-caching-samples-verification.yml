@@ -21,7 +21,7 @@ jobs:
           node-version: '14'
       - name: Set up Yarn
         run: npm install -g yarn
-      - name: Run build validation scripts
+      - name: Verify cacheable goals are retrieved from the build cache
         id: build
         working-directory: gradle-enterprise-maven-build-validation
         run: |
