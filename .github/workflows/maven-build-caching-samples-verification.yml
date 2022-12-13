@@ -7,8 +7,9 @@ jobs:
     name: Verification
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+      - uses: gradle/gradle-enterprise-build-validation-scripts/.github/actions/maven/download@actions-stable
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
       - name: Set up JDK 11
         uses: actions/setup-java@v3
         with:
@@ -20,15 +21,22 @@ jobs:
           node-version: '14'
       - name: Set up Yarn
         run: npm install -g yarn
-      - name: Build with Maven
-        id: mvn-build
-        working-directory: ./build-caching-maven-samples
+      - name: Verify cacheable goals are retrieved from the build cache
+        id: build
+        working-directory: gradle-enterprise-maven-build-validation
         run: |
           set -o pipefail
-          ./mvnw clean verify -Dgradle.enterprise.url=https://ge.solutions-team.gradle.com -Dorg.slf4j.simpleLogger.log.gradle.goal.cache=debug -B 2>&1 | tee -a /tmp/gradle-build.log
-          echo "hasUnknownParams=$(grep "Build caching was not enabled for this goal execution because the following parameters were not handled" /tmp/gradle-build.log | wc -l)" >> $GITHUB_OUTPUT
+          ./02-validate-local-build-caching-different-locations.sh \
+            -r "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY.git" \
+            -c "$GITHUB_SHA" \
+            -p "build-caching-maven-samples" \
+            -g "verify" \
+            -a "-Dorg.slf4j.simpleLogger.log.gradle.goal.cache=debug -B" \
+            -s "https://ge.solutions-team.gradle.com" \
+            -f 2>&1 | tee -a /tmp/build.log
+          echo "hasUnknownParams=$(grep "Build caching was not enabled for this goal execution because the following parameters were not handled" /tmp/build.log | wc -l)" >> $GITHUB_OUTPUT
         env:
           GRADLE_ENTERPRISE_ACCESS_KEY: ${{ secrets.GE_SOLUTIONS_ACCESS_TOKEN }}
-      - name: Fail if unmapped mojo parameters
+      - name: Verify no unmapped mojo parameters
+        if: (success() || failure()) && steps.build.outputs.hasUnknownParams != '0'
         run: exit 1
-        if:  steps.mvn-build.outputs.hasUnknownParams != '0'
