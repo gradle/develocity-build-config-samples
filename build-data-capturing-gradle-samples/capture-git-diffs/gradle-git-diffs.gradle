@@ -7,13 +7,11 @@ import java.util.concurrent.TimeUnit
 /**
  * This Gradle script captures the <i>Git diff</i> in a GitHub gist,
  * and references the gist via a custom link.
- * This should be applied to the root project:
- * <code> apply from: file('gradle-git-diffs.gradle') </code>
  *
  * In order for the gist to be created successfully, you must specify the Gradle property `gistToken` where
  * the value is a Github access token that has gist permission on the given Github repo.
  *
- * See https://docs.github.com/en/free-pro-team@latest/rest/reference/gists#create-a-gist for reference.
+ * See https://docs.github.com/en/rest/gists/gists#create-a-gist for reference.
  */
 
 def buildScanApi = project.extensions.findByName('buildScan')

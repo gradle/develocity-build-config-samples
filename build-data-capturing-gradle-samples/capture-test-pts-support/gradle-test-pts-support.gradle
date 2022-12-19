@@ -8,8 +8,6 @@ import groovy.transform.Field
 /**
  * This Gradle script captures Predictive Test Selection and Test Distribution compatibility for each Test task, 
  * adding a flag as custom value.
- * This should be applied to the root project since it configures all projects:
- * <code> apply from: file('gradle-test-pts-support.gradle') </code>
  */
 
 def buildScanApi = project.extensions.findByName('buildScan')
