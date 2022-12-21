@@ -143,9 +143,7 @@
                           <property>
                             <name>skip</name>
                           </property>
-                          <property>
-                            <name>skipTests</name>
-                          </property>
+
                           <property>
                             <name>staticImports</name>
                           </property>
