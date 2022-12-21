@@ -8,109 +8,100 @@ if (!buildScanApi) {
     return
 }
 
-def capture = new Capture(project.rootDir.path)
-
-// configure reporting tasks
-gradle.beforeProject { p ->
-
-    p.pluginManager.withPlugin('groovy') {
-        p.tasks.withType(org.gradle.api.plugins.quality.CodeNarc).configureEach {
-            it.ignoreFailures = true
-            it.reports.xml.required = true
-            doLast {
-                capture.processResults(buildScanApi, it.reports.xml.outputLocation, Capture.ReportType.CODENARC)
-            }
-        }
+gradle.taskGraph.beforeTask { task ->
+    if (!ReportingTask.isSupported(task)) {
+        return
     }
 
-    p.pluginManager.withPlugin('java') {
-        p.tasks.withType(org.gradle.api.plugins.quality.Checkstyle).configureEach {
-            it.ignoreFailures = true
-            it.reports.xml.required = true
-            doLast {
-                capture.processResults(buildScanApi, it.reports.xml.outputLocation, Capture.ReportType.CHECKSTYLE)
-            }
-        }
-
-        p.tasks.withType(com.github.spotbugs.snom.SpotBugsTask).configureEach {
-            it.reports.create("xml")
-            it.reports.getByName("xml").enabled = true
-            it.ignoreFailures = true
-            doLast {
-                capture.processResults(buildScanApi, it.reports.xml.outputLocation, Capture.ReportType.SPOTBUGS)
-            }
-        }
-    }
+    task.reports.xml.required = true
 }
 
-// Quality check service
-class Capture {
-
-    enum ReportType {
-        CHECKSTYLE, CODENARC, FINDBUGS, SPOTBUGS
+gradle.taskGraph.afterTask { task, TaskState state ->
+    if (!ReportingTask.isSupported(task)) {
+        return
     }
 
-    enum SpotBugsParent {
-        BugInstance, Method, Class, Field
+    def reportFile = task.reports.xml.outputLocation.get().asFile
+    if (!reportFile.exists()) {
+        return
     }
 
-    def projectRootDir
+    def report = new XmlSlurper().parse(reportFile)
+    def valueName = '' as String
+    def errors = [] as List<String>
 
-    Capture(def projectRootDir) {
-        this.projectRootDir = projectRootDir
+    if (ReportingTask.CHECKSTYLE.isTask(task)) {
+        valueName = 'Verification Checkstyle'
+        errors = report.file.collect {
+            String filePath = task.project.rootProject.relativePath(it.@name.text())
+            it.error.collect { "${filePath}:${it.@line}:${it.@column} \u2192 ${it.@message}" }
+        }.flatten() as List<String>
+    } else if (ReportingTask.CODENARC.isTask(task)) {
+        valueName = 'Verification CodeNarc'
+        errors = report.Package.collect {
+            def sourceDirectory = appendIfMissing(it.parent().Project.SourceDirectory.text() as String, '/')
+            it.File.collect {
+                String filePath = task.project.rootProject.relativePath(sourceDirectory + (it.@name.text() as String))
+                it.Violation.collect { "${filePath}:${it.@lineNumber} \u2192 ${it.Message.text()}" }
+            }.flatten()
+        }.flatten() as List<String>
+    } else if (ReportingTask.FINDBUGS.isTask(task)) {
+        valueName = 'Verification FindBugs'
+        errors = report.BugInstance.collect { bugInstance ->
+            String type = bugInstance.@type.text()
+            def error = bugInstance.breadthFirst().findAll { it.name() == 'SourceLine' }.sort(false) { it.parent().name() as SpotBugsParent }.first()
+            String startLine = error.@start.text()
+            String endLine = error.@end.text()
+            String lineNumber = endLine == startLine ? startLine : "$startLine-$endLine"
+            def absoluteFilePath = bugInstance.parent().Project.SrcDir.collect { it.text() }.find { it.endsWith(error.@sourcepath.text()) }
+            String relativePath = task.project.rootProject.relativePath(absoluteFilePath)
+            "${relativePath}:${lineNumber} \u2192 ${type}"
+        }.flatten() as List<String>
+    } else if (ReportingTask.SPOTBUGS.isTask(task)) {
+        valueName = 'Verification SpotBugs'
+        errors = report.BugInstance.collect { bugInstance ->
+            String type = bugInstance.@type.text()
+            def error = bugInstance.breadthFirst().findAll { it.name() == 'SourceLine' }.sort(false) { it.parent().name() as SpotBugsParent }.first()
+            String startLine = error.@start.text()
+            String endLine = error.@end.text()
+            String lineNumber = endLine == startLine ? startLine : "$startLine-$endLine"
+            def absoluteFilePath = bugInstance.parent().Project.SrcDir.collect { it.text() }.find { it.endsWith(error.@sourcepath.text()) }
+            String relativePath = task.project.rootProject.relativePath(absoluteFilePath)
+            "${relativePath}:${lineNumber} \u2192 ${type}"
+        }.flatten() as List<String>
     }
 
-    void processResults(def buildScanApi, def outputLocation, def reportType) {
-        def reportFile = outputLocation.get().getAsFile()
-        if (!reportFile.exists()) {
-            return
-        }
+    errors.each { buildScan.value valueName, it }
+}
 
-        def xmlReport = new XmlSlurper().parse(reportFile)
-        def valueName = ''
-        def errors = [] as List<String>
+static String appendIfMissing(String str, String suffix) {
+    str.endsWith(suffix) ? str : str + suffix
+}
 
-        switch(reportType) {
-            case ReportType.CHECKSTYLE:
-                valueName = 'Verification Checkstyle'
-                errors = xmlReport.file.collect {
-                    def filePath = it.@name.text().minus(projectRootDir)
-                    it.error.collect { "${filePath}:${it.@line}:${it.@column} \u2192 ${it.@message}" }
-                }.flatten() as List<String>
-                break;
-            case ReportType.CODENARC:
-                valueName = 'Verification CodeNarc'
-                errors = xmlReport.Package.collect {
-                    def sourceDirectory = it.parent().Project.SourceDirectory.text()
-                    sourceDirectory = (sourceDirectory.endsWith('/') ? sourceDirectory : sourceDirectory + '/')
-                    it.File.collect {
-                        def filePath = sourceDirectory + it.@name.text().minus(projectRootDir)
-                        it.Violation.collect { "${filePath}:${it.@lineNumber} \u2192 ${it.Message.text()}" }
-                    }.flatten()
-                }.flatten() as List<String>
-                break;
-            case ReportType.SPOTBUGS:
-            case ReportType.FINDBUGS:
-                if(ReportType.FINDBUGS == reportType) {
-                    valueName = 'Verification FindBugs'
-                } else {
-                    valueName = 'Verification SpotBugs'
-                }
-                errors = xmlReport.BugInstance.collect { bugInstance ->
-                    def type = bugInstance.@type.text()
-                    def error = bugInstance.breadthFirst().findAll { it.name() == 'SourceLine' }.sort(false) { it.parent().name() as SpotBugsParent }.first()
-                    def startLine = error.@start.text()
-                    def endLine = error.@end.text()
-                    def lineNumber = endLine == startLine ? startLine : "$startLine-$endLine"
-                    def sourcePathType = error.@sourcepath.text().subSequence(error.@sourcepath.text().lastIndexOf(".") + 1, error.@sourcepath.text().length())
-                    def projectPath = bugInstance.parent().Project.SrcDir.find { it.text().endsWith(sourcePathType) }
-                    def absolutePath = "$projectPath/${error.@sourcepath.text()}"
-                    def relativePath = absolutePath.minus(projectRootDir)
-                    "${relativePath}:${lineNumber} \u2192 ${type}"
-                }.flatten() as List<String>
-                break;
-        }
+enum SpotBugsParent {
 
-        errors.each { buildScanApi.value "${valueName}", "${it}" }
+    BugInstance, Method, Class
+}
+
+enum ReportingTask {
+
+    CHECKSTYLE('org.gradle.api.plugins.quality.Checkstyle'),
+    CODENARC('org.gradle.api.plugins.quality.CodeNarc'),
+    FINDBUGS('org.gradle.api.plugins.quality.FindBugs'),
+    SPOTBUGS('com.github.spotbugs.SpotBugsTask')
+
+    String className
+
+    private ReportingTask(String className) {
+        this.className = className
     }
+
+    boolean isTask(task) {
+        task.class.name.contains(className)
+    }
+
+    static boolean isSupported(task) {
+        values().any { it.isTask(task) }
+    }
+
 }
