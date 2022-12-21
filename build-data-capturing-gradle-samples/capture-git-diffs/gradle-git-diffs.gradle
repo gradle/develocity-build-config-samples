@@ -19,80 +19,102 @@ if (!buildScanApi) {
     return
 }
 
+def capture = new Capture(gradle.startParameter.offline, gradle.startParameter.continuous, gradle.rootProject.logger, getProviders().gradleProperty('gistToken'), rootProject.name)
+
 buildScan.background {
-    captureGitDiffInGist()
+    if(capture.isEnabled()) {
+        capture.captureGitDiffInGist(buildScanApi)
+    }
 }
 
-void captureGitDiffInGist() {
-    def isCapturingScan = !gradle.startParameter.offline && !gradle.startParameter.continuous
-    if (!isCapturingScan) {
-        gradle.rootProject.logger.warn("Build is offline or continuous. Will not publish gist.")
-        return
+class Capture {
+
+    def offline
+    def continuous
+    def logger
+    def gistTokenProvider
+    def projectName
+
+    Capture(offline, continuous, logger, gistTokenProvider, projectName) {
+        this.offline = offline
+        this.continuous = continuous
+        this.logger = logger
+        this.gistTokenProvider = gistTokenProvider
+        this.projectName = projectName
     }
 
-    def hasGistCredentials = gradle.rootProject.hasProperty('gistToken')
-    if (!hasGistCredentials) {
-        gradle.rootProject.logger.warn("User has not set 'gistToken'. Cannot publish gist.")
-        return
+    boolean isEnabled(){
+        def isCapturingScan = !offline && !continuous
+        if (!isCapturingScan) {
+            logger.warn("Build is offline or continuous. Will not publish gist.")
+            return
+        }
+        return isCapturingScan
     }
 
-    def diff = execAndGetStdout('git', 'diff')
-    if (diff) {
-        try {
-            def baseUrl = new URL('https://api.github.com/gists')
-            def credentials = gradle.rootProject.findProperty('gistToken')
-            def basicAuth = "Basic ${credentials.bytes.encodeBase64()}"
+    void captureGitDiffInGist(api) {
+        def hasCredentials = gistTokenProvider.present
+        if (!hasCredentials) {
+            logger.warn("User has not set 'gistToken'. Cannot publish gist.")
+            return
+        }
 
-            HttpURLConnection connection = (HttpURLConnection) baseUrl.openConnection()
-            connection.with {
-                // request
-                setRequestProperty('Authorization', basicAuth)
-                setRequestProperty('Accept', 'application/vnd.github.v3+json')
-                requestMethod = 'POST'
-                doOutput = true
-                outputStream.withWriter { writer ->
-                    jsonRequest(writer, diff, gradle.rootProject)
+        def diff = execAndGetStdout('git', 'diff')
+        if (diff) {
+            try {
+                def baseUrl = new URL('https://api.github.com/gists')
+                def basicAuth = "Basic ${gistTokenProvider.get().bytes.encodeBase64()}"
+
+                HttpURLConnection connection = (HttpURLConnection) baseUrl.openConnection()
+                connection.with {
+                    // request
+                    setRequestProperty('Authorization', basicAuth)
+                    setRequestProperty('Accept', 'application/vnd.github.v3+json')
+                    requestMethod = 'POST'
+                    doOutput = true
+                    outputStream.withWriter { writer ->
+                        jsonRequest(writer, diff, projectName)
+                    }
+
+                    // response
+                    def url = new JsonSlurper().parse(content.text.bytes).html_url
+                    api.link('Git diff', url)
                 }
-
-                // response
-                def url = new JsonSlurper().parse(content.text.bytes).html_url
-                buildScan.link('Git diff', url)
-            }
-            gradle.rootProject.logger.info('Successfully published gist.')
-        } catch (ex) {
-            gradle.rootProject.logger.warn('Unable to publish gist', ex)
-        }
-    }
-}
-
-// this method must be static, otherwise Gradle will interpret `files` as Project.files() and this won't work
-static void jsonRequest(Writer writer, String diff, Project project) {
-    def builder = new JsonBuilder()
-    builder {
-        description "Git diff for $project.name"
-        'public' false
-        files {
-            "${project.name}.diff" {
-                content diff
+                logger.info('Successfully published gist.')
+            } catch (ex) {
+                logger.warn('Unable to publish gist', ex)
             }
         }
     }
-    builder.writeTo(writer)
-}
 
-static String execAndGetStdout(String... args) {
-    Process process = args.toList().execute()
-    try {
-        def standardText = process.inputStream.withStream { s -> s.getText(Charset.defaultCharset().name()) }
-        def ignore = process.errorStream.withStream { s -> s.getText(Charset.defaultCharset().name()) }
-
-        def finished = process.waitFor(10, TimeUnit.SECONDS);
-        finished && process.exitValue() == 0 ? trimAtEnd(standardText) : null;
-    } finally {
-        process.destroyForcibly()
+    void jsonRequest(Writer writer, String diff, String projectName) {
+        def builder = new JsonBuilder()
+        builder {
+            description "Git diff for $projectName"
+            'public' false
+            files {
+                "${projectName}.diff" {
+                    content diff
+                }
+            }
+        }
+        builder.writeTo(writer)
     }
-}
 
-static String trimAtEnd(String str) {
-    ('x' + str).trim().substring(1)
+    String execAndGetStdout(String... args) {
+        Process process = args.toList().execute()
+        try {
+            def standardText = process.inputStream.withStream { s -> s.getText(Charset.defaultCharset().name()) }
+            def ignore = process.errorStream.withStream { s -> s.getText(Charset.defaultCharset().name()) }
+
+            def finished = process.waitFor(10, TimeUnit.SECONDS);
+            finished && process.exitValue() == 0 ? trimAtEnd(standardText) : null;
+        } finally {
+            process.destroyForcibly()
+        }
+    }
+
+    String trimAtEnd(String str) {
+        ('x' + str).trim().substring(1)
+    }
 }
