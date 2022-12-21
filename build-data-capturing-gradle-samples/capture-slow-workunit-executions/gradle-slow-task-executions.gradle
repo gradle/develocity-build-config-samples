@@ -19,8 +19,16 @@ allprojects {
         doLast {
             long duration = System.currentTimeMillis() - start
             if (duration > THRESHOLD_MILLIS) {
-                buildScan.value 'Slow task', t.identityPath as String
+                Capture.addbuildScanValue buildScanApi, 'Slow task', t.identityPath as String
             }
-        }
+         }
     }
+}
+
+class Capture {
+
+    static void addbuildScanValue(api, key, value) {
+        api.value key, value
+    }
+
 }
