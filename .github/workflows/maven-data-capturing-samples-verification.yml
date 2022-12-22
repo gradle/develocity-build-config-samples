@@ -33,7 +33,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           java-version: '17'
-          distribution: 'temerin'
+          distribution: 'temurin'
       - name: Provide data capture script to Maven build
         run: |
             # copy over sample script such that it gets pulled in by the GE extension
