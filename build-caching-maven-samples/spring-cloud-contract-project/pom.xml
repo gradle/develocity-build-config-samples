@@ -24,7 +24,7 @@
       <plugin>
         <groupId>org.springframework.cloud</groupId>
         <artifactId>spring-cloud-contract-maven-plugin</artifactId>
-        <version>3.1.5</version>
+        <version>4.0.0</version>
         <extensions>true</extensions>
         <configuration></configuration>
       </plugin>
@@ -142,9 +142,6 @@
                           </property>
                           <property>
                             <name>skip</name>
-                          </property>
-                          <property>
-                            <name>skipTests</name>
                           </property>
                           <property>
                             <name>staticImports</name>
