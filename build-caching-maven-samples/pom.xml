@@ -8,20 +8,21 @@
   <name>gradle-enterprise-maven-caching-sample</name>
 
   <modules>
-    <module>java-project</module>
-    <module>avro-project</module>
-    <module>protobuf-project</module>
-    <module>pmd-project</module>
-    <module>spotbugs-project</module>
-    <module>antlr3-project</module>
-    <module>clojure-project</module>
-    <module>asciidoctor-project</module>
     <module>animal-sniffer-project</module>
+    <module>antlr3-project</module>
+    <module>asciidoctor-project</module>
+    <module>aspectj-project</module>
+    <module>avro-project</module>
+    <module>clojure-project</module>
+    <module>duplicate-finder-project</module>
     <module>enforcer-project</module>
     <module>exec-yarn-project</module>
-    <module>spring-cloud-contract-project</module>
-    <module>duplicate-finder-project</module>
+    <module>java-project</module>
     <module>kotlin-project</module>
+    <module>pmd-project</module>
+    <module>protobuf-project</module>
+    <module>spotbugs-project</module>
+    <module>spring-cloud-contract-project</module>
 
     <!-- Webstart/JNLP only works when run with JDK 1.8 or earlier, so it is excluded by default. -->
     <!-- <module>webstart-project</module> -->
