@@ -31,7 +31,7 @@ jobs:
             -c "$GITHUB_SHA" \
             -p "build-caching-maven-samples" \
             -g "verify" \
-            -a "-Dorg.slf4j.simpleLogger.log.gradle.goal.cache=debug -Dorg.slf4j.simpleLogger.log.gradle.goal.fingerprint=trace -B" \
+            -a "-Dorg.slf4j.simpleLogger.log.gradle.goal.cache=debug -B" \
             -s "https://ge.solutions-team.gradle.com" \
             -f 2>&1 | tee -a /tmp/build.log
           echo "hasUnknownParams=$(grep "Build caching was not enabled for this goal execution because the following parameters were not handled" /tmp/build.log | wc -l)" >> $GITHUB_OUTPUT
