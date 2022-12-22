@@ -160,9 +160,6 @@
                                             <property>
                                                 <name>forceAjcCompile</name>
                                             </property>
-                                            <property>
-                                                <name>additionalAspectPaths</name>
-                                            </property>
                                         </properties>
                                         <ignoredProperties>
                                             <ignore>project</ignore>
@@ -178,6 +175,7 @@
                                             <ignore>XterminateAfterCompilation</ignore>
                                             <ignore>argumentFileName</ignore>
                                             <ignore>warn</ignore>
+                                            <ignore>additionalAspectPaths</ignore>
                                         </ignoredProperties>
                                     </inputs>
                                     <iteratedProperties>
