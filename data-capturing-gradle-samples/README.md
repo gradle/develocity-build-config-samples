@@ -8,17 +8,17 @@ be downloaded and used directly within a build.
 
 ```groovy
 // build.gradle
-apply from: 'build-data-capturing-sample.gradle'
+apply from: 'data-capturing-sample.gradle'
 ```
 
 ```kotlin
 // build.gradle.kts
-apply(from = "build-data-capturing-sample.gradle.kts")
+apply(from = "data-capturing-sample.gradle.kts")
 ```
 
 ## Overview
 
-This directory contains samples demonstrating various ways to extend and customize a Build Scan with extra data using 
+This directory contains samples demonstrating various ways to extend and customize a Build Scan with extra data using
 tags, links, and custom values.
 
 To learn more, see the Gradle Enterprise documentation
@@ -63,7 +63,7 @@ the corresponding Build Scan.
 
 _Demonstrates: Custom values_
 
-This sample adds a custom value to the Build Scan for each task that has an execution time greater than a specified 
+This sample adds a custom value to the Build Scan for each task that has an execution time greater than a specified
 threshold.
 
 ### Capture Test Execution System Properties
@@ -71,7 +71,7 @@ threshold.
 _Demonstrates: Custom values_
 
 This sample adds the system properties of test tasks to the Build Scan. In order to not leak sensitive information, the
-value of the system property is hashed. This can be useful in Build Scan comparison as it helps identify any system 
+value of the system property is hashed. This can be useful in Build Scan comparison as it helps identify any system
 properties which differed between two builds.
 
 ### Capture Test PTS Support
@@ -87,6 +87,6 @@ for each test task.
 
 _Demonstrates: Custom values, Custom tags_
 
-This sample adds a custom value for macOS builds that captures the average amount of thermal throttling that was 
-applied during the build, a technique where the CPU is throttled in an effort to reduce heat. It then applies a tag to 
+This sample adds a custom value for macOS builds that captures the average amount of thermal throttling that was
+applied during the build, a technique where the CPU is throttled in an effort to reduce heat. It then applies a tag to
 the Build Scan that maps the percentage to a level of thermal throttling.
