@@ -3,11 +3,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.example</groupId>
-    <artifactId>common-gradle-enterprise-maven-configuration</artifactId>
+    <artifactId>gradle-enterprise-maven-configuration</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <name>Common Gradle Enterprise Maven configuration</name>
-    <url>https://github.com/gradle/gradle-enterprise-build-config-samples/tree/main/common-gradle-enterprise-maven-configuration</url>
+    <url>https://github.com/gradle/gradle-enterprise-build-config-samples/tree/main/gradle-enterprise-maven-configuration</url>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

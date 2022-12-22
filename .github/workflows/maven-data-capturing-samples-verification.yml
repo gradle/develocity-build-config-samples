@@ -37,13 +37,13 @@ jobs:
       - name: Provide data capture script to Maven build
         run: |
             # copy over sample script such that it gets pulled in by the GE extension
-            cp data-capturing-maven-samples/${{ matrix.sample-file }} common-gradle-enterprise-maven-configuration/.mvn/gradle-enterprise-custom-user-data.groovy
+            cp data-capturing-maven-samples/${{ matrix.sample-file }} gradle-enterprise-maven-configuration/.mvn/gradle-enterprise-custom-user-data.groovy
       - name: Run Maven build
         id: mvn-build
         run: |
           delimiter="$(openssl rand -hex 8)"
           echo "mavenOutput<<${delimiter}" >> $GITHUB_OUTPUT
-          echo "$(mvn -f common-gradle-enterprise-maven-configuration/pom.xml -Dgradle.enterprise.url=https://ge.solutions-team.gradle.com -X -B clean validate)" >> $GITHUB_OUTPUT
+          echo "$(mvn -f gradle-enterprise-maven-configuration/pom.xml -Dgradle.enterprise.url=https://ge.solutions-team.gradle.com -X -B clean validate)" >> $GITHUB_OUTPUT
           echo "${delimiter}" >> $GITHUB_OUTPUT
         env:
           GRADLE_ENTERPRISE_ACCESS_KEY: ${{ secrets.GE_SOLUTIONS_ACCESS_TOKEN }}

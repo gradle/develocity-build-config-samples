@@ -38,22 +38,22 @@ jobs:
       - name: Set up Gradle
         uses: gradle/gradle-build-action@v2
       - name: Inject data capture script into Gradle build using Groovy DSL
-        working-directory: common-gradle-enterprise-gradle-configuration-groovy
+        working-directory: gradle-enterprise-gradle-groovy-configuration
         run: |
           # apply sample file
           echo "apply from: file(\"../data-capturing-gradle-samples/${{matrix.sample-file}}\")" >> build.gradle
       - name: Run Gradle build using Groovy DSL
-        working-directory: common-gradle-enterprise-gradle-configuration-groovy
+        working-directory: gradle-enterprise-gradle-groovy-configuration
         run: ./gradlew tasks -Dgradle.enterprise.url=https://ge.solutions-team.gradle.com
         env:
           GRADLE_ENTERPRISE_ACCESS_KEY: ${{ secrets.GE_SOLUTIONS_ACCESS_TOKEN }}
       - name: Inject data capture script into Gradle build using Kotlin DSL
-        working-directory: common-gradle-enterprise-gradle-configuration-kotlin
+        working-directory: gradle-enterprise-gradle-kotlin-configuration
         run: |
           # apply sample file
           echo "apply(from = \"../data-capturing-gradle-samples/${{matrix.sample-file}}\")" >> build.gradle.kts
       - name: Run Gradle build using Kotlin DSL
-        working-directory: common-gradle-enterprise-gradle-configuration-kotlin
+        working-directory: gradle-enterprise-gradle-kotlin-configuration
         run: ./gradlew tasks -Dgradle.enterprise.url=https://ge.solutions-team.gradle.com
         env:
           GRADLE_ENTERPRISE_ACCESS_KEY: ${{ secrets.GE_SOLUTIONS_ACCESS_TOKEN }}

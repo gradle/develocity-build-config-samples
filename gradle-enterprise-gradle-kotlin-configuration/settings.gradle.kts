@@ -44,4 +44,4 @@ buildCache {
     */
 }
 
-rootProject.name = "common-gradle-enterprise-gradle-configuration-kotlin" // adjust to your project
+rootProject.name = "gradle-enterprise-gradle-kotlin-configuration" // adjust to your project

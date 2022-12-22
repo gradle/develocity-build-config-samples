@@ -15,17 +15,17 @@ updates:
     schedule:
       interval: "daily"
   - package-ecosystem: "maven"
-    directory: "common-gradle-enterprise-maven-configuration"
+    directory: "gradle-enterprise-maven-configuration"
     schedule:
       interval: "daily"
   - package-ecosystem: "gradle"
-    directory: "common-gradle-enterprise-gradle-configuration-groovy"
+    directory: "gradle-enterprise-gradle-groovy-configuration"
     registries:
       - gradle-plugin-portal
     schedule:
       interval: "daily"
   - package-ecosystem: "gradle"
-    directory: "common-gradle-enterprise-gradle-configuration-kotlin"
+    directory: "gradle-enterprise-gradle-kotlin-configuration"
     registries:
       - gradle-plugin-portal
     schedule:
