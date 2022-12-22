@@ -3,4 +3,4 @@ plugins {
     id 'com.gradle.common-custom-user-data-gradle-plugin' version '1.8.2'
 }
 
-rootProject.name = 'gradle-enterprise-conventions-gradle-plugin-gradle-5-or-newer'
+rootProject.name = 'conventions-gradle-plugin-gradle-2-through-4'
