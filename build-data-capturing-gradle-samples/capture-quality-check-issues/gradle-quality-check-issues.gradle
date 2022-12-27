@@ -45,18 +45,6 @@ gradle.taskGraph.afterTask { task, TaskState state ->
                 it.Violation.collect { "${filePath}:${it.@lineNumber} \u2192 ${it.Message.text()}" }
             }.flatten()
         }.flatten() as List<String>
-    } else if (ReportingTask.FINDBUGS.isTask(task)) {
-        valueName = 'Verification FindBugs'
-        errors = report.BugInstance.collect { bugInstance ->
-            String type = bugInstance.@type.text()
-            def error = bugInstance.breadthFirst().findAll { it.name() == 'SourceLine' }.sort(false) { it.parent().name() as SpotBugsParent }.first()
-            String startLine = error.@start.text()
-            String endLine = error.@end.text()
-            String lineNumber = endLine == startLine ? startLine : "$startLine-$endLine"
-            def absoluteFilePath = bugInstance.parent().Project.SrcDir.collect { it.text() }.find { it.endsWith(error.@sourcepath.text()) }
-            String relativePath = task.project.rootProject.relativePath(absoluteFilePath)
-            "${relativePath}:${lineNumber} \u2192 ${type}"
-        }.flatten() as List<String>
     } else if (ReportingTask.SPOTBUGS.isTask(task)) {
         valueName = 'Verification SpotBugs'
         errors = report.BugInstance.collect { bugInstance ->
@@ -87,7 +75,6 @@ enum ReportingTask {
 
     CHECKSTYLE('org.gradle.api.plugins.quality.Checkstyle'),
     CODENARC('org.gradle.api.plugins.quality.CodeNarc'),
-    FINDBUGS('org.gradle.api.plugins.quality.FindBugs'),
     SPOTBUGS('com.github.spotbugs.SpotBugsTask')
 
     String className

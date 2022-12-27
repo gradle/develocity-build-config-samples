@@ -65,27 +65,6 @@ void captureReportingIssues(def api) {
                             it.Violation.collect { "${filePath}:${it.@lineNumber} \u2192 ${it.Message.text()}" }
                         }.flatten()
                     }.flatten()
-                } else if (ReportingPlugin.FINDBUGS.isPlugin(mojoExecution.plugin)) {
-                    if (!mojo.xmlOutput) {
-                        return
-                    }
-                    def xmlOutputDirectory = mojo.xmlOutputDirectory
-                    def reportFile = new File(xmlOutputDirectory, 'findbugsXml.xml')
-                    if (!reportFile.exists()) {
-                        return
-                    }
-                    def report = new XmlSlurper().parse(reportFile)
-                    valueName = 'Verification FindBugs'
-                    errors = report.BugInstance.collect { bugInstance ->
-                        String type = bugInstance.ShortMessage.text()
-                        def error = bugInstance.breadthFirst().findAll { it.name() == 'SourceLine' }.sort(false) { it.parent().name() as SpotBugsParent }.first()
-                        String startLine = error.@start.text()
-                        String endLine = error.@end.text()
-                        String lineNumber = endLine == startLine ? startLine : "$startLine-$endLine"
-                        def absoluteFilePath = bugInstance.parent().Project.SrcDir.collect { it.text() }.collect { new File(it as String, error.@sourcepath.text()) }.find { it.exists() }.absolutePath
-                        String filePath = topLevelProjectPath.relativize(Paths.get(absoluteFilePath))
-                        "${filePath}:${lineNumber} \u2192 ${type}"
-                    }.flatten()
                 } else if (ReportingPlugin.SPOTBUGS.isPlugin(mojoExecution.plugin)) {
                     if (!mojo.xmlOutput) {
                         return
@@ -150,7 +129,6 @@ enum ReportingPlugin {
 
     CHECKSTYLE('org.apache.maven.plugins:maven-checkstyle-plugin'),
     CODENARC('org.codehaus.mojo:codenarc-maven-plugin'),
-    FINDBUGS('org.codehaus.mojo:findbugs-maven-plugin'),
     SPOTBUGS('com.github.spotbugs:spotbugs-maven-plugin')
 
     String pluginKey
