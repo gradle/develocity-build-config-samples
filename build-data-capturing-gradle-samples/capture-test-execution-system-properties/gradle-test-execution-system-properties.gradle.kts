@@ -25,7 +25,7 @@ class Capture {
     companion object {
         val MESSAGE_DIGEST = MessageDigest.getInstance("SHA-256")
 
-        fun addbuildScanValue(api: BuildScanExtension, key: String, value: Any?): Unit {
+        fun addbuildScanValue(api: BuildScanExtension, key: String, value: Any?) {
             api.value(key, hash(value))
         }
 

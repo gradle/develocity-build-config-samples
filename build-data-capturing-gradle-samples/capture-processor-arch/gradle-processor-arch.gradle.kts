@@ -18,7 +18,7 @@ project.extensions.configure<GradleEnterpriseExtension>() {
 
 class Capture {
     companion object {
-        fun captureProcessorArch(api: BuildScanExtension): Unit {
+        fun captureProcessorArch(api: BuildScanExtension) {
             val osName = System.getProperty("os.name")
             api.value("os.name", osName)
 

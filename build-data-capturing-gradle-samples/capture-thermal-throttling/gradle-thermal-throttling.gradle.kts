@@ -82,7 +82,7 @@ abstract class ThermalThrottlingService : BuildService<BuildServiceParameters.No
         // ignored
     }
 
-    private fun processCommandOutput(commandOutput: String): Unit {
+    private fun processCommandOutput(commandOutput: String) {
         val tokens = commandOutput.split(COMMAND_OUTPUT_PARSING_PATTERN)
         if (tokens != null && tokens.size > 0) {
             val sample = tokens[1].toIntOrNull()
@@ -92,7 +92,7 @@ abstract class ThermalThrottlingService : BuildService<BuildServiceParameters.No
         }
     }
 
-    fun processResults(api: BuildScanExtension): Unit {
+    fun processResults(api: BuildScanExtension) {
         if (!samples.isEmpty()) {
             val average = samples.stream().mapToInt{ it as Int }.average().getAsDouble()
             if (average < 100.0) {

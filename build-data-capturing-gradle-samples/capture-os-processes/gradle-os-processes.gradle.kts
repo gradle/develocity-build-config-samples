@@ -18,7 +18,7 @@ project.extensions.configure<GradleEnterpriseExtension>() {
 
 class Capture {
     companion object {
-        fun captureOsProcesses(api: BuildScanExtension): Unit {
+        fun captureOsProcesses(api: BuildScanExtension) {
             val psOutput = execAndGetStdout("ps", "-o pid,ppid,time,command")
             api.value("OS processes", psOutput)
         }

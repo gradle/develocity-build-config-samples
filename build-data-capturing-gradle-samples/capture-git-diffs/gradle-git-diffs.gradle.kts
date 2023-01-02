@@ -49,7 +49,7 @@ class Capture(val offline: Boolean,
         return true
     }
 
-    fun captureGitDiffInGist(api: BuildScanExtension): Unit {
+    fun captureGitDiffInGist(api: BuildScanExtension) {
         val hasCredentials = gistTokenProvider.isPresent
         if (!hasCredentials) {
             logger.warn("User has not set 'gistToken'. Cannot publish gist.")
@@ -86,7 +86,7 @@ class Capture(val offline: Boolean,
     }
 
     // this method must be static, otherwise Gradle will interpret `files` as Project.files() and this won't work
-    private fun jsonRequest(writer: java.io.Writer, diff: String): Unit {
+    private fun jsonRequest(writer: java.io.Writer, diff: String) {
         val json = groovy.json.JsonOutput.toJson(mapOf(
             "description" to "Git diff for ${projectName}",
             "public" to false,

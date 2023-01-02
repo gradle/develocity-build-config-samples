@@ -29,7 +29,7 @@ project.extensions.configure<GradleEnterpriseExtension>() {
 
 class Capture {
     companion object {
-        fun addbuildScanValue(api: BuildScanExtension, key: String, value: String): Unit {
+        fun addbuildScanValue(api: BuildScanExtension, key: String, value: String) {
             api.value(key, value)
         }
     }

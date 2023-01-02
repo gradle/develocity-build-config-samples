@@ -38,7 +38,7 @@ class Capture(val logger: Logger) {
         "co.helmethair.scalatest.ScalatestEngine" to "scalatest"
     )
 
-    fun capturePts(t: Test, api: BuildScanExtension): Unit {
+    fun capturePts(t: Test, api: BuildScanExtension) {
         if (t.getTestFramework()::class.java.name == "org.gradle.api.internal.tasks.testing.junitplatform.JUnitPlatformTestFramework") {
             val engines = testEngines(t)
             api.value("${t.identityPath}#engines", "${engines}")
