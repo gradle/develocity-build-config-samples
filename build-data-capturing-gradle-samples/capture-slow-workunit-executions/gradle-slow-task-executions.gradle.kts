@@ -11,7 +11,7 @@ project.extensions.configure<GradleEnterpriseExtension>() {
         val THRESHOLD_MILLIS = 15 * 60 * 1000 // 15 min
         val api = buildScan
         allprojects {
-            tasks.withType<JavaCompile> {
+            tasks.withType<JavaCompile>().configureEach {
                 var start = 0L
                 doFirst {
                     start = System.currentTimeMillis()

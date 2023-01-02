@@ -12,7 +12,7 @@ project.extensions.configure<GradleEnterpriseExtension>() {
     buildScan {
         val api = buildScan
         allprojects {
-            tasks.withType<Test> {
+            tasks.withType<Test>().configureEach {
                 doFirst {
                     systemProperties.forEach { (k, v) -> Capture.addbuildScanValue(api, "${identityPath}#sysProps-${k}", v) }
                 }
