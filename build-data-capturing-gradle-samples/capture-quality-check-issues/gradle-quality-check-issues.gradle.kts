@@ -13,7 +13,7 @@ import groovy.xml.slurpersupport.GPathResult
 project.extensions.configure<GradleEnterpriseExtension>() {
     buildScan {
         gradle.taskGraph.beforeTask {
-            if (ReportingTask.isSupported(this) && this is Reporting<*>) {
+            if (this.reportingSupported && this is Reporting<*>) {
                 val reportTask = this as Reporting<ReportContainer<*>>
                 reportTask.reports.withGroovyBuilder { "xml" { setProperty("enabled", true) } }
             } else if (ReportingTask.SPOTBUGS.isTask(this)) {
@@ -27,7 +27,7 @@ project.extensions.configure<GradleEnterpriseExtension>() {
         }
 
         gradle.taskGraph.afterTask {
-            if (ReportingTask.isSupported(this)) {
+            if (this.reportingSupported) {
                 val reportFile = reportFromTask(this)
                 if (reportFile.exists()) {
                     val report = XmlSlurper().parse(reportFile)
@@ -120,10 +120,7 @@ enum class ReportingTask(val className: String) {
     fun isTask(task: Task): Boolean {
         return task::class.java.name.contains(className)
     }
-
-    companion object {
-        fun isSupported(task: Task): Boolean {
-            return values().any { it.isTask(task) }
-        }
-    }
 }
+
+val Task.reportingSupported: Boolean
+    get() = ReportingTask.values().any { value -> value.isTask(this) }
