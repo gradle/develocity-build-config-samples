@@ -22,7 +22,7 @@ project.extensions.configure<GradleEnterpriseExtension>() {
     val capture = Capture(gradle.startParameter.isOffline,
         gradle.startParameter.isContinuous,
         gradle.rootProject.logger,
-        getProviders().gradleProperty("gistToken"),
+        providers.gradleProperty("gistToken"),
         rootProject.name)
 
     buildScan {

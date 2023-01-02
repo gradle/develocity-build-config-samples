@@ -19,7 +19,7 @@ if (!buildScanApi) {
     return
 }
 
-def capture = new Capture(gradle.startParameter.offline, gradle.startParameter.continuous, gradle.rootProject.logger, getProviders().gradleProperty('gistToken'), rootProject.name)
+def capture = new Capture(gradle.startParameter.offline, gradle.startParameter.continuous, gradle.rootProject.logger, providers.gradleProperty('gistToken'), rootProject.name)
 
 buildScan.background {
     if(capture.isEnabled()) {
