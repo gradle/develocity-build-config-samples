@@ -127,8 +127,8 @@ class ProcessRunner : Runnable {
         val process = ProcessBuilder(args).start()
         try {
             val finished = process.waitFor(10, TimeUnit.SECONDS)
-            val standardText = process.inputStream.bufferedReader().readText()
-            val ignore = process.errorStream.bufferedReader().readText()
+            val standardText = process.inputStream.bufferedReader().use { it.readText() }
+            val ignore = process.errorStream.bufferedReader().use { it.readText() }
             return if (finished && process.exitValue() == 0) trimAtEnd(standardText) else null
         } finally {
             process.destroyForcibly()
