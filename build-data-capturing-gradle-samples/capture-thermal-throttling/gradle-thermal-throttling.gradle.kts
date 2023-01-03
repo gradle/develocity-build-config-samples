@@ -36,7 +36,7 @@ project.extensions.configure<GradleEnterpriseExtension>() {
             // start service
             (project as ProjectInternal).services.get(BuildEventsListenerRegistry::class.java).onTaskCompletion(throttlingServiceProvider)
 
-            buildScan.buildFinished {
+            buildFinished {
                 throttlingServiceProvider.get().use { s ->
                     // process results on build completion
                     s.processResults(api)
