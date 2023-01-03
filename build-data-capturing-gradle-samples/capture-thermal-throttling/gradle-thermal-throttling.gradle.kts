@@ -60,7 +60,7 @@ abstract class ThermalThrottlingService : BuildService<BuildServiceParameters.No
     /**
      * Throttling levels by throttling average value.
      */
-    val THROTTLING_LEVEL = mapOf("THROTTLING_HIGH" to 0..40, "THROTTLING_MEIUM" to 40..80, "THROTTLING_LOW" to 80..100)
+    val THROTTLING_LEVEL = mapOf("THROTTLING_HIGH" to 0..40, "THROTTLING_MEDIUM" to 40..80, "THROTTLING_LOW" to 80..100)
 
     val COMMAND_ARGS = listOf("pmset", "-g", "therm")
     val COMMAND_OUTPUT_PARSING_PATTERN = Regex("""CPU_Speed_Limit\s+=\s+""")

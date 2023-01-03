@@ -54,7 +54,7 @@ class Capture {
         }
     }
 
-    private Set<String> testEngines(Test t) {
+    Set<String> testEngines(Test t) {
         try {
             Stream<String> engines = t.classpath.files.stream()
                 .filter { f -> f.name.endsWith('.jar') }
@@ -78,7 +78,7 @@ class Capture {
         return Collections.emptySet()
     }
 
-    private Optional<String> findTestEngine(File jar) {
+    Optional<String> findTestEngine(File jar) {
         try (def jarFile = new JarFile(jar)) {
             return Optional.ofNullable(jarFile.getEntry('META-INF/services/org.junit.platform.engine.TestEngine'))
                 .map { e -> jarFile.getInputStream(e).withCloseable { it.getText(StandardCharsets.UTF_8.name()).trim() } }
