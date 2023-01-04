@@ -33,7 +33,7 @@ project.extensions.configure<GradleEnterpriseExtension>() {
             // Register Thermal throttling service
             val throttlingServiceProvider =
                 gradle.sharedServices.registerIfAbsent("thermalThrottling", ThermalThrottlingService::class.java) {}
-            // start service
+            // We register a BuildEventsListenerRegistry in order to mark the BuildService as configuration cache compatible but is otherwise unused.
             (project as ProjectInternal).services.get(BuildEventsListenerRegistry::class.java).onTaskCompletion(throttlingServiceProvider)
 
             buildFinished {

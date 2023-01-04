@@ -30,7 +30,7 @@ if (OperatingSystem.current().macOsX) {
   // Register Thermal throttling service
   def throttlingServiceProvider = gradle.sharedServices.registerIfAbsent("thermalThrottling", ThermalThrottlingService.class) {}
 
-  // start service
+  // We register a BuildEventsListenerRegistry in order to mark the BuildService as configuration cache compatible but is otherwise unused.
   gradle.services.get(BuildEventsListenerRegistry).onTaskCompletion(throttlingServiceProvider)
 
   buildScan.buildFinished { def result ->
