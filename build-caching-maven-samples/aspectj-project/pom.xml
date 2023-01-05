@@ -175,7 +175,6 @@
                                             <ignore>XterminateAfterCompilation</ignore>
                                             <ignore>argumentFileName</ignore>
                                             <ignore>warn</ignore>
-                                            <ignore>additionalAspectPaths</ignore>
                                         </ignoredProperties>
                                     </inputs>
                                     <iteratedProperties>
@@ -276,6 +275,7 @@
                                                 <ignoredProperties>
                                                     <ignore>testAspectDirectory</ignore>
                                                     <ignore>sources</ignore>
+                                                    <ignore>additionalAspectPaths</ignore>
                                                 </ignoredProperties>
                                             </inputs>
                                             <outputs>
@@ -294,6 +294,14 @@
                                                         <name>testAspectDirectory</name>
                                                         <includesProperty>includes</includesProperty>
                                                         <excludesProperty>excludes</excludesProperty>
+                                                        <normalization>
+                                                            <strategy>RELATIVE_PATH</strategy>
+                                                            <ignoreEmptyDirectories>true</ignoreEmptyDirectories>
+                                                            <ignoreLineEndings>true</ignoreLineEndings>
+                                                        </normalization>
+                                                    </fileSet>
+                                                    <fileSet>
+                                                        <name>additionalAspectPaths</name>
                                                         <normalization>
                                                             <strategy>RELATIVE_PATH</strategy>
                                                             <ignoreEmptyDirectories>true</ignoreEmptyDirectories>
