@@ -134,6 +134,9 @@
                                                 <name>encoding</name>
                                             </property>
                                             <property>
+                                                <name>Xlint</name>
+                                            </property>
+                                            <property>
                                                 <name>Xreweavable</name>
                                             </property>
                                             <property>
@@ -141,6 +144,9 @@
                                             </property>
                                             <property>
                                                 <name>XnoInline</name>
+                                            </property>
+                                            <property>
+                                                <name>showWeaveInfo</name>
                                             </property>
                                             <property>
                                                 <name>XserializableAspects</name>
@@ -162,15 +168,14 @@
                                             </property>
                                         </properties>
                                         <ignoredProperties>
+                                            <ignore>additionalAspectPaths</ignore>
                                             <ignore>project</ignore>
                                             <ignore>basedir</ignore>
-                                            <ignore>Xlint</ignore>
                                             <ignore>Xlintfile</ignore>
                                             <ignore>deprecation</ignore>
                                             <ignore>noImportError</ignore>
                                             <ignore>proceedOnError</ignore>
                                             <ignore>verbose</ignore>
-                                            <ignore>showWeaveInfo</ignore>
                                             <ignore>repeat</ignore>
                                             <ignore>XterminateAfterCompilation</ignore>
                                             <ignore>argumentFileName</ignore>
@@ -231,6 +236,8 @@
                                                 <fileSets>
                                                     <fileSet>
                                                         <name>basedir</name>
+                                                        <includesProperty>includedFiles</includesProperty>
+                                                        <includesProperty>includedDirectories</includesProperty>
                                                         <normalization>
                                                             <strategy>RELATIVE_PATH</strategy>
                                                             <ignoreEmptyDirectories>true</ignoreEmptyDirectories>
@@ -238,10 +245,6 @@
                                                         </normalization>
                                                     </fileSet>
                                                 </fileSets>
-                                                <ignoredProperties>
-                                                    <ignore>includedFiles</ignore>
-                                                    <ignore>includedDirectories</ignore>
-                                                </ignoredProperties>
                                             </inputs>
                                         </property>
                                     </iteratedProperties>
@@ -275,7 +278,6 @@
                                                 <ignoredProperties>
                                                     <ignore>testAspectDirectory</ignore>
                                                     <ignore>sources</ignore>
-                                                    <ignore>additionalAspectPaths</ignore>
                                                 </ignoredProperties>
                                             </inputs>
                                             <outputs>
@@ -294,14 +296,6 @@
                                                         <name>testAspectDirectory</name>
                                                         <includesProperty>includes</includesProperty>
                                                         <excludesProperty>excludes</excludesProperty>
-                                                        <normalization>
-                                                            <strategy>RELATIVE_PATH</strategy>
-                                                            <ignoreEmptyDirectories>true</ignoreEmptyDirectories>
-                                                            <ignoreLineEndings>true</ignoreLineEndings>
-                                                        </normalization>
-                                                    </fileSet>
-                                                    <fileSet>
-                                                        <name>additionalAspectPaths</name>
                                                         <normalization>
                                                             <strategy>RELATIVE_PATH</strategy>
                                                             <ignoreEmptyDirectories>true</ignoreEmptyDirectories>

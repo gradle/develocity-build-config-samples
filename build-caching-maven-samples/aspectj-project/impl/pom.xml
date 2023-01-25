@@ -45,6 +45,16 @@
                         <complianceLevel>1.8</complianceLevel>
                         <source>1.8</source>
                         <target>1.8</target>
+                        <sources>
+                            <source>
+                                <basedir>${project.basedir}/src/main/java</basedir>
+                            </source>
+                        </sources>
+                        <testSources>
+                            <source>
+                                <basedir>${project.basedir}/src/test/java</basedir>
+                            </source>
+                        </testSources>
                     </configuration>
                     <dependencies>
                         <dependency>
