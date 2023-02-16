@@ -15,7 +15,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-enforcer-plugin</artifactId>
-        <version>3.1.0</version>
+        <version>3.2.1</version>
 
         <executions>
           <!-- Split the slow enforcer rules into their own execution. All fast rules can be in a single, uncached execution. -->
@@ -107,48 +107,33 @@
                       <inputs>
                         <properties>
                           <property>
-                            <name>commandLineRules</name>
-                          </property>
-                          <property>
                             <name>fail</name>
                           </property>
                           <property>
                             <name>failFast</name>
                           </property>
                           <property>
-                            <name>ignoreCache</name>
+                            <name>failIfNoRules</name>
+                          </property>
+                          <property>
+                            <name>rulesToSkip</name>
+                          </property>
+                          <property>
+                            <name>rulesToExecute</name>
+                          </property>
+                          <property>
+                            <name>rules</name>
                           </property>
                           <property>
                             <name>skip</name>
                           </property>
                         </properties>
                         <ignoredProperties>
-                          <ignore>session</ignore>
-                          <ignore>project</ignore>
+                          <ignore>ignoreCache</ignore>
                           <ignore>mojoExecution</ignore>
+                          <ignore>session</ignore>
                         </ignoredProperties>
                       </inputs>
-                      <iteratedProperties>
-                        <property>
-                          <name>rules</name>
-                          <inputs>
-                            <properties>
-                              <property>
-                                <name>includes</name>
-                              </property>
-                              <property>
-                                <name>excludes</name>
-                              </property>
-                              <property>
-                                <name>searchTransitive</name>
-                              </property>
-                              <property>
-                                <name>message</name>
-                              </property>
-                            </properties>
-                          </inputs>
-                        </property>
-                      </iteratedProperties>
                       <nestedProperties>
                         <property>
                           <name>project</name>
@@ -185,43 +170,35 @@
                     <execution>
                       <id>enforce-bytecode-version</id>
                       <inputs>
+                        <properties>
+                          <property>
+                            <name>failIfNoRules</name>
+                          </property>
+                          <property>
+                            <name>rulesToSkip</name>
+                          </property>
+                          <property>
+                            <name>rulesToExecute</name>
+                          </property>
+                          <property>
+                            <name>rules</name>
+                          </property>
+                          <property>
+                            <name>skip</name>
+                          </property>
+                          <property>
+                            <name>fail</name>
+                          </property>
+                          <property>
+                            <name>failFast</name>
+                          </property>
+                        </properties>
                         <ignoredProperties>
-                          <ignore>commandLineRules</ignore>
-                          <ignore>fail</ignore>
-                          <ignore>failFast</ignore>
                           <ignore>ignoreCache</ignore>
                           <ignore>mojoExecution</ignore>
                           <ignore>session</ignore>
-                          <ignore>skip</ignore>
                         </ignoredProperties>
                       </inputs>
-                      <iteratedProperties>
-                        <property>
-                          <name>rules</name>
-                          <inputs>
-                            <properties>
-                              <property>
-                                <name>maxJdkVersion</name>
-                              </property>
-                              <property>
-                                <name>maxJavaMajorVersionNumber</name>
-                              </property>
-                              <property>
-                                <name>ignoredScopes</name>
-                              </property>
-                              <property>
-                                <name>ignoreClasses</name>
-                              </property>
-                              <property>
-                                <name>ignoreOptionals</name>
-                              </property>
-                              <property>
-                                <name>excludes</name>
-                              </property>
-                            </properties>
-                          </inputs>
-                        </property>
-                      </iteratedProperties>
                       <nestedProperties>
                         <property>
                           <name>project</name>
