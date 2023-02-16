@@ -45,3 +45,7 @@ updates:
     ignore:
       - dependency-name: "com.gradle:build-scan-plugin"
         versions: [ "1.16" ]
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "daily"
