@@ -11,7 +11,7 @@ The following Maven plugins are demonstrated:
 - Antlr3: `org.antlr:antlr3-maven-plugin`
 - AsciiDoctor: `org.asciidoctor:asciidoctor-maven-plugin`
 - AspectJ: `org.codehaus.mojo:aspectj-maven-plugin`
-- Avro (Apache): `org.apache.avro:avro-maven-plugi`
+- Avro (Apache): `org.apache.avro:avro-maven-plugin`
 - Clojure: `com.theoryinpractise:clojure-maven-plugin`
 - Duplicate Finder Plugin: `org.basepom.maven:duplicate-finder-maven-plugin`
 - Enforcer: `org.apache.maven.plugins:maven-enforcer-plugin`
