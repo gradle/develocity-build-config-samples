@@ -22,6 +22,7 @@
     <module>pmd-project</module>
     <module>protobuf-project</module>
     <module>spotbugs-project</module>
+    <module>spotless-project</module>
     <module>spring-cloud-contract-project</module>
 
     <!-- Webstart/JNLP only works when run with JDK 1.8 or earlier, so it is excluded by default. -->
