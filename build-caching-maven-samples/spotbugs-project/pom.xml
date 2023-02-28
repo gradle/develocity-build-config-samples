@@ -15,13 +15,14 @@
       <plugin>
         <groupId>com.github.spotbugs</groupId>
         <artifactId>spotbugs-maven-plugin</artifactId>
-        <version>4.7.3.0</version>
+        <version>4.7.3.2</version>
         <configuration>
           <effort>Max</effort>
           <threshold>Low</threshold>
           <omitVisitors>FindDeadLocalStores,UnreadFields</omitVisitors>
           <failThreshold>High</failThreshold>
-          <xmlOutput>false</xmlOutput>
+          <xmlOutput>true</xmlOutput>
+          <htmlOutput>true</htmlOutput>
           <sarifOutput>true</sarifOutput>
         </configuration>
         <executions>
@@ -61,6 +62,7 @@
                           <property><name>skip</name></property>
 
                           <property><name>xmlOutput</name></property>
+                          <property><name>htmlOutput</name></property>
 
                           <property><name>includeTests</name></property>
                           <property><name>addSourceDirs</name></property>
@@ -132,6 +134,10 @@
                           <file>
                             <name>xmlOutputFile</name>
                             <path>${project.build.directory}/spotbugs.xml</path>
+                          </file>
+                          <file>
+                            <name>htmlOutputFile</name>
+                            <path>${project.build.directory}/spotbugs.html</path>
                           </file>
                           <file>
                             <name>spotbugsXmlOutputFile</name>
