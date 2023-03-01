@@ -10,34 +10,40 @@ updates:
     directory: "build-caching-maven-samples"
     schedule:
       interval: "daily"
+      time: "02:00"
   - package-ecosystem: "maven"
     directory: "common-gradle-enterprise-maven-configuration"
     schedule:
       interval: "daily"
+      time: "02:00"
   - package-ecosystem: "gradle"
     directory: "common-gradle-enterprise-gradle-configuration-groovy"
     registries:
       - gradle-plugin-portal
     schedule:
       interval: "daily"
+      time: "02:00"
   - package-ecosystem: "gradle"
     directory: "common-gradle-enterprise-gradle-configuration-kotlin"
     registries:
       - gradle-plugin-portal
     schedule:
       interval: "daily"
+      time: "02:00"
   - package-ecosystem: "gradle"
     directory: "gradle-enterprise-conventions-gradle-plugin/plugins/gradle-5-or-newer"
     registries:
       - gradle-plugin-portal
     schedule:
       interval: "daily"
+      time: "02:00"
   - package-ecosystem: "gradle"
     directory: "gradle-enterprise-conventions-gradle-plugin/plugins/gradle-2-through-4"
     registries:
       - gradle-plugin-portal
     schedule:
       interval: "daily"
+      time: "02:00"
     ignore:
       - dependency-name: "com.gradle:build-scan-plugin"
         versions: [ "1.16" ]
@@ -45,3 +51,4 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
+      time: "02:00"
