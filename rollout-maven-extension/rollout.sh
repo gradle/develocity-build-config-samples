@@ -31,72 +31,21 @@ function process_repositories() {
     process_repository "$repo"
     ((current++))
   done < <(sed "/^[[:blank:]]*#/d;s/^[[:blank:]]*//;s/#.*//" "$repositories")
+
+  # remove duplicates in list of users
+  sort -u "$basedir/gradle-enterprise-users.txt" > "$basedir/gradle-enterprise-unique-users.txt"
 }
 
 function process_repository() {
   repository_name="${1##*/}"
 
   # clone the Git epository without actually downloading files or history
-  git clone -n "$1" "$checkout_area/$repository_name" --depth 1 >& /dev/null
+  git clone -n "$1" "$checkout_area/$repository_name" >& /dev/null
   pushd "$checkout_area/$repository_name" >& /dev/null || return
   git reset HEAD . >& /dev/null
 
-  # ensure it is a Maven project
-  if ! git ls-tree -r HEAD --name-only | grep -q 'pom.xml'
-  then
-    # no pom.xml found in the project  
-    echo "$repository_name repository is not a Maven project, skipping..." >&2
-    return
-  fi
-
-  # ensure .mvn folder exists
-  if ! git ls-tree -r HEAD --name-only | grep -q '^.mvn/'
-  then
-    # .mvn folder not found 
-    if [ "$do_update" ]; then
-      # script invoked with -u (update) flag, thus .mvn folder expected to already exist
-      echo "$repository_name repository does not contain existing .mvn directory, skipping..." >&2
-      return
-    else
-      # script invoked without -u (update) flag, thus .mvn folder will be created
-      mkdir .mvn
-    fi
-  fi
-
-  # Check out .mvn folder and recursively copy Gradle Enterprise configuration into it
-  git checkout .mvn >& /dev/null
-  if [ "$force" ]; then 
-    # override existing files
-    cp -a "$basedir"/.mvn/. .mvn
-  else
-    # do not override existing files
-    cp -na "$basedir"/.mvn/. .mvn
-  fi
-
-  # update .gitignore file to ignore the .mvn/.gradle-enterprise folder
-  if git checkout -- .gitignore >& /dev/null
-  then
-    # .gitignore file already exists
-    if ! grep -Fxq ".mvn/.gradle-enterprise/" .gitignore ; then
-      echo ".mvn/.gradle-enterprise/" >> .gitignore
-    fi
-  else
-    # .gitignore file does not already exist
-    echo ".mvn/.gradle-enterprise/" > .gitignore
-  fi
-
-  # add changes to staging and commit
-  git add .mvn/. 
-  git add .gitignore
-  git commit -m "$commit_msg"
-
-  # push change if script was invoked with -p (push) flag
-  if [ "$push" ]; then
-     git push >& /dev/null
-     echo "Changes pushed to $repository_name repository"
-  else
-     echo "Changes to $repository_name repository available at $PWD"
-  fi
+  # append the number of git users by email in the last 30 days to a file
+  git log --format="%ae" --since=30.day | sort -u >> "$basedir/gradle-enterprise-users.txt"
 
   popd >& /dev/null || return
 }

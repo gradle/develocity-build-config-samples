@@ -1,34 +1,20 @@
-## Gradle Enterprise Maven Extension rollout script
+## Gradle Enterprise Git User Count
 
 ### Overview
 
-The Gradle Enterprise Maven Extension rollout script provides a means to automate the application and upgrade of the [Gradle Enterprise Maven extension](https://docs.gradle.com/enterprise/maven-extension) on multiple Maven projects stored in separate Git repositories.
+The Gradle Enterprise Git user count script provides a means to automate the counting of the number of unique active developers in separate Git repositories.
 
 ### Usage
 
 1. Update the `repositories.txt` file with the list of Git repositories you want to apply the extension on.
-   Make sure each line contains a single Git repository URL.
-1. Update the Maven `.mvn/extensions.xml` and the Gradle Enterprise `.mvn/gradle-enterprise.xml` files with your desired Gradle Enterprise configuration.
-1. Run the `./rollout.sh` bash script to execute the Gradle Enterprise configuration rollout. The script supports the following command line arguments:
-   * `-u`: Only update those Git repositories that already contain the `.mvn` folder where the configuration files are stored.
-   * `-f`: Force-override any pre-existing `extensions.xml` and `gradle-enterprise.xml` configuration files in the `.mvn` folder.
-   * `-p`: Push the applied changes to the listed Git repositories. Omit the `-p` flag to do a dry run.
+   Make sure each line contains a single Git repository URL and that there is a newline at the end of th file.
+2. Run the `./rollout.sh` bash script to count the number of users rollout. The script supports the following command line arguments:
+3. Remove redundant or CI email from the `gradle-enterprise-unique-users.txt` file.
+4. Run `wc -l gradle-enterprise-unique-users.txt` to get the number of unique users.
 
 ### How it works
 
-The `rollout.sh` script reads the list of Git repositories with Maven projects to instrument from the `repositories.txt` file.
+The `rollout.sh` script reads the list of Git repositories from the `repositories.txt` file.
 The script creates a temporary folder and clones the listed Git repositories to that folder.
+It then writes all the unique emails committed to that repository to a file named `gradle-enterprise-unique-users.txt`.
 
-If the `-u` flag is specified, the script only processes those repositories that already contain a `.mvn` folder.
-If the `-u` flag is not specified, the script will process all repositories and create the `.mvn` folder for those repositories that do not already contain it.
-
-For each processed repository, if the `-f` flag is specified, any pre-existing `extensions.xml` and `gradle-enterprise.xml` configuration files in the `.mvn` folder are overridden.
-If the `-f` flag is not specified, any pre-existing configuration files are not modified. The modifications are committed to the cloned repository.
-
-For each repository, if the `-p` flag is specified, the committed changes are pushed to the remote Git repository, and the temporary folder is deleted once all repositories have been processed.
-If the `-p` flag is not specified, the committed changes are not pushed, and the temporary folder with all the cloned repositories is kept for further inspection.
-
-### Changelog
-
-- 2020-09-01 - Add the `-p`, `-f`, and `-u` flags
-- 2020-07-27 - Initial release
