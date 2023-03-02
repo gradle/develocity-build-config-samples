@@ -39,9 +39,16 @@ gradle.taskGraph.afterTask { task, TaskState state ->
     } else if (ReportingTask.CODENARC.isTask(task)) {
         valueName = 'Verification CodeNarc'
         errors = report.Package.collect {
-            def sourceDirectory = appendIfMissing(it.parent().Project.SourceDirectory.text() as String, '/')
+            def sourceDirectories = it.parent().Project.SourceDirectory.collect {
+                appendIfMissing(it.text() as String, '/')
+            }.unique()
             it.File.collect {
-                String filePath = task.project.rootProject.relativePath(sourceDirectory + (it.@name.text() as String))
+                File fileWithViolation = sourceDirectories.collect { sourceDirectory ->
+                    task.project.file(sourceDirectory + (it.@name.text() as String))
+                }.find {
+                    it.exists()
+                }
+                String filePath = task.project.rootProject.relativePath(fileWithViolation)
                 it.Violation.collect { "${filePath}:${it.@lineNumber} \u2192 ${it.Message.text()}" }
             }.flatten()
         }.flatten() as List<String>
