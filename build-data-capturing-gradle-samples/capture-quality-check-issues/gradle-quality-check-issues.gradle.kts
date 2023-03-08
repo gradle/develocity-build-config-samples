@@ -1,8 +1,9 @@
 import com.gradle.enterprise.gradleplugin.GradleEnterpriseExtension
 import com.gradle.scan.plugin.BuildScanExtension
 import groovy.xml.XmlSlurper
-import groovy.xml.slurpersupport.NodeChildren
+import groovy.xml.slurpersupport.Node
 import groovy.xml.slurpersupport.NodeChild
+import groovy.xml.slurpersupport.NodeChildren
 import groovy.xml.slurpersupport.GPathResult
 
 /**
@@ -51,13 +52,20 @@ project.extensions.configure<GradleEnterpriseExtension>() {
                         val packages = report.getProperty("Package") as NodeChildren
                         packages.forEach { p ->
                             val proj = report.getProperty("Project") as NodeChildren
-                            val sourceDirectoryNode = proj.getProperty("SourceDirectory") as NodeChildren
-                            val sourceDirectory = appendIfMissing(sourceDirectoryNode.text() as String, "/")
+                            val sourceDirectoryNodes = proj.getProperty("SourceDirectory") as NodeChildren
+                            val sourceDirectories = sourceDirectoryNodes.map {
+                                it as NodeChild
+                                appendIfMissing(it.text() as String, "/")
+                            }
                             val files = (p as NodeChild).getProperty("File") as NodeChildren
                             files.forEach { f ->
                                 val file = f as NodeChild
-                                val filePath =
-                                    project.rootProject.relativePath(sourceDirectory + file.attributes()["name"])
+                                val fileWithViolation = sourceDirectories.map {
+                                    file(project.rootProject.relativePath(it + file.attributes()["name"]))
+                                }.first {
+                                    it.exists()
+                                }
+                                val filePath = project.rootProject.relativePath(fileWithViolation)
                                 (file.getProperty("Violation") as NodeChildren).forEach { v ->
                                     val violation = v as NodeChild
                                     errors.add("${filePath}:${violation.attributes()["lineNumber"]} \u2192 ${violation.attributes()["ruleName"]}")
