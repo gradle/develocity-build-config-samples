@@ -7,6 +7,7 @@ final class CiUtils {
     private CiUtils() {
     }
 
+    //todo: implement this more specifically for your CI environment
     static boolean isCi() {
         return envVariable("CI").isPresent() || sysProperty("CI").isPresent();
     }
