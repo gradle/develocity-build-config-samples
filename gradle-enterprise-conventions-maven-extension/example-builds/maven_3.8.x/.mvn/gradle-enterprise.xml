@@ -1,8 +1,0 @@
-<gradleEnterprise>
-    <server>
-        <url>https://ge.solutions-team.gradle.com</url>
-    </server>
-    <buildScan>
-        <publish>ALWAYS</publish>
-    </buildScan>
-</gradleEnterprise>
