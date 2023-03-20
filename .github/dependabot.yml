@@ -47,6 +47,11 @@ updates:
     ignore:
       - dependency-name: "com.gradle:build-scan-plugin"
         versions: [ "1.16" ]
+  - package-ecosystem: "maven"
+    directory: "common-gradle-enterprise-maven-configuration"
+    schedule:
+      interval: "daily"
+      time: "02:00"
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
