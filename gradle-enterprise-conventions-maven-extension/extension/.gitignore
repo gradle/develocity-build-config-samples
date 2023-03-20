@@ -1,9 +1,0 @@
-../.idea/
-.gradle/
-.tmp/
-out/
-build/
-target/
-*.DS_Store
-/dependency-reduced-pom.xml
-/.mvn/.gradle-enterprise/gradle-enterprise-workspace-id
