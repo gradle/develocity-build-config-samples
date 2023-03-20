@@ -3,27 +3,27 @@
 <gradleEnterprise
     xmlns="https://www.gradle.com/gradle-enterprise-maven" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="https://www.gradle.com/gradle-enterprise-maven https://www.gradle.com/schema/gradle-enterprise-maven.xsd">
-<!--  <server>-->
-<!--    &lt;!&ndash; todo: change to your own Gradle Enterprise instance &ndash;&gt;-->
-<!--    <url>https://ge.example.com</url>-->
-<!--    <allowUntrusted>false</allowUntrusted>-->
-<!--  </server>-->
-<!--  <buildScan>-->
-<!--    <capture>-->
-<!--        <goalInputFiles>true</goalInputFiles>-->
-<!--    </capture>-->
-<!--    <backgroundBuildScanUpload>#{isFalse(env['CI'])}</backgroundBuildScanUpload>-->
-<!--    <publish>ALWAYS</publish>-->
-<!--    <obfuscation>-->
-<!--      <ipAddresses>#{{'0.0.0.0'}}</ipAddresses>-->
-<!--    </obfuscation>-->
-<!--  </buildScan>-->
-<!--  <buildCache>-->
-<!--    <local>-->
-<!--      <enabled>true</enabled>-->
-<!--    </local>-->
-<!--    <remote>-->
-<!--      <storeEnabled>#{isTrue(env['CI'])}</storeEnabled>-->
-<!--    </remote>-->
-<!--  </buildCache>-->
+  <server>
+    <!-- todo: change to your own Gradle Enterprise instance -->
+    <url>https://ge.example.com</url>
+    <allowUntrusted>false</allowUntrusted>
+  </server>
+  <buildScan>
+    <capture>
+        <goalInputFiles>true</goalInputFiles>
+    </capture>
+    <backgroundBuildScanUpload>#{isFalse(env['CI'])}</backgroundBuildScanUpload>
+    <publish>ALWAYS</publish>
+    <obfuscation>
+      <ipAddresses>#{{'0.0.0.0'}}</ipAddresses>
+    </obfuscation>
+  </buildScan>
+  <buildCache>
+    <local>
+      <enabled>true</enabled>
+    </local>
+    <remote>
+      <storeEnabled>#{isTrue(env['CI'])}</storeEnabled>
+    </remote>
+  </buildCache>
 </gradleEnterprise>
