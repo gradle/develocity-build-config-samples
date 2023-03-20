@@ -1,6 +1,6 @@
 plugins {
-    id("com.gradle.enterprise") version "3.12.4"
-    id("com.gradle.common-custom-user-data-gradle-plugin") version "1.9"
+    id("com.gradle.enterprise") version "3.12.5"
+    id("com.gradle.common-custom-user-data-gradle-plugin") version "1.10"
 }
 
 val isCI = !System.getenv("CI").isNullOrEmpty() // adjust to your CI provider
