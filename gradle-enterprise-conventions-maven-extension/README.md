@@ -6,9 +6,9 @@ This project demonstrates how to share a common Gradle Enterprise configuration 
 
 * Create your own copy of the `extension` project
 * Address all `todo` comments
-    * Update the `groupId` and `artifactId` in [extensions/pom.xml] file
-    * Update the server URL to your own Gradle Enterprise instance in [.mvn/gradle-enterprise.xml] and [extension/src/main/java/com/example/CustomGradleEnterpriseConfig.java]
-    * Update `isCi` in [extension/src/main/java/com/example/CiUtils.java] to properly detect your CI environment
+    * Update the `groupId` and `artifactId` in the [POM](extension/pom.xml) file
+    * Update the server URL to your own Gradle Enterprise instance in the [Gradle Enterprise configuration](extension/.mvn/gradle-enterprise.xml) and [CustomGradleEnterpriseConfig.java](extension/src/main/java/com/example/CustomGradleEnterpriseConfig.java)
+    * Update `isCi` in [CiUtils.java](extension/src/main/java/com/example/CiUtils.java) to properly detect your CI environment
 * Deploy the extension to your own artifact repository
 
 ## Contents
