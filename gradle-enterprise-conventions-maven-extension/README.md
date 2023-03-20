@@ -11,6 +11,19 @@ This project demonstrates how to share a common Gradle Enterprise configuration 
     * Update the server URL to your own Gradle Enterprise instance in the [Gradle Enterprise configuration](extension/.mvn/gradle-enterprise.xml) and [CustomGradleEnterpriseConfig.java](extension/src/main/java/com/example/CustomGradleEnterpriseConfig.java)
 * Add any common tags, links, or values to [CustomGradleEnterpriseConfig.java](extension/src/main/java/com/example/CustomGradleEnterpriseConfig.java)
 * Deploy the extension to your own artifact repository
+* Utilize the extension in your projects by adding the following to your `.mvn/extensions.xml' file, adjusted for your own groupId and artifactId:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<extensions xmlns="http://maven.apache.org/EXTENSIONS/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:schemaLocation="http://maven.apache.org/EXTENSIONS/1.0.0 http://maven.apache.org/xsd/core-extensions-1.0.0.xsd">
+  <extension>
+    <groupId>com.example</groupId>
+    <artifactId>gradle-enterprise-conventions-maven-extension</artifactId>
+    <version>0.1.0-SNAPSHOT</version>
+  </extension>
+</extensions>
+```
 
 ## Contents
 
