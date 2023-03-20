@@ -1,0 +1,51 @@
+name: Verify Maven Data Capturing Samples
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build Gradle Enterprise Conventions Maven Extension
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Set up JDK 8
+        uses: actions/setup-java@v3
+        with:
+          java-version: '8'
+          distribution: 'temurin'
+      - name: Build Gradle Enterprise Conventions Maven Extension
+        run: ./mvnw clean install -Dgradle.enterprise.url=https://ge.solutions-team.gradle.com
+        working-directory: gradle-enterprise-conventions-maven-extension
+        env:
+          GRADLE_ENTERPRISE_ACCESS_KEY: ${{ secrets.GE_SOLUTIONS_ACCESS_TOKEN }}
+#  verification:
+#    name: Verification of ${{ matrix.name }} Example Build
+#    needs: build
+#    runs-on: ubuntu-latest
+#    strategy:
+#      matrix:
+#        include:
+#          - name: 'Maven 3.6.x'
+#            directory: 'gradle-enterprise-conventions-maven-extension/example-builds/maven_3.6.x'
+#          - name: 'Maven 3.9.x'
+#            directory: 'gradle-enterprise-conventions-maven-extension/example-builds/maven_396.x'
+#    steps:
+#      - name: Checkout
+#        uses: actions/checkout@v3
+#      - name: Set up JDK 8
+#        uses: actions/setup-java@v3
+#        with:
+#          java-version: '8'
+#          distribution: 'temurin'
+#      - name: Build Gradle Enterprise Conventions Maven Extension
+#        run: ./mvnw clean install -Dgradle.enterprise.url=https://ge.solutions-team.gradle.com
+#        working-directory: gradle-enterprise-conventions-maven-extension
+#        env:
+#          GRADLE_ENTERPRISE_ACCESS_KEY: ${{ secrets.GE_SOLUTIONS_ACCESS_TOKEN }}
+#      - name: Run
