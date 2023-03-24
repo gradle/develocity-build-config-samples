@@ -88,9 +88,6 @@
                                             <property>
                                                 <name>ratchetFrom</name>
                                             </property>
-                                            <property>
-                                                <name>upToDateChecking</name>
-                                            </property>
                                         </properties>
                                         <ignoredProperties>
                                             <ignore>repositorySystemSession</ignore>
@@ -118,6 +115,9 @@
                                                     </property>
                                                 </properties>
                                             </inputs>
+                                        </property>
+                                        <property>
+                                            <name>upToDateChecking</name>
                                         </property>
                                         <!-- Entities used by Spotless with parameters defined in FormatterFactory -->
                                         <property>
