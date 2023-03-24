@@ -118,6 +118,16 @@
                                         </property>
                                         <property>
                                             <name>upToDateChecking</name>
+                                            <inputs>
+                                                <properties>
+                                                    <property>
+                                                        <name>enabled</name>
+                                                    </property>
+                                                    <property>
+                                                        <name>indexFile</name>
+                                                    </property>
+                                                </properties>
+                                            </inputs>
                                         </property>
                                         <!-- Entities used by Spotless with parameters defined in FormatterFactory -->
                                         <property>
