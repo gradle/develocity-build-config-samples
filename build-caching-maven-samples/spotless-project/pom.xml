@@ -88,9 +88,6 @@
                                             <property>
                                                 <name>ratchetFrom</name>
                                             </property>
-                                            <property>
-                                                <name>upToDateChecking</name>
-                                            </property>
                                         </properties>
                                         <ignoredProperties>
                                             <ignore>repositorySystemSession</ignore>
@@ -115,6 +112,19 @@
                                                     </property>
                                                     <property>
                                                         <name>skipLinesMatching</name>
+                                                    </property>
+                                                </properties>
+                                            </inputs>
+                                        </property>
+                                        <property>
+                                            <name>upToDateChecking</name>
+                                            <inputs>
+                                                <properties>
+                                                    <property>
+                                                        <name>enabled</name>
+                                                    </property>
+                                                    <property>
+                                                        <name>indexFile</name>
                                                     </property>
                                                 </properties>
                                             </inputs>
