@@ -51,8 +51,8 @@
                       <id>animal-sniffer-check</id>
                       <inputs>
                         <ignoredProperties>
-                          <ignore>localRepository</ignore>
                           <ignore>project</ignore>
+                          <ignore>repositorySystemSession</ignore>
                         </ignoredProperties>
                         <fileSets>
                           <fileSet>
