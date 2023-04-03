@@ -7,8 +7,9 @@ The Gradle Enterprise Git user count script provides a means to automate the cou
 ### Usage
 
 1. Update the `repositories.txt` file with the list of Git repositories you want to apply the extension on.
-   Make sure each line contains a single Git repository URL and that there is a newline at the end of th file.
+   Make sure each line contains a single Git repository URL and that there is a newline at the end of the file.
 2. Run the `./rollout.sh` bash script to count the number of users rollout. The script supports the following command line arguments:
+    * `-b <branch-name>`: Count the users from the specified branch name (across all repositories).
 3. Remove redundant or CI email from the `gradle-enterprise-unique-users.txt` file.
 4. Run `wc -l gradle-enterprise-unique-users.txt` to get the number of unique users.
 
