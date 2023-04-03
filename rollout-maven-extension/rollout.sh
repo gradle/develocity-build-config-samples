@@ -1,6 +1,5 @@
 #!/bin/bash
 
-commit_msg="Apply latest Gradle Enterprise configuration"
 basedir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 repositories=$basedir/repositories.txt
 checkout_area=
@@ -8,15 +7,21 @@ checkout_area=
 yellow='\033[1;33m'
 nc='\033[0m'
 
-# process arguments
-while getopts "ufp" opt; do
-    case $opt in
-    u) do_update=true ;;
-    f) force=true ;;
-    p) push=true ;;
-    \?) ;;
-    esac
+# -b option lets you specify a branch to checkout, store it in a variable
+while getopts b: option
+do
+case "${option}"
+in
+b) branch=${OPTARG};;
+esac
 done
+
+# print branch name argument if specified, otherwise print a message saying the default branch will be counted
+if ( [ -z "$branch" ] ); then
+  echo "No branch name specified, counting commits on default branch"
+else
+  echo "Branch name is $branch"
+fi
 
 function prepare() {
   checkout_area=$( mktemp -d )
@@ -44,6 +49,11 @@ function process_repository() {
   pushd "$checkout_area/$repository_name" >& /dev/null || return
   git reset HEAD . >& /dev/null
 
+  # Check out the branch if option is specified
+  if ( [ ! -z "$branch" ] ); then
+    git checkout "$branch"
+  fi
+
   # append the number of git users by email in the last 30 days to a file
   git log --format="%ae" --since=30.day | sort -u >> "$basedir/gradle-enterprise-users.txt"
 
@@ -51,11 +61,7 @@ function process_repository() {
 }
 
 function cleanup() {
-  if [ "$push" ]; then
-    rm -rf "$checkout_area"
-  else
-    echo "All cloned repositories available at $checkout_area"
-  fi
+  echo "All cloned repositories available at $checkout_area"
 }
 
 # entry point
