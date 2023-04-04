@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 basedir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 repositories=$basedir/repositories.txt
@@ -44,15 +45,14 @@ function process_repositories() {
 function process_repository() {
   repository_name="${1##*/}"
 
-  # clone the Git epository without actually downloading files or history
-  git clone -n "$1" "$checkout_area/$repository_name" >& /dev/null
+  # Clone the repository branch if specified (otherwise default branch)
+  if ( [ -z "$branch" ] ); then
+    git clone -n "$1" "$checkout_area/$repository_name" >& /dev/null
+  else
+    git clone -n -b "$branch" "$1" "$checkout_area/$repository_name"
+  fi
   pushd "$checkout_area/$repository_name" >& /dev/null || return
   git reset HEAD . >& /dev/null
-
-  # Check out the branch if option is specified
-  if ( [ ! -z "$branch" ] ); then
-    git checkout "$branch"
-  fi
 
   # append the number of git users by email in the last 30 days to a file
   git log --format="%ae" --since=30.day | sort -u >> "$basedir/gradle-enterprise-users.txt"
