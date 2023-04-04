@@ -65,10 +65,7 @@ function cleanup() {
 }
 
 # entry point
-if [ ! -d ".mvn" ]; then
-  echo ".mvn directory is missing" >&2
-  exit 1
-elif [ ! -f "repositories.txt" ]; then
+if [ ! -f "repositories.txt" ]; then
   echo "repositories.txt file is missing" >&2
   exit 1
 else
