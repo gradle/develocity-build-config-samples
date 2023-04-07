@@ -172,6 +172,9 @@
                                         <property>
                                             <name>markdown</name>
                                         </property>
+                                        <property>
+                                            <name>gherkin</name>
+                                        </property>
                                     </nestedProperties>
                                     <outputs>
                                         <directories>
