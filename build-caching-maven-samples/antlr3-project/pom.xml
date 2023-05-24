@@ -70,9 +70,17 @@
                     <fileSets>
                       <fileSet>
                         <name>sourceDirectory</name>
+                        <normalization>
+                          <ignoreLineEndings>true</ignoreLineEndings>
+                          <ignoreEmptyDirectories>true</ignoreEmptyDirectories>
+                        </normalization>
                       </fileSet>
                       <fileSet>
                         <name>libDirectory</name>
+                        <normalization>
+                          <ignoreLineEndings>true</ignoreLineEndings>
+                          <ignoreEmptyDirectories>true</ignoreEmptyDirectories>
+                        </normalization>
                       </fileSet>
                     </fileSets>
                     <properties>
