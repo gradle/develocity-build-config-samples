@@ -106,6 +106,10 @@
                                         <fileSets>
                                             <fileSet>
                                                 <name>sourceDirs</name>
+                                                <normalization>
+                                                    <ignoreEmptyDirectories>true</ignoreEmptyDirectories>
+                                                    <ignoreLineEndings>true</ignoreLineEndings>
+                                                </normalization>
                                             </fileSet>
                                             <fileSet>
                                                 <name>classpath</name>
