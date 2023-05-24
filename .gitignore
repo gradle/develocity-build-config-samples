@@ -7,3 +7,4 @@ target/
 *.DS_Store
 gradle-enterprise-unique-users.txt
 gradle-enterprise-users.txt
+gradle-enterprise-users-by-repo.csv
