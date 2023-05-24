@@ -107,6 +107,7 @@
                                             <fileSet>
                                                 <name>sourceDirs</name>
                                                 <normalization>
+                                                    <ignoreEmptyDirectories>true</ignoreEmptyDirectories>
                                                     <ignoreLineEndings>true</ignoreLineEndings>
                                                 </normalization>
                                             </fileSet>
