@@ -1,4 +1,2 @@
 # List of Git repositories to process, one repository per line, end with an empty line
 https://github.com/gradle/maven-build-scan-quickstart
-https://github.com/gradle/android-cache-fix-gradle-plugin
-https://github.com/gradle/gradle-enterprise-build-config-samples
