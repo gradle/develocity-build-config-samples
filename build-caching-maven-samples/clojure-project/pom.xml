@@ -123,9 +123,17 @@
                       </fileSet>
                       <fileSet>
                         <name>testSourceDirectories</name>
+                        <normalization>
+                          <ignoreEmptyDirectories>true</ignoreEmptyDirectories>
+                          <ignoreLineEndings>true</ignoreLineEndings>
+                        </normalization>
                       </fileSet>
                       <fileSet>
                         <name>sourceDirectories</name>
+                        <normalization>
+                          <ignoreEmptyDirectories>true</ignoreEmptyDirectories>
+                          <ignoreLineEndings>true</ignoreLineEndings>
+                        </normalization>
                       </fileSet>
                       <fileSet>
                         <name>generatedSourceDirectory</name>
