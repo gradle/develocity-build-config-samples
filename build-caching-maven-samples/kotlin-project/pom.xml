@@ -12,7 +12,7 @@
     </parent>
 
     <properties>
-        <kotlin.version>1.8.21</kotlin.version>
+        <kotlin.version>1.8.22</kotlin.version>
         <junit-jupiter.version>5.9.3</junit-jupiter.version>
         <kotlin.compiler.incremental>true</kotlin.compiler.incremental>
     </properties>
