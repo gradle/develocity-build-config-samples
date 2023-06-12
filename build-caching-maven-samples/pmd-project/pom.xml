@@ -50,11 +50,19 @@
                             <name>compileSourceRoots</name>
                             <includesProperty>includes</includesProperty>
                             <excludesProperty>excludes</excludesProperty>
+                            <normalization>
+                              <ignoreLineEndings>true</ignoreLineEndings>
+                              <ignoreEmptyDirectories>true</ignoreEmptyDirectories>
+                            </normalization>
                           </fileSet>
                           <fileSet>
                             <name>testSourceRoots</name>
                             <includesProperty>includes</includesProperty>
                             <excludesProperty>excludes</excludesProperty>
+                            <normalization>
+                              <ignoreLineEndings>true</ignoreLineEndings>
+                              <ignoreEmptyDirectories>true</ignoreEmptyDirectories>
+                            </normalization>
                           </fileSet>
                           <fileSet>
                             <name>excludeFromFailureFile</name>
