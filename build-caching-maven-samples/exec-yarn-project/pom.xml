@@ -70,6 +70,10 @@
                               <path>${project.basedir}/src</path>
                               <path>${project.basedir}/public</path>
                             </paths>
+                            <normalization>
+                              <ignoreEmptyDirectories>true</ignoreEmptyDirectories>
+                              <ignoreLineEndings>true</ignoreLineEndings>
+                            </normalization>
                           </fileSet>
                           <fileSet>
                             <name>build-files</name>
@@ -77,6 +81,9 @@
                               <path>${project.basedir}/package.json</path>
                               <path>${project.basedir}/yarn.lock</path>
                             </paths>
+                            <normalization>
+                              <ignoreLineEndings>true</ignoreLineEndings>
+                            </normalization>
                           </fileSet>
                         </fileSets>
                         <!-- Many properties that _can_ be configured on the `exec-maven-plugin`. They should be tracked as inputs. -->
