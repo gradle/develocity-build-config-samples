@@ -58,6 +58,10 @@
                                                     <exclude>.idea/*</exclude>
                                                     <exclude>target/*</exclude>
                                                 </excludes>
+                                                <normalization>
+                                                    <ignoreEmptyDirectories>true</ignoreEmptyDirectories>
+                                                    <ignoreLineEndings>true</ignoreLineEndings>
+                                                </normalization>
                                             </fileSet>
                                         </fileSets>
                                         <properties>

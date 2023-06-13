@@ -75,6 +75,10 @@
                         <name>sourceDirectory</name>
                         <includesProperty>includes</includesProperty>
                         <excludesProperty>excludes</excludesProperty>
+                        <normalization>
+                          <ignoreEmptyDirectories>true</ignoreEmptyDirectories>
+                          <ignoreLineEndings>true</ignoreLineEndings>
+                        </normalization>
                       </fileSet>
                       <fileSet>
                         <name>testSourceDirectory</name>

@@ -78,6 +78,10 @@
                             <name>contractsDirectory</name>
                             <excludesProperty>excludedFiles</excludesProperty>
                             <includesProperty>includedFiles</includesProperty>
+                            <normalization>
+                              <ignoreEmptyDirectories>true</ignoreEmptyDirectories>
+                              <ignoreLineEndings>true</ignoreLineEndings>
+                            </normalization>
                           </fileSet>
                         </fileSets>
                         <ignoredProperties>

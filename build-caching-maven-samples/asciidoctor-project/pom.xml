@@ -69,6 +69,10 @@
                     <fileSets>
                       <fileSet>
                         <name>sourceDirectory</name>
+                        <normalization>
+                          <ignoreEmptyDirectories>true</ignoreEmptyDirectories>
+                          <ignoreLineEndings>true</ignoreLineEndings>
+                        </normalization>
                       </fileSet>
                       <fileSet>
                         <name>templateDirs</name>
