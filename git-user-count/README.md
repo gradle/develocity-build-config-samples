@@ -8,7 +8,7 @@ The Gradle Enterprise Git user count script provides a means to automate the cou
 
 1. Update the `repositories.txt` file with the list of Git repositories that are connected to Gradle Enterprise.
    Make sure each line contains a single Git repository URL.
-2. Run the `./rollout.sh` bash script to count the number of users rollout. The script supports the following command line arguments:
+2. Run the `./user-count.sh` bash script to count the number of users rollout. The script supports the following command line arguments:
     * `-b <branch-name>`: Count the users from the specified branch name (across all repositories).
     * `-s <since-days>`: Number of days to go back in history (default: 30).
     * `-c`: When specified does not pass --shallow-since flag to cloning options

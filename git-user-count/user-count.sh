@@ -2,11 +2,17 @@
 set -e
 
 basedir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-repositories=$basedir/repositories.txt
+
+# input
+repositories="$basedir/repositories.txt"
+
+# outputs
 userListFile="$basedir/gradle-enterprise-users.txt"
 userUniqueListFile="$basedir/gradle-enterprise-unique-users.txt"
 usersByRepoFile="$basedir/gradle-enterprise-users-by-repo.csv"
 checkout_area=.tmp/repos
+
+# options
 since=30
 shallow_clone=true
 git_options=
@@ -71,11 +77,9 @@ function process_repository() {
   
   # Check if repository is valid
   if [ -z "$repository_name" ]; then
-    echo "Repository name is empty" >&2
-    exit 1
-  fi
+    echo "repository name is empty" >&2
   # If repository is already cloned, switch to specified branch
-  if [ -d "$checkout_area/$repository_name" ]; then
+  elif [ -d "$checkout_area/$repository_name" ]; then
     echo "already cloned."
     if [ -n "$branch" ]; then
       pushd "$checkout_area/$repository_name" >& /dev/null || return
@@ -116,8 +120,10 @@ function print_results() {
   echo "Unique usernames are stored in $(basename "$userUniqueListFile")"
   echo "User counts by repository are stored in $(basename "$usersByRepoFile")"
 
+  echo ""
   echo "Total number of unique users: $(wc -l < "$userUniqueListFile")"
-  echo "Note: this user count may include bots and other non-human users that commit to repositories."
+  echo ""
+  echo "Note: this user count may include bots and other non-human users that commit to repositories. Please examine the contents of $(basename "$userUniqueListFile") to remove duplicated and non-human users."
 }
 
 function cleanup() {
