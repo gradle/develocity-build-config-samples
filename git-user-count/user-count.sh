@@ -1,7 +1,7 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -e
 
-basedir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+basedir="$(cd "$( dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd )" 
 
 # input
 repositories="$basedir/repositories.txt"
@@ -24,23 +24,26 @@ nc='\033[0m'
 # -s option lets you specify a number of days to count commits from, store it in a variable otherwise default to 30
 # -c option disables shallow cloning
 # -o option lets you specify aditional git cloning options
-while getopts b:s:co: option
+# -r option lets you specify a file with repositories to clone
+# -h option prints usage
+while getopts b:s:co:r:h: option
 do
   case "${option}" in
     b) branch=${OPTARG};;
     s) since=${OPTARG};;
+    r) repositories=${OPTARG};;
     c) shallow_clone=false;;
     o) git_options=${OPTARG};;
-    *) echo "Usage: $0 [-b branch_name] [-s since_days] [-o git_options] [-c]" >&2
+    h) print_usage;
+       exit 0;;
+    *) echo print_usage >&2;
        exit 1;;
   esac
 done
 
-# Check that both -s and -c cannot be specified at the same time
-if [ "$shallow_clone" = false ] && [ -n "$since" ]; then
-  echo "Cannot specify both -s and -c options at the same time" >&2
-  exit 1
-fi
+function print_usage() {
+  echo >&2 "Usage: $0 [-b branch_name] [-s since_days] [-o git_options] [-r repositories_list] [-c]"
+}
 
 function prepare() {
   echo -n "" > "$userListFile"
@@ -87,7 +90,7 @@ function process_repository() {
       popd >& /dev/null || return
     fi
   else
-    git_clone_command="git clone --no-checkout  --filter=tree:0 --single-branch --no-tags $1 $checkout_area/$repository_name $git_options --quiet"
+    git_clone_command="git clone --no-checkout --filter=tree:0 --single-branch --no-tags $1 $checkout_area/$repository_name ${git_options} --quiet"
 
     # If branch is specified, append it to the git clone command
     if [ -n "$branch" ]; then
@@ -96,7 +99,7 @@ function process_repository() {
     
     # If shallow clone is enabled, append it to the git clone command
     if [ "$shallow_clone" = true ]; then
-      git_clone_command="${git_clone_command} --shallow-since=\"${since} days ago\""
+      git_clone_command="${git_clone_command} --shallow-since=\"$since days ago\""
     fi
 
     eval "${git_clone_command}" && echo -e "${yellow}done${nc}"
@@ -106,10 +109,10 @@ function process_repository() {
   git reset HEAD . >& /dev/null
 
   # append unique git usernames from commits in the last X days to a file
-  git log --format="%ae" --since="${since}".day | sort -u >> "$userListFile"
+  git log --format="%ae" --since="$since".day | sort -u >> "$userListFile"
 
   # append the number of unique git committers in the last X days to a file
-  git log --format="%ae" --since="${since}".day | sort -u | wc -l | xargs echo "$1," >> "$usersByRepoFile"
+  git log --format="%ae" --since="$since".day | sort -u | wc -l | xargs echo "$1," >> "$usersByRepoFile"
 
   popd >& /dev/null || return
 }
@@ -131,8 +134,9 @@ function cleanup() {
 }
 
 # entry point
-if [ ! -f "repositories.txt" ]; then
-  echo "repositories.txt file is missing" >&2
+if [ ! -f "$repositories" ]; then
+  echo "$repositories file is missing" >&2
+  print_usage
   exit 1
 else
   prepare
