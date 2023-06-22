@@ -11,8 +11,8 @@ The Gradle Enterprise Git user count script provides a means to automate the cou
 2. Run the `./user-count.sh` bash script to count the number of users rollout. The script supports the following command line arguments:
     * `-b <branch-name>`: Count the users from the specified branch name (across all repositories).
     * `-s <since-days>`: Number of days to go back in history (default: 30).
-    * `-c`: When specified does not pass --shallow-since flag to cloning options
-    * `-o <git-options>`: Specify additional git cloning options
+    * `-c`: When specified does not pass `--shallow-since` flag to cloning options. Use this when encountering cloning issues.
+    * `-o <git-options>`: Specify additional git cloning options (default: none).
 3. Remove redundant users or CI emails from the `gradle-enterprise-unique-users.txt` file.
 4. Run `wc -l gradle-enterprise-unique-users.txt` to get the number of unique users.
 
