@@ -76,6 +76,11 @@
                                     <executions>
                                         <execution>
                                             <id>compile</id>
+                                            <inputs>
+                                                <ignoredProperties>
+                                                    <ignore>session</ignore>
+                                                </ignoredProperties>
+                                            </inputs>
                                             <outputs>
                                                 <cacheableBecause>compilation is CPU-bound</cacheableBecause>
                                             </outputs>
@@ -83,6 +88,9 @@
                                         <execution>
                                             <id>test-compile</id>
                                             <inputs>
+                                                <ignoredProperties>
+                                                    <ignore>session</ignore>
+                                                </ignoredProperties>
                                                 <fileSets>
                                                     <fileSet>
                                                         <name>defaultSourceDirs</name>
