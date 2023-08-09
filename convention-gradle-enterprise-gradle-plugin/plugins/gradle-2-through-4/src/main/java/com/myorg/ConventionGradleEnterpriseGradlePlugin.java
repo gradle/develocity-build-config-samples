@@ -1,9 +1,11 @@
 package com.myorg;
 
+import com.gradle.CommonCustomUserDataGradlePlugin;
 import com.gradle.scan.plugin.BuildScanExtension;
 import com.gradle.scan.plugin.BuildScanPlugin;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
+import org.gradle.util.GradleVersion;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,10 +22,20 @@ public class ConventionGradleEnterpriseGradlePlugin implements Plugin<Project> {
         args.put("plugin", BuildScanPlugin.class);
         project.apply(args);
 
+        if (isGradle4OrNewer()) {
+            args = new HashMap<>();
+            args.put("plugin", CommonCustomUserDataGradlePlugin.class);
+            project.apply(args);
+        }
+
         /* Example of how to configure build scan publishing from the plugin. */
         BuildScanExtension buildScan = project.getExtensions().getByType(BuildScanExtension.class);
-        buildScan.setServer("https://etiennestuder.gradle-enterprise.cloud/");
+        buildScan.setServer("https://enterprise-samples.gradle.com");
         buildScan.publishAlways();
+    }
+
+    private static boolean isGradle4OrNewer() {
+        return GradleVersion.current().compareTo(GradleVersion.version("4.0")) >= 0;
     }
 
 }
