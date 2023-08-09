@@ -14,19 +14,23 @@ repositories {
 dependencies {
     // must not be newer than 1.16 to be compatible with Gradle 2.x - 4.x
     implementation "com.gradle:build-scan-plugin:1.16"
+    implementation 'com.gradle:common-custom-user-data-gradle-plugin:1.11.1'
 }
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(8)
+    }
+}
 
 gradlePlugin {
     plugins {
         gradleEnterpriseConventions {
             // CHANGE ME: change for your organization
-            id = 'com.myorg.gradle-enterprise-conventions-gradle-2-through-4'
-            displayName = 'Build Scans Convension Plugin for Gradle 2.0 through Gradle 4.10.2'
-            description = 'A Gradle plugin to apply and configure the Gradle Enterprise Build Scans plugin for com.myorg'
-            implementationClass = 'com.myorg.BuildScansConventionsPlugin'
+            id = 'com.myorg.convention-gradle-enterprise-gradle-2-through-4'
+            displayName = 'Gradle Enterprise Convention Plugin for Gradle 2.0 through Gradle 4.10.3'
+            description = 'A Gradle plugin to apply and configure the Build Scan Gradle plugin for com.myorg'
+            implementationClass = 'com.myorg.ConventionGradleEnterpriseGradlePlugin'
         }
     }
 }

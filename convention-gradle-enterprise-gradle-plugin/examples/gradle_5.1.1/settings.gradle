@@ -5,4 +5,4 @@ pluginManagement {
  }
 }
 
-rootProject.name = "example-build"
+rootProject.name = 'example-build'

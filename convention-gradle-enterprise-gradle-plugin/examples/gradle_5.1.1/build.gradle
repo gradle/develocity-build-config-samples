@@ -1,0 +1,4 @@
+plugins {
+  id 'com.myorg.convention-gradle-enterprise-gradle-5-or-newer' version '1.0.0-SNAPSHOT'
+  id 'java'
+}

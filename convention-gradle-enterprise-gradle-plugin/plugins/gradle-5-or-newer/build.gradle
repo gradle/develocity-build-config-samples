@@ -13,19 +13,23 @@ repositories {
 
 dependencies {
     implementation 'com.gradle:gradle-enterprise-gradle-plugin:3.14.1'
+    implementation 'com.gradle:common-custom-user-data-gradle-plugin:1.11.1'
 }
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(8)
+    }
+}
 
 gradlePlugin {
     plugins {
         gradleEnterpriseConventions {
             // CHANGE ME: change for your organization
-            id = 'com.myorg.gradle-enterprise-conventions-gradle-5-or-newer'
-            displayName = 'Gradle Enterprise Convension Plugin'
+            id = 'com.myorg.convention-gradle-enterprise-gradle-5-or-newer'
+            displayName = 'Gradle Enterprise Convention Plugin for Gradle 5.0 and higher'
             description = 'A Gradle plugin to apply and configure the Gradle Enterprise Gradle plugin for com.myorg'
-            implementationClass = 'com.myorg.GradleEnterpriseConventionsPlugin'
+            implementationClass = 'com.myorg.ConventionGradleEnterpriseGradlePlugin'
         }
     }
 }
