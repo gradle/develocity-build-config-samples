@@ -9,8 +9,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * An example Gradle plugin for enabling and configuring Gradle Enterprise features (build scans only) for Gradle v2.0
- * through Gradle v4.10.2.
+ * An example Gradle plugin for enabling and configuring Gradle Enterprise features (Build Scan only) for
+ * Gradle versions 2.0 through Gradle v4.10.3.
  */
 public class BuildScansConventionsPlugin implements Plugin<Project> {
 
@@ -25,4 +25,5 @@ public class BuildScansConventionsPlugin implements Plugin<Project> {
         buildScan.setServer("https://enterprise-samples.gradle.com");
         buildScan.publishAlways();
     }
+
 }

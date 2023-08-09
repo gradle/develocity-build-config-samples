@@ -13,7 +13,8 @@ import org.gradle.caching.http.HttpBuildCache;
 import org.gradle.util.GradleVersion;
 
 /**
- * An example plugin for enabling and configuring Gradle Enterprise features for Gradle versions 5.x and higher.
+ * An example Gradle plugin for enabling and configuring Gradle Enterprise features for
+ * Gradle versions 5.x and higher.
  */
 public class GradleEnterpriseConventionsPlugin implements Plugin<Object> {
 
