@@ -1,5 +1,6 @@
 package com.myorg;
 
+import com.gradle.CommonCustomUserDataGradlePlugin;
 import com.gradle.enterprise.gradleplugin.GradleEnterpriseExtension;
 import com.gradle.enterprise.gradleplugin.GradleEnterprisePlugin;
 import com.gradle.scan.plugin.BuildScanExtension;
@@ -15,7 +16,7 @@ import org.gradle.util.GradleVersion;
  * An example Gradle plugin for enabling and configuring Gradle Enterprise features for
  * Gradle versions 5.x and higher.
  */
-public class GradleEnterpriseConventionsPlugin implements Plugin<Object> {
+public class GradleEnterpriseConventionsPlugin implements Plugin<Object> { // todo rename class
 
     @Override
     public void apply(Object target) {
@@ -42,12 +43,14 @@ public class GradleEnterpriseConventionsPlugin implements Plugin<Object> {
 
     private void configureGradle6OrNewer(Settings settings) {
         settings.getPluginManager().apply(GradleEnterprisePlugin.class);
+        settings.getPluginManager().apply(CommonCustomUserDataGradlePlugin.class);
         configureGradleEnterprise(settings.getExtensions().getByType(GradleEnterpriseExtension.class));
-        configureBuildCache(settings.getExtensions().getByType(GradleEnterpriseExtension.class), settings.getBuildCache());
+        configureBuildCache(settings.getBuildCache(), settings.getExtensions().getByType(GradleEnterpriseExtension.class));
     }
 
     private void configureGradle5(Project project) {
         project.getPluginManager().apply(BuildScanPlugin.class);
+        project.getPluginManager().apply(CommonCustomUserDataGradlePlugin.class);
         configureGradleEnterprise(project.getExtensions().getByType(GradleEnterpriseExtension.class));
         // configureBuildCache is not called because the build cache cannot be configured via a plugin prior to Gradle 6.0
     }
@@ -55,17 +58,23 @@ public class GradleEnterpriseConventionsPlugin implements Plugin<Object> {
     private void configureGradleEnterprise(GradleEnterpriseExtension gradleEnterprise) {
         // CHANGE ME: Apply your Gradle Enterprise Configuration here
         gradleEnterprise.setServer("https://enterprise-samples.gradle.com");
+        configureBuildScan(gradleEnterprise.getBuildScan());
+    }
 
-        BuildScanExtension buildScan = gradleEnterprise.getBuildScan();
+    private void configureBuildScan(BuildScanExtension buildScan) {
         buildScan.publishAlways();
     }
 
-    private void configureBuildCache(GradleEnterpriseExtension gradleEnterprise, BuildCacheConfiguration buildCache) {
+    private void configureBuildCache(BuildCacheConfiguration buildCache, GradleEnterpriseExtension gradleEnterprise) {
         // CHANGE ME: Apply your Build Cache configuration here
         boolean isCiServer = System.getenv().containsKey("CI");
         buildCache.remote(gradleEnterprise.getBuildCache(), remote -> {
             remote.setEnabled(true);
             remote.setPush(isCiServer);
+        });
+        buildCache.local(local -> {
+            local.setEnabled(true);
+            local.setPush(true);
         });
     }
 
