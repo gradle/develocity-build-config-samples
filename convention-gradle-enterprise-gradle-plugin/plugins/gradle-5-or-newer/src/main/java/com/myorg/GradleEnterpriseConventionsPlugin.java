@@ -43,7 +43,7 @@ public class GradleEnterpriseConventionsPlugin implements Plugin<Object> {
     private void configureGradle6OrNewer(Settings settings) {
         settings.getPluginManager().apply(GradleEnterprisePlugin.class);
         configureGradleEnterprise(settings.getExtensions().getByType(GradleEnterpriseExtension.class));
-        configureBuildCache(settings.getBuildCache());
+        configureBuildCache(settings.getExtensions().getByType(GradleEnterpriseExtension.class), settings.getBuildCache());
     }
 
     private void configureGradle5(Project project) {
@@ -60,11 +60,10 @@ public class GradleEnterpriseConventionsPlugin implements Plugin<Object> {
         buildScan.publishAlways();
     }
 
-    private void configureBuildCache(BuildCacheConfiguration buildCache) {
-        // CHANGE ME: Apply your build cache configuration here
+    private void configureBuildCache(GradleEnterpriseExtension gradleEnterprise, BuildCacheConfiguration buildCache) {
+        // CHANGE ME: Apply your Build Cache configuration here
         boolean isCiServer = System.getenv().containsKey("CI");
-        buildCache.remote(HttpBuildCache.class, remote -> {
-            remote.setUrl("https://enterprise-samples.gradle.com/cache/");
+        buildCache.remote(gradleEnterprise.getBuildCache(), remote -> {
             remote.setEnabled(true);
             remote.setPush(isCiServer);
         });
