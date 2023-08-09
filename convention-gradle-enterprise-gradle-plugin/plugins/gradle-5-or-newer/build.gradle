@@ -29,7 +29,7 @@ gradlePlugin {
             id = 'com.myorg.gradle-enterprise-conventions-gradle-5-or-newer'
             displayName = 'Gradle Enterprise Convension Plugin'
             description = 'A Gradle plugin to apply and configure the Gradle Enterprise Gradle plugin for com.myorg'
-            implementationClass = 'com.myorg.GradleEnterpriseConventionsPlugin'
+            implementationClass = 'com.myorg.ConventionGradleEnterpriseGradlePlugin'
         }
     }
 }

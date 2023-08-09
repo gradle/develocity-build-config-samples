@@ -16,7 +16,7 @@ import org.gradle.util.GradleVersion;
  * An example Gradle plugin for enabling and configuring Gradle Enterprise features for
  * Gradle versions 5.x and higher.
  */
-public class GradleEnterpriseConventionsPlugin implements Plugin<Object> { // todo rename class
+public class ConventionGradleEnterpriseGradlePlugin implements Plugin<Object> {
 
     @Override
     public void apply(Object target) {
