@@ -4,4 +4,4 @@ plugins {
     id 'org.gradle.toolchains.foojay-resolver-convention' version '0.6.0'
 }
 
-rootProject.name = 'gradle-enterprise-conventions-gradle-plugin-gradle-2-through-4'
+rootProject.name = 'convention-gradle-enterprise-gradle-plugin-gradle-2-through-4'
