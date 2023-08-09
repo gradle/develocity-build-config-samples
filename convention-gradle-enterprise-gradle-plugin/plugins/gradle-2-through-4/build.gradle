@@ -16,8 +16,11 @@ dependencies {
     implementation "com.gradle:build-scan-plugin:1.16"
 }
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(8)
+    }
+}
 
 gradlePlugin {
     plugins {
