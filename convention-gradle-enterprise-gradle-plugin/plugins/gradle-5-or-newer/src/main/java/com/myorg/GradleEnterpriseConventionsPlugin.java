@@ -31,11 +31,11 @@ public class GradleEnterpriseConventionsPlugin implements Plugin<Object> {
             }
 
             if (isGradle6OrNewer()) {
-                throw new GradleException("For Gradle versions 6.0 and newer, the Convention Gradle Enterprise plugin must be applied to the Settings");
+                throw new GradleException("For Gradle versions 6.0 and newer, the Convention Gradle Enterprise plugin must be applied to Settings");
             } else if (isGradle5OrNewer()) {
                 configureGradle5(project);
             } else {
-                throw new GradleException("For Gradle versions prior to 5.0, the Convention Gradle Enterprise plugin may not be applied");
+                throw new GradleException("For Gradle versions prior to 5.0, the Convention Gradle Enterprise plugin is not supported");
             }
         }
     }
