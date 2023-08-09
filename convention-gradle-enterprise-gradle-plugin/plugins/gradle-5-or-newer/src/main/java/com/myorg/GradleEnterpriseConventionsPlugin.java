@@ -22,19 +22,17 @@ public class GradleEnterpriseConventionsPlugin implements Plugin<Object> {
     public void apply(Object target) {
         if (target instanceof Settings) {
             if (!isGradle6OrNewer()) {
-                throw new GradleException("For Gradle versions prior to 6.0, gradle-enterprise-conventions must be applied to the Root project");
+                throw new GradleException("For Gradle versions prior to 6.0, the Convention Gradle Enterprise plugin must be applied to the Root project");
             }
             configureGradle60OrNewer((Settings) target);
         } else if (target instanceof Project) {
             if (isGradle6OrNewer()) {
-                throw new GradleException("For Gradle versions 6.0 and newer, gradle-enterprise-conventions must be applied to Settings");
+                throw new GradleException("For Gradle versions 6.0 and newer, the Convention Gradle Enterprise plugin must be applied to the Settings");
             }
-
             Project project = (Project) target;
             if (!project.equals(project.getRootProject())) {
-                throw new GradleException("gradle-enterprise-conventions may only be applied to root project");
+                throw new GradleException("The Convention Gradle Enterprise plugin may only be applied to the Root project");
             }
-
             configureGradle5(project);
         }
     }
