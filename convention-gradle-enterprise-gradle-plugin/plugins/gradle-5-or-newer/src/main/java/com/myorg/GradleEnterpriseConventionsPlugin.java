@@ -9,7 +9,6 @@ import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.initialization.Settings;
 import org.gradle.caching.configuration.BuildCacheConfiguration;
-import org.gradle.caching.http.HttpBuildCache;
 import org.gradle.util.GradleVersion;
 
 /**
@@ -24,20 +23,24 @@ public class GradleEnterpriseConventionsPlugin implements Plugin<Object> {
             if (!isGradle6OrNewer()) {
                 throw new GradleException("For Gradle versions prior to 6.0, the Convention Gradle Enterprise plugin must be applied to the Root project");
             }
-            configureGradle60OrNewer((Settings) target);
+            configureGradle6OrNewer((Settings) target);
         } else if (target instanceof Project) {
-            if (isGradle6OrNewer()) {
-                throw new GradleException("For Gradle versions 6.0 and newer, the Convention Gradle Enterprise plugin must be applied to the Settings");
-            }
             Project project = (Project) target;
             if (!project.equals(project.getRootProject())) {
                 throw new GradleException("The Convention Gradle Enterprise plugin may only be applied to the Root project");
             }
-            configureGradle5(project);
+
+            if (isGradle6OrNewer()) {
+                throw new GradleException("For Gradle versions 6.0 and newer, the Convention Gradle Enterprise plugin must be applied to the Settings");
+            } else if (isGradle5OrNewer()) {
+                configureGradle5(project);
+            } else {
+                throw new GradleException("For Gradle versions prior to 5.0, the Convention Gradle Enterprise plugin may not be applied");
+            }
         }
     }
 
-    private void configureGradle60OrNewer(Settings settings) {
+    private void configureGradle6OrNewer(Settings settings) {
         settings.getPluginManager().apply(GradleEnterprisePlugin.class);
         configureGradleEnterprise(settings.getExtensions().getByType(GradleEnterpriseExtension.class));
         configureBuildCache(settings.getBuildCache());
@@ -70,4 +73,9 @@ public class GradleEnterpriseConventionsPlugin implements Plugin<Object> {
     private static boolean isGradle6OrNewer() {
         return GradleVersion.current().compareTo(GradleVersion.version("6.0")) >= 0;
     }
+
+    private static boolean isGradle5OrNewer() {
+        return GradleVersion.current().compareTo(GradleVersion.version("5.0")) >= 0;
+    }
+
 }
