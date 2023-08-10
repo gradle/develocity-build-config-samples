@@ -56,26 +56,32 @@ public class ConventionGradleEnterpriseGradlePlugin implements Plugin<Object> {
     }
 
     private void configureGradleEnterprise(GradleEnterpriseExtension gradleEnterprise) {
-        // CHANGE ME: Apply your Gradle Enterprise Configuration here
+        // CHANGE ME: Apply your Gradle Enterprise configuration here
         gradleEnterprise.setServer("https://enterprise-samples.gradle.com");
         configureBuildScan(gradleEnterprise.getBuildScan());
     }
 
     private void configureBuildScan(BuildScanExtension buildScan) {
+        // CHANGE ME: Apply your Build Scan configuration here
         buildScan.publishAlways();
+        buildScan.setUploadInBackground(!isCi());
     }
 
     private void configureBuildCache(BuildCacheConfiguration buildCache, GradleEnterpriseExtension gradleEnterprise) {
         // CHANGE ME: Apply your Build Cache configuration here
-        boolean isCiServer = System.getenv().containsKey("CI");
         buildCache.remote(gradleEnterprise.getBuildCache(), remote -> {
             remote.setEnabled(true);
-            remote.setPush(isCiServer);
+            remote.setPush(isCi());
         });
         buildCache.local(local -> {
             local.setEnabled(true);
             local.setPush(true);
         });
+    }
+
+    private static boolean isCi() {
+        // CHANGE ME: Apply your environment detection logic here
+        return System.getenv().containsKey("CI");
     }
 
     private static boolean isGradle6OrNewer() {
