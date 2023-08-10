@@ -15,7 +15,7 @@ This project is structured as follows:
     * `gradle_2.0` - Applies the convention plugin on a Gradle 2.0 build (only the GE plugin is applied)
     * `gradle_4.1` - Applies the convention plugin on a Gradle 4.1 build (the GE and CCUD plugins are applied)
     * `gradle_5.1.1` - Applies the convention plugin on a Gradle 5 build (the GE and CCUD plugins are applied)
-    * `gradle_6.0.1` - Applies the convention plugin on a Gradle 6 build (the GE and CCUD plugins are applied)
+    * `gradle_6.0.1` - Applies the convention plugin on a Gradle 6+ build (the GE and CCUD plugins are applied)
 
 ### Running the example builds
 
