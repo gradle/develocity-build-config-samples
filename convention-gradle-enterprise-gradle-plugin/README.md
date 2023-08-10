@@ -1,23 +1,25 @@
-## Example Gradle Enterprise Conventions Gradle Plugin
+## Convention Gradle Enterprise Gradle Plugin
 
-This project demonstrates how to share a common Gradle Enterprise configuration across multiple projects. It is intended to serve as a starting point for creating your own plugin to apply your specific Gradle Enterprise configuration. See inline comments for things to adjust specifically to your needs.
+This project demonstrates how the same Gradle Enterprise build configuration can be shared across multiple projects using a convention plugin. It 
+is intended to serve as a starting point for creating your own Gradle plugin that applies your specific Gradle Enterprise configuration. See inline
+comments for things to adjust specifically to your needs.
 
 ### Contents
 
 This project contains the following:
 
-  * `plugins` - Contains the example convention plugins
-    * `gradle-2-through-4` - Applies and configure build scans on projects using Gradle 2.0 through Gradle 4.10.2
-    * `gradle-5-or-newer` - Applies and configure Gradle Enterprise on projects using Gradle 5 or higher
-  * `example-builds` - A set of example builds that apply the convention plugins
-    * `via-build-script` - Example builds that apply the convention plugins directly in build scripts
-      * `gradle_2.0` - Uses the convention plugin for Gradle 2.0 through Gradle 4.10.2
-      * `gradle_5.1.1` - Uses the convention plugin on a Gradle 5 project
-      * `gradle_6.0.1` - Uses the convention plugin on a Gradle 6 project
+  * `plugins` - Contains the convention plugins
+    * `gradle-2-through-4` - Applies and configures the Build Scan plugin on builds using Gradle 2.0 through Gradle 4.10.3
+    * `gradle-5-or-newer` - Applies and configures the Gradle Enterprise plugin on builds using Gradle 5.0 or higher
+  * `examples` - Contains example builds that apply the convention plugin for different Gradle versions
+    * `gradle_2.0` - Applies the convention plugin on a Gradle 2.0 build (only the GE plugin is applied)
+    * `gradle_4.1` - Applies the convention plugin on a Gradle 4.1 build (the GE and CCUD plugins are applied)
+    * `gradle_5.1.1` - Applies the convention plugin on a Gradle 5 build (the GE and CCUD plugins are applied)
+    * `gradle_6.0.1` - Applies the convention plugin on a Gradle 6 build (the GE and CCUD plugins are applied)
 
 ### Running the example builds
 
-Before running the example builds, publish the two example Gradle plugins to your local Maven repository:
+Before running the example builds, publish the two convention plugins to your local Maven repository.
 
 ```bash
 cd plugins/gradle-2-through-4
@@ -27,18 +29,17 @@ cd plugins/gradle-5-or-newer
 ./gradlew publishToMavenLocal
 ```
 
-Once the plugins are published, then you can run the example builds under `example-builds/via-build-script` using the Gradle wrapper:
+Once you have published the plugins, you can run the four example builds under `examples`:
 
 ```bash
 cd example-builds/via-build-script/gradle_6.0.1
 ./gradlew build
 ```
 
-#### Example Builds and Java Versions
+Note that for production usage, you would publish your convention plugins to your internal dependency storage, e.g. Artifactory.
 
-To run the Gradle 2.0 example builds, use Java 8. The Gradle 2.0 example builds will fail when used with newer versions of Java.
+#### Requirements
 
-It is recommended to use Java 11 for the Gradle 5.1.1 and Gradle 6.0.1 example builds.
+To run the Gradle 2.0 example build, use Java 8. To run the Gradle 4.1 example build, use Java 8 or 9. These builds will fail when used with newer versions of Java.
 
-### Differences with the Common Custom User Data Gradle plugin
-These plugins differ from the Common Custom User Data Gradle Plugin in that they also apply the Gradle Enterprise plugins (the Common Custom User Data Gradle Plugin does not apply the plugins...it assumes the plugins have already been applied when it is used).
+To run the Gradle 5.1.1 and Gradle 6.0.1 example builds, use Java 8 or higher.
