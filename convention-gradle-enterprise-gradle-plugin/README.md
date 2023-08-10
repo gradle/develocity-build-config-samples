@@ -1,12 +1,12 @@
 ## Convention Gradle Enterprise Gradle Plugin
 
-This project demonstrates how the same Gradle Enterprise build configuration can be shared across multiple projects using a convention plugin. It 
-is intended to serve as a starting point for creating your own Gradle plugin that applies your specific Gradle Enterprise configuration. See inline
-comments for things to adjust specifically to your needs.
+This project demonstrates how a convention plugin can share the same Gradle Enterprise build configuration across multiple projects. It 
+is intended to serve as a starting point for creating your own Gradle plugin that applies your specific Gradle Enterprise configuration. Note
+the inline comments in the build and source code for things to adjust specifically to your needs.
 
 ### Contents
 
-This project contains the following:
+This project is structured as follows:
 
   * `plugins` - Contains the convention plugins
     * `gradle-2-through-4` - Applies and configures the Build Scan plugin on builds using Gradle 2.0 through Gradle 4.10.3
@@ -36,7 +36,7 @@ cd example-builds/via-build-script/gradle_6.0.1
 ./gradlew build
 ```
 
-Note that for production usage, you would publish your convention plugins to your internal dependency storage, e.g. Artifactory.
+Note that you would publish your convention plugins to your internal artifact provider, e.g., Artifactory or Nexus, for production usage.
 
 #### Requirements
 
