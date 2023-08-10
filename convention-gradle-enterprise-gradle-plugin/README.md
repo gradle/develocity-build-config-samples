@@ -4,7 +4,7 @@ This project demonstrates how a convention plugin can share the same Gradle Ente
 is intended to serve as a starting point for creating your own Gradle plugin that applies your specific Gradle Enterprise configuration. Note
 the inline comments in the build and source code for things to adjust specifically to your needs.
 
-### Contents
+### Content
 
 This project is structured as follows:
 
