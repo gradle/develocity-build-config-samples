@@ -62,7 +62,10 @@ public class ConventionGradleEnterpriseGradlePlugin implements Plugin<Object> {
     }
 
     private void configureBuildScan(BuildScanExtension buildScan) {
+        // CHANGE ME: Apply your Build Scan configuration here
+        boolean isCiServer = System.getenv().containsKey("CI");
         buildScan.publishAlways();
+        buildScan.setUploadInBackground(!isCiServer);
     }
 
     private void configureBuildCache(BuildCacheConfiguration buildCache, GradleEnterpriseExtension gradleEnterprise) {
