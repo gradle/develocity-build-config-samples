@@ -80,6 +80,7 @@ public class ConventionGradleEnterpriseGradlePlugin implements Plugin<Object> {
     }
 
     private static boolean isCi() {
+        // CHANGE ME: Apply your environment detection logic here
         return System.getenv().containsKey("CI");
     }
 
