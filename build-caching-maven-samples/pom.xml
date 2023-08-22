@@ -17,6 +17,7 @@
     <module>duplicate-finder-project</module>
     <module>enforcer-project</module>
     <module>exec-yarn-project</module>
+    <module>jacoco-project</module>
     <module>java-project</module>
     <module>kotlin-project</module>
     <module>pmd-project</module>
