@@ -290,7 +290,7 @@ final class QuarkusBuildCache {
     }
 
     private void addQuarkusPropertiesInput(MojoMetadataProvider.Context.Inputs inputs, QuarkusExtensionConfiguration extensionConfiguration) {
-        inputs.fileSet("quarkusCopyProperties", new File(extensionConfiguration.getCurrentConfigFileName()), fileSet -> fileSet.normalizationStrategy(MojoMetadataProvider.Context.FileSet.NormalizationStrategy.RELATIVE_PATH));
+        inputs.fileSet("quarkusConfigCheck", new File(extensionConfiguration.getCurrentConfigFileName()), fileSet -> fileSet.normalizationStrategy(MojoMetadataProvider.Context.FileSet.NormalizationStrategy.RELATIVE_PATH));
         inputs.fileSet("generatedSourcesDirectory", fileSet -> {
         });
     }
