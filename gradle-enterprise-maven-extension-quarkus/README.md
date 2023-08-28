@@ -36,7 +36,7 @@ This extension requires the gradle-enterprise-maven-extension.
     </extension>
     <extension>
         <groupId>com.gradle</groupId>
-        <artifactId>gradle-enterprise-maven-extension-quarkus</artifactId>
+        <artifactId>gradle-enterprise-caching-quarkus</artifactId>
         <version>1.0</version>
     </extension>
 </extensions>
