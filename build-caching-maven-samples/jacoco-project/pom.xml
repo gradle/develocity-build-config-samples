@@ -115,12 +115,39 @@
                                                 </properties>
                                                 <ignoredProperties>
                                                     <ignore>project</ignore>
-                                                    <ignore>reactorProjects</ignore>
                                                 </ignoredProperties>
                                             </inputs>
                                             <iteratedProperties>
                                                 <property>
                                                     <name>formats</name>
+                                                </property>
+                                                <property>
+                                                    <name>reactorProjects</name>
+                                                    <nestedProperties>
+                                                        <property>
+                                                            <name>model</name>
+                                                            <inputs>
+                                                                <properties>
+                                                                    <property>
+                                                                        <name>version</name>
+                                                                    </property>
+                                                                    <property>
+                                                                        <name>groupId</name>
+                                                                    </property>
+                                                                    <property>
+                                                                        <name>artifactId</name>
+                                                                    </property>
+                                                                </properties>
+                                                            </inputs>
+                                                        </property>
+                                                    </nestedProperties>
+                                                    <inputs>
+                                                        <fileSets>
+                                                            <fileSet>
+                                                                <name>file</name>
+                                                            </fileSet>
+                                                        </fileSets>
+                                                    </inputs>
                                                 </property>
                                             </iteratedProperties>
                                             <outputs>
