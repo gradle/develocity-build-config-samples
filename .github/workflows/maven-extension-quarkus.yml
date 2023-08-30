@@ -22,6 +22,6 @@ jobs:
       - name: Build with Maven
         working-directory: gradle-enterprise-maven-extension-quarkus
         run: |
-          mvn --batch-mode clean package
+          ./mvnw --batch-mode clean package
         env:
           GRADLE_ENTERPRISE_ACCESS_KEY: ${{ secrets.GE_SOLUTIONS_ACCESS_TOKEN }}
