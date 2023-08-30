@@ -1,4 +1,4 @@
-name: Verify Quarkus Maven Extension
+name: Verify Quarkus Build Caching Extension
 
 on:
   push:
@@ -20,7 +20,7 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
       - name: Build with Maven
-        working-directory: gradle-enterprise-maven-extension-quarkus
+        working-directory: quarkus-build-caching-extension
         run: |
           ./mvnw --batch-mode clean package
         env:

@@ -2,8 +2,8 @@
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.gradle</groupId>
-    <artifactId>gradle-enterprise-caching-quarkus</artifactId>
-    <version>1.0</version>
+    <artifactId>quarkus-build-caching-extension</artifactId>
+    <version>0.9</version>
     <packaging>jar</packaging>
 
     <properties>

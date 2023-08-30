@@ -17,7 +17,7 @@ updates:
       interval: "daily"
       time: "02:00"
   - package-ecosystem: "maven"
-    directory: "gradle-enterprise-maven-extension-quarkus"
+    directory: "quarkus-build-caching-extension"
     schedule:
         interval: "daily"
         time: "02:00"
