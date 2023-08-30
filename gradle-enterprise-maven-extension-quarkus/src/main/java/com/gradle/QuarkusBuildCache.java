@@ -151,7 +151,7 @@ final class QuarkusBuildCache {
                         LOGGER.info("Configuring caching for Quarkus build");
                         configureQuarkusBuildGoal(context, extensionConfiguration);
                     } else {
-                        LOGGER.info("Quarkus caching is disabled (gradle.quarkus.cache.enabled=false)");
+                        LOGGER.debug("Quarkus caching is disabled (gradle.quarkus.cache.enabled=false)");
                     }
                 }
             });
@@ -199,11 +199,11 @@ final class QuarkusBuildCache {
         // Load Quarkus properties for previous build
         Properties quarkusPreviousProperties = loadProperties(baseDir, extensionConfiguration.getDumpConfigFileName());
         if (quarkusPreviousProperties.size() == 0) {
-            LOGGER.info("Quarkus previous properties not found");
+            LOGGER.debug("Quarkus previous properties not found");
             return false;
         }
         if (quarkusCurrentProperties.size() == 0) {
-            LOGGER.info("Quarkus current properties not found");
+            LOGGER.debug("Quarkus current properties not found");
             return false;
         }
 

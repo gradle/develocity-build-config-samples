@@ -21,7 +21,7 @@ public final class QuarkusBuildCacheGradleEnterpriseListener implements GradleEn
 
     @Override
     public void configure(GradleEnterpriseApi api, MavenSession session) {
-        LOGGER.info("Executing extension: " + getClass().getSimpleName());
+        LOGGER.debug("Executing extension: " + getClass().getSimpleName());
         quarkusBuildCache.configureBuildCache(api.getBuildCache());
     }
 
