@@ -16,6 +16,11 @@ updates:
     schedule:
       interval: "daily"
       time: "02:00"
+  - package-ecosystem: "maven"
+    directory: "gradle-enterprise-maven-extension-quarkus"
+    schedule:
+        interval: "daily"
+        time: "02:00"
   - package-ecosystem: "gradle"
     directory: "common-gradle-enterprise-gradle-configuration-groovy"
     registries:
