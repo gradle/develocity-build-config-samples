@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.gradle</groupId>
     <artifactId>quarkus-build-caching-extension</artifactId>
-    <version>0.9-SNAPSHOT</version>
+    <version>0.9</version>
     <packaging>jar</packaging>
 
     <name>${project.groupId}:${project.artifactId}</name>
@@ -18,7 +18,7 @@
         <url>https://github.com/gradle/gradle-enterprise-build-config-samples</url>
         <connection>scm:git:https://github.com/gradle/gradle-enterprise-build-config-samples.git</connection>
         <developerConnection>scm:git:https://github.com/gradle/gradle-enterprise-build-config-samples.git</developerConnection>
-        <tag>HEAD</tag>
+        <tag>v0.9</tag>
     </scm>
 
     <licenses>
@@ -116,7 +116,7 @@
                 </executions>
                 <configuration>
                     <transformers>
-                        <transformer implementation="org.apache.maven.plugins.shade.resource.ComponentsXmlResourceTransformer"/>
+                        <transformer implementation="org.apache.maven.plugins.shade.resource.ComponentsXmlResourceTransformer" />
                     </transformers>
                 </configuration>
             </plugin>
