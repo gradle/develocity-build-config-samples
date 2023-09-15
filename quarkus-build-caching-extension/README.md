@@ -34,7 +34,7 @@ This extension requires the gradle-enterprise-maven-extension.
     <extension>
         <groupId>com.gradle</groupId>
         <artifactId>gradle-enterprise-maven-extension</artifactId>
-        <version>1.18.1</version>
+        <version>1.19</version>
     </extension>
     <extension>
         <groupId>com.gradle</groupId>
