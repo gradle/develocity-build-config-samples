@@ -39,7 +39,7 @@ This extension requires the gradle-enterprise-maven-extension.
     <extension>
         <groupId>com.gradle</groupId>
         <artifactId>quarkus-build-caching-extension</artifactId>
-        <version>0.9</version>
+        <version>0.10</version>
     </extension>
 </extensions>
 ```
