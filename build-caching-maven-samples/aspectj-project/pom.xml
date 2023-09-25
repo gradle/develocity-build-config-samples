@@ -182,6 +182,24 @@
                                             <ignore>warn</ignore>
                                         </ignoredProperties>
                                     </inputs>
+                                    <nestedProperties>
+                                        <property>
+                                            <name>project</name>
+                                            <iteratedProperties>
+                                                <property>
+                                                    <name>artifacts</name>
+                                                    <inputs>
+                                                        <fileSets>
+                                                            <fileSet>
+                                                                <name>file</name>
+                                                                <normalization>CLASSPATH</normalization>
+                                                            </fileSet>
+                                                        </fileSets>
+                                                    </inputs>
+                                                </property>
+                                            </iteratedProperties>
+                                        </property>
+                                    </nestedProperties>
                                     <iteratedProperties>
                                         <property>
                                             <name>weaveDependencies</name>
