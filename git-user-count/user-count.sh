@@ -109,10 +109,10 @@ function process_repository() {
   git reset HEAD . >& /dev/null
 
   # append unique git usernames from commits in the last X days to a file
-  git log --format="%ae" --since="$since".day | sort -u >> "$userListFile"
+  git log --format="%ae" --since="$since".day | awk '{print tolower($0)}' | sort -u >> "$userListFile"
 
   # append the number of unique git committers in the last X days to a file
-  git log --format="%ae" --since="$since".day | sort -u | wc -l | xargs echo "$1," >> "$usersByRepoFile"
+  git log --format="%ae" --since="$since".day | awk '{print tolower($0)}' | sort -u | wc -l | xargs echo "$1," >> "$usersByRepoFile"
 
   popd >& /dev/null || return
 }
