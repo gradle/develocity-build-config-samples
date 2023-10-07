@@ -36,14 +36,14 @@ updates:
       interval: "daily"
       time: "02:00"
   - package-ecosystem: "gradle"
-    directory: "gradle-enterprise-conventions-gradle-plugin/plugins/gradle-5-or-newer"
+    directory: "convention-gradle-enterprise-gradle-plugin/plugins/gradle-5-or-newer"
     registries:
       - gradle-plugin-portal
     schedule:
       interval: "daily"
       time: "02:00"
   - package-ecosystem: "gradle"
-    directory: "gradle-enterprise-conventions-gradle-plugin/plugins/gradle-2-through-4"
+    directory: "convention-gradle-enterprise-gradle-plugin/plugins/gradle-2-through-4"
     registries:
       - gradle-plugin-portal
     schedule:
