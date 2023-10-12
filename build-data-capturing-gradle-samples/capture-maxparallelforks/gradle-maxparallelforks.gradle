@@ -1,0 +1,10 @@
+def buildScan = project.extensions.findByName('buildScan')
+if (!buildScan) {
+    return
+}
+
+gradle.afterProject {
+    it.tasks.withType(Test).configureEach {
+        buildScan.value "${identityPath}#maxParallelForks", "${maxParallelForks}"
+    }
+}
