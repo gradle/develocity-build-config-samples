@@ -5,6 +5,6 @@ if (!buildScan) {
 
 allprojects {
     tasks.withType(Test).configureEach {
-        buildScan.value "${identityPath}#maxParallelForks", "${maxParallelForks}"
+        buildScan.value "${identityPath}#maxParallelForks", "$maxParallelForks"
     }
 }
