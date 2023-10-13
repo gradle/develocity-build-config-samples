@@ -38,6 +38,12 @@ _Demonstrates: Custom links_
 This sample creates a private GitHub gist containing the difference between the current working directory and the index.
 The URL of the gist is included as a custom link named `Git diff` at the top of the Build Scan.
 
+### Capture maxParallelForks
+
+_Demonstrates: Custom values_
+
+This sample captures the value of `maxParallelForks` for each test task and adds it to the Build Scan as a custom value.
+
 ### Capture OS Processes
 
 _Demonstrates: Custom values_
