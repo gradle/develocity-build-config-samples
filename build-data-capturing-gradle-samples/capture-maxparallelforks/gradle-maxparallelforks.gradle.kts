@@ -2,7 +2,7 @@ import com.gradle.enterprise.gradleplugin.GradleEnterpriseExtension
 
 project.extensions.configure<GradleEnterpriseExtension>() {
     buildScan {
-        gradle.afterProject {
+        allprojects {
             tasks.withType<Test>().configureEach {
                 value("${identityPath}#maxParallelForks", "$maxParallelForks")
             }
