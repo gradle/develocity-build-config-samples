@@ -22,6 +22,9 @@ Only the *native*, *uber-jar*, *jar* and *legacy-jar* [packaging types](https://
 The native packaging is cacheable only if the in-container build strategy (`quarkus.native.container-build=true`) is configured along with a fixed build image (`quarkus.native.builder-image`).
 This in-container build strategy means the build is as reproducible as possible. Even so, some timestamps and instruction ordering may be different even when built on the same system in the same environment.
 
+**Note:**
+*When the in-container build strategy is used as a fallback due to GraalVM requirements not met for instance, the caching feature will still be disabled. The recommendation is to explicitly set the in-container strategy (`quarkus.native.container-build=true`) to benefit from caching.* 
+
 The Quarkus build goal is made not cacheable if the `.quarkus/quarkus-prod-config-dump` file is not present or if a Quarkus property was changed since the last build execution (or after cloning the repository if no local build yet happened).
 
 ## Application
