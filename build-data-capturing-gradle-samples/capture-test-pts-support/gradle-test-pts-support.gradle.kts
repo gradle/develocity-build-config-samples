@@ -35,7 +35,8 @@ class Capture(val logger: Logger) {
         "org.spockframework.runtime.SpockEngine" to "spock",
         "net.jqwik.engine.JqwikTestEngine" to "jqwik",
         "com.tngtech.archunit.junit.ArchUnitTestEngine" to "archunit",
-        "co.helmethair.scalatest.ScalatestEngine" to "scalatest"
+        "co.helmethair.scalatest.ScalatestEngine" to "scalatest",
+        "io.kotest.runner.junit.platform.KotestJunitPlatformTestEngine" to "kotest-runner"
     )
 
     fun capturePts(t: Test, api: BuildScanExtension) {

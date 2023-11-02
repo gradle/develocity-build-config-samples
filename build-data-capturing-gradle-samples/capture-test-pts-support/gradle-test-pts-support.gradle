@@ -32,7 +32,8 @@ class Capture {
         'org.spockframework.runtime.SpockEngine' : 'spock',
         'net.jqwik.engine.JqwikTestEngine' : 'jqwik',
         'com.tngtech.archunit.junit.ArchUnitTestEngine' : 'archunit',
-        'co.helmethair.scalatest.ScalatestEngine' : 'scalatest'
+        'co.helmethair.scalatest.ScalatestEngine' : 'scalatest',
+        'io.kotest.runner.junit.platform.KotestJunitPlatformTestEngine' : 'kotest-runner'
     ]
     private Logger logger
 
