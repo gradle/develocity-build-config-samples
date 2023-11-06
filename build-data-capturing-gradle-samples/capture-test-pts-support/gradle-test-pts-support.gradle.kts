@@ -57,6 +57,15 @@ class Capture(val logger: Logger) {
         try {
             var engines = t.classpath.files.stream().filter { f -> f.name.endsWith(".jar") }
                 .filter { f -> supportedEngines.values.stream().anyMatch { e -> f.name.contains(e) } }
+                .filter { f ->
+                    if (f.name.contains("kotest-runner")) {
+                        val actualKotestEngine = KotestEngine(f)
+                        val minCompatibleKotestEngine = KotestEngine("5.6.0")
+                        actualKotestEngine >= minCompatibleKotestEngine
+                    } else {
+                        true
+                    }
+                }
                 .map { f -> findTestEngine(f) }
                 .flatMap { o -> if (o.isPresent()) Stream.of(o.get()) else Stream.empty() }
 
@@ -85,5 +94,32 @@ class Capture(val logger: Logger) {
                     j.getInputStream(e).bufferedReader().use { b -> b.readText().trim() }
                 }
         }
+    }
+}
+
+class KotestEngine(private val version: String) : Comparable<KotestEngine> {
+
+    constructor(jarFile: File) : this(jarFile.name.split("-")[jarFile.name.split("-").lastIndex].replace(".jar", ""))
+
+    override fun compareTo(other: KotestEngine): Int {
+        val thisVersion = parseVersion(version)
+        val otherVersion = parseVersion(other.version)
+
+        for (i in 0..2) {
+            val comparison = thisVersion[i].compareTo(otherVersion[i])
+            if (comparison != 0) {
+                return thisVersion[i].compareTo(otherVersion[i])
+            }
+        }
+        return 0
+    }
+
+    private fun parseVersion(version: String): List<Int> {
+        val parsedVersion: MutableList<Int> = mutableListOf()
+        val splitVersion = version.split(".")
+        for (i in 0..2) {
+            parsedVersion.add(splitVersion[i].toInt())
+        }
+        return parsedVersion
     }
 }
