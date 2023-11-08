@@ -1,5 +1,6 @@
 import com.gradle.enterprise.gradleplugin.GradleEnterpriseExtension
 import com.gradle.scan.plugin.BuildScanExtension
+import org.gradle.util.internal.VersionNumber
 import java.nio.charset.StandardCharsets
 import java.util.Collections
 import java.util.Optional
