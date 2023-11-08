@@ -18,18 +18,18 @@ import groovy.transform.Field
 project.extensions.configure<GradleEnterpriseExtension>() {
     buildScan {
         val api = buildScan
-        val capture = Capture(gradle.rootProject.logger)
+        val capture = Capture(api, gradle.rootProject.logger)
         allprojects {
             tasks.withType<Test>().configureEach {
                 doFirst {
-                    capture.capturePts(this as Test, api)
+                    capture.capturePts(this as Test)
                 }
             }
         }
     }
 }
 
-class Capture(val logger: Logger) {
+class Capture(val api: BuildScanExtension, val logger: Logger) {
     val supportedEngines: Map<String, String> = mapOf(
         "org.junit.support.testng.engine.TestNGTestEngine" to "testng",
         "org.junit.jupiter.engine.JupiterTestEngine" to "junit-jupiter",
@@ -41,7 +41,7 @@ class Capture(val logger: Logger) {
         "io.kotest.runner.junit.platform.KotestJunitPlatformTestEngine" to "kotest-runner"
     )
 
-    fun capturePts(t: Test, api: BuildScanExtension) {
+    fun capturePts(t: Test) {
         if (t.getTestFramework()::class.java.name == "org.gradle.api.internal.tasks.testing.junitplatform.JUnitPlatformTestFramework") {
             val engines = testEngines(t)
             api.value("${t.identityPath}#engines", "${engines}")
@@ -59,7 +59,7 @@ class Capture(val logger: Logger) {
         try {
             var engines = t.classpath.files.stream().filter { f -> f.name.endsWith(".jar") }
                 .filter { f -> supportedEngines.values.stream().anyMatch { e -> f.name.contains(e) } }
-                .filter(filterIncompatibleKotestVersions)
+                .filter(filterIncompatibleKotestVersions(t))
                 .map { f -> findTestEngine(f) }
                 .flatMap { o -> if (o.isPresent()) Stream.of(o.get()) else Stream.empty() }
 
@@ -90,17 +90,20 @@ class Capture(val logger: Logger) {
         }
     }
 
-    private val filterIncompatibleKotestVersions = Predicate<File> { jar ->
-        if (jar.name.contains("kotest-runner")) {
-            val kotestVersionString = jar.name.split("-")[jar.name.split("-").lastIndex].replace(".jar", "")
-            val kotestVersion = VersionNumber.parse(kotestVersionString)
-            if (VersionNumber.UNKNOWN == kotestVersion) {
-                logger.warn("Unable to parse kotest version from file name ${jar.name}")
-                return@Predicate false
+    private fun filterIncompatibleKotestVersions(t: Test): Predicate<File> {
+        return Predicate<File> { jar ->
+            if (jar.name.contains("kotest-runner")) {
+                val kotestVersionString = jar.name.split("-")[jar.name.split("-").lastIndex].replace(".jar", "")
+                val kotestVersion = VersionNumber.parse(kotestVersionString)
+                if (VersionNumber.UNKNOWN == kotestVersion) {
+                    logger.error("Unable to parse kotest version from file name ${jar.name}")
+                    api.value("${t.identityPath}#unknownKotestVersion", "${jar.name}")
+                    return@Predicate false
+                }
+                return@Predicate VersionNumber.parse("5.6.0") <= kotestVersion
+            } else {
+                return@Predicate true
             }
-            VersionNumber.parse("5.6.0") <= kotestVersion
-        } else {
-            true
         }
     }
 }
