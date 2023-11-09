@@ -1,4 +1,5 @@
 import com.gradle.scan.plugin.BuildScanExtension
+import org.gradle.util.internal.VersionNumber
 import java.nio.charset.StandardCharsets
 import java.util.Collections
 import java.util.Optional
@@ -15,11 +16,11 @@ def buildScanApi = project.extensions.findByName('buildScan')
 if (!buildScanApi) {
     return
 }
-def capture = new Capture(gradle.rootProject.logger)
+def capture = new Capture(buildScanApi, gradle.rootProject.logger)
 allprojects {
     tasks.withType(Test).configureEach { t ->
         doFirst {
-            capture.capturePts(t, buildScanApi)
+            capture.capturePts(t)
         }
     }
 }
@@ -32,15 +33,18 @@ class Capture {
         'org.spockframework.runtime.SpockEngine' : 'spock',
         'net.jqwik.engine.JqwikTestEngine' : 'jqwik',
         'com.tngtech.archunit.junit.ArchUnitTestEngine' : 'archunit',
-        'co.helmethair.scalatest.ScalatestEngine' : 'scalatest'
+        'co.helmethair.scalatest.ScalatestEngine' : 'scalatest',
+        'io.kotest.runner.junit.platform.KotestJunitPlatformTestEngine' : 'kotest-runner'
     ]
     private Logger logger
+    private BuildScanExtension buildScanApi
 
-    Capture(Logger logger) {
+    Capture(BuildScanExtension buildScanApi, Logger logger) {
+        this.buildScanApi = buildScanApi
         this.logger = logger
     }
 
-    void capturePts(Test t, BuildScanExtension buildScanApi) {
+    void capturePts(Test t) {
         if (t.getTestFramework().getClass().getName() == 'org.gradle.api.internal.tasks.testing.junitplatform.JUnitPlatformTestFramework') {
             def engines = testEngines(t)
             buildScanApi.value("${t.identityPath}#engines", "${engines}")
@@ -59,6 +63,7 @@ class Capture {
             Stream<String> engines = t.classpath.files.stream()
                 .filter { f -> f.name.endsWith('.jar') }
                 .filter { f -> supportedEngines.values().stream().anyMatch { e -> f.name.contains(e) } }
+                .filter { f -> isCompatibleVersion(f, t) }
                 .map { f -> findTestEngine(f) }
                 .flatMap { o -> o.isPresent() ? Stream.of(o.get()) : Stream.empty() }
 
@@ -82,6 +87,21 @@ class Capture {
         try (def jarFile = new JarFile(jar)) {
             return Optional.ofNullable(jarFile.getEntry('META-INF/services/org.junit.platform.engine.TestEngine'))
                 .map { e -> jarFile.getInputStream(e).withCloseable { it.getText(StandardCharsets.UTF_8.name()).trim() } }
+        }
+    }
+
+    boolean isCompatibleVersion(File f, Test t) {
+        if (f.name.contains("kotest-runner")) {
+            def kotestVersionString = f.name.split("-")[f.name.split("-").length - 1].replace(".jar", "")
+            def kotestVersion = VersionNumber.parse(kotestVersionString)
+            if (VersionNumber.UNKNOWN == kotestVersion) {
+                logger.error("Unable to parse kotest version from file name ${f.name}")
+                buildScanApi.value("${t.identityPath}#unknownKotestVersion", "${f.name}")
+                return false
+            }
+            return VersionNumber.parse("5.6.0") <= kotestVersion
+        } else {
+            return true
         }
     }
 }
