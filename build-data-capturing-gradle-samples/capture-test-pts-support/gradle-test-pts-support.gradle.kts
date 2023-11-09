@@ -4,7 +4,6 @@ import org.gradle.util.internal.VersionNumber
 import java.nio.charset.StandardCharsets
 import java.util.Collections
 import java.util.Optional
-import java.util.function.Predicate
 import java.util.jar.JarFile
 import java.util.stream.Stream
 import java.util.stream.Collectors
@@ -59,7 +58,7 @@ class Capture(val api: BuildScanExtension, val logger: Logger) {
         try {
             var engines = t.classpath.files.stream().filter { f -> f.name.endsWith(".jar") }
                 .filter { f -> supportedEngines.values.stream().anyMatch { e -> f.name.contains(e) } }
-                .filter(filterIncompatibleKotestVersions(t))
+                .filter { f -> isCompatibleVersion(f, t) }
                 .map { f -> findTestEngine(f) }
                 .flatMap { o -> if (o.isPresent()) Stream.of(o.get()) else Stream.empty() }
 
@@ -90,20 +89,18 @@ class Capture(val api: BuildScanExtension, val logger: Logger) {
         }
     }
 
-    private fun filterIncompatibleKotestVersions(t: Test): Predicate<File> {
-        return Predicate<File> { jar ->
-            if (jar.name.contains("kotest-runner")) {
-                val kotestVersionString = jar.name.split("-")[jar.name.split("-").lastIndex].replace(".jar", "")
-                val kotestVersion = VersionNumber.parse(kotestVersionString)
-                if (VersionNumber.UNKNOWN == kotestVersion) {
-                    logger.error("Unable to parse kotest version from file name ${jar.name}")
-                    api.value("${t.identityPath}#unknownKotestVersion", "${jar.name}")
-                    return@Predicate false
-                }
-                return@Predicate VersionNumber.parse("5.6.0") <= kotestVersion
-            } else {
-                return@Predicate true
+    private fun isCompatibleVersion(f: File, t: Test): Boolean {
+        if (f.name.contains("kotest-runner")) {
+            val kotestVersionString = f.name.split("-")[f.name.split("-").lastIndex].replace(".jar", "")
+            val kotestVersion = VersionNumber.parse(kotestVersionString)
+            if (VersionNumber.UNKNOWN == kotestVersion) {
+                logger.error("Unable to parse kotest version from file name ${f.name}")
+                api.value("${t.identityPath}#unknownKotestVersion", "${f.name}")
+                return false
             }
+            return VersionNumber.parse("5.6.0") <= kotestVersion
+        } else {
+            return true
         }
     }
 }
