@@ -119,6 +119,9 @@
                             <name>executable</name>
                           </property>
                           <property>
+                            <name>forceJava</name>
+                          </property>
+                          <property>
                             <name>skip</name>
                           </property>
                           <property>
