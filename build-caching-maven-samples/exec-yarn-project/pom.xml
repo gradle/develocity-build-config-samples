@@ -15,7 +15,7 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>exec-maven-plugin</artifactId>
-        <version>3.1.0</version>
+        <version>3.1.1</version>
         <executions>
           <execution>
             <id>yarn-install</id>
@@ -117,6 +117,9 @@
                           </property>
                           <property>
                             <name>executable</name>
+                          </property>
+                          <property>
+                            <name>forceJava</name>
                           </property>
                           <property>
                             <name>skip</name>
