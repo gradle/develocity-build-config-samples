@@ -9,3 +9,5 @@ Global / gradleEnterpriseConfiguration :=
     buildScan = BuildScan(
       publishConfig = PublishConfig.Always,
       backgroundUpload = !sys.env.get("CI").exists(_.toBoolean)))
+
+lazy val `common-gradle-enterprise-sbt-configuration` = (project in file(".")) // adjust to your project name
