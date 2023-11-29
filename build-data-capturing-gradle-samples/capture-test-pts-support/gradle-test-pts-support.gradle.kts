@@ -37,14 +37,15 @@ class Capture(val api: BuildScanExtension, val logger: Logger) {
         "net.jqwik.engine.JqwikTestEngine" to "jqwik",
         "com.tngtech.archunit.junit.ArchUnitTestEngine" to "archunit",
         "co.helmethair.scalatest.ScalatestEngine" to "scalatest",
-        "io.kotest.runner.junit.platform.KotestJunitPlatformTestEngine" to "kotest-runner"
+        "io.kotest.runner.junit.platform.KotestJunitPlatformTestEngine" to "kotest-runner",
+        "io.cucumber.junit.platform.engine.CucumberTestEngine" to "cucumber-junit-platform"
     )
 
     fun capturePts(t: Test) {
         if (t.getTestFramework()::class.java.name == "org.gradle.api.internal.tasks.testing.junitplatform.JUnitPlatformTestFramework") {
             val engines = testEngines(t)
             api.value("${t.identityPath}#engines", "${engines}")
-            if (!engines.isEmpty() && engines.stream().allMatch { e -> supportedEngines.containsKey(e) }) {
+            if (ptsSupported(t, engines)) {
                 api.value("${t.identityPath}#pts", "SUPPORTED")
             } else {
                 api.value("${t.identityPath}#pts", "ENGINES_NOT_ALL_SUPPORTED")
@@ -52,6 +53,19 @@ class Capture(val api: BuildScanExtension, val logger: Logger) {
         } else {
             api.value("${t.identityPath}#pts", "NO_JUNIT_PLATFORM")
         }
+    }
+
+    private fun ptsSupported(t: Test, engines: Set<String>): Boolean {
+        return if (!engines.isEmpty() && engines.stream().allMatch { e -> supportedEngines.containsKey(e) }) {
+            // If cucumber is used without companion it's not supported, otherwise it is.
+            !(cucumberUsed(t, engines) && !t.project.plugins.hasPlugin("com.gradle.cucumber.companion"))
+        } else {
+            false
+        }
+    }
+
+    private fun cucumberUsed(t: Test, engines: Set<String>): Boolean {
+        return t.classpath.any { f -> f.name.contains("cucumber")} || engines.any { it.contains("cucumber")}
     }
 
     private fun testEngines(t: Test): Set<String> {
