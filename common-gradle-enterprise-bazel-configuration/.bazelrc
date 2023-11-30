@@ -5,11 +5,14 @@ common:develocity --bes_results_url=https://<<develocity-server>>/build/ # adjus
 common:develocity --bes_backend=grpcs://<<develocity-server>> # adjust to your Develocity server
 common:develocity --build_event_publish_all_actions=true
 common:develocity --noslim_profile
+common:develocity --bes_instance_name=<<project-name>> # set project name
+common:develocity --remote_instance_name=<<project-name> # set project name
 
 build --config=develocity
 query --config=develocity
 
-# If your Develocity server forbids anonymous cache writes or scan publishing, the following 
+
+# Because Bazel build scans are enriched by allowing users to upload data to the remote cache, the following
 # additional steps are required:
 # 1. Log into your Develocity server, from the upper-right corner click your user icon, then "My Settings".
 # 2. Ensure that your user has at least "Publish build scans" and either "Read and write build cache data" or 
