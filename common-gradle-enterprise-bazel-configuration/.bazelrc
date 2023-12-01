@@ -5,8 +5,6 @@ common:develocity --bes_results_url=https://<<develocity-server>>/build/ # adjus
 common:develocity --bes_backend=grpcs://<<develocity-server>> # adjust to your Develocity server
 common:develocity --build_event_publish_all_actions=true
 common:develocity --noslim_profile
-common:develocity --bes_instance_name=<<project-name>> # set project name
-common:develocity --remote_instance_name=<<project-name> # set project name
 
 build --config=develocity
 query --config=develocity
