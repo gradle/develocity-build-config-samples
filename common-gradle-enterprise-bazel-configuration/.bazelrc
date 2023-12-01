@@ -1,0 +1,10 @@
+# To publish Build Scans to your Develocity server, add the following to the .bazelrc file in your 
+# build workspace:
+common:develocity --remote_cache=grpcs://<<develocity-server>> # adjust to your Develocity server
+common:develocity --bes_results_url=https://<<develocity-server>>/build/ # adjust to your Develocity server
+common:develocity --bes_backend=grpcs://<<develocity-server>> # adjust to your Develocity server
+common:develocity --build_event_publish_all_actions=true
+common:develocity --noslim_profile
+
+build --config=develocity
+query --config=develocity
