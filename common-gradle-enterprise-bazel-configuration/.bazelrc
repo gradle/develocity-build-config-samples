@@ -8,14 +8,3 @@ common:develocity --noslim_profile
 
 build --config=develocity
 query --config=develocity
-
-
-# Because Bazel build scans are enriched by allowing users to upload data to the remote cache, the following
-# additional steps are required:
-# 1. Log into your Develocity server, from the upper-right corner click your user icon, then "My Settings".
-# 2. Ensure that your user has at least "Publish build scans" and either "Read and write build cache data" or 
-#    "Read build cache data and write Bazel CAS data" permissions.
-# 3. Select "Access keys" on the left and then generate a new access key.
-# 4. In a .bazelrc file in your user’s home directory, add the following:
-#    common:develocity --remote_cache_header=Authorization=<<access key generated>>
-#    common:develocity --bes_header=Authorization=<<access key generated>>
