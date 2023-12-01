@@ -62,14 +62,18 @@ class Capture {
     boolean ptsSupported(Test t, Set<String> engines) {
         if (!engines.isEmpty() && engines.stream().allMatch { e -> supportedEngines.containsKey(e) }) {
             // If cucumber is used without companion it's not supported, otherwise it is.
-            return !(cucumberUsed(t, engines) && !t.project.plugins.hasPlugin('com.gradle.cucumber.companion'))
+            return !(cucumberUsed(t) && !t.project.plugins.hasPlugin('com.gradle.cucumber.companion'))
         } else {
             return false
         }
     }
 
-    boolean cucumberUsed(Test t, Set<String> engines) {
-        return t.classpath.any { f -> f.name.contains('cucumber')} || engines.any { it.contains('cucumber')}
+    boolean cucumberUsed(Test t) {
+        return t.project.configurations.stream().filter { it.canBeResolved }.any {
+            it.resolvedConfiguration.resolvedArtifacts.any {
+                it.moduleVersion.id.group == 'io.cucumber'
+            }
+        }
     }
 
     Set<String> testEngines(Test t) {

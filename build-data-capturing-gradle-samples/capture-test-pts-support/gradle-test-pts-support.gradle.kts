@@ -58,14 +58,18 @@ class Capture(val api: BuildScanExtension, val logger: Logger) {
     private fun ptsSupported(t: Test, engines: Set<String>): Boolean {
         return if (!engines.isEmpty() && engines.stream().allMatch { e -> supportedEngines.containsKey(e) }) {
             // If cucumber is used without companion it's not supported, otherwise it is.
-            !(cucumberUsed(t, engines) && !t.project.plugins.hasPlugin("com.gradle.cucumber.companion"))
+            !(cucumberUsed(t) && !t.project.plugins.hasPlugin("com.gradle.cucumber.companion"))
         } else {
             false
         }
     }
 
-    private fun cucumberUsed(t: Test, engines: Set<String>): Boolean {
-        return t.classpath.any { f -> f.name.contains("cucumber")} || engines.any { it.contains("cucumber")}
+    private fun cucumberUsed(t: Test): Boolean {
+        return t.project.configurations.filter { it.isCanBeResolved }.any {
+            it.resolvedConfiguration.resolvedArtifacts.any {
+                it.moduleVersion.id.group == "io.cucumber"
+            }
+        }
     }
 
     private fun testEngines(t: Test): Set<String> {
