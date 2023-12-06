@@ -37,14 +37,15 @@ class Capture(val api: BuildScanExtension, val logger: Logger) {
         "net.jqwik.engine.JqwikTestEngine" to "jqwik",
         "com.tngtech.archunit.junit.ArchUnitTestEngine" to "archunit",
         "co.helmethair.scalatest.ScalatestEngine" to "scalatest",
-        "io.kotest.runner.junit.platform.KotestJunitPlatformTestEngine" to "kotest-runner"
+        "io.kotest.runner.junit.platform.KotestJunitPlatformTestEngine" to "kotest-runner",
+        "io.cucumber.junit.platform.engine.CucumberTestEngine" to "cucumber-junit-platform"
     )
 
     fun capturePts(t: Test) {
         if (t.getTestFramework()::class.java.name == "org.gradle.api.internal.tasks.testing.junitplatform.JUnitPlatformTestFramework") {
             val engines = testEngines(t)
             api.value("${t.identityPath}#engines", "${engines}")
-            if (!engines.isEmpty() && engines.stream().allMatch { e -> supportedEngines.containsKey(e) }) {
+            if (ptsSupported(t, engines)) {
                 api.value("${t.identityPath}#pts", "SUPPORTED")
             } else {
                 api.value("${t.identityPath}#pts", "ENGINES_NOT_ALL_SUPPORTED")
@@ -52,6 +53,23 @@ class Capture(val api: BuildScanExtension, val logger: Logger) {
         } else {
             api.value("${t.identityPath}#pts", "NO_JUNIT_PLATFORM")
         }
+    }
+
+    private fun ptsSupported(t: Test, engines: Set<String>): Boolean {
+        return allEnginesSupported(engines) && !cucumberUsedWithoutCompanion(t)
+    }
+
+    private fun allEnginesSupported(engines: Set<String>): Boolean {
+        return !engines.isEmpty() && engines.stream().allMatch { e -> supportedEngines.containsKey(e) }
+    }
+
+    private fun cucumberUsedWithoutCompanion(t: Test): Boolean {
+        val cucumberUsed = t.project.configurations.filter { it.isCanBeResolved }.any {
+            it.resolvedConfiguration.resolvedArtifacts.any {
+                it.moduleVersion.id.group == "io.cucumber"
+            }
+        }
+        return cucumberUsed && !t.project.plugins.hasPlugin("com.gradle.cucumber.companion")
     }
 
     private fun testEngines(t: Test): Set<String> {
