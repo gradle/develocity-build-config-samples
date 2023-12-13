@@ -19,7 +19,7 @@
 
     <properties>
         <aspectj.version>1.9.21</aspectj.version>
-        <aspectj-maven-plugin.version>1.14.0</aspectj-maven-plugin.version>
+        <aspectj-maven-plugin.version>1.15.0</aspectj-maven-plugin.version>
     </properties>
 
     <modules>
