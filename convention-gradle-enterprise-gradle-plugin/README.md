@@ -32,7 +32,7 @@ cd plugins/gradle-5-or-newer
 Once you have published the plugins, you can run the four example builds under `examples`:
 
 ```bash
-cd example-builds/via-build-script/gradle_6.0.1
+cd examples/gradle_6.0.1
 ./gradlew build
 ```
 
