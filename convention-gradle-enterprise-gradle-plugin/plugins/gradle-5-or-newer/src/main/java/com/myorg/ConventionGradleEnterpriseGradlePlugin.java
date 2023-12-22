@@ -5,6 +5,7 @@ import com.gradle.enterprise.gradleplugin.GradleEnterpriseExtension;
 import com.gradle.enterprise.gradleplugin.GradleEnterprisePlugin;
 import com.gradle.scan.plugin.BuildScanExtension;
 import com.gradle.scan.plugin.BuildScanPlugin;
+import org.gradle.StartParameter;
 import org.gradle.api.GradleException;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
@@ -44,21 +45,28 @@ public class ConventionGradleEnterpriseGradlePlugin implements Plugin<Object> {
     private void configureGradle6OrNewer(Settings settings) {
         settings.getPluginManager().apply(GradleEnterprisePlugin.class);
         settings.getPluginManager().apply(CommonCustomUserDataGradlePlugin.class);
-        configureGradleEnterprise(settings.getExtensions().getByType(GradleEnterpriseExtension.class));
+        configureGradleEnterprise(settings.getExtensions().getByType(GradleEnterpriseExtension.class), settings.getGradle().getStartParameter());
         configureBuildCache(settings.getBuildCache(), settings.getExtensions().getByType(GradleEnterpriseExtension.class));
     }
 
     private void configureGradle5(Project project) {
         project.getPluginManager().apply(BuildScanPlugin.class);
         project.getPluginManager().apply(CommonCustomUserDataGradlePlugin.class);
-        configureGradleEnterprise(project.getExtensions().getByType(GradleEnterpriseExtension.class));
+        configureGradleEnterprise(project.getExtensions().getByType(GradleEnterpriseExtension.class), project.getGradle().getStartParameter());
         // configureBuildCache is not called because the build cache cannot be configured via a plugin prior to Gradle 6.0
     }
 
-    private void configureGradleEnterprise(GradleEnterpriseExtension gradleEnterprise) {
+    private void configureGradleEnterprise(GradleEnterpriseExtension gradleEnterprise, StartParameter startParameter) {
         // CHANGE ME: Apply your Gradle Enterprise configuration here
         gradleEnterprise.setServer("https://enterprise-samples.gradle.com");
-        configureBuildScan(gradleEnterprise.getBuildScan());
+        if (!containsPropertiesTask(startParameter)) {
+            configureBuildScan(gradleEnterprise.getBuildScan());
+        }
+    }
+
+    private boolean containsPropertiesTask(StartParameter startParameter) {
+        return startParameter.getTaskNames().contains("properties")
+                || startParameter.getTaskNames().stream().anyMatch(it -> it.endsWith(":properties"));
     }
 
     private void configureBuildScan(BuildScanExtension buildScan) {
