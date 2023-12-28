@@ -3,7 +3,7 @@
 #
 # Script that demonstrates how to build a custom Maven distribution that bundles
 #
-#  - Gradle Enterprise Maven extension
+#  - Develocity Maven extension
 #  - Common Custom User Data Maven extension that captures additional build metadata
 #  - gradle-enterprise.xml with typical configuration for CI and developers building locally
 #
@@ -12,13 +12,13 @@
 #  - deployed to a repository like Artifactory, Nexus, etc.
 #  - applied when building a Maven project via Maven Wrapper
 #
-# Having such a custom Maven distribution that bundles all Gradle Enterprise configuration is one way to share
+# Having such a custom Maven distribution that bundles all Develocity configuration is one way to share
 # the configuration across multiple projects, in case the build master fully controls the Maven distribution
-# used by CI and developers. In most cases though, the recommended way for sharing the Gradle Enterprise configuration
+# used by CI and developers. In most cases though, the recommended way for sharing the Develocity configuration
 # across multiple projects is by referencing the extensions via .mvn/extensions.xml file checked in to every project.
 #
-# Note: You can build a Maven distribution that connects to _your_ Gradle Enterprise instance by running
-#       this script and passing the root URL of your Gradle Enterprise server as the first argument, e.g.:
+# Note: You can build a Maven distribution that connects to _your_ Develocity instance by running
+#       this script and passing the root URL of your Develocity server as the first argument, e.g.:
 #
 #       ./create-custom-maven-distribution.sh https://gradle-enterprise.mycompany.com
 #
@@ -67,15 +67,15 @@ fi
 echo -e "${yellow}Extracting Maven distribution${nc}"
 unzip -q $tmp_dir/$maven_zip -d $out_dir
 
-### Downloading and embedding Gradle Enterprise Maven extension
+### Downloading and embedding Develocity Maven extension
 
 if [ ! -f "$tmp_dir/$ge_ext_jar" ]; then
-  echo -e "${yellow}Downloading Gradle Enterprise Maven extension $ge_ext_version${nc}"
+  echo -e "${yellow}Downloading Develocity Maven extension $ge_ext_version${nc}"
   ge_ext_download_url=https://repo1.maven.org/maven2/com/gradle/gradle-enterprise-maven-extension/${ge_ext_version}/${ge_ext_jar}
   wget $ge_ext_download_url  -P $tmp_dir
 fi
 
-echo -e "${yellow}Copying Gradle Enterprise Maven extension into Maven distribution${nc}"
+echo -e "${yellow}Copying Develocity Maven extension into Maven distribution${nc}"
 cp $tmp_dir/$ge_ext_jar $out_dir/$maven_lib_ext
 
 ### Downloading and embedding Common Custom User Data Maven extension

@@ -27,7 +27,7 @@ gradlePlugin {
         gradleEnterpriseConventions {
             // CHANGE ME: change for your organization
             id = 'com.myorg.convention-gradle-enterprise-gradle-5-or-newer'
-            displayName = 'Gradle Enterprise Convention Plugin for Gradle 5.0 and higher'
+            displayName = ' Enterprise Convention Plugin for Gradle 5.0 and higher'
             description = 'A Gradle plugin to apply and configure the Gradle Enterprise Gradle plugin for com.myorg'
             implementationClass = 'com.myorg.ConventionGradleEnterpriseGradlePlugin'
         }

@@ -17,8 +17,8 @@ jobs:
     strategy:
       matrix:
         include:
-          - name: 'GE Maven extension version'
-            sample-file: 'capture-ge-extension-version/maven-ge-extension-version.groovy'
+          - name: 'DV Maven extension version'
+            sample-file: 'capture-dv-extension-version/maven-dv-extension-version.groovy'
           - name: 'OS processes'
             sample-file: 'capture-os-processes/maven-os-processes.groovy'
           - name: 'Processor arch'
@@ -41,7 +41,7 @@ jobs:
           distribution: 'temurin'
       - name: Provide data capture script to Maven build
         run: |
-            # copy over sample script such that it gets pulled in by the GE extension
+            # copy over sample script such that it gets pulled in by the DV extension
             cp build-data-capturing-maven-samples/${{ matrix.sample-file }} common-gradle-enterprise-maven-configuration/.mvn/gradle-enterprise-custom-user-data.groovy
       - name: Run Maven build
         id: mvn-build

@@ -14,7 +14,7 @@ import org.gradle.caching.configuration.BuildCacheConfiguration;
 import org.gradle.util.GradleVersion;
 
 /**
- * An example Gradle plugin for enabling and configuring Gradle Enterprise features for
+ * An example Gradle plugin for enabling and configuring Develocity features for
  * Gradle versions 5.x and higher.
  */
 public class ConventionGradleEnterpriseGradlePlugin implements Plugin<Object> {
@@ -57,7 +57,7 @@ public class ConventionGradleEnterpriseGradlePlugin implements Plugin<Object> {
     }
 
     private void configureGradleEnterprise(GradleEnterpriseExtension gradleEnterprise, StartParameter startParameter) {
-        // CHANGE ME: Apply your Gradle Enterprise configuration here
+        // CHANGE ME: Apply your Develocity configuration here
         gradleEnterprise.setServer("https://enterprise-samples.gradle.com");
         if (!containsPropertiesTask(startParameter)) {
             configureBuildScan(gradleEnterprise.getBuildScan());

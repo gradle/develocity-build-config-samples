@@ -1,10 +1,10 @@
-// You can configure the Gradle Enterprise sbt plugin to publish Build Scans to your Gradle Enterprise server
+// You can configure the Develocity sbt plugin to publish Build Scans to your Develocity server
 // by adding the following configuration to your project's build.sbt file
 
 Global / gradleEnterpriseConfiguration :=
   GradleEnterpriseConfiguration(
     server = Server(
-      url = Some(url("https://enterprise-samples.gradle.com")), // adjust to your GE server
+      url = Some(url("https://enterprise-samples.gradle.com")), // adjust to your DV server
       allowUntrusted = false), // ensure a trusted certificate is configured
     buildScan = BuildScan(
       publishConfig = PublishConfig.Always,

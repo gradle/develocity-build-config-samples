@@ -6,7 +6,7 @@ plugins {
 def isCI = System.getenv('CI') != null // adjust to your CI provider
 
 gradleEnterprise {
-    server = 'https://enterprise-samples.gradle.com' // adjust to your GE server
+    server = 'https://enterprise-samples.gradle.com' // adjust to your DV server
     allowUntrustedServer = false // ensure a trusted certificate is configured
 
     buildScan {
@@ -21,15 +21,15 @@ buildCache {
         enabled = true
     }
 
-    // Use the Gradle Enterprise connector's access key based authentication.
-    // This is available in Gradle Enterprise 2022.3+ and Gradle Enterprise Plugin 3.11+.
+    // Use the Develocity connector's access key based authentication.
+    // This is available in Develocity 2022.3+ and Develocity Plugin 3.11+.
     remote(gradleEnterprise.buildCache) {
         enabled = true
         push = isCI
     }
 
     // Use Gradle's built-in access credentials.
-    // This is available in all Gradle Enterprise and Gradle Enterprise Plugin versions.
+    // This is available in all Develocity and Develocity Plugin versions.
     /**
     remote(HttpBuildCache) {
         url = 'https://enterprise-samples.gradle.com/cache/' // adjust to your build cache node, and note the trailing slash

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-commit_msg="Apply latest Gradle Enterprise configuration"
+commit_msg="Apply latest Develocity configuration"
 basedir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 repositories=$basedir/repositories.txt
 checkout_area=
@@ -63,7 +63,7 @@ function process_repository() {
     fi
   fi
 
-  # Check out .mvn folder and recursively copy Gradle Enterprise configuration into it
+  # Check out .mvn folder and recursively copy Develocity configuration into it
   git checkout .mvn >& /dev/null
   if [ "$force" ]; then 
     # override existing files

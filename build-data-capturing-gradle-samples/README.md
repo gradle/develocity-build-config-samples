@@ -23,15 +23,15 @@ The samples are designed to be applied to the root level `build.gradle(.kts)` sc
 This directory contains samples demonstrating various ways to extend and customize a Build Scan with extra data using 
 tags, links, and custom values.
 
-To learn more, see the Gradle Enterprise documentation
+To learn more, see the Develocity documentation
 on [Extending build scans](https://docs.gradle.com/enterprise/gradle-plugin/#extending_build_scans).
 
-### Capture GE Plugin Version
+### Capture DV Plugin Version
 
 _Demonstrates: Custom values_
 
-This sample demonstrates how to capture the Gradle Enterprise Gradle plugin version as a custom value. This can be used
-to identify and filter for projects using a certain version of the plugin on the Gradle Enterprise dashboards.
+This sample demonstrates how to capture the Develocity Gradle plugin version as a custom value. This can be used
+to identify and filter for projects using a certain version of the plugin on the Develocity dashboards.
 
 ### Capture Git Diffs
 

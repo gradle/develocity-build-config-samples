@@ -14,8 +14,8 @@ jobs:
     strategy:
       matrix:
         include:
-          - name: 'GE Gradle plugin version'
-            sample-file: 'capture-ge-plugin-version/gradle-ge-plugin-version.gradle'
+          - name: 'DV Gradle plugin version'
+            sample-file: 'capture-dv-plugin-version/gradle-dv-plugin-version.gradle'
           - name: 'Git diffs'
             sample-file: 'capture-git-diffs/gradle-git-diffs.gradle'
           - name: 'OS processes'

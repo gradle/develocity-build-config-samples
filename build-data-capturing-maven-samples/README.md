@@ -13,15 +13,15 @@ section of the extension documentation for more information.
 This directory contains samples demonstrating various ways to extend and customize a Build Scan with extra data using 
 tags, links, and custom values.
 
-To learn more, see the Gradle Enterprise documentation
+To learn more, see the Develocity documentation
 on [Extending build scans](https://docs.gradle.com/enterprise/maven-extension/#extending_build_scans).
 
-### Capture GE Extension Version
+### Capture DV Extension Version
 
 _Demonstrates: Custom values_
 
-This sample demonstrates how to capture the Gradle Enterprise Maven extension version as a custom value. This can be 
-used to identify and filter for projects using a certain version of the extension on the Gradle Enterprise dashboards.
+This sample demonstrates how to capture the Develocity Maven extension version as a custom value. This can be 
+used to identify and filter for projects using a certain version of the extension on the Develocity dashboards.
 
 ### Capture OS Processes
 
