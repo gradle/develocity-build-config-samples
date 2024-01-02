@@ -18,7 +18,7 @@ jobs:
       matrix:
         include:
           - name: 'DV Maven extension version'
-            sample-file: 'capture-dv-extension-version/maven-dv-extension-version.groovy'
+            sample-file: 'capture-develocity-extension-version/maven-develocity-extension-version.groovy'
           - name: 'OS processes'
             sample-file: 'capture-os-processes/maven-os-processes.groovy'
           - name: 'Processor arch'
