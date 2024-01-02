@@ -8,7 +8,7 @@ project.extensions.configure<GradleEnterpriseExtension>() {
     buildScan {
         val url = GradleEnterpriseExtension::class.java.classLoader.getResource("com.gradle.scan.plugin.internal.meta.buildAgentVersion.txt")
         val buildAgentVersion = url.readText()
-        value("DV Gradle plugin version", buildAgentVersion)
+        value("Develocity Gradle plugin version", buildAgentVersion)
     }
 }
 

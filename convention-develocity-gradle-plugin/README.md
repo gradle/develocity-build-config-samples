@@ -12,10 +12,10 @@ This project is structured as follows:
     * `gradle-2-through-4` - Applies and configures the Build Scan plugin on builds using Gradle 2.0 through Gradle 4.10.3
     * `gradle-5-or-newer` - Applies and configures the Develocity plugin on builds using Gradle 5.0 or higher
   * `examples` - Contains example builds that apply the convention plugin for different Gradle versions
-    * `gradle_2.0` - Applies the convention plugin on a Gradle 2.0 build (only the DV plugin is applied)
-    * `gradle_4.1` - Applies the convention plugin on a Gradle 4.1 build (the DV and CCUD plugins are applied)
-    * `gradle_5.1.1` - Applies the convention plugin on a Gradle 5 build (the DV and CCUD plugins are applied)
-    * `gradle_6.0.1` - Applies the convention plugin on a Gradle 6+ build (the DV and CCUD plugins are applied)
+    * `gradle_2.0` - Applies the convention plugin on a Gradle 2.0 build (only the Develocity plugin is applied)
+    * `gradle_4.1` - Applies the convention plugin on a Gradle 4.1 build (the Develocity and CCUD plugins are applied)
+    * `gradle_5.1.1` - Applies the convention plugin on a Gradle 5 build (the Develocity and CCUD plugins are applied)
+    * `gradle_6.0.1` - Applies the convention plugin on a Gradle 6+ build (the Develocity and CCUD plugins are applied)
 
 ### Running the example builds
 

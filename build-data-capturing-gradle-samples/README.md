@@ -26,7 +26,7 @@ tags, links, and custom values.
 To learn more, see the Develocity documentation
 on [Extending build scans](https://docs.gradle.com/enterprise/gradle-plugin/#extending_build_scans).
 
-### Capture DV Plugin Version
+### Capture Develocity Plugin Version
 
 _Demonstrates: Custom values_
 

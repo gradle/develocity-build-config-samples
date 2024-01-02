@@ -4,4 +4,4 @@
 
 URL url = buildScan.class.classLoader.getResource("com.gradle.scan.plugin.internal.meta.buildAgentVersion.txt")
 String buildAgentVersion = url.text
-buildScan.value("DV Maven extension version", buildAgentVersion)
+buildScan.value("Develocity Maven extension version", buildAgentVersion)

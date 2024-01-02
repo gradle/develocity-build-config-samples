@@ -6,7 +6,7 @@ plugins {
 def isCI = System.getenv('CI') != null // adjust to your CI provider
 
 gradleEnterprise {
-    server = 'https://enterprise-samples.gradle.com' // adjust to your DV server
+    server = 'https://enterprise-samples.gradle.com' // adjust to your Develocity server
     allowUntrustedServer = false // ensure a trusted certificate is configured
 
     buildScan {

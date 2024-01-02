@@ -16,7 +16,7 @@ tags, links, and custom values.
 To learn more, see the Develocity documentation
 on [Extending build scans](https://docs.gradle.com/enterprise/maven-extension/#extending_build_scans).
 
-### Capture DV Extension Version
+### Capture Develocity Extension Version
 
 _Demonstrates: Custom values_
 

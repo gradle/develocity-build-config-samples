@@ -17,7 +17,7 @@ jobs:
     strategy:
       matrix:
         include:
-          - name: 'DV Maven extension version'
+          - name: 'Develocity Maven extension version'
             sample-file: 'capture-develocity-extension-version/maven-develocity-extension-version.groovy'
           - name: 'OS processes'
             sample-file: 'capture-os-processes/maven-os-processes.groovy'
@@ -41,7 +41,7 @@ jobs:
           distribution: 'temurin'
       - name: Provide data capture script to Maven build
         run: |
-            # copy over sample script such that it gets pulled in by the DV extension
+            # copy over sample script such that it gets pulled in by the Develocity extension
             cp build-data-capturing-maven-samples/${{ matrix.sample-file }} common-develocity-maven-configuration/.mvn/develocity-custom-user-data.groovy
       - name: Run Maven build
         id: mvn-build

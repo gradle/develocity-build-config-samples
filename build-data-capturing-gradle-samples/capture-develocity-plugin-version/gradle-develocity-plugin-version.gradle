@@ -9,5 +9,5 @@ if (!buildScanApi) {
 
 URL url = buildScanApi.class.classLoader.getResource("com.gradle.scan.plugin.internal.meta.buildAgentVersion.txt")
 String buildAgentVersion = url.text
-buildScan.value("DV Gradle plugin version", buildAgentVersion)
+buildScan.value("Develocity Gradle plugin version", buildAgentVersion)
 

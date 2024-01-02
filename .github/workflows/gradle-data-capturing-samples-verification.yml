@@ -14,7 +14,7 @@ jobs:
     strategy:
       matrix:
         include:
-          - name: 'DV Gradle plugin version'
+          - name: 'Develocity Gradle plugin version'
             sample-file: 'capture-develocity-plugin-version/gradle-develocity-plugin-version.gradle'
           - name: 'Git diffs'
             sample-file: 'capture-git-diffs/gradle-git-diffs.gradle'
