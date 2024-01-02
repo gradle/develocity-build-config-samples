@@ -15,7 +15,7 @@ jobs:
       matrix:
         include:
           - name: 'DV Gradle plugin version'
-            sample-file: 'capture-dv-plugin-version/gradle-dv-plugin-version.gradle'
+            sample-file: 'capture-develocity-plugin-version/gradle-develocity-plugin-version.gradle'
           - name: 'Git diffs'
             sample-file: 'capture-git-diffs/gradle-git-diffs.gradle'
           - name: 'OS processes'
@@ -43,22 +43,22 @@ jobs:
       - name: Set up Gradle
         uses: gradle/gradle-build-action@v2
       - name: Inject data capture script into Gradle build using Groovy DSL
-        working-directory: common-gradle-enterprise-gradle-configuration-groovy
+        working-directory: common-develocity-gradle-configuration-groovy
         run: |
           # apply sample file
           echo "apply from: file(\"../build-data-capturing-gradle-samples/${{matrix.sample-file}}\")" >> build.gradle
       - name: Run Gradle build using Groovy DSL
-        working-directory: common-gradle-enterprise-gradle-configuration-groovy
+        working-directory: common-develocity-gradle-configuration-groovy
         run: ./gradlew tasks -Dgradle.enterprise.url=https://ge.solutions-team.gradle.com
         env:
           GRADLE_ENTERPRISE_ACCESS_KEY: ${{ secrets.GE_SOLUTIONS_ACCESS_TOKEN }}
       - name: Inject data capture script into Gradle build using Kotlin DSL
-        working-directory: common-gradle-enterprise-gradle-configuration-kotlin
+        working-directory: common-develocity-gradle-configuration-kotlin
         run: |
           # apply sample file
           echo "apply(from = \"../build-data-capturing-gradle-samples/${{matrix.sample-file}}.kts\")" >> build.gradle.kts
       - name: Run Gradle build using Kotlin DSL
-        working-directory: common-gradle-enterprise-gradle-configuration-kotlin
+        working-directory: common-develocity-gradle-configuration-kotlin
         run: ./gradlew tasks -Dgradle.enterprise.url=https://ge.solutions-team.gradle.com
         env:
           GRADLE_ENTERPRISE_ACCESS_KEY: ${{ secrets.GE_SOLUTIONS_ACCESS_TOKEN }}

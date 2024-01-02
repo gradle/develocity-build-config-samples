@@ -20,7 +20,7 @@
 # Note: You can build a Maven distribution that connects to _your_ Develocity instance by running
 #       this script and passing the root URL of your Develocity server as the first argument, e.g.:
 #
-#       ./create-custom-maven-distribution.sh https://gradle-enterprise.mycompany.com
+#       ./create-custom-maven-distribution.sh https://develocity.mycompany.com
 #
 
 maven_version=3.9.4
@@ -93,7 +93,7 @@ cp $tmp_dir/$ge_sample_ext_jar $out_dir/$maven_lib_ext
 
 if [ ! -f "$tmp_dir/$ge_sample_ext_xml" ]; then
   echo -e "${yellow}Downloading common gradle-enterprise.xml configuration for CI builds and developers building locally${nc}"
-  ge_sample_ext_xml_download_url=https://raw.githubusercontent.com/gradle/gradle-enterprise-build-config-samples/master/common-gradle-enterprise-xml-maven-configuration/${ge_sample_ext_xml}
+  ge_sample_ext_xml_download_url=https://raw.githubusercontent.com/gradle/develocity-build-config-samples/master/common-develocity-xml-maven-configuration/${ge_sample_ext_xml}
   wget $ge_sample_ext_xml_download_url  -P $tmp_dir
 fi
 

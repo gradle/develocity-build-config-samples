@@ -28,7 +28,7 @@ jobs:
         run: npm install -g yarn
       - name: Verify cacheable goals are retrieved from the build cache
         id: build
-        working-directory: gradle-enterprise-maven-build-validation
+        working-directory: develocity-maven-build-validation
         run: |
           set -o pipefail
           ./02-validate-local-build-caching-different-locations.sh \
