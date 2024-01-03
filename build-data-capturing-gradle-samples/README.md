@@ -7,14 +7,16 @@ a [script plugin](https://docs.gradle.org/current/userguide/plugins.html#sec:scr
 be downloaded and used directly within a build.
 
 ```groovy
-// build.gradle
+// root build.gradle
 apply from: 'build-data-capturing-sample.gradle'
 ```
 
 ```kotlin
-// build.gradle.kts
+// root build.gradle.kts
 apply(from = "build-data-capturing-sample.gradle.kts")
 ```
+
+The samples are designed to be applied to the root level `build.gradle(.kts)` script. If it's necessary to use them on a subproject `build.gradle(.kts)` script, the samples should be modified to reference the `rootProject` when retrieving the scan extension.
 
 ## Overview
 
