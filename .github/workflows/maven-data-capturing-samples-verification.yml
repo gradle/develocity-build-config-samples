@@ -22,7 +22,7 @@ jobs:
           - name: 'OS processes'
             sample-file: 'capture-os-processes/maven-os-processes.groovy'
           - name: 'Processor arch'
-            sample-file: 'capture-processor-arch/maven-processor-arch.groovy'
+            sample-file: 'M1CHIP-arch/maven-processor-arch.groovy'
           - name: 'Profiles'
             sample-file: 'capture-profiles/maven-profiles.groovy'
           - name: 'Quality checks'

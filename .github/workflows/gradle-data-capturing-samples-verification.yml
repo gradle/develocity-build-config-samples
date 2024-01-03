@@ -21,7 +21,7 @@ jobs:
           - name: 'OS processes'
             sample-file: 'capture-os-processes/gradle-os-processes.gradle'
           - name: 'Processor arch'
-            sample-file: 'capture-processor-arch/gradle-processor-arch.gradle'
+            sample-file: 'ssor-arch/gradle-processor-arch.gradle'
           - name: 'Quality checks'
             sample-file: 'capture-quality-check-issues/gradle-quality-check-issues.gradle'
           - name: 'Slow tasks'
