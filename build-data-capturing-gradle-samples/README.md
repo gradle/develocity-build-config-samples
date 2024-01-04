@@ -16,7 +16,7 @@ apply from: 'build-data-capturing-sample.gradle'
 apply(from = "build-data-capturing-sample.gradle.kts")
 ```
 
-The samples are designed to be applied to the root level `build.gradle(.kts)` script. If it's necessary to use them on a subproject `build.gradle(.kts)` script, the samples should be modified to reference the `rootProject` when retrieving the scan extension.
+The samples are designed to be applied to the root level `build.gradle(.kts)` script. 
 
 ## Overview
 
