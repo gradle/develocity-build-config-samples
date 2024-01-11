@@ -42,7 +42,7 @@ jobs:
       - name: Provide data capture script to Maven build
         run: |
             # copy over sample script such that it gets pulled in by the Develocity extension
-            cp build-data-capturing-maven-samples/${{ matrix.sample-file }} common-develocity-maven-configuration/.mvn/develocity-custom-user-data.groovy
+            cp build-data-capturing-maven-samples/${{ matrix.sample-file }} common-develocity-maven-configuration/.mvn/gradle-enterprise-custom-user-data.groovy
       - name: Run Maven build
         id: mvn-build
         run: |
