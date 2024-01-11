@@ -35,7 +35,7 @@ public class ConventionGradleEnterpriseGradlePlugin implements Plugin<Project> {
 
         /* Example of how to configure build scan publishing from the plugin. */
         BuildScanExtension buildScan = project.getExtensions().getByType(BuildScanExtension.class);
-        buildScan.setServer("https://enterprise-samples.gradle.com");
+        buildScan.setServer("https://develocity-samples.gradle.com");
         buildScan.publishAlways();
     }
 

@@ -58,7 +58,7 @@ public class ConventionGradleEnterpriseGradlePlugin implements Plugin<Object> {
 
     private void configureGradleEnterprise(GradleEnterpriseExtension gradleEnterprise, StartParameter startParameter) {
         // CHANGE ME: Apply your Develocity configuration here
-        gradleEnterprise.setServer("https://enterprise-samples.gradle.com");
+        gradleEnterprise.setServer("https://develocity-samples.gradle.com");
         if (!containsPropertiesTask(startParameter)) {
             configureBuildScan(gradleEnterprise.getBuildScan());
         }

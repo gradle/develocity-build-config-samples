@@ -104,7 +104,7 @@ cp $tmp_dir/$ge_sample_ext_xml $out_dir/$maven_conf
 
 if [ -n "$server_url" ]; then
   echo -e "${yellow}Replacing the urls in gradle-enterprise.xml with ${server_url}${nc}"
-  sed -i '' -e 's+https://enterprise-samples.gradle.com+'"$server_url"'+g' $out_dir/$maven_conf/$ge_sample_ext_xml
+  sed -i '' -e 's+https://develocity-samples.gradle.com+'"$server_url"'+g' $out_dir/$maven_conf/$ge_sample_ext_xml
 fi
 
 ### Packing the customized Maven distribution

@@ -4,7 +4,7 @@
 Global / gradleEnterpriseConfiguration :=
   GradleEnterpriseConfiguration(
     server = Server(
-      url = Some(url("https://enterprise-samples.gradle.com")), // adjust to your Develocity server
+      url = Some(url("https://develocity-samples.gradle.com")), // adjust to your Develocity server
       allowUntrusted = false), // ensure a trusted certificate is configured
     buildScan = BuildScan(
       publishConfig = PublishConfig.Always,

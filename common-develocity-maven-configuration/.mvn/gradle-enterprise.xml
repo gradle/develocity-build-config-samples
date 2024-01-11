@@ -19,7 +19,7 @@
     xmlns="https://www.gradle.com/gradle-enterprise-maven" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="https://www.gradle.com/gradle-enterprise-maven https://www.gradle.com/schema/gradle-enterprise-maven.xsd">
   <server>
-    <url>https://enterprise-samples.gradle.com</url> <!-- adjust to your Develocity server -->
+    <url>https://develocity-samples.gradle.com</url> <!-- adjust to your Develocity server -->
     <allowUntrusted>false</allowUntrusted> <!-- ensure a trusted certificate is configured -->
   </server>
   <buildScan>
@@ -40,7 +40,7 @@
       <!-- Use build cache node credentials.
            This is available in all Develocity and Develocity Plugin versions.
       <server>
-        <url>https://enterprise-samples.gradle.com/cache/</url> 
+        <url>https://develocity-samples.gradle.com/cache/</url> 
         <allowUntrusted>false</allowUntrusted>
         <credentials>
           <username>${env.GRADLE_ENTERPRISE_CACHE_USERNAME}</username>

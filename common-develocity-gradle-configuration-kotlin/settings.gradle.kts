@@ -6,7 +6,7 @@ plugins {
 val isCI = !System.getenv("CI").isNullOrEmpty() // adjust to your CI provider
 
 gradleEnterprise {
-    server = "https://enterprise-samples.gradle.com" // adjust to your Develocity server
+    server = "https://develocity-samples.gradle.com" // adjust to your Develocity server
     allowUntrustedServer = false // ensure a trusted certificate is configured
 
     buildScan {
@@ -32,7 +32,7 @@ buildCache {
     // This is available in all Develocity and Develocity Plugin versions.
     /**
     remote(HttpBuildCache::class) {
-        url = uri("https://enterprise-samples.gradle.com/cache/") // adjust to your Develocity server, and note the trailing slash
+        url = uri("https://develocity-samples.gradle.com/cache/") // adjust to your Develocity server, and note the trailing slash
         isAllowUntrustedServer = false // ensure a trusted certificate is configured
         credentials {
             username = System.getenv("GRADLE_ENTERPRISE_CACHE_USERNAME")
