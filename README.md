@@ -32,10 +32,10 @@ Visit our website to learn more about [Develocity][develocity].
 
 The Develocity build configuration samples are open-source software released under the [Apache 2.0 License][apache-license].
 
-[develocity-build-config-samples]: https://github.com/gradle/develocity-build-config-samples
-[develocity-build-optimization-experiments]: https://github.com/gradle/develocity-build-optimization-experiments
-[develocity-build-validation-scripts]: https://github.com/gradle/develocity-build-validation-scripts
-[develocity-oss-projects]: https://github.com/gradle/develocity-oss-projects
+[develocity-build-config-samples]: https://github.com/gradle/gradle-enterprise-build-config-samples
+[develocity-build-optimization-experiments]: https://github.com/gradle/gradle-enterprise-build-optimization-experiments
+[develocity-build-validation-scripts]: https://github.com/gradle/gradle-enterprise-build-validation-scripts
+[develocity-oss-projects]: https://github.com/gradle/gradle-enterprise-oss-projects
 [ccud-gradle-plugin]: https://github.com/gradle/common-custom-user-data-gradle-plugin
 [ccud-maven-extension]: https://github.com/gradle/common-custom-user-data-maven-extension
 [android-cache-fix-plugin]: https://github.com/gradle/android-cache-fix-gradle-plugin
