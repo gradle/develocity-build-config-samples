@@ -75,7 +75,7 @@
           <groupId>com.gradle</groupId>
           <artifactId>gradle-enterprise-maven-extension</artifactId>
           <configuration>
-            <gradleEnterprise xmlns="https://www.gradle.com/gradle-enterprise-maven-project">
+            <gradleEnterprise>
               <plugins>
                 <plugin>
                   <groupId>org.codehaus.mojo</groupId>

@@ -15,7 +15,7 @@ import java.util.Map;
  * An example Gradle plugin for enabling and configuring Develocity features (Build Scan only) for
  * Gradle versions 2.0 through Gradle v4.10.3.
  */
-public class ConventionGradleEnterpriseGradlePlugin implements Plugin<Project> {
+public class ConventionDevelocityGradlePlugin implements Plugin<Project> {
 
     @Override
     public void apply(Project project) {

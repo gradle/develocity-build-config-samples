@@ -17,13 +17,13 @@ import org.gradle.util.GradleVersion;
  * An example Gradle plugin for enabling and configuring Develocity features for
  * Gradle versions 5.x and higher.
  */
-public class ConventionGradleEnterpriseGradlePlugin implements Plugin<Object> {
+public class ConventionDevelocityGradlePlugin implements Plugin<Object> {
 
     @Override
     public void apply(Object target) {
         if (target instanceof Settings) {
             if (!isGradle6OrNewer()) {
-                throw new GradleException("For Gradle versions prior to 6.0, the Convention Gradle Enterprise plugin must be applied to the Root project");
+                throw new GradleException("For Gradle versions prior to 6.0, the Convention Develocity plugin must be applied to the Root project");
             }
             configureGradle6OrNewer((Settings) target);
         } else if (target instanceof Project) {
@@ -33,11 +33,11 @@ public class ConventionGradleEnterpriseGradlePlugin implements Plugin<Object> {
             }
 
             if (isGradle6OrNewer()) {
-                throw new GradleException("For Gradle versions 6.0 and newer, the Convention Gradle Enterprise plugin must be applied to Settings");
+                throw new GradleException("For Gradle versions 6.0 and newer, the Convention Develocity plugin must be applied to Settings");
             } else if (isGradle5OrNewer()) {
                 configureGradle5(project);
             } else {
-                throw new GradleException("For Gradle versions prior to 5.0, the Convention Gradle Enterprise plugin is not supported");
+                throw new GradleException("For Gradle versions prior to 5.0, the Convention Develocity plugin is not supported");
             }
         }
     }

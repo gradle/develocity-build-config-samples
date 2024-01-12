@@ -35,8 +35,8 @@ buildCache {
         url = uri("https://develocity-samples.gradle.com/cache/") // adjust to your Develocity server, and note the trailing slash
         isAllowUntrustedServer = false // ensure a trusted certificate is configured
         credentials {
-            username = System.getenv("GRADLE_ENTERPRISE_CACHE_USERNAME")
-            password = System.getenv("GRADLE_ENTERPRISE_CACHE_PASSWORD")
+            username = System.getenv("DEVELOCITY_CACHE_USERNAME")
+            password = System.getenv("DEVELOCITY_CACHE_PASSWORD")
         }
         isEnabled = true
         isPush = isCI
