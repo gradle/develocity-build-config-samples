@@ -23,7 +23,7 @@
 #       ./create-custom-maven-distribution.sh https://develocity.mycompany.com
 #
 
-maven_version=3.9.4
+maven_version=3.9.6
 maven_dir=apache-maven-${maven_version}
 maven_zip=${maven_dir}-bin.zip
 maven_lib_ext=${maven_dir}/lib/ext
@@ -32,13 +32,13 @@ maven_conf=${maven_dir}/conf
 custom_maven_version=1.0.0
 custom_maven_zip=${maven_dir}-sample-${custom_maven_version}-bin.zip
 
-ge_ext_version=1.20
-ge_ext_jar=gradle-enterprise-maven-extension-${ge_ext_version}.jar
+develocity_ext_version=1.20
+develocity_ext_jar=gradle-enterprise-maven-extension-${develocity_ext_version}.jar
 
-ge_sample_ext_version=1.12.5
-ge_sample_ext_jar=common-custom-user-data-maven-extension-${ge_sample_ext_version}.jar
+develocity_sample_ext_version=1.12.5
+develocity_sample_ext_jar=common-custom-user-data-maven-extension-${develocity_sample_ext_version}.jar
 
-ge_sample_ext_xml=gradle-enterprise.xml
+develocity_sample_ext_xml=gradle-enterprise.xml
 
 server_url=
 
@@ -69,42 +69,42 @@ unzip -q $tmp_dir/$maven_zip -d $out_dir
 
 ### Downloading and embedding Develocity Maven extension
 
-if [ ! -f "$tmp_dir/$ge_ext_jar" ]; then
-  echo -e "${yellow}Downloading Develocity Maven extension $ge_ext_version${nc}"
-  ge_ext_download_url=https://repo1.maven.org/maven2/com/gradle/gradle-enterprise-maven-extension/${ge_ext_version}/${ge_ext_jar}
-  wget $ge_ext_download_url  -P $tmp_dir
+if [ ! -f "$tmp_dir/$develocity_ext_jar" ]; then
+  echo -e "${yellow}Downloading Develocity Maven extension $develocity_ext_version${nc}"
+  develocity_ext_download_url=https://repo1.maven.org/maven2/com/gradle/gradle-enterprise-maven-extension/${develocity_ext_version}/${develocity_ext_jar}
+  wget $develocity_ext_download_url  -P $tmp_dir
 fi
 
 echo -e "${yellow}Copying Develocity Maven extension into Maven distribution${nc}"
-cp $tmp_dir/$ge_ext_jar $out_dir/$maven_lib_ext
+cp $tmp_dir/$develocity_ext_jar $out_dir/$maven_lib_ext
 
 ### Downloading and embedding Common Custom User Data Maven extension
 
-if [ ! -f "$tmp_dir/$ge_sample_ext_jar" ]; then
-  echo -e "${yellow}Downloading common custom user data capturing Maven extension $ge_sample_ext_version${nc}"
-  ge_sample_ext_download_url=https://repo1.maven.org/maven2/com/gradle/common-custom-user-data-maven-extension/${ge_sample_ext_version}/${ge_sample_ext_jar}
-  wget $ge_sample_ext_download_url  -P $tmp_dir
+if [ ! -f "$tmp_dir/$develocity_sample_ext_jar" ]; then
+  echo -e "${yellow}Downloading common custom user data capturing Maven extension $develocity_sample_ext_version${nc}"
+  develocity_sample_ext_download_url=https://repo1.maven.org/maven2/com/gradle/common-custom-user-data-maven-extension/${develocity_sample_ext_version}/${develocity_sample_ext_jar}
+  wget $develocity_sample_ext_download_url  -P $tmp_dir
 fi
 
 echo -e "${yellow}Copying common custom user data capturing Maven extension into Maven distribution${nc}"
-cp $tmp_dir/$ge_sample_ext_jar $out_dir/$maven_lib_ext
+cp $tmp_dir/$develocity_sample_ext_jar $out_dir/$maven_lib_ext
 
 ### Downloading and embedding common gradle-enterprise.xml configuration for CI builds and developers building locally
 
-if [ ! -f "$tmp_dir/$ge_sample_ext_xml" ]; then
+if [ ! -f "$tmp_dir/$develocity_sample_ext_xml" ]; then
   echo -e "${yellow}Downloading common gradle-enterprise.xml configuration for CI builds and developers building locally${nc}"
-  ge_sample_ext_xml_download_url=https://raw.githubusercontent.com/gradle/develocity-build-config-samples/master/common-develocity-xml-maven-configuration/${ge_sample_ext_xml}
-  wget $ge_sample_ext_xml_download_url  -P $tmp_dir
+  develocity_sample_ext_xml_download_url=https://raw.githubusercontent.com/gradle/gradle-enterprise-build-config-samples/master/common-develocity-maven-configuration/.mvn/${develocity_sample_ext_xml}
+  wget $develocity_sample_ext_xml_download_url  -P $tmp_dir
 fi
 
 echo -e "${yellow}Copying common gradle-enterprise.xml for developers building locally into Maven distribution${nc}"
-cp $tmp_dir/$ge_sample_ext_xml $out_dir/$maven_conf
+cp $tmp_dir/$develocity_sample_ext_xml $out_dir/$maven_conf
 
 ### If present, replace the default urls in the gradle-enterprise.xml file with the url passed on the command line
 
 if [ -n "$server_url" ]; then
   echo -e "${yellow}Replacing the urls in gradle-enterprise.xml with ${server_url}${nc}"
-  sed -i '' -e 's+https://develocity-samples.gradle.com+'"$server_url"'+g' $out_dir/$maven_conf/$ge_sample_ext_xml
+  sed -i '' -e 's+https://develocity-samples.gradle.com+'"$server_url"'+g' $out_dir/$maven_conf/$develocity_sample_ext_xml
 fi
 
 ### Packing the customized Maven distribution
