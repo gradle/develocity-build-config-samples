@@ -1,6 +1,6 @@
 # Custom Maven Extension to make Quarkus build goal cacheable
 
-This project performs programmatic configuration of the Gradle Enterprise Build Cache through a Maven extension. See [here](https://docs.gradle.com/enterprise/maven-extension/#custom_extension) for more details.
+This project performs programmatic configuration of the Develocity Build Cache through a Maven extension. See [here](https://docs.gradle.com/enterprise/maven-extension/#custom_extension) for more details.
 
 This project is derived from [the CCUD Maven extension](https://github.com/gradle/common-custom-user-data-maven-extension).
 

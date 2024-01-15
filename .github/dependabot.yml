@@ -12,7 +12,7 @@ updates:
       interval: "daily"
       time: "02:00"
   - package-ecosystem: "maven"
-    directory: "common-gradle-enterprise-maven-configuration"
+    directory: "common-develocity-maven-configuration"
     schedule:
       interval: "daily"
       time: "02:00"
@@ -22,28 +22,28 @@ updates:
         interval: "daily"
         time: "02:00"
   - package-ecosystem: "gradle"
-    directory: "common-gradle-enterprise-gradle-configuration-groovy"
+    directory: "common-develocity-gradle-configuration-groovy"
     registries:
       - gradle-plugin-portal
     schedule:
       interval: "daily"
       time: "02:00"
   - package-ecosystem: "gradle"
-    directory: "common-gradle-enterprise-gradle-configuration-kotlin"
+    directory: "common-develocity-gradle-configuration-kotlin"
     registries:
       - gradle-plugin-portal
     schedule:
       interval: "daily"
       time: "02:00"
   - package-ecosystem: "gradle"
-    directory: "convention-gradle-enterprise-gradle-plugin/plugins/gradle-5-or-newer"
+    directory: "convention-develocity-gradle-plugin/plugins/gradle-5-or-newer"
     registries:
       - gradle-plugin-portal
     schedule:
       interval: "daily"
       time: "02:00"
   - package-ecosystem: "gradle"
-    directory: "convention-gradle-enterprise-gradle-plugin/plugins/gradle-2-through-4"
+    directory: "convention-develocity-gradle-plugin/plugins/gradle-2-through-4"
     registries:
       - gradle-plugin-portal
     schedule:

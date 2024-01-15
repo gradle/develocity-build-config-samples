@@ -1,0 +1,13 @@
+buildscript {
+  repositories {
+      mavenLocal()
+      maven { url 'https://plugins.gradle.org/m2/' }
+  }
+  dependencies {
+      classpath 'com.myorg:convention-develocity-gradle-plugin-gradle-2-through-4:1.0.0-SNAPSHOT'
+  }
+}
+
+apply plugin: 'com.myorg.convention-develocity-gradle-2-through-4'
+apply plugin: 'java'
+

@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd
-        https://www.gradle.com/gradle-enterprise-maven-project https://www.gradle.com/schema/gradle-enterprise-maven-project.xsd">
+        https://www.gradle.com/schema/gradle-enterprise-maven-project.xsd">
 
     <modelVersion>4.0.0</modelVersion>
 
@@ -13,7 +13,7 @@
 
     <parent>
         <groupId>com.example</groupId>
-        <artifactId>gradle-enterprise-maven-caching-sample</artifactId>
+        <artifactId>develocity-maven-caching-sample</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
 
@@ -54,7 +54,7 @@
                     <groupId>com.gradle</groupId>
                     <artifactId>gradle-enterprise-maven-extension</artifactId>
                     <configuration>
-                        <gradleEnterprise xmlns="https://www.gradle.com/gradle-enterprise-maven-project">
+                        <gradleEnterprise>
                             <plugins>
                                 <plugin>
                                     <groupId>org.codehaus.mojo</groupId>

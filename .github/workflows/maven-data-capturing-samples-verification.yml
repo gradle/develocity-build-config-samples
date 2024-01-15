@@ -17,8 +17,8 @@ jobs:
     strategy:
       matrix:
         include:
-          - name: 'GE Maven extension version'
-            sample-file: 'capture-ge-extension-version/maven-ge-extension-version.groovy'
+          - name: 'Develocity Maven extension version'
+            sample-file: 'capture-develocity-extension-version/maven-develocity-extension-version.groovy'
           - name: 'OS processes'
             sample-file: 'capture-os-processes/maven-os-processes.groovy'
           - name: 'Processor arch'
@@ -41,14 +41,14 @@ jobs:
           distribution: 'temurin'
       - name: Provide data capture script to Maven build
         run: |
-            # copy over sample script such that it gets pulled in by the GE extension
-            cp build-data-capturing-maven-samples/${{ matrix.sample-file }} common-gradle-enterprise-maven-configuration/.mvn/gradle-enterprise-custom-user-data.groovy
+            # copy over sample script such that it gets pulled in by the Develocity extension
+            cp build-data-capturing-maven-samples/${{ matrix.sample-file }} common-develocity-maven-configuration/.mvn/gradle-enterprise-custom-user-data.groovy
       - name: Run Maven build
         id: mvn-build
         run: |
           delimiter="$(openssl rand -hex 8)"
           echo "mavenOutput<<${delimiter}" >> $GITHUB_OUTPUT
-          echo "$(mvn -f common-gradle-enterprise-maven-configuration/pom.xml -Dgradle.enterprise.url=https://ge.solutions-team.gradle.com -X -B clean validate)" >> $GITHUB_OUTPUT
+          echo "$(mvn -f common-develocity-maven-configuration/pom.xml -Dgradle.enterprise.url=https://ge.solutions-team.gradle.com -X -B clean validate)" >> $GITHUB_OUTPUT
           echo "${delimiter}" >> $GITHUB_OUTPUT
         env:
           GRADLE_ENTERPRISE_ACCESS_KEY: ${{ secrets.GE_SOLUTIONS_ACCESS_TOKEN }}
