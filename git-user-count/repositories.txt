@@ -2,4 +2,4 @@
 https://github.com/gradle/maven-build-scan-quickstart
 https://github.com/gradle/android-cache-fix-gradle-plugin
 
-https://github.com/gradle/gradle-enterprise-build-config-samples
+https://github.com/gradle/develocity-build-config-samples
