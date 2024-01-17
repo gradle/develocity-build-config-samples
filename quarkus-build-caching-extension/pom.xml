@@ -8,16 +8,16 @@
 
     <name>${project.groupId}:${project.artifactId}</name>
     <description>Maven extension to make the Quarkus build goal cacheable</description>
-    <url>https://github.com/gradle/gradle-enterprise-build-config-samples/tree/main/quarkus-build-caching-extension</url>
+    <url>https://github.com/gradle/develocity-build-config-samples/tree/main/quarkus-build-caching-extension</url>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
     <scm>
-        <url>https://github.com/gradle/gradle-enterprise-build-config-samples</url>
-        <connection>scm:git:https://github.com/gradle/gradle-enterprise-build-config-samples.git</connection>
-        <developerConnection>scm:git:https://github.com/gradle/gradle-enterprise-build-config-samples.git</developerConnection>
+        <url>https://github.com/gradle/develocity-build-config-samples</url>
+        <connection>scm:git:https://github.com/gradle/develocity-build-config-samples.git</connection>
+        <developerConnection>scm:git:https://github.com/gradle/develocity-build-config-samples.git</developerConnection>
         <tag>HEAD</tag>
     </scm>
 
@@ -31,7 +31,7 @@
     <distributionManagement>
         <site>
             <id>Documentation</id>
-            <url>https://github.com/gradle/gradle-enterprise-build-config-samples/tree/main/quarkus-build-caching-extension</url>
+            <url>https://github.com/gradle/develocity-build-config-samples/tree/main/quarkus-build-caching-extension</url>
         </site>
         <snapshotRepository>
             <id>ossrh</id>

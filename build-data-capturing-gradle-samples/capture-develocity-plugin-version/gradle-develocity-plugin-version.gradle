@@ -1,0 +1,13 @@
+/**
+ * This Groovy script captures the Develocity Gradle plugin version as a custom value.
+ */
+
+def buildScanApi = project.extensions.findByName('buildScan')
+if (!buildScanApi) {
+    return
+}
+
+URL url = buildScanApi.class.classLoader.getResource("com.gradle.scan.plugin.internal.meta.buildAgentVersion.txt")
+String buildAgentVersion = url.text
+buildScan.value("Develocity Gradle plugin version", buildAgentVersion)
+

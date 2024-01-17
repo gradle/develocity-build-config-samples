@@ -7,9 +7,9 @@ basedir="$(cd "$( dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd )"
 repositories="$basedir/repositories.txt"
 
 # outputs
-userListFile="$basedir/gradle-enterprise-users.txt"
-userUniqueListFile="$basedir/gradle-enterprise-unique-users.txt"
-usersByRepoFile="$basedir/gradle-enterprise-users-by-repo.csv"
+userListFile="$basedir/develocity-users.txt"
+userUniqueListFile="$basedir/develocity-unique-users.txt"
+usersByRepoFile="$basedir/develocity-users-by-repo.csv"
 checkout_area=.tmp/repos
 
 # options
