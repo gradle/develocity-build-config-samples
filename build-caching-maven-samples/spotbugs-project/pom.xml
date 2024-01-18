@@ -80,6 +80,7 @@
                           <property><name>failOnError</name></property>
                           <property><name>skipEmptyReport</name></property>
                           <property><name>userPrefs</name></property>
+                          <property><name>noClassOk</name></property>
 
                           <property><name>sarifOutput</name></property>
                           <property><name>sarifFullPath</name></property>
