@@ -15,7 +15,7 @@
       <plugin>
         <groupId>com.github.spotbugs</groupId>
         <artifactId>spotbugs-maven-plugin</artifactId>
-        <version>4.8.2.0</version>
+        <version>4.8.3.0</version>
         <configuration>
           <effort>Max</effort>
           <threshold>Low</threshold>
@@ -80,6 +80,7 @@
                           <property><name>failOnError</name></property>
                           <property><name>skipEmptyReport</name></property>
                           <property><name>userPrefs</name></property>
+                          <property><name>noClassOk</name></property>
 
                           <property><name>sarifOutput</name></property>
                           <property><name>sarifFullPath</name></property>
@@ -102,7 +103,6 @@
                           <ignore>maxHeap</ignore>
                           <ignore>timeout</ignore>
                           <ignore>jvmArgs</ignore>
-                          <ignore>spotbugsXmlOutput</ignore><!-- Deprecated, always true -->
                           <ignore>compileSourceRoots</ignore> <!-- Read-only -->
                           <ignore>testSourceRoots</ignore> <!-- Read-only -->
                           <ignore>remoteRepositories</ignore>
