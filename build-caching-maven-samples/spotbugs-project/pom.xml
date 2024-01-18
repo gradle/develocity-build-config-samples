@@ -102,7 +102,6 @@
                           <ignore>maxHeap</ignore>
                           <ignore>timeout</ignore>
                           <ignore>jvmArgs</ignore>
-                          <ignore>spotbugsXmlOutput</ignore><!-- Deprecated, always true -->
                           <ignore>compileSourceRoots</ignore> <!-- Read-only -->
                           <ignore>testSourceRoots</ignore> <!-- Read-only -->
                           <ignore>remoteRepositories</ignore>
