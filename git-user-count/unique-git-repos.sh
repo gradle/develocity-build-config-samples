@@ -43,7 +43,7 @@ while :; do
 done
 
 # Remove duplicates and count unique Git repositories
-unique_git_repos=($(echo "${git_repos[@]}" | tr ' ' '\n' | sort -u | tr '\n' ' '))
+IFS=$'\n' read -r -d '' -a unique_git_repos < <(printf "%s\n" "${git_repos[@]}" | sort -u && printf '\0')
 num_unique_repos=${#unique_git_repos[@]}
 
 # Print unique Git repositories and their count
