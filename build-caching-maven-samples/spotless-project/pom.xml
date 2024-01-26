@@ -179,6 +179,12 @@
                                         <property>
                                             <name>gherkin</name>
                                         </property>
+                                        <property>
+                                            <name>go</name>
+                                        </property>
+                                        <property>
+                                            <name>shell</name>
+                                        </property>
                                     </nestedProperties>
                                     <outputs>
                                         <directories>
