@@ -25,6 +25,14 @@
                     </execution>
                 </executions>
                 <configuration>
+                    <formats>
+                        <format>
+                            <includes>
+                                <include>src/main/**/package-info.java</include>
+                                <include>src/main/**/module-info.java</include>
+                            </includes>
+                        </format>
+                    </formats>
                     <java>
                         <includes>
                             <include>src/main/java/**/*.java</include>
