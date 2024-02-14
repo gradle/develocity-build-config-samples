@@ -78,9 +78,6 @@
                                                 <name>filePatterns</name>
                                             </property>
                                             <property>
-                                                <name>formats</name>
-                                            </property>
-                                            <property>
                                                 <name>goal</name>
                                             </property>
                                             <property>
