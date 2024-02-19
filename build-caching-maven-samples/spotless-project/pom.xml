@@ -25,6 +25,14 @@
                     </execution>
                 </executions>
                 <configuration>
+                    <formats>
+                        <format>
+                            <includes>
+                                <include>src/main/**/package-info.java</include>
+                                <include>src/main/**/module-info.java</include>
+                            </includes>
+                        </format>
+                    </formats>
                     <java>
                         <includes>
                             <include>src/main/java/**/*.java</include>
@@ -78,9 +86,6 @@
                                                 <name>filePatterns</name>
                                             </property>
                                             <property>
-                                                <name>formats</name>
-                                            </property>
-                                            <property>
                                                 <name>goal</name>
                                             </property>
                                             <property>
@@ -100,6 +105,30 @@
                                             <ignore>lineEndings</ignore>
                                         </ignoredProperties>
                                     </inputs>
+                                    <iteratedProperties>
+                                        <property>
+                                            <name>formats</name>
+                                            <inputs>
+                                                <properties>
+                                                    <property>
+                                                        <name>encoding</name>
+                                                    </property>
+                                                    <property>
+                                                        <name>lineEndings</name>
+                                                    </property>
+                                                    <property>
+                                                        <name>ratchetFrom</name>
+                                                    </property>
+                                                    <property>
+                                                        <name>includes</name>
+                                                    </property>
+                                                    <property>
+                                                        <name>excludes</name>
+                                                    </property>
+                                                </properties>
+                                            </inputs>
+                                        </property>
+                                    </iteratedProperties>
                                     <nestedProperties>
                                         <property>
                                             <name>licenseHeader</name>
