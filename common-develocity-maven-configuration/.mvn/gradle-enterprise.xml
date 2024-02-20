@@ -32,21 +32,8 @@
       <enabled>true</enabled>
     </local>
     <remote>
-     <!-- Use the Develocity connector's access key based authentication. 
-          This is available in Develocity 2022.3+ and Develocity Plugin 3.11+. -->
       <enabled>true</enabled>
       <storeEnabled>#{isTrue(env['CI'])}</storeEnabled> <!-- adjust to your CI provider -->
-
-      <!-- Use build cache node credentials.
-           This is available in all Develocity and Develocity Plugin versions.
-      <server>
-        <url>https://develocity-samples.gradle.com/cache/</url> 
-        <allowUntrusted>false</allowUntrusted>
-        <credentials>
-          <username>${env.DEVELOCITY_CACHE_USERNAME}</username>
-          <password>${env.DEVELOCITY_CACHE_PASSWORD}</password>
-        </credentials>
-      </server> -->
     </remote>
   </buildCache>
 </gradleEnterprise>

@@ -21,27 +21,10 @@ buildCache {
         enabled = true
     }
 
-    // Use the Develocity connector's access key based authentication.
-    // This is available in Develocity 2022.3+ and Develocity Plugin 3.11+.
     remote(gradleEnterprise.buildCache) {
         enabled = true
         push = isCI
     }
-
-    // Use Gradle's built-in access credentials.
-    // This is available in all Develocity and Develocity Plugin versions.
-    /**
-    remote(HttpBuildCache) {
-        url = 'https://develocity-samples.gradle.com/cache/' // adjust to your build cache node, and note the trailing slash
-        allowUntrustedServer = false // ensure a trusted certificate is configured
-        credentials { creds ->
-            creds.username = System.getenv('DEVELOCITY_CACHE_USERNAME')
-            creds.password = System.getenv('DEVELOCITY_CACHE_PASSWORD')
-        }
-        enabled = true
-        push = isCI
-    }
-    */
 }
 
 rootProject.name = 'common-develocity-gradle-configuration-groovy' // adjust to your project
