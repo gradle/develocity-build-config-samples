@@ -17,7 +17,7 @@
       <plugin>
         <groupId>org.asciidoctor</groupId>
         <artifactId>asciidoctor-maven-plugin</artifactId>
-        <version>2.2.6</version>
+        <version>3.0.0</version>
         <dependencies>
         </dependencies>
         <configuration>
@@ -80,9 +80,6 @@
                     </fileSets>
                     <properties>
                       <property>
-                        <name>encoding</name>
-                      </property>
-                      <property>
                         <name>preserveDirectories</name>
                       </property>
                       <property>
@@ -104,7 +101,7 @@
                         <name>doctype</name>
                       </property>
                       <property>
-                        <name>headerFooter</name>
+                        <name>standalone</name>
                       </property>
                       <property>
                         <name>templateEngine</name>
@@ -143,7 +140,6 @@
 
                       <ignore>eruby</ignore>
                       <ignore>project</ignore>
-                      <ignore>session</ignore>
                       <ignore>enableVerbose</ignore>
                       <ignore>logHandler</ignore>
                     </ignoredProperties>
