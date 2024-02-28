@@ -1,0 +1,1 @@
+- Add dependency-checksums.txt as Quarkus build goal input

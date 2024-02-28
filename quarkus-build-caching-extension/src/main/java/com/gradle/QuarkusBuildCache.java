@@ -8,9 +8,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -131,6 +131,13 @@ final class QuarkusBuildCache {
                 configuration.getProperty(GRADLE_QUARKUS_KEY_BUILD_PROFILE)
             );
         }
+
+        private String getCurrentDependencyChecksumsFileName() {
+            return String.format("target/%s-%s-dependency-checksums.txt",
+                    configuration.getProperty(GRADLE_QUARKUS_KEY_DUMP_CONFIG_PREFIX),
+                    configuration.getProperty(GRADLE_QUARKUS_KEY_BUILD_PROFILE)
+            );
+        }
     }
 
     void configureBuildCache(BuildCacheApi buildCache) {
@@ -177,7 +184,7 @@ final class QuarkusBuildCache {
         File configFile = new File(baseDir, propertyFile);
 
         if (configFile.exists()) {
-            try (InputStream input = new FileInputStream(configFile)) {
+            try (InputStream input = Files.newInputStream(configFile.toPath())) {
                 props.load(input);
             } catch (IOException e) {
                 LOGGER.error("Error while loading " + propertyFile, e);
@@ -258,7 +265,8 @@ final class QuarkusBuildCache {
             addClasspathInput(context, inputs);
             addMojoInputs(inputs);
             addQuarkusPropertiesInput(inputs, extensionConfiguration);
-            addQuarkusFilesInputs(inputs, quarkusCurrentProperties);
+            addQuarkusConfigurationFilesInputs(inputs, quarkusCurrentProperties);
+            addQuarkusDependencyChecksumsInput(inputs, extensionConfiguration);
         });
     }
 
@@ -295,13 +303,17 @@ final class QuarkusBuildCache {
         });
     }
 
-    private void addQuarkusFilesInputs(MojoMetadataProvider.Context.Inputs inputs, Properties quarkusCurrentProperties) {
+    private void addQuarkusConfigurationFilesInputs(MojoMetadataProvider.Context.Inputs inputs, Properties quarkusCurrentProperties) {
         for (String quarkusFilePropertyKey : QUARKUS_KEYS_AS_FILE_INPUTS) {
             String quarkusFilePropertyValue = quarkusCurrentProperties.getProperty(quarkusFilePropertyKey);
             if (isNotEmpty(quarkusFilePropertyValue)) {
                 inputs.fileSet(quarkusFilePropertyKey, new File(quarkusFilePropertyValue), fileSet -> fileSet.normalizationStrategy(MojoMetadataProvider.Context.FileSet.NormalizationStrategy.RELATIVE_PATH));
             }
         }
+    }
+
+    private void addQuarkusDependencyChecksumsInput(MojoMetadataProvider.Context.Inputs inputs, QuarkusExtensionConfiguration extensionConfiguration) {
+        inputs.fileSet("quarkusDependencyChecksums", new File(extensionConfiguration.getCurrentDependencyChecksumsFileName()), fileSet -> fileSet.normalizationStrategy(MojoMetadataProvider.Context.FileSet.NormalizationStrategy.RELATIVE_PATH));
     }
 
     private boolean isNotEmpty(String value) {
