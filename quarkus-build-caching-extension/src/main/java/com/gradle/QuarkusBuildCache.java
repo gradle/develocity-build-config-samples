@@ -4,6 +4,7 @@ import com.gradle.maven.extension.api.cache.BuildCacheApi;
 import com.gradle.maven.extension.api.cache.MojoMetadataProvider;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,6 +26,7 @@ import java.util.stream.Collectors;
 final class QuarkusBuildCache {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(QuarkusBuildCache.class);
+    private static final String LOG_PREFIX = "[quarkus-build-caching-extension] ";
 
     // Quarkus' configuration keys
     private static final List<String> QUARKUS_CONFIG_KEY_NATIVE_CONTAINER_BUILD = Arrays.asList("quarkus.native.container-build", "quarkus.native.remote-container-build");
@@ -156,10 +158,10 @@ final class QuarkusBuildCache {
                 if ("build".equals(context.getMojoExecution().getGoal())) {
 
                     if (extensionConfiguration.isQuarkusCacheEnabled()) {
-                        LOGGER.info("Configuring caching for Quarkus build");
+                        LOGGER.debug(getLogMessage("Quarkus caching is enabled"));
                         configureQuarkusBuildGoal(context, extensionConfiguration);
                     } else {
-                        LOGGER.debug("Quarkus caching is disabled (gradle.quarkus.cache.enabled=false)");
+                        LOGGER.debug(getLogMessage("Quarkus caching is disabled"));
                     }
                 }
             });
@@ -198,10 +200,11 @@ final class QuarkusBuildCache {
 
         // Check required configuration
         if (isQuarkusBuildCacheable(baseDir, extensionConfiguration, quarkusCurrentProperties)) {
+            LOGGER.info(getLogMessage("Quarkus build goal marked as cacheable"));
             configureInputs(context, extensionConfiguration, quarkusCurrentProperties);
             configureOutputs(context);
         } else {
-            LOGGER.info("Caching not possible for Quarkus goal");
+            LOGGER.info(getLogMessage("Quarkus build goal marked as not cacheable"));
         }
     }
 
@@ -213,10 +216,10 @@ final class QuarkusBuildCache {
             try (InputStream input = Files.newInputStream(configFile.toPath())) {
                 props.load(input);
             } catch (IOException e) {
-                LOGGER.error("Error while loading " + propertyFile, e);
+                LOGGER.error(getLogMessage("Error while loading " + propertyFile), e);
             }
         } else {
-            LOGGER.debug(propertyFile + " not found");
+            LOGGER.debug(getLogMessage(propertyFile + " not found"));
         }
 
         return props;
@@ -232,11 +235,11 @@ final class QuarkusBuildCache {
         // Load Quarkus properties for previous build
         Properties quarkusPreviousProperties = loadProperties(baseDir, extensionConfiguration.getDumpConfigFileName());
         if (quarkusPreviousProperties.size() == 0) {
-            LOGGER.debug("Quarkus previous properties not found");
+            LOGGER.debug(getLogMessage("Quarkus previous configuration not found"));
             return false;
         }
         if (quarkusCurrentProperties.size() == 0) {
-            LOGGER.debug("Quarkus current properties not found");
+            LOGGER.debug(getLogMessage("Quarkus current configuration not found"));
             return false;
         }
 
@@ -249,7 +252,7 @@ final class QuarkusBuildCache {
         quarkusPropertiesCopy.removeIf(e -> QUARKUS_IGNORED_PROPERTIES.contains(e.getKey().toString()));
 
         if (quarkusPropertiesCopy.size() > 0) {
-            LOGGER.info("Quarkus properties have changed [" + quarkusPropertiesCopy.stream().map(e -> e.getKey().toString()).collect(Collectors.joining(", ")) + "]");
+            LOGGER.debug(getLogMessage("Quarkus properties have changed [" + quarkusPropertiesCopy.stream().map(e -> e.getKey().toString()).collect(Collectors.joining(", ")) + "]"));
         } else {
             return true;
         }
@@ -261,12 +264,12 @@ final class QuarkusBuildCache {
         if (PACKAGE_NATIVE.equals(quarkusCurrentProperties.getProperty(QUARKUS_CONFIG_KEY_PACKAGE_TYPE))) {
             String builderImage = quarkusCurrentProperties.getProperty(QUARKUS_CONFIG_KEY_NATIVE_BUILDER_IMAGE, "");
             if (builderImage.isEmpty()) {
-                LOGGER.info("Quarkus build is not using a fixed image");
+                LOGGER.info(getLogMessage("Quarkus build is not using a fixed image"));
                 return false;
             }
 
             if (QUARKUS_CONFIG_KEY_NATIVE_CONTAINER_BUILD.stream().noneMatch(key -> Boolean.parseBoolean(quarkusCurrentProperties.getProperty(key)))) {
-                LOGGER.info("Quarkus build is not in-container");
+                LOGGER.info(getLogMessage("Quarkus build strategy is not in-container"));
                 return false;
             }
         }
@@ -277,7 +280,7 @@ final class QuarkusBuildCache {
     private boolean isPackagingTypeSupported(Properties quarkusCurrentProperties) {
         String packageType = quarkusCurrentProperties.getProperty(QUARKUS_CONFIG_KEY_PACKAGE_TYPE);
         if (packageType == null || !QUARKUS_CACHEABLE_PACKAGE_TYPES.contains(packageType)) {
-            LOGGER.info("Quarkus package type " + packageType + " is not cacheable");
+            LOGGER.info(getLogMessage("Quarkus package type " + packageType + " is not cacheable"));
             return false;
         }
 
@@ -358,4 +361,9 @@ final class QuarkusBuildCache {
             outputs.file("quarkusUberJar", quarkusUberJarFileName);
         });
     }
+
+    private static String getLogMessage(String msg) {
+        return LOG_PREFIX + msg;
+    }
+
 }
