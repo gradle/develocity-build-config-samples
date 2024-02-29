@@ -150,9 +150,10 @@ final class QuarkusBuildCache {
             }
         });
         buildCache.registerMojoMetadataProvider(context -> {
+            QuarkusExtensionConfiguration extensionConfiguration = new QuarkusExtensionConfiguration(context.getProject());
+
             context.withPlugin("quarkus-maven-plugin", () -> {
                 if ("build".equals(context.getMojoExecution().getGoal())) {
-                    QuarkusExtensionConfiguration extensionConfiguration = new QuarkusExtensionConfiguration(context.getProject());
 
                     if (extensionConfiguration.isQuarkusCacheEnabled()) {
                         LOGGER.info("Configuring caching for Quarkus build");
@@ -162,7 +163,32 @@ final class QuarkusBuildCache {
                     }
                 }
             });
+            context.withPlugin("maven-surefire-plugin", () -> {
+                if(isQuarkusExtraTestInputsExpected(context)) {
+                    configureQuarkusExtraTestInputs(context, extensionConfiguration);
+                }
+            });
+            context.withPlugin("maven-failsafe-plugin", () -> {
+                if(isQuarkusExtraTestInputsExpected(context)) {
+                    configureQuarkusExtraTestInputs(context, extensionConfiguration);
+                }
+            });
         });
+    }
+
+    private void configureQuarkusExtraTestInputs(MojoMetadataProvider.Context context, QuarkusExtensionConfiguration extensionConfiguration) {
+        context.inputs(inputs -> addQuarkusDependencyChecksumsInput(inputs, extensionConfiguration));
+    }
+
+    private boolean isQuarkusExtraTestInputsExpected(MojoMetadataProvider.Context context) {
+        Xpp3Dom properties = context.getMojoExecution().getConfiguration().getChild("properties");
+        if(properties != null) {
+            Xpp3Dom addQuarkusInputs = properties.getChild("addQuarkusInputs");
+            if(addQuarkusInputs != null) {
+                return Boolean.parseBoolean(addQuarkusInputs.getValue());
+            }
+        }
+        return false;
     }
 
     private void configureQuarkusBuildGoal(MojoMetadataProvider.Context context, QuarkusExtensionConfiguration extensionConfiguration) {
