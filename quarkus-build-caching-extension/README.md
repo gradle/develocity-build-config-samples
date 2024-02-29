@@ -194,3 +194,31 @@ Here are the files added as output:
 - `target/<project.build.finalName>-runner`
 - `target/<project.build.finalName>.jar`
 - `target/<project.build.finalName>-runner.jar`
+
+## Quarkus Test goals
+
+When the test goals (`maven-surefire-plugin` and `maven-test-plugin`) are running some `@QuarkusTest` or `@QuarkusIntegrationTest`, 
+it is important for consistency to add [implicit dependencies](#quarkus-dependency-checksums) as goal [additional input](https://docs.gradle.com/enterprise/maven-extension/#declaring_additional_inputs).
+
+This can be achieved by declaring a property on the test goal:
+
+```xml
+<plugins>
+    <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+            <properties>
+                <addQuarkusInputs>true</addQuarkusInputs>>
+            </properties>
+        </configuration>
+    </plugin>
+    <plugin>
+        <artifactId>maven-failsafe-plugin</artifactId>
+        <configuration>
+            <properties>
+                <addQuarkusInputs>true</addQuarkusInputs>>
+            </properties>
+        </configuration>
+    </plugin>
+</plugins>
+```
