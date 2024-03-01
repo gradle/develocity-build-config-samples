@@ -5,7 +5,7 @@ This project performs programmatic configuration of the [Develocity Build Cache]
 This project is derived from [the CCUD Maven extension](https://github.com/gradle/common-custom-user-data-maven-extension).
 
 *Note:*<br>
-A native executable can be a very large file, and copying it from/to the local cache, or transferring it from/to the remote cache can be an expensive operation that has to be balanced with the caching benefit
+A native executable can be a very large file. Copying it from/to the local cache, or transferring it from/to the remote cache can be an expensive operation that has to be balanced with the duration of the work being avoided.
 
 ## Requirements
 - Quarkus 3.2.4 and above which brings [track-config-changes goal](https://quarkus.io/guides/config-reference#tracking-build-time-configuration-changes-between-builds)
