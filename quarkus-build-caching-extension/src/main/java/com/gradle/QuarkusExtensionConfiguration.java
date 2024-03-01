@@ -2,53 +2,49 @@ package com.gradle;
 
 import org.apache.maven.project.MavenProject;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
 import java.util.Properties;
 
 final class QuarkusExtensionConfiguration {
 
     // Environment variable key to disable caching
-    private static final String GRADLE_QUARKUS_KEY_CACHE_ENABLED = "GRADLE_QUARKUS_CACHE_ENABLED";
+    private static final String DEVELOCITY_QUARKUS_KEY_CACHE_ENABLED = "DEVELOCITY_QUARKUS_CACHE_ENABLED";
 
     // Environment variable or Maven property key to define extension configuration file location
-    private static final String GRADLE_QUARKUS_KEY_CONFIG_FILE = "GRADLE_QUARKUS_EXTENSION_CONFIG_FILE";
+    private static final String DEVELOCITY_QUARKUS_KEY_CONFIG_FILE = "DEVELOCITY_QUARKUS_EXTENSION_CONFIG_FILE";
 
     // Extension configuration build profile key
-    private static final String GRADLE_QUARKUS_KEY_BUILD_PROFILE = "BUILD_PROFILE";
+    private static final String DEVELOCITY_QUARKUS_KEY_BUILD_PROFILE = "BUILD_PROFILE";
 
     // Extension configuration default profile
-    private static final String GRADLE_QUARKUS_DEFAULT_BUILD_PROFILE = "prod";
+    private static final String DEVELOCITY_QUARKUS_DEFAULT_BUILD_PROFILE = "prod";
 
     // Extension configuration dump config file prefix
-    private static final String GRADLE_QUARKUS_KEY_DUMP_CONFIG_PREFIX = "DUMP_CONFIG_PREFIX";
+    private static final String DEVELOCITY_QUARKUS_KEY_DUMP_CONFIG_PREFIX = "DUMP_CONFIG_PREFIX";
 
     // Extension configuration default dump config file prefix
-    private static final String GRADLE_QUARKUS_DEFAULT_DUMP_CONFIG_PREFIX = "quarkus";
+    private static final String DEVELOCITY_QUARKUS_DEFAULT_DUMP_CONFIG_PREFIX = "quarkus";
 
     // Extension configuration dump config file suffix
-    private static final String GRADLE_QUARKUS_KEY_DUMP_CONFIG_SUFFIX = "DUMP_CONFIG_SUFFIX";
+    private static final String DEVELOCITY_QUARKUS_KEY_DUMP_CONFIG_SUFFIX = "DUMP_CONFIG_SUFFIX";
 
     // Extension configuration default dump config file suffix
-    private static final String GRADLE_QUARKUS_DEFAULT_DUMP_CONFIG_SUFFIX = "config-dump";
+    private static final String DEVELOCITY_QUARKUS_DEFAULT_DUMP_CONFIG_SUFFIX = "config-dump";
 
     private final Properties configuration = new Properties();
 
     QuarkusExtensionConfiguration(MavenProject project) {
         // loading default properties
-        String isQuarkusCacheEnabledFromEnv = System.getenv(GRADLE_QUARKUS_KEY_CACHE_ENABLED);
-        configuration.setProperty(GRADLE_QUARKUS_KEY_CACHE_ENABLED, isQuarkusCacheEnabledFromEnv != null ? isQuarkusCacheEnabledFromEnv : "");
-        configuration.setProperty(GRADLE_QUARKUS_KEY_BUILD_PROFILE, GRADLE_QUARKUS_DEFAULT_BUILD_PROFILE);
-        configuration.setProperty(GRADLE_QUARKUS_KEY_DUMP_CONFIG_PREFIX, GRADLE_QUARKUS_DEFAULT_DUMP_CONFIG_PREFIX);
-        configuration.setProperty(GRADLE_QUARKUS_KEY_DUMP_CONFIG_SUFFIX, GRADLE_QUARKUS_DEFAULT_DUMP_CONFIG_SUFFIX);
+        String isQuarkusCacheEnabledFromEnv = System.getenv(DEVELOCITY_QUARKUS_KEY_CACHE_ENABLED);
+        configuration.setProperty(DEVELOCITY_QUARKUS_KEY_CACHE_ENABLED, isQuarkusCacheEnabledFromEnv != null ? isQuarkusCacheEnabledFromEnv : "");
+        configuration.setProperty(DEVELOCITY_QUARKUS_KEY_BUILD_PROFILE, DEVELOCITY_QUARKUS_DEFAULT_BUILD_PROFILE);
+        configuration.setProperty(DEVELOCITY_QUARKUS_KEY_DUMP_CONFIG_PREFIX, DEVELOCITY_QUARKUS_DEFAULT_DUMP_CONFIG_PREFIX);
+        configuration.setProperty(DEVELOCITY_QUARKUS_KEY_DUMP_CONFIG_SUFFIX, DEVELOCITY_QUARKUS_DEFAULT_DUMP_CONFIG_SUFFIX);
 
         // loading optional overridden locations
-        String extensionConfigurationFileFromEnv = System.getenv(GRADLE_QUARKUS_KEY_CONFIG_FILE);
+        String extensionConfigurationFileFromEnv = System.getenv(DEVELOCITY_QUARKUS_KEY_CONFIG_FILE);
         String extensionConfigurationFileFromMaven =
                 project.getProperties().getProperty(
-                        GRADLE_QUARKUS_KEY_CONFIG_FILE.toLowerCase().replace("_", "."),
+                        DEVELOCITY_QUARKUS_KEY_CONFIG_FILE.toLowerCase().replace("_", "."),
                         ""
                 );
 
@@ -66,7 +62,7 @@ final class QuarkusExtensionConfiguration {
      */
     boolean isQuarkusCacheEnabled() {
         // Quarkus cache is enabled by default
-        return !Boolean.FALSE.toString().equals(configuration.get(GRADLE_QUARKUS_KEY_CACHE_ENABLED));
+        return !Boolean.FALSE.toString().equals(configuration.get(DEVELOCITY_QUARKUS_KEY_CACHE_ENABLED));
     }
 
     /**
@@ -77,9 +73,9 @@ final class QuarkusExtensionConfiguration {
      */
     String getDumpConfigFileName() {
         return String.format(".quarkus/%s-%s-%s",
-                configuration.getProperty(GRADLE_QUARKUS_KEY_DUMP_CONFIG_PREFIX),
-                configuration.getProperty(GRADLE_QUARKUS_KEY_BUILD_PROFILE),
-                configuration.getProperty(GRADLE_QUARKUS_KEY_DUMP_CONFIG_SUFFIX)
+                configuration.getProperty(DEVELOCITY_QUARKUS_KEY_DUMP_CONFIG_PREFIX),
+                configuration.getProperty(DEVELOCITY_QUARKUS_KEY_BUILD_PROFILE),
+                configuration.getProperty(DEVELOCITY_QUARKUS_KEY_DUMP_CONFIG_SUFFIX)
         );
     }
 
@@ -91,15 +87,15 @@ final class QuarkusExtensionConfiguration {
      */
     String getCurrentConfigFileName() {
         return String.format("target/%s-%s-config-check",
-                configuration.getProperty(GRADLE_QUARKUS_KEY_DUMP_CONFIG_PREFIX),
-                configuration.getProperty(GRADLE_QUARKUS_KEY_BUILD_PROFILE)
+                configuration.getProperty(DEVELOCITY_QUARKUS_KEY_DUMP_CONFIG_PREFIX),
+                configuration.getProperty(DEVELOCITY_QUARKUS_KEY_BUILD_PROFILE)
         );
     }
 
     String getCurrentDependencyChecksumsFileName() {
         return String.format("target/%s-%s-dependency-checksums.txt",
-                configuration.getProperty(GRADLE_QUARKUS_KEY_DUMP_CONFIG_PREFIX),
-                configuration.getProperty(GRADLE_QUARKUS_KEY_BUILD_PROFILE)
+                configuration.getProperty(DEVELOCITY_QUARKUS_KEY_DUMP_CONFIG_PREFIX),
+                configuration.getProperty(DEVELOCITY_QUARKUS_KEY_BUILD_PROFILE)
         );
     }
 
