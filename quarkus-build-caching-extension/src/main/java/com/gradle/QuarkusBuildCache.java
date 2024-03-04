@@ -8,6 +8,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -77,7 +80,7 @@ final class QuarkusBuildCache {
     }
 
     private void configureQuarkusExtraTestInputs(MojoMetadataProvider.Context context, QuarkusExtensionConfiguration extensionConfiguration) {
-        context.inputs(inputs -> addQuarkusDependencyChecksumsInput(inputs, extensionConfiguration));
+        context.inputs(inputs -> addQuarkusDependenciesInputs(inputs, extensionConfiguration));
     }
 
     private boolean isQuarkusExtraTestInputsExpected(MojoMetadataProvider.Context context) {
@@ -176,7 +179,7 @@ final class QuarkusBuildCache {
             addMojoInputs(inputs);
             addQuarkusPropertiesInput(inputs, extensionConfiguration);
             addQuarkusConfigurationFilesInputs(inputs, quarkusCurrentProperties);
-            addQuarkusDependencyChecksumsInput(inputs, extensionConfiguration);
+            addQuarkusDependenciesInputs(inputs, extensionConfiguration);
         });
     }
 
@@ -222,8 +225,20 @@ final class QuarkusBuildCache {
         }
     }
 
-    private void addQuarkusDependencyChecksumsInput(MojoMetadataProvider.Context.Inputs inputs, QuarkusExtensionConfiguration extensionConfiguration) {
-        inputs.fileSet("quarkusDependencyChecksums", new File(extensionConfiguration.getCurrentDependencyChecksumsFileName()), fileSet -> fileSet.normalizationStrategy(MojoMetadataProvider.Context.FileSet.NormalizationStrategy.RELATIVE_PATH));
+    private void addQuarkusDependenciesInputs(MojoMetadataProvider.Context.Inputs inputs, QuarkusExtensionConfiguration extensionConfiguration) {
+        File quarkusDependencyFile = new File(extensionConfiguration.getCurrentDependencyFileName());
+
+        if (quarkusDependencyFile.exists()) {
+            try {
+                List<String> quarkusDependencies = Files.readAllLines(quarkusDependencyFile.toPath(), Charset.defaultCharset());
+                inputs.fileSet("quarkusDependencies", quarkusDependencies, fileSet -> fileSet.normalizationStrategy(MojoMetadataProvider.Context.FileSet.NormalizationStrategy.CLASSPATH));
+            } catch (IOException e) {
+                LOGGER.error(QuarkusExtensionUtil.getLogMessage("Error while loading " + quarkusDependencyFile), e);
+            }
+        } else {
+            LOGGER.debug(QuarkusExtensionUtil.getLogMessage(quarkusDependencyFile + " not found"));
+        }
+
     }
 
     private void configureOutputs(MojoMetadataProvider.Context context) {

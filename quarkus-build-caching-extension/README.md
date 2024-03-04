@@ -11,7 +11,7 @@ A native executable can be a very large file. Copying it from/to the local cache
 - Quarkus 3.2.4 and above which brings [track-config-changes goal](https://quarkus.io/guides/config-reference#tracking-build-time-configuration-changes-between-builds)
 
 *Note:*<br>
-Although Quarkus 3.2.4 is required, 3.9.0 and above is recommended as it brings [Dependency checksums](#quarkus-dependency-checksums) which is used as extra input by the current extension. 
+Although Quarkus 3.2.4 is required, 3.9.0 and above is recommended as it exposes [Quarkus extra dependencies](#quarkus-extra-dependencies) which is added as extra input by the current extension. 
 
 This additional input is necessary when using snapshot versions (or when overwriting fixed version) of
 - The Quarkus dependencies
@@ -192,9 +192,10 @@ Some properties are pointing to a file which has to be declared as file input. T
 - `quarkus.openshift.jvm-dockerfile`
 - `quarkus.openshift.native-dockerfile`
 
-#### Quarkus dependency checksums
-Quarkus dynamically adds some dependencies to the build which must be declared as inputs (`RELATIVE_PATH` strategy).
-The file `quarkus-prod-dependency-checksums.txt` contains the list of dependencies (with their checksum for snapshot dependencies).
+#### Quarkus extra dependencies
+Quarkus dynamically adds some dependencies to the build which will be listed in the `target/quarkus-prod-dependencies.txt` file. 
+This file is created by the Quarkus `track-config-changes` goal and contains the absolute path to each dependency (one dependency per line).
+This fileset is added as goal input with a `RUNTIME_CLASSPATH` normalization strategy.
 
 ### Goal Outputs
 Here are the files added as output:

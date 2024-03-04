@@ -1,0 +1,1 @@
+- Add Quarkus dependencies as input
