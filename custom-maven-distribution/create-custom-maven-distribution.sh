@@ -35,7 +35,7 @@ custom_maven_zip=${maven_dir}-sample-${custom_maven_version}-bin.zip
 develocity_ext_version=1.20
 develocity_ext_jar=gradle-enterprise-maven-extension-${develocity_ext_version}.jar
 
-develocity_sample_ext_version=1.12.5
+develocity_sample_ext_version=1.13
 develocity_sample_ext_jar=common-custom-user-data-maven-extension-${develocity_sample_ext_version}.jar
 
 develocity_sample_ext_xml=gradle-enterprise.xml
