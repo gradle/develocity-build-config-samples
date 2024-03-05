@@ -99,4 +99,11 @@ final class QuarkusExtensionConfiguration {
         );
     }
 
+    String getCurrentDependencyChecksumsFileName() {
+        return String.format("target/%s-%s-dependency-checksums.txt",
+                configuration.getProperty(DEVELOCITY_QUARKUS_KEY_DUMP_CONFIG_PREFIX),
+                configuration.getProperty(DEVELOCITY_QUARKUS_KEY_BUILD_PROFILE)
+        );
+    }
+
 }

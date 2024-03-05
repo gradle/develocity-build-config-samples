@@ -193,9 +193,18 @@ Some properties are pointing to a file which has to be declared as file input. T
 - `quarkus.openshift.native-dockerfile`
 
 #### Quarkus extra dependencies
+
+For compatibility reasons, both the [current version](#current-version) and the [legacy version](#legacy-version) coexist.
+
+##### Current version
 Quarkus dynamically adds some dependencies to the build which will be listed in the `target/quarkus-prod-dependencies.txt` file. 
 This file is created by the Quarkus `track-config-changes` goal and contains the absolute path to each dependency (one dependency per line).
 This fileset is added as goal input with a `RUNTIME_CLASSPATH` normalization strategy.
+
+##### Legacy version
+Quarkus dynamically adds some dependencies to the build which will be listed in the `target/quarkus-prod-dependency-checksums.txt` file.
+This file is created by the Quarkus `track-config-changes` goal and contains the list of dependencies along with their checksum for snapshot versions (one dependency per line).
+This file is added as goal input with a `RELATIVE_PATH` normalization strategy.
 
 ### Goal Outputs
 Here are the files added as output:

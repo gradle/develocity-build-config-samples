@@ -180,6 +180,7 @@ final class QuarkusBuildCache {
             addQuarkusPropertiesInput(inputs, extensionConfiguration);
             addQuarkusConfigurationFilesInputs(inputs, quarkusCurrentProperties);
             addQuarkusDependenciesInputs(inputs, extensionConfiguration);
+            addQuarkusDependencyChecksumsInput(inputs, extensionConfiguration);
         });
     }
 
@@ -223,6 +224,14 @@ final class QuarkusBuildCache {
                 inputs.fileSet(quarkusFilePropertyKey, new File(quarkusFilePropertyValue), fileSet -> fileSet.normalizationStrategy(MojoMetadataProvider.Context.FileSet.NormalizationStrategy.RELATIVE_PATH));
             }
         }
+    }
+
+    /**
+     * This method is deprecated and kept for compatibility reasons @see {@link #addQuarkusDependenciesInputs} for replacement
+     */
+    @Deprecated
+    private void addQuarkusDependencyChecksumsInput(MojoMetadataProvider.Context.Inputs inputs, QuarkusExtensionConfiguration extensionConfiguration) {
+        inputs.fileSet("quarkusDependencyChecksums", new File(extensionConfiguration.getCurrentDependencyChecksumsFileName()), fileSet -> fileSet.normalizationStrategy(MojoMetadataProvider.Context.FileSet.NormalizationStrategy.RELATIVE_PATH));
     }
 
     private void addQuarkusDependenciesInputs(MojoMetadataProvider.Context.Inputs inputs, QuarkusExtensionConfiguration extensionConfiguration) {
