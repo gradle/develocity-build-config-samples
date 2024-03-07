@@ -8,6 +8,7 @@ This project is derived from [the CCUD Maven extension](https://github.com/gradl
 A native executable can be a very large file. Copying it from/to the local cache, or transferring it from/to the remote cache can be an expensive operation that has to be balanced with the duration of the work being avoided.
 
 ## Requirements
+- [Gradle Enterprise plugin](https://docs.gradle.com/enterprise/gradle-plugin/) until 3.16.x
 - Quarkus 3.2.4 and above which brings [track-config-changes goal](https://quarkus.io/guides/config-reference#tracking-build-time-configuration-changes-between-builds)
 
 *Note:*<br>
