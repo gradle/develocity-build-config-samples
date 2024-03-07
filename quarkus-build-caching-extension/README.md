@@ -8,10 +8,11 @@ This project is derived from [the CCUD Maven extension](https://github.com/gradl
 A native executable can be a very large file. Copying it from/to the local cache, or transferring it from/to the remote cache can be an expensive operation that has to be balanced with the duration of the work being avoided.
 
 ## Requirements
+- [Gradle Enterprise plugin](https://docs.gradle.com/enterprise/gradle-plugin/) until 3.16.x
 - Quarkus 3.2.4 and above which brings [track-config-changes goal](https://quarkus.io/guides/config-reference#tracking-build-time-configuration-changes-between-builds)
 
 *Note:*<br>
-Although Quarkus 3.2.4 is required, 3.9.0 and above is recommended as it brings [Dependency checksums](#quarkus-dependency-checksums) which is used as extra input by the current extension. 
+Although Quarkus 3.2.4 is required, 3.9.0 and above is recommended as it exposes [Quarkus extra dependencies](#quarkus-extra-dependencies) which is added as extra input by the current extension. 
 
 This additional input is necessary when using snapshot versions (or when overwriting fixed version) of
 - The Quarkus dependencies
@@ -192,9 +193,19 @@ Some properties are pointing to a file which has to be declared as file input. T
 - `quarkus.openshift.jvm-dockerfile`
 - `quarkus.openshift.native-dockerfile`
 
-#### Quarkus dependency checksums
-Quarkus dynamically adds some dependencies to the build which must be declared as inputs (`RELATIVE_PATH` strategy).
-The file `quarkus-prod-dependency-checksums.txt` contains the list of dependencies (with their checksum for snapshot dependencies).
+#### Quarkus extra dependencies
+
+For compatibility reasons, both the [current version](#current-version) and the [legacy version](#legacy-version) coexist.
+
+##### Current version
+Quarkus dynamically adds some dependencies to the build which will be listed in the `target/quarkus-prod-dependencies.txt` file. 
+This file is created by the Quarkus `track-config-changes` goal and contains the absolute path to each dependency (one dependency per line).
+This fileset is added as goal input with a `RUNTIME_CLASSPATH` normalization strategy.
+
+##### Legacy version
+Quarkus dynamically adds some dependencies to the build which will be listed in the `target/quarkus-prod-dependency-checksums.txt` file.
+This file is created by the Quarkus `track-config-changes` goal and contains the list of dependencies along with their checksum for snapshot versions (one dependency per line).
+This file is added as goal input with a `RELATIVE_PATH` normalization strategy.
 
 ### Goal Outputs
 Here are the files added as output:
