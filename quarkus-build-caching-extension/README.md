@@ -2,13 +2,12 @@
 This Maven extension allows to make the [Quarkus Maven plugin](https://quarkus.io/guides/quarkus-maven-plugin) `build` goal cacheable.
 
 This project performs programmatic configuration of the [Develocity Build Cache](https://docs.gradle.com/enterprise/maven-extension/#using_the_build_cache) through a Maven extension. See [here](https://docs.gradle.com/enterprise/maven-extension/#custom_extension) for more details.
-This project is derived from [the CCUD Maven extension](https://github.com/gradle/common-custom-user-data-maven-extension).
 
 *Note:*<br>
 A native executable can be a very large file. Copying it from/to the local cache, or transferring it from/to the remote cache can be an expensive operation that has to be balanced with the duration of the work being avoided.
 
 ## Requirements
-- [Gradle Enterprise plugin](https://docs.gradle.com/enterprise/gradle-plugin/) until 3.16.x
+- [Gradle Enterprise Maven extension](https://docs.gradle.com/enterprise/maven-extension-plugin/) 1.20.X or lower
 - Quarkus 3.2.4 and above which brings [track-config-changes goal](https://quarkus.io/guides/config-reference#tracking-build-time-configuration-changes-between-builds)
 
 *Note:*<br>
