@@ -7,7 +7,7 @@ This project performs programmatic configuration of the [Develocity Build Cache]
 A native executable can be a very large file. Copying it from/to the local cache, or transferring it from/to the remote cache can be an expensive operation that has to be balanced with the duration of the work being avoided.
 
 ## Requirements
-- [Gradle Enterprise Maven extension](https://docs.gradle.com/enterprise/maven-extension-plugin/) 1.20.1 or lower
+- [Gradle Enterprise Maven extension](https://docs.gradle.com/enterprise/maven-extension-plugin/) 1.20.X or lower
 - Quarkus 3.2.4 and above which brings [track-config-changes goal](https://quarkus.io/guides/config-reference#tracking-build-time-configuration-changes-between-builds)
 
 *Note:*<br>
