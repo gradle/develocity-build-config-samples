@@ -18,7 +18,7 @@
     </parent>
 
     <properties>
-        <aspectj.version>1.9.21.2</aspectj.version>
+        <aspectj.version>1.9.22</aspectj.version>
         <aspectj-maven-plugin.version>1.15.0</aspectj-maven-plugin.version>
     </properties>
 
