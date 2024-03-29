@@ -37,7 +37,7 @@ The Develocity build configuration samples are open-source software released und
 [develocity-oss-projects]: https://github.com/gradle/develocity-oss-projects
 [ccud-gradle-plugin]: https://github.com/gradle/common-custom-user-data-gradle-plugin
 [ccud-maven-extension]: https://github.com/gradle/common-custom-user-data-maven-extension
-[ccud-sbt-plugin]: https://github.com/gradle/common-custom-user-data-sbt-plugin-plugin
+[ccud-sbt-plugin]: https://github.com/gradle/common-custom-user-data-sbt-plugin
 [android-cache-fix-plugin]: https://github.com/gradle/android-cache-fix-gradle-plugin
 [develocity]: https://gradle.com/develocity
 [apache-license]: https://www.apache.org/licenses/LICENSE-2.0.html
