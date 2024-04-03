@@ -5,7 +5,6 @@
         xsi:schemaLocation="https://www.gradle.com/develocity-maven https://www.gradle.com/schema/develocity-maven.xsd">
     <server>
         <url>https://ge.solutions-team.gradle.com</url>
-        <allowUntrusted>false</allowUntrusted>
     </server>
     <buildScan>
         <publishing>
