@@ -11,9 +11,6 @@
         <publishing>
             <onlyIf><![CDATA[authenticated]]></onlyIf>
         </publishing>
-        <capture>
-            <fileFingerprints>true</fileFingerprints>
-        </capture>
         <backgroundBuildScanUpload>#{isFalse(env['GITHUB_ACTIONS'])}</backgroundBuildScanUpload>
         <obfuscation>
             <ipAddresses>#{{'0.0.0.0'}}</ipAddresses>
