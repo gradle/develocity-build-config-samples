@@ -27,19 +27,19 @@ This additional input is necessary when using snapshot versions (or when overwri
 
 ## Usage
 
-Reference the extension in `.mvn/extensions.xml` (this extension requires the gradle-enterprise-maven-extension):
+Reference the extension in `.mvn/extensions.xml` (this extension requires the develocity-maven-extension):
 
 ```xml
 <extensions>
     <extension>
         <groupId>com.gradle</groupId>
-        <artifactId>gradle-enterprise-maven-extension</artifactId>
-        <version>1.20.1</version>
+        <artifactId>develocity-maven-extension</artifactId>
+        <version>1.21</version>
     </extension>
     <extension>
         <groupId>com.gradle</groupId>
         <artifactId>quarkus-build-caching-extension</artifactId>
-        <version>0.12</version>
+        <version>1.0</version>
     </extension>
 </extensions>
 ```
