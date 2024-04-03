@@ -16,9 +16,6 @@
         </obfuscation>
     </buildScan>
     <buildCache>
-        <local>
-            <enabled>true</enabled>
-        </local>
         <remote>
             <storeEnabled>#{isTrue(env['GITHUB_ACTIONS'])}</storeEnabled>
         </remote>
