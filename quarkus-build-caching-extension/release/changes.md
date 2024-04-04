@@ -1,0 +1,1 @@
+- Add compatiblity with develocity-maven-extension:1.21

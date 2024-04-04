@@ -38,4 +38,4 @@ nb-configuration.xml
 
 # Local environment
 .env
-.mvn/.gradle-enterprise/
+.mvn/.develocity/

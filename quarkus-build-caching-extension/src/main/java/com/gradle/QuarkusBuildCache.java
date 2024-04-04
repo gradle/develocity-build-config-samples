@@ -1,8 +1,8 @@
 package com.gradle;
 
-import com.gradle.maven.extension.api.cache.BuildCacheApi;
-import com.gradle.maven.extension.api.cache.MojoMetadataProvider;
-import com.gradle.maven.extension.api.cache.NormalizationProvider;
+import com.gradle.develocity.agent.maven.api.cache.BuildCacheApi;
+import com.gradle.develocity.agent.maven.api.cache.MojoMetadataProvider;
+import com.gradle.develocity.agent.maven.api.cache.NormalizationProvider;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.slf4j.Logger;
