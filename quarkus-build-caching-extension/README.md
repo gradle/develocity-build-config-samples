@@ -7,8 +7,7 @@ This project performs programmatic configuration of the [Develocity Build Cache]
 A native executable can be a very large file. Copying it from/to the local cache, or transferring it from/to the remote cache can be an expensive operation that has to be balanced with the duration of the work being avoided.
 
 ## Requirements
-- [Gradle Enterprise Maven extension](https://docs.gradle.com/enterprise/maven-extension-plugin/) 1.20.X or lower
-- Quarkus 3.2.4 and above which brings [track-config-changes goal](https://quarkus.io/guides/config-reference#tracking-build-time-configuration-changes-between-builds)
+Quarkus 3.2.4 and above which brings [track-config-changes goal](https://quarkus.io/guides/config-reference#tracking-build-time-configuration-changes-between-builds)
 
 *Note:*<br>
 Although Quarkus 3.2.4 is required, 3.9.0 and above is recommended as it exposes [Quarkus extra dependencies](#quarkus-extra-dependencies) which is added as extra input by the current extension. 
@@ -43,6 +42,13 @@ Reference the extension in `.mvn/extensions.xml` (this extension requires the de
     </extension>
 </extensions>
 ```
+
+Note on the Compatibility with The Develocity extension:
+
+| Extension                                      | Compatible version |
+|------------------------------------------------|--------------------|
+| `com.gradle:develocity-maven-extension`        | 1.0                |
+| `com.gradle:gradle-enterprise-maven-extension` | 0.12               |
 
 Enable [Quarkus config tracking](https://quarkus.io/guides/config-reference#dumping-build-time-configuration-options-read-during-the-build) in `pom.xml`:
 
