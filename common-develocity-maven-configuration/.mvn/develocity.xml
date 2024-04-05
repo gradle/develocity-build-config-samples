@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 
-<!-- Common gradle-enterprise.xml configuration for Maven shared between CI agents and developers building locally.
+<!-- Common develocity.xml configuration for Maven shared between CI agents and developers building locally.
 
      The build cache credentials required for CI builds to write to the remote build cache are read from environment variables.
      Possibly, the credentials are configured in Jenkins via Credentials plugin (https://plugins.jenkins.io/credentials/) and
@@ -15,17 +15,15 @@
 
            to the specifics of your CI server settings. -->
 
-<gradleEnterprise
-    xmlns="https://www.gradle.com/gradle-enterprise-maven" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="https://www.gradle.com/gradle-enterprise-maven https://www.gradle.com/schema/gradle-enterprise-maven.xsd">
+<develocity
+    xmlns="https://www.gradle.com/develocity-maven" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="https://www.gradle.com/develocity-maven https://www.gradle.com/schema/develocity-maven.xsd">
   <server>
     <url>https://develocity-samples.gradle.com</url> <!-- adjust to your Develocity server -->
     <allowUntrusted>false</allowUntrusted> <!-- ensure a trusted certificate is configured -->
   </server>
   <buildScan>
-    <captureGoalInputFiles>true</captureGoalInputFiles>
     <backgroundBuildScanUpload>#{isFalse(env['CI'])}</backgroundBuildScanUpload> <!-- adjust to your CI provider -->
-    <publish>ALWAYS</publish>
   </buildScan>
   <buildCache>
     <local>
@@ -36,4 +34,4 @@
       <storeEnabled>#{isTrue(env['CI'])}</storeEnabled> <!-- adjust to your CI provider -->
     </remote>
   </buildCache>
-</gradleEnterprise>
+</develocity>

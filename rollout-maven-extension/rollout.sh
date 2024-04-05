@@ -73,16 +73,16 @@ function process_repository() {
     cp -na "$basedir"/.mvn/. .mvn
   fi
 
-  # update .gitignore file to ignore the .mvn/.gradle-enterprise folder
+  # update .gitignore file to ignore the .mvn/.develocity folder
   if git checkout -- .gitignore >& /dev/null
   then
     # .gitignore file already exists
-    if ! grep -Fxq ".mvn/.gradle-enterprise/" .gitignore ; then
-      echo ".mvn/.gradle-enterprise/" >> .gitignore
+    if ! grep -Fxq ".mvn/.develocity/" .gitignore ; then
+      echo ".mvn/.develocity/" >> .gitignore
     fi
   else
     # .gitignore file does not already exist
-    echo ".mvn/.gradle-enterprise/" > .gitignore
+    echo ".mvn/.develocity/" > .gitignore
   fi
 
   # add changes to staging and commit

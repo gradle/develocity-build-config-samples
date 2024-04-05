@@ -1,5 +1,5 @@
 import java.nio.file.Paths
-import com.gradle.maven.extension.api.scan.BuildScanApi
+import com.gradle.develocity.agent.maven.adapters.BuildScanApiAdapter
 @Grab(group='org.codehaus.groovy', module='groovy-xml', version='3.0.9')
 import groovy.util.XmlSlurper
 
@@ -8,7 +8,7 @@ import groovy.util.XmlSlurper
  * and adds these as custom values.
  */
 
-buildScan.executeOnce('reporting-issues') { BuildScanApi buildScanApi ->
+buildScan.executeOnce('reporting-issues') { BuildScanApiAdapter buildScanApi ->
     captureReportingIssues(buildScanApi)
 }
 
