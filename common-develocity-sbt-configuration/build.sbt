@@ -1,7 +1,7 @@
 // You can configure the Develocity sbt plugin to publish Build Scans to your Develocity server
 // by adding the following configuration to your project's build.sbt file
 
-Global / develocityConfiguration :=
+ThisBuild / develocityConfiguration :=
   DevelocityConfiguration(
     server = Server(
       url = Some(url("https://develocity-samples.gradle.com")), // adjust to your Develocity server
