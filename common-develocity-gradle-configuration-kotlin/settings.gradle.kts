@@ -1,18 +1,16 @@
 plugins {
-    id("com.gradle.enterprise") version "3.17"
+    id("com.gradle.develocity") version "3.17"
     id("com.gradle.common-custom-user-data-gradle-plugin") version "2"
 }
 
 val isCI = !System.getenv("CI").isNullOrEmpty() // adjust to your CI provider
 
-gradleEnterprise {
+develocity {
     server = "https://develocity-samples.gradle.com" // adjust to your Develocity server
     allowUntrustedServer = false // ensure a trusted certificate is configured
 
     buildScan {
-        capture { isTaskInputFiles = true }
-        isUploadInBackground = !isCI
-        publishAlways()
+        uploadInBackground = !isCI
     }
 }
 
@@ -21,7 +19,7 @@ buildCache {
         isEnabled = true
     }
 
-    remote(gradleEnterprise.buildCache) {
+    remote(develocity.buildCache) {
         isEnabled = true
         isPush = isCI
     }
