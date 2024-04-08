@@ -30,13 +30,16 @@ final class QuarkusBuildCache {
     // Quarkus' configuration keys
     private static final List<String> QUARKUS_CONFIG_KEY_NATIVE_CONTAINER_BUILD = Arrays.asList("quarkus.native.container-build", "quarkus.native.remote-container-build");
     private static final String QUARKUS_CONFIG_KEY_NATIVE_BUILDER_IMAGE = "quarkus.native.builder-image";
-    private static final String QUARKUS_CONFIG_KEY_PACKAGE_TYPE = "quarkus.package.type";
+    // quarkus.package.type is replaced by quarkus.native.enabled / quarkus.package.jar.type in Quarkus 3.9
+    private static final String QUARKUS_CONFIG_KEY_DEPRECATED_PACKAGE_TYPE = "quarkus.package.type";
+    private static final String QUARKUS_CONFIG_KEY_NATIVE = "quarkus.native.enabled";
+    private static final String QUARKUS_CONFIG_KEY_JAR_TYPE = "quarkus.package.jar.type";
     private static final String QUARKUS_CONFIG_KEY_GRAALVM_HOME = "quarkus.native.graalvm-home";
     private static final String QUARKUS_CONFIG_KEY_JAVA_HOME = "quarkus.native.java-home";
     private static final String PACKAGE_NATIVE = "native";
     private static final String TEST_GOAL_KEY_ADD_QUARKUS_INPUTS = "addQuarkusInputs";
     // Quarkus' cacheable package types
-    private static final List<String> QUARKUS_CACHEABLE_PACKAGE_TYPES = Arrays.asList("jar", "legacy-jar", "uber-jar", PACKAGE_NATIVE);
+    private static final List<String> QUARKUS_CACHEABLE_JAR_TYPES = Arrays.asList("jar", "legacy-jar", "uber-jar");
 
     // Quarkus' properties which are considered as file inputs
     private static final List<String> QUARKUS_KEYS_AS_FILE_INPUTS = Arrays.asList("quarkus.docker.dockerfile-native-path", "quarkus.docker.dockerfile-jvm-path", "quarkus.openshift.jvm-dockerfile", "quarkus.openshift.native-dockerfile");
@@ -116,7 +119,7 @@ final class QuarkusBuildCache {
     }
 
     private boolean isQuarkusBuildCacheable(String baseDir, QuarkusExtensionConfiguration extensionConfiguration, Properties quarkusCurrentProperties) {
-        return isPackagingTypeSupported(quarkusCurrentProperties)
+        return isJarPackagingTypeSupported(quarkusCurrentProperties)
                 && isNotNativeOrInContainerNativeBuild(quarkusCurrentProperties)
                 && isQuarkusPropertiesUnchanged(baseDir, extensionConfiguration, quarkusCurrentProperties);
     }
@@ -150,8 +153,12 @@ final class QuarkusBuildCache {
         return false;
     }
 
+    private boolean isNativeBuild(Properties quarkusCurrentProperties) {
+        return Boolean.parseBoolean(quarkusCurrentProperties.getProperty(QUARKUS_CONFIG_KEY_NATIVE)) || PACKAGE_NATIVE.equals(quarkusCurrentProperties.getProperty(QUARKUS_CONFIG_KEY_DEPRECATED_PACKAGE_TYPE));
+    }
+
     private boolean isNotNativeOrInContainerNativeBuild(Properties quarkusCurrentProperties) {
-        if (PACKAGE_NATIVE.equals(quarkusCurrentProperties.getProperty(QUARKUS_CONFIG_KEY_PACKAGE_TYPE))) {
+        if (isNativeBuild(quarkusCurrentProperties)) {
             String builderImage = quarkusCurrentProperties.getProperty(QUARKUS_CONFIG_KEY_NATIVE_BUILDER_IMAGE, "");
             if (builderImage.isEmpty()) {
                 LOGGER.info(QuarkusExtensionUtil.getLogMessage("Quarkus build is not using a fixed image"));
@@ -167,11 +174,13 @@ final class QuarkusBuildCache {
         return true;
     }
 
-    private boolean isPackagingTypeSupported(Properties quarkusCurrentProperties) {
-        String packageType = quarkusCurrentProperties.getProperty(QUARKUS_CONFIG_KEY_PACKAGE_TYPE);
-        if (packageType == null || !QUARKUS_CACHEABLE_PACKAGE_TYPES.contains(packageType)) {
-            LOGGER.info(QuarkusExtensionUtil.getLogMessage("Quarkus package type " + packageType + " is not cacheable"));
-            return false;
+    private boolean isJarPackagingTypeSupported(Properties quarkusCurrentProperties) {
+        if (!isNativeBuild(quarkusCurrentProperties)) {
+            String packageType = quarkusCurrentProperties.getProperty(QUARKUS_CONFIG_KEY_JAR_TYPE);
+            if (packageType == null || !QUARKUS_CACHEABLE_JAR_TYPES.contains(packageType)) {
+                LOGGER.info(QuarkusExtensionUtil.getLogMessage("Quarkus package type " + packageType + " is not cacheable"));
+                return false;
+            }
         }
 
         return true;
