@@ -38,7 +38,7 @@ Reference the extension in `.mvn/extensions.xml` (this extension requires the de
     <extension>
         <groupId>com.gradle</groupId>
         <artifactId>quarkus-build-caching-extension</artifactId>
-        <version>1.0</version>
+        <version>1.1</version>
     </extension>
 </extensions>
 ```
@@ -47,7 +47,7 @@ Note on the Compatibility with The Develocity extension:
 
 | Extension                                      | Compatible version |
 |------------------------------------------------|--------------------|
-| `com.gradle:develocity-maven-extension`        | 1.0                |
+| `com.gradle:develocity-maven-extension`        | 1.+                |
 | `com.gradle:gradle-enterprise-maven-extension` | 0.12               |
 
 Enable [Quarkus config tracking](https://quarkus.io/guides/config-reference#dumping-build-time-configuration-options-read-during-the-build) in `pom.xml`:
