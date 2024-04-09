@@ -66,9 +66,9 @@
             <plugins>
                 <plugin>
                     <groupId>com.gradle</groupId>
-                    <artifactId>gradle-enterprise-maven-extension</artifactId>
+                    <artifactId>develocity-maven-extension</artifactId>
                     <configuration>
-                        <gradleEnterprise>
+                        <develocity>
                             <plugins>
                                 <plugin>
                                     <groupId>org.jetbrains.kotlin</groupId>
@@ -199,7 +199,7 @@
                                     </localState>
                                 </plugin>
                             </plugins>
-                        </gradleEnterprise>
+                        </develocity>
                     </configuration>
                 </plugin>
             </plugins>

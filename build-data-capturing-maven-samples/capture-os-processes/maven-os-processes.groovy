@@ -1,13 +1,13 @@
 import java.nio.charset.Charset
 import java.util.concurrent.TimeUnit
-import com.gradle.maven.extension.api.scan.BuildScanApi
+import com.gradle.develocity.agent.maven.adapters.BuildScanApiAdapter
 
 /**
  * This Groovy script captures the OS processes as reported by the OS 'ps' command,
  * and adds these as a custom value.
  */
 
-buildScan.executeOnce('os-processes') { BuildScanApi buildScanApi ->
+buildScan.executeOnce('os-processes') { BuildScanApiAdapter buildScanApi ->
     buildScanApi.background { api ->
         captureOsProcesses(api)
     }

@@ -3,17 +3,16 @@
 <!-- The content of this configuration file needs to be adjusted to the specific needs of 
      the entity rolling out Develocity to multiple Maven projects. 
     
-     See https://github.com/gradle/develocity-build-config-samples/blob/master/common-develocity-maven-configuration/.mvn/gradle-enterprise.xml
+     See https://github.com/gradle/develocity-build-config-samples/blob/master/common-develocity-maven-configuration/.mvn/develocity.xml
      for some notes on how to adjust the below template configuration. -->
 
-<gradleEnterprise
-    xmlns="https://www.gradle.com/gradle-enterprise-maven" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="https://www.gradle.com/gradle-enterprise-maven https://www.gradle.com/schema/gradle-enterprise-maven.xsd">
+<develocity
+    xmlns="https://www.gradle.com/develocity-maven" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="https://www.gradle.com/develocity-maven https://www.gradle.com/schema/develocity-maven.xsd">
   <server>
     <url>https://develocity-samples.gradle.com</url>
   </server>
   <buildScan>
-    <captureGoalInputFiles>true</captureGoalInputFiles>
     <backgroundBuildScanUpload>#{isFalse(env['CI'])}</backgroundBuildScanUpload>
   </buildScan>
   <buildCache>
@@ -25,4 +24,4 @@
       <storeEnabled>#{isTrue(env['CI'])}</storeEnabled>
     </remote>
   </buildCache>
-</gradleEnterprise>
+</develocity>

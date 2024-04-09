@@ -1,11 +1,8 @@
-<gradleEnterprise>
+<develocity>
     <server>
         <url>https://localhost</url>
         <allowUntrusted>true</allowUntrusted>
     </server>
-    <buildScan>
-        <captureGoalInputFiles>true</captureGoalInputFiles>
-    </buildScan>
     <buildCache>
         <local>
             <enabled>true</enabled>
@@ -14,4 +11,4 @@
             <enabled>false</enabled>
         </remote>
     </buildCache>
-</gradleEnterprise>
+</develocity>

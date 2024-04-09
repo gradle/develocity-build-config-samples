@@ -51,9 +51,9 @@
             <plugins>
                 <plugin>
                     <groupId>com.gradle</groupId>
-                    <artifactId>gradle-enterprise-maven-extension</artifactId>
+                    <artifactId>develocity-maven-extension</artifactId>
                     <configuration>
-                        <gradleEnterprise>
+                        <develocity>
                             <plugins>
                                 <plugin>
                                     <groupId>com.diffplug.spotless</groupId>
@@ -226,7 +226,7 @@
                                     </outputs>
                                 </plugin>
                             </plugins>
-                        </gradleEnterprise>
+                        </develocity>
                     </configuration>
                 </plugin>
             </plugins>

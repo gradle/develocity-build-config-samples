@@ -35,9 +35,9 @@
       <plugins>
         <plugin>
           <groupId>com.gradle</groupId>
-          <artifactId>gradle-enterprise-maven-extension</artifactId>
+          <artifactId>develocity-maven-extension</artifactId>
           <configuration>
-            <gradleEnterprise>
+            <develocity>
               <plugins>
                 <plugin>
                   <artifactId>maven-pmd-plugin</artifactId>
@@ -295,7 +295,7 @@
                   </executions>
                 </plugin>
               </plugins>
-            </gradleEnterprise>
+            </develocity>
           </configuration>
         </plugin>
       </plugins>

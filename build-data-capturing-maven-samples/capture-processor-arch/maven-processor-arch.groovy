@@ -1,13 +1,13 @@
 import java.nio.charset.Charset
 import java.util.concurrent.TimeUnit
-import com.gradle.maven.extension.api.scan.BuildScanApi
+import com.gradle.develocity.agent.maven.adapters.BuildScanApiAdapter
 
 /**
  * This Groovy script captures the processor architecture
  * and adds these as a custom value.
  */
 
-buildScan.executeOnce('processor-arch') { BuildScanApi buildScanApi ->
+buildScan.executeOnce('processor-arch') { BuildScanApiAdapter buildScanApi ->
     buildScanApi.background { api ->
         captureProcessorArch(api)
     }
