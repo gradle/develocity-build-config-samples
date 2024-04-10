@@ -69,8 +69,13 @@ class Capture {
 
     boolean cucumberUsedWithoutCompanion(Test t) {
         def cucumberUsed = t.project.configurations.stream().filter { it.canBeResolved }.any {
-            it.resolvedConfiguration.resolvedArtifacts.any {
-                it.moduleVersion.id.group == 'io.cucumber'
+            try {
+                it.resolvedConfiguration.resolvedArtifacts.any {
+                    it.moduleVersion.id.group == "io.cucumber"
+                }
+            } catch (Exception e) {
+                logger.warn("WARN: Could not resolve ${it.name} -> Cucumber test detection might be incomplete!")
+                false
             }
         }
         return cucumberUsed && !t.project.plugins.hasPlugin('com.gradle.cucumber.companion')
