@@ -65,8 +65,13 @@ class Capture(val api: BuildScanExtension, val logger: Logger) {
 
     private fun cucumberUsedWithoutCompanion(t: Test): Boolean {
         val cucumberUsed = t.project.configurations.filter { it.isCanBeResolved }.any {
-            it.resolvedConfiguration.resolvedArtifacts.any {
-                it.moduleVersion.id.group == "io.cucumber"
+            try {
+                it.resolvedConfiguration.resolvedArtifacts.any {
+                    it.moduleVersion.id.group == "io.cucumber"
+                }
+            } catch (e: Exception) {
+                logger.warn("WARN: Could not resolve ${it.name} -> Cucumber test detection might be incomplete!")
+                false
             }
         }
         return cucumberUsed && !t.project.plugins.hasPlugin("com.gradle.cucumber.companion")
