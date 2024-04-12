@@ -3,7 +3,7 @@ plugins {
     id("com.gradle.common-custom-user-data-gradle-plugin") version "2.0"
 }
 
-val isCI = !System.getenv("CI").isNullOrEmpty() // adjust to your CI provider
+val isCI = System.getenv("CI") != null // adjust to your CI provider
 
 develocity {
     server = "https://develocity-samples.gradle.com" // adjust to your Develocity server
