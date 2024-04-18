@@ -13,7 +13,7 @@ repositories {
 
 dependencies {
     implementation 'com.gradle:gradle-enterprise-gradle-plugin:3.17.1'
-    implementation 'com.gradle:common-custom-user-data-gradle-plugin:2.0'
+    implementation 'com.gradle:common-custom-user-data-gradle-plugin:2.0.1'
 }
 
 java {
