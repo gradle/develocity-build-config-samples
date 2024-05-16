@@ -9,7 +9,8 @@ the inline comments in the build and source code for things to adjust specifical
 This project is structured as follows:
 
 * `extension` - Contains the convention extension
-* `example` - Contains an example build that applies the convention extension
+* `examples` - Contains an example build that applies the convention extension
+  * `maven_3.9.4` - Applies the convention extension on a Maven 3.9.4 build
 
 ### Running the example builds
 
@@ -20,17 +21,16 @@ cd extension
 ./mvnw clean install
 ```
 
-Once the extension is published, you can run the example build under `example`:
+Once you have installed the extension, you can run the example build under `examples`:
 
 ```bash
-cd example
+cd examples/maven_3.9.4
 ./mvnw clean verify
 ```
 
-Note that you would publish your convention extension to your internal artifact provider, e.g., Artifactory or Nexus, for 
-production usage. The artifact provider must be configured as a [Mirror](https://maven.apache.org/guides/mini/guide-mirror-settings.html) 
-to Maven Central in order to correctly resolve the extension.
+Note that you would publish your convention extension to your internal artifact provider, e.g., Artifactory or Nexus, for production usage.
+The artifact provider must be configured as a [Mirror](https://maven.apache.org/guides/mini/guide-mirror-settings.html) to Maven Central in order to correctly resolve the extension.
 
 #### Requirements
 
-To run the example build, use Java 8.
+To run the example build, use Java 8 or higher.
