@@ -1,7 +1,7 @@
-## Convention Gradle Enterprise Maven Extension
+## Convention Develocity Maven Extension
 
-This project demonstrates how a convention extension can share the same Gradle Enterprise build configuration across multiple projects. It
-is intended to serve as a starting point for creating your own Maven extension that applies your specific Gradle Enterprise configuration. Note
+This project demonstrates how a convention extension can share the same Develocity build configuration across multiple projects. It
+is intended to serve as a starting point for creating your own Maven extension that applies your specific Develocity configuration. Note
 the inline comments in the build and source code for things to adjust specifically to your needs.
 
 ### Content

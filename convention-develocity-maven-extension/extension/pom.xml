@@ -3,12 +3,12 @@
     <modelVersion>4.0.0</modelVersion>
     <!-- CHANGE ME: change to your organization's group ID -->
     <groupId>com.myorg</groupId>
-    <artifactId>convention-gradle-enterprise-maven-extension</artifactId>
+    <artifactId>convention-develocity-maven-extension</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>Convention Gradle Enterprise Maven Extension</name>
-    <description>A Maven extension to apply and configure the Gradle Enterprise Maven Extension for com.myorg</description>
+    <name>Convention Develocity Maven Extension</name>
+    <description>A Maven extension to apply and configure the Develocity Maven extension for com.myorg</description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -31,13 +31,13 @@
         </dependency>
         <dependency>
             <groupId>com.gradle</groupId>
-            <artifactId>gradle-enterprise-maven-extension</artifactId>
-            <version>1.18.1</version>
+            <artifactId>develocity-maven-extension</artifactId>
+            <version>1.21.3</version>
         </dependency>
         <dependency>
             <groupId>com.gradle</groupId>
             <artifactId>common-custom-user-data-maven-extension</artifactId>
-            <version>1.12.3</version>
+            <version>2.0</version>
         </dependency>
     </dependencies>
 
