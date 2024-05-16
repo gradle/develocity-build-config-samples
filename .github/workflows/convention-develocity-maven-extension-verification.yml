@@ -36,7 +36,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        maven-version: ['3.6.3', '3.8.8', '3.9.6']
+        maven-version: ['3.6', '3.8', '3.9']
     steps:
       - name: Checkout
         uses: actions/checkout@v4
