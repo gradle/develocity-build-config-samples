@@ -35,6 +35,7 @@ jobs:
     needs: [build]
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         gradle-version: ['5.1.1', '6.0.1'] # Gradle 4.x and earlier examples are not tested as they would not succeed
     steps:
@@ -53,7 +54,11 @@ jobs:
           name: convention-develocity-gradle-plugin
           path: ~/.m2/repository/com/myorg
       - name: Verify example build
+        id: build
         working-directory: convention-develocity-gradle-plugin/examples/gradle_${{ matrix.gradle-version }}
         run: ./gradlew build -Ddevelocity.url=https://ge.solutions-team.gradle.com
         env:
           DEVELOCITY_ACCESS_KEY: ${{ secrets.GE_SOLUTIONS_ACCESS_TOKEN }}
+      - name: Verify Build Scan published
+        if: ${{ !steps.build.outputs.build-scan-url }}
+        run: echo "::error ::No Build Scan published"; exit 1
