@@ -1,0 +1,59 @@
+name: Verify Convention Develocity Gradle Plugin
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build Convention Develocity Gradle Plugin
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up JDK 8
+        uses: actions/setup-java@v4
+        with:
+          java-version: '8'
+          distribution: 'temurin'
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v3
+      - name: Build with Gradle
+        working-directory: convention-develocity-gradle-plugin/plugins/gradle-5-or-newer
+        run: ./gradlew build publishToMavenLocal
+      - name: Upload plugin
+        uses: actions/upload-artifact@v4
+        with:
+          name: convention-develocity-gradle-plugin
+          path: ~/.m2/repository/com/myorg
+
+  verification:
+    name: Verify Example Build for Gradle ${{ matrix.gradle-version }}
+    needs: [build]
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        gradle-version: ['5.1.1', '6.0.1'] # Gradle 4.x and earlier examples are not tested as they would not succeed
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up JDK 8
+        uses: actions/setup-java@v4
+        with:
+          java-version: '8'
+          distribution: 'temurin'
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v3
+      - name: Download plugin
+        uses: actions/download-artifact@v4
+        with:
+          name: convention-develocity-gradle-plugin
+          path: ~/.m2/repository/com/myorg
+      - name: Verify example build
+        working-directory: convention-develocity-gradle-plugin/examples/gradle_${{ matrix.gradle-version }}
+        run: ./gradlew build -Ddevelocity.url=https://ge.solutions-team.gradle.com
+        env:
+          DEVELOCITY_ACCESS_KEY: ${{ secrets.GE_SOLUTIONS_ACCESS_TOKEN }}
