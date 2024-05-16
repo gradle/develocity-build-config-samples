@@ -33,4 +33,4 @@ The artifact provider must be configured as a [Mirror](https://maven.apache.org/
 
 #### Requirements
 
-To run the example build, use Java 8 or higher.
+To run the example builds, use Java 8 or higher.
