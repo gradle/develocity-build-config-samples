@@ -31,13 +31,13 @@ jobs:
           path: ~/.m2/repository/com/myorg
 
   verification:
-    name: Verify Example Build for Gradle ${{ matrix.gradle-version }}
+    name: Verify Example Build for Gradle ${{ format(matrix.gradle-version, ' ') }}
     needs: [build]
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        gradle-version: ['5.1.1', '6.0.1'] # Gradle 4.x and earlier examples are not tested as they would not succeed
+        gradle-version: ['5', '6{0}and{0}later'] # Gradle 4 and earlier examples are not tested as they would not succeed
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -55,7 +55,7 @@ jobs:
           path: ~/.m2/repository/com/myorg
       - name: Verify example build
         id: build
-        working-directory: convention-develocity-gradle-plugin/examples/gradle_${{ matrix.gradle-version }}
+        working-directory: convention-develocity-gradle-plugin/examples/gradle_${{ format(matrix.gradle-version, '_') }}
         run: ./gradlew build -Ddevelocity.url=https://ge.solutions-team.gradle.com
         env:
           DEVELOCITY_ACCESS_KEY: ${{ secrets.GE_SOLUTIONS_ACCESS_TOKEN }}

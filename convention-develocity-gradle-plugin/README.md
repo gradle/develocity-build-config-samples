@@ -12,10 +12,10 @@ This project is structured as follows:
     * `gradle-2-through-4` - Applies and configures the Build Scan plugin on builds using Gradle 2.0 through Gradle 4.10.3
     * `gradle-5-or-newer` - Applies and configures the Develocity plugin on builds using Gradle 5.0 or higher
   * `examples` - Contains example builds that apply the convention plugin for different Gradle versions
-    * `gradle_2.0` - Applies the convention plugin on a Gradle 2.0 build (only the Develocity plugin is applied)
-    * `gradle_4.1` - Applies the convention plugin on a Gradle 4.1 build (the Develocity and CCUD plugins are applied)
-    * `gradle_5.1.1` - Applies the convention plugin on a Gradle 5 build (the Develocity and CCUD plugins are applied)
-    * `gradle_6.0.1` - Applies the convention plugin on a Gradle 6+ build (the Develocity and CCUD plugins are applied)
+    * `gradle_3_and_earlier` - Applies the convention plugin on a Gradle 3 and earlier (only the Develocity plugin is applied)
+    * `gradle_4` - Applies the convention plugin on a Gradle 4 build (the Develocity and CCUD plugins are applied)
+    * `gradle_5` - Applies the convention plugin on a Gradle 5 build (the Develocity and CCUD plugins are applied)
+    * `gradle_6_and_later` - Applies the convention plugin on a Gradle 6 and later build (the Develocity and CCUD plugins are applied)
 
 ### Running the example builds
 
@@ -32,7 +32,7 @@ cd plugins/gradle-5-or-newer
 Once you have published the plugins, you can run the four example builds under `examples`:
 
 ```bash
-cd examples/gradle_6.0.1
+cd examples/gradle_6_and_later
 ./gradlew build
 ```
 
@@ -40,6 +40,6 @@ Note that you would publish your convention plugins to your internal artifact pr
 
 #### Requirements
 
-To run the Gradle 2.0 example build, use Java 8. To run the Gradle 4.1 example build, use Java 8 or 9. These builds will fail when used with newer versions of Java.
+To run the Gradle 3 and earlier example build, use Java 8. To run the Gradle 4 example build, use Java 8 or 9. These builds will fail when used with newer versions of Java.
 
-To run the Gradle 5.1.1 and Gradle 6.0.1 example builds, use Java 8 or higher.
+To run the Gradle 5 and later example builds, use Java 8 or higher.
