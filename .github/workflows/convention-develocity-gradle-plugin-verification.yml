@@ -21,7 +21,10 @@ jobs:
           distribution: 'temurin'
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v3
-      - name: Build with Gradle
+      - name: Build with Gradle - Gradle 2 through 4
+        working-directory: convention-develocity-gradle-plugin/plugins/gradle-2-through-4
+        run: ./gradlew build
+      - name: Build with Gradle - Gradle 5 or newer
         working-directory: convention-develocity-gradle-plugin/plugins/gradle-5-or-newer
         run: ./gradlew build publishToMavenLocal
       - name: Upload plugin
