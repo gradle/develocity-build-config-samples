@@ -30,13 +30,19 @@ jobs:
           path: ~/.m2/repository/com/myorg
 
   verification:
-    name: Verify Example Build for Maven ${{ matrix.maven-version }}
+    name: Verify Example Build for Maven ${{ matrix.versions.version }}
     needs: [build]
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        maven-version: ['3.6', '3.8', '3.9']
+        versions:
+          - sample: '3'
+            version: '3.6'
+          - sample: '3'
+            version: '3.8'
+          - sample: '3'
+            version: '(Current)'
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -51,8 +57,14 @@ jobs:
         with:
           name: convention-develocity-maven-extension
           path: ~/.m2/repository/com/myorg
+      - name: Set Maven version
+        if: ${{ matrix.versions.version != '(Current)' }}
+        working-directory: convention-develocity-maven-extension/examples/maven_${{ matrix.versions.sample }}
+        run: ./mvnw wrapper:wrapper -Dmaven=${{ matrix.versions.version }} -Dgradle.enterprise.url=https://ge.solutions-team.gradle.com
+        env:
+          DEVELOCITY_ACCESS_KEY: ${{ secrets.GE_SOLUTIONS_ACCESS_TOKEN }}
       - name: Verify example build
-        working-directory: convention-develocity-maven-extension/examples/maven_${{ matrix.maven-version }}
+        working-directory: convention-develocity-maven-extension/examples/maven_${{ matrix.versions.sample }}
         run: ./mvnw clean verify -Ddevelocity.url=https://ge.solutions-team.gradle.com
         env:
           DEVELOCITY_ACCESS_KEY: ${{ secrets.GE_SOLUTIONS_ACCESS_TOKEN }}

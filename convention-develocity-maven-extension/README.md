@@ -9,10 +9,8 @@ the inline comments in the build and source code for things to adjust specifical
 This project is structured as follows:
 
 * `extension` - Contains the convention extension
-* `examples` - Contains an example build that applies the convention extension
-  * `maven_3.6` - Applies the convention extension on a Maven 3.6 build (the Develocity and CCUD plugins are applied)
-  * `maven_3.8` - Applies the convention extension on a Maven 3.8 build (the Develocity and CCUD plugins are applied)
-  * `maven_3.9` - Applies the convention extension on a Maven 3.9 build (the Develocity and CCUD plugins are applied)
+* `examples` - Contains example builds that apply the convention extension for different Maven versions
+  * `maven_3` - Applies the convention extension on a Maven 3 build (the Develocity and CCUD plugins are applied)
 
 ### Running the example builds
 
@@ -26,7 +24,7 @@ cd extension
 Once you have installed the extension, you can run the example build under `examples`:
 
 ```bash
-cd examples/maven_3.9
+cd examples/maven_3
 ./mvnw clean verify
 ```
 
