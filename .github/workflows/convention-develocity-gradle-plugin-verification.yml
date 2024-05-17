@@ -71,7 +71,9 @@ jobs:
       - name: Set Gradle version
         if: ${{ matrix.versions.version != '(Current)' }}
         working-directory: convention-develocity-gradle-plugin/examples/gradle_${{ matrix.versions.sample }}
-        run: ./gradlew wrapper --gradle-version=${{ matrix.versions.version }}
+        run: |
+          ./gradlew wrapper --gradle-version=${{ matrix.versions.version }}
+          ./gradlew wrapper --gradle-version=${{ matrix.versions.version }}
         env:
           DEVELOCITY_ACCESS_KEY: ${{ secrets.GE_SOLUTIONS_ACCESS_TOKEN }}
       - name: Verify example build
