@@ -38,9 +38,9 @@ jobs:
       matrix:
         versions:
           - sample: '3'
-            version: '3.6'
+            version: '3.6.3'
           - sample: '3'
-            version: '3.8'
+            version: '3.8.8'
           - sample: '3'
             version: '(Current)'
     steps:
