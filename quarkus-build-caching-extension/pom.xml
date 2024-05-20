@@ -129,7 +129,7 @@
                     <invokerPropertiesFile>invoker.properties</invokerPropertiesFile>
                     <streamLogs>true</streamLogs>
                     <filterProperties>
-                        <develocity-options>-Dmaven.ext.class.path=../../quarkus-build-caching-extension-${project.version}.jar -Ddevelocity.cache.local.directory=${project.build.directory}/build-cache</develocity-options>
+                        <develocity-options>-Dmaven.ext.class.path=../../quarkus-build-caching-extension-${project.version}.jar -Ddevelocity.cache.local.directory=${project.build.directory}/build-cache -Ddevelocity.cache.remote.enabled=false</develocity-options>
                     </filterProperties>
                 </configuration>
                 <executions>
