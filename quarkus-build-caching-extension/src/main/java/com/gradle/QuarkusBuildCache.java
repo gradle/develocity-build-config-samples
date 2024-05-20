@@ -100,12 +100,15 @@ final class QuarkusBuildCache {
             if (extensionConfiguration.isQuarkusCacheEnabled()) {
                 LOGGER.debug(QuarkusExtensionUtil.getLogMessage("Quarkus caching is enabled"));
 
-                // Load Quarkus properties for current build
+                // Load Quarkus properties for previous build
                 String baseDir = context.getProject().getBasedir().getAbsolutePath();
-                Properties quarkusCurrentProperties = QuarkusExtensionUtil.loadProperties(context.getProject().getBasedir().getAbsolutePath(), extensionConfiguration.getCurrentConfigFileName());
+                Properties quarkusPreviousProperties = QuarkusExtensionUtil.loadProperties(baseDir, extensionConfiguration.getDumpConfigFileName());
+
+                // Load Quarkus properties for current build
+                Properties quarkusCurrentProperties = QuarkusExtensionUtil.loadProperties(baseDir, extensionConfiguration.getCurrentConfigFileName());
 
                 // Check required configuration
-                if (isQuarkusBuildCacheable(baseDir, extensionConfiguration, quarkusCurrentProperties)) {
+                if (isQuarkusBuildCacheable(quarkusPreviousProperties, quarkusCurrentProperties)) {
                     LOGGER.info(QuarkusExtensionUtil.getLogMessage("Quarkus build goal marked as cacheable"));
                     configureInputs(context, extensionConfiguration, quarkusCurrentProperties);
                     configureOutputs(context);
@@ -118,15 +121,14 @@ final class QuarkusBuildCache {
         }
     }
 
-    private boolean isQuarkusBuildCacheable(String baseDir, QuarkusExtensionConfiguration extensionConfiguration, Properties quarkusCurrentProperties) {
-        return isJarPackagingTypeSupported(quarkusCurrentProperties)
+    private boolean isQuarkusBuildCacheable(Properties quarkusPreviousProperties, Properties quarkusCurrentProperties) {
+        return isQuarkusDumpConfigFilePresent(quarkusPreviousProperties, quarkusCurrentProperties)
+                && isJarPackagingTypeSupported(quarkusCurrentProperties)
                 && isNotNativeOrInContainerNativeBuild(quarkusCurrentProperties)
-                && isQuarkusPropertiesUnchanged(baseDir, extensionConfiguration, quarkusCurrentProperties);
+                && isQuarkusPropertiesUnchanged(quarkusPreviousProperties, quarkusCurrentProperties);
     }
 
-    private boolean isQuarkusPropertiesUnchanged(String baseDir, QuarkusExtensionConfiguration extensionConfiguration, Properties quarkusCurrentProperties) {
-        // Load Quarkus properties for previous build
-        Properties quarkusPreviousProperties = QuarkusExtensionUtil.loadProperties(baseDir, extensionConfiguration.getDumpConfigFileName());
+    private boolean isQuarkusDumpConfigFilePresent(Properties quarkusPreviousProperties, Properties quarkusCurrentProperties) {
         if (quarkusPreviousProperties.size() == 0) {
             LOGGER.info(QuarkusExtensionUtil.getLogMessage("Quarkus previous configuration not found"));
             return false;
@@ -136,6 +138,10 @@ final class QuarkusBuildCache {
             return false;
         }
 
+        return true;
+    }
+
+    private boolean isQuarkusPropertiesUnchanged(Properties quarkusPreviousProperties, Properties quarkusCurrentProperties) {
         Set<Map.Entry<Object, Object>> quarkusPropertiesCopy = new HashSet<>(quarkusPreviousProperties.entrySet());
 
         // Remove properties identical between current and previous build
