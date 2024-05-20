@@ -128,11 +128,11 @@ final class QuarkusBuildCache {
         // Load Quarkus properties for previous build
         Properties quarkusPreviousProperties = QuarkusExtensionUtil.loadProperties(baseDir, extensionConfiguration.getDumpConfigFileName());
         if (quarkusPreviousProperties.size() == 0) {
-            LOGGER.debug(QuarkusExtensionUtil.getLogMessage("Quarkus previous configuration not found"));
+            LOGGER.info(QuarkusExtensionUtil.getLogMessage("Quarkus previous configuration not found"));
             return false;
         }
         if (quarkusCurrentProperties.size() == 0) {
-            LOGGER.debug(QuarkusExtensionUtil.getLogMessage("Quarkus current configuration not found"));
+            LOGGER.info(QuarkusExtensionUtil.getLogMessage("Quarkus current configuration not found"));
             return false;
         }
 
@@ -145,7 +145,8 @@ final class QuarkusBuildCache {
         quarkusPropertiesCopy.removeIf(e -> QUARKUS_IGNORED_PROPERTIES.contains(e.getKey().toString()));
 
         if (quarkusPropertiesCopy.size() > 0) {
-            LOGGER.debug(QuarkusExtensionUtil.getLogMessage("Quarkus properties have changed [" + quarkusPropertiesCopy.stream().map(e -> e.getKey().toString()).collect(Collectors.joining(", ")) + "]"));
+            LOGGER.info(QuarkusExtensionUtil.getLogMessage("Quarkus properties have changed"));
+            LOGGER.debug(QuarkusExtensionUtil.getLogMessage("[" + quarkusPropertiesCopy.stream().map(e -> e.getKey().toString()).collect(Collectors.joining(", ")) + "]"));
         } else {
             return true;
         }
