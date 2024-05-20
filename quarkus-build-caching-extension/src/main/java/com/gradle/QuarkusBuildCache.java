@@ -176,7 +176,7 @@ final class QuarkusBuildCache {
 
     private boolean isJarPackagingTypeSupported(Properties quarkusCurrentProperties) {
         if (!isNativeBuild(quarkusCurrentProperties)) {
-            String packageType = quarkusCurrentProperties.getProperty(QUARKUS_CONFIG_KEY_JAR_TYPE);
+            String packageType = getJarPackageType(quarkusCurrentProperties);
             if (packageType == null || !QUARKUS_CACHEABLE_JAR_TYPES.contains(packageType)) {
                 LOGGER.info(QuarkusExtensionUtil.getLogMessage("Quarkus package type " + packageType + " is not cacheable"));
                 return false;
@@ -184,6 +184,14 @@ final class QuarkusBuildCache {
         }
 
         return true;
+    }
+
+    private String getJarPackageType(Properties quarkusCurrentProperties) {
+        String jarPackageType = quarkusCurrentProperties.getProperty(QUARKUS_CONFIG_KEY_JAR_TYPE);
+        if (jarPackageType == null) {
+            jarPackageType = quarkusCurrentProperties.getProperty(QUARKUS_CONFIG_KEY_DEPRECATED_PACKAGE_TYPE);
+        }
+        return jarPackageType;
     }
 
     private void configureInputs(MojoMetadataProvider.Context context, QuarkusExtensionConfiguration extensionConfiguration, Properties quarkusCurrentProperties) {
