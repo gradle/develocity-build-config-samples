@@ -8,8 +8,8 @@ String getContent(String fileName) {
 void checkBuildCacheDisabled(String logFile) {
     println("Verifying build cache disabled on ${logFile}...")
     String log = getContent(logFile)
-    assert log.contains( '[quarkus-build-caching-extension] Quarkus build goal marked as not cacheable')
-    assert log.contains( 'Quarkus augmentation completed')
+    assert log.contains('[quarkus-build-caching-extension] Quarkus build goal marked as not cacheable')
+    assert log.contains('Quarkus augmentation completed')
 }
 
 void checkBuildCacheMiss(String logFile) {
@@ -23,8 +23,8 @@ void checkBuildCacheMiss(String logFile) {
 void checkBuildCacheHit(String logFile) {
     println("Verifying build cache hit on ${logFile}...")
     String log = getContent(logFile)
-    assert log.contains( '[quarkus-build-caching-extension] Quarkus build goal marked as cacheable' )
-    assert !log.contains( 'Quarkus augmentation completed' )
+    assert log.contains('[quarkus-build-caching-extension] Quarkus build goal marked as cacheable')
+    assert !log.contains('Quarkus augmentation completed')
 }
 
 // Assertions
