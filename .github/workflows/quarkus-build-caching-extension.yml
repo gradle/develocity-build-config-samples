@@ -30,7 +30,7 @@ jobs:
           ./mvnw --batch-mode clean package integration-test
         env:
           DEVELOCITY_ACCESS_KEY: ${{ secrets.GE_SOLUTIONS_ACCESS_TOKEN }}
-      - name: Upload Test Reports to Artifacts (on failure only)
+      - name: Upload integration tests reports (on failure only)
         if: ${{ failure() }}
         uses: actions/upload-artifact@v4
         with:
