@@ -100,11 +100,11 @@ final class QuarkusBuildCache {
             if (extensionConfiguration.isQuarkusCacheEnabled()) {
                 LOGGER.debug(QuarkusExtensionUtil.getLogMessage("Quarkus caching is enabled"));
 
-                // Load Quarkus properties for previous build
+                // Load Quarkus properties from previous build
                 String baseDir = context.getProject().getBasedir().getAbsolutePath();
                 Properties quarkusPreviousProperties = QuarkusExtensionUtil.loadProperties(baseDir, extensionConfiguration.getDumpConfigFileName());
 
-                // Load Quarkus properties for current build
+                // Load Quarkus properties from current build
                 Properties quarkusCurrentProperties = QuarkusExtensionUtil.loadProperties(baseDir, extensionConfiguration.getCurrentConfigFileName());
 
                 // Check required configuration
