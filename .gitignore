@@ -8,3 +8,6 @@ target/
 develocity-unique-users.txt
 develocity-users.txt
 develocity-users-by-repo.csv
+
+*.iml
+.develocity/
