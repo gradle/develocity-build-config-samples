@@ -120,6 +120,28 @@
                     </transformers>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-invoker-plugin</artifactId>
+                <version>3.6.1</version>
+                <configuration>
+                    <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
+                    <invokerPropertiesFile>invoker.properties</invokerPropertiesFile>
+                    <streamLogs>true</streamLogs>
+                    <filterProperties>
+                        <develocity-options>-Dmaven.ext.class.path=../../quarkus-build-caching-extension-${project.version}.jar -Ddevelocity.cache.local.directory=${project.build.directory}/build-cache -Ddevelocity.cache.remote.enabled=false</develocity-options>
+                    </filterProperties>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>integration-test</id>
+                        <goals>
+                            <goal>install</goal>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
@@ -134,6 +156,15 @@
                         <version>3.0.1</version>
                         <configuration>
                             <arguments>-Dscan=false</arguments>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-invoker-plugin</artifactId>
+                        <version>3.6.1</version>
+                        <configuration>
+                            <skipInstallation>true</skipInstallation>
+                            <skipInvocation>true</skipInvocation>
                         </configuration>
                     </plugin>
                     <plugin>
