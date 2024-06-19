@@ -20,6 +20,5 @@ The following Maven plugins are demonstrated:
 - PMD: `org.apache.maven.plugins:maven-pmd-plugin`
 - Protobuf: `com.github.os72:protoc-jar-maven-plugin`
 - Spotbugs: `com.github.spotbugs:spotbugs-maven-plugin`
-- Spotless: `com.diffplug.spotless:spotless-maven-plugin`
 - Spring Cloud Contract: `org.springframework.cloud:spring-cloud-contract-maven-plugin`
 - Webstart: `org.codehaus.mojo:webstart-maven-plugin` (Java 1.8 only)
