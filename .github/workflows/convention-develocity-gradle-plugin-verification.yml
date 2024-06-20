@@ -72,6 +72,7 @@ jobs:
         if: ${{ matrix.versions.version != '(Current)' }}
         working-directory: convention-develocity-gradle-plugin/examples/gradle_${{ matrix.versions.sample }}
         run: |
+          sed -i '/distributionSha256Sum.*/d' gradle/wrapper/gradle-wrapper.properties
           ./gradlew wrapper --gradle-version=${{ matrix.versions.version }} --no-scan
           ./gradlew wrapper --gradle-version=${{ matrix.versions.version }} --no-scan
         env:
