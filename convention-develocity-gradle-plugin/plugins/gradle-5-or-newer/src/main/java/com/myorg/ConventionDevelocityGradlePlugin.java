@@ -1,10 +1,9 @@
 package com.myorg;
 
 import com.gradle.CommonCustomUserDataGradlePlugin;
-import com.gradle.enterprise.gradleplugin.GradleEnterpriseExtension;
-import com.gradle.enterprise.gradleplugin.GradleEnterprisePlugin;
-import com.gradle.scan.plugin.BuildScanExtension;
-import com.gradle.scan.plugin.BuildScanPlugin;
+import com.gradle.develocity.agent.gradle.DevelocityConfiguration;
+import com.gradle.develocity.agent.gradle.DevelocityPlugin;
+import com.gradle.develocity.agent.gradle.scan.BuildScanConfiguration;
 import org.gradle.StartParameter;
 import org.gradle.api.GradleException;
 import org.gradle.api.Plugin;
@@ -27,14 +26,13 @@ public class ConventionDevelocityGradlePlugin implements Plugin<Object> {
             }
             configureGradle6OrNewer((Settings) target);
         } else if (target instanceof Project) {
-            Project project = (Project) target;
-            if (!project.equals(project.getRootProject())) {
-                throw new GradleException("The Convention Gradle Enterprise plugin may only be applied to the Root project");
-            }
-
             if (isGradle6OrNewer()) {
                 throw new GradleException("For Gradle versions 6.0 and newer, the Convention Develocity plugin must be applied to Settings");
             } else if (isGradle5OrNewer()) {
+                Project project = (Project) target;
+                if (!project.equals(project.getRootProject())) {
+                    throw new GradleException("For Gradle versions prior to 6.0, the Convention Develocity plugin must be applied to the Root project");
+                }
                 configureGradle5(project);
             } else {
                 throw new GradleException("For Gradle versions prior to 5.0, the Convention Develocity plugin is not supported");
@@ -43,24 +41,24 @@ public class ConventionDevelocityGradlePlugin implements Plugin<Object> {
     }
 
     private void configureGradle6OrNewer(Settings settings) {
-        settings.getPluginManager().apply(GradleEnterprisePlugin.class);
+        settings.getPluginManager().apply(DevelocityPlugin.class);
         settings.getPluginManager().apply(CommonCustomUserDataGradlePlugin.class);
-        configureGradleEnterprise(settings.getExtensions().getByType(GradleEnterpriseExtension.class), settings.getGradle().getStartParameter());
-        configureBuildCache(settings.getBuildCache(), settings.getExtensions().getByType(GradleEnterpriseExtension.class));
+        configureDevelocity(settings.getExtensions().getByType(DevelocityConfiguration.class), settings.getGradle().getStartParameter());
+        configureBuildCache(settings.getBuildCache(), settings.getExtensions().getByType(DevelocityConfiguration.class));
     }
 
     private void configureGradle5(Project project) {
-        project.getPluginManager().apply(BuildScanPlugin.class);
+        project.getPluginManager().apply(DevelocityPlugin.class);
         project.getPluginManager().apply(CommonCustomUserDataGradlePlugin.class);
-        configureGradleEnterprise(project.getExtensions().getByType(GradleEnterpriseExtension.class), project.getGradle().getStartParameter());
+        configureDevelocity(project.getExtensions().getByType(DevelocityConfiguration.class), project.getGradle().getStartParameter());
         // configureBuildCache is not called because the build cache cannot be configured via a plugin prior to Gradle 6.0
     }
 
-    private void configureGradleEnterprise(GradleEnterpriseExtension gradleEnterprise, StartParameter startParameter) {
+    private void configureDevelocity(DevelocityConfiguration develocity, StartParameter startParameter) {
         // CHANGE ME: Apply your Develocity configuration here
-        gradleEnterprise.setServer("https://develocity-samples.gradle.com");
+        develocity.getServer().set("https://develocity-samples.gradle.com");
         if (!containsPropertiesTask(startParameter)) {
-            configureBuildScan(gradleEnterprise.getBuildScan());
+            configureBuildScan(develocity.getBuildScan());
         }
     }
 
@@ -69,15 +67,14 @@ public class ConventionDevelocityGradlePlugin implements Plugin<Object> {
                 || startParameter.getTaskNames().stream().anyMatch(it -> it.endsWith(":properties"));
     }
 
-    private void configureBuildScan(BuildScanExtension buildScan) {
+    private void configureBuildScan(BuildScanConfiguration buildScan) {
         // CHANGE ME: Apply your Build Scan configuration here
-        buildScan.publishAlways();
-        buildScan.setUploadInBackground(!isCi());
+        buildScan.getUploadInBackground().set(!isCi());
     }
 
-    private void configureBuildCache(BuildCacheConfiguration buildCache, GradleEnterpriseExtension gradleEnterprise) {
+    private void configureBuildCache(BuildCacheConfiguration buildCache, DevelocityConfiguration develocity) {
         // CHANGE ME: Apply your Build Cache configuration here
-        buildCache.remote(gradleEnterprise.getBuildCache(), remote -> {
+        buildCache.remote(develocity.getBuildCache(), remote -> {
             remote.setEnabled(true);
             remote.setPush(isCi());
         });
