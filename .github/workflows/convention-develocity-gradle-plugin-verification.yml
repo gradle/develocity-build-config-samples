@@ -1,0 +1,87 @@
+name: Verify Convention Develocity Gradle Plugin
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build Convention Develocity Gradle Plugin
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up JDK 8
+        uses: actions/setup-java@v4
+        with:
+          java-version: '8'
+          distribution: 'temurin'
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v3
+      - name: Build with Gradle - Gradle 2 through 4
+        working-directory: convention-develocity-gradle-plugin/plugins/gradle-2-through-4
+        run: ./gradlew build
+      - name: Build with Gradle - Gradle 5 or newer
+        working-directory: convention-develocity-gradle-plugin/plugins/gradle-5-or-newer
+        run: ./gradlew build publishToMavenLocal
+      - name: Upload plugin
+        uses: actions/upload-artifact@v4
+        with:
+          name: convention-develocity-gradle-plugin
+          path: ~/.m2/repository/com/myorg
+
+  verification:
+    name: Verify Example Build for Gradle ${{ matrix.versions.version }}
+    needs: [build]
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # Gradle 3 and earlier is not tested because it does not apply CCUD and overriding the server URL is not possible.
+        # Gradle 4 is not tested because it does not support publishing to authenticated servers.
+        versions:
+          - sample: '5'
+            version: '5.0'
+          - sample: '6_and_later'
+            version: '6.0.1'
+          - sample: '6_and_later'
+            version: '7.0.2'
+          - sample: '6_and_later'
+            version: '8.0.2'
+          - sample: '6_and_later'
+            version: '(Current)'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up JDK 8
+        uses: actions/setup-java@v4
+        with:
+          java-version: '8'
+          distribution: 'temurin'
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v3
+      - name: Download plugin
+        uses: actions/download-artifact@v4
+        with:
+          name: convention-develocity-gradle-plugin
+          path: ~/.m2/repository/com/myorg
+      - name: Set Gradle version
+        if: ${{ matrix.versions.version != '(Current)' }}
+        working-directory: convention-develocity-gradle-plugin/examples/gradle_${{ matrix.versions.sample }}
+        run: |
+          ./gradlew wrapper --gradle-version=${{ matrix.versions.version }}
+          ./gradlew wrapper --gradle-version=${{ matrix.versions.version }}
+        env:
+          DEVELOCITY_ACCESS_KEY: ${{ secrets.GE_SOLUTIONS_ACCESS_TOKEN }}
+      - name: Verify example build
+        id: build
+        working-directory: convention-develocity-gradle-plugin/examples/gradle_${{ matrix.versions.sample }}
+        run: ./gradlew build -Ddevelocity.url=https://ge.solutions-team.gradle.com
+        env:
+          DEVELOCITY_ACCESS_KEY: ${{ secrets.GE_SOLUTIONS_ACCESS_TOKEN }}
+      - name: Verify Build Scan published
+        if: ${{ !steps.build.outputs.build-scan-url }}
+        run: echo "::error ::No Build Scan published"; exit 1
