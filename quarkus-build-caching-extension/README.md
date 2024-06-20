@@ -33,7 +33,7 @@ Reference the extension in `.mvn/extensions.xml` (this extension requires the de
     <extension>
         <groupId>com.gradle</groupId>
         <artifactId>develocity-maven-extension</artifactId>
-        <version>1.21.4</version>
+        <version>1.21.5</version>
     </extension>
     <extension>
         <groupId>com.gradle</groupId>
