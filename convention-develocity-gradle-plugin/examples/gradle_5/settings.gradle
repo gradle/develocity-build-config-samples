@@ -1,8 +1,8 @@
 pluginManagement {
- repositories {
-     mavenLocal()
-     gradlePluginPortal()
- }
+    repositories {
+        mavenLocal()
+        gradlePluginPortal()
+    }
 }
 
 rootProject.name = 'example-build'
