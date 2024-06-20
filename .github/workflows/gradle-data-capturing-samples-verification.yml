@@ -42,6 +42,8 @@ jobs:
           distribution: 'temurin'
       - name: Set up Gradle
         uses: gradle/gradle-build-action@v3
+        with:
+          develocity-access-key: ${{ secrets.GE_SOLUTIONS_ACCESS_TOKEN }}
       - name: Inject data capture script into Gradle build using Groovy DSL
         working-directory: common-develocity-gradle-configuration-groovy
         run: |
@@ -49,9 +51,7 @@ jobs:
           echo "apply from: file(\"../build-data-capturing-gradle-samples/${{matrix.sample-file}}\")" >> build.gradle
       - name: Run Gradle build using Groovy DSL
         working-directory: common-develocity-gradle-configuration-groovy
-        run: ./gradlew tasks -Dgradle.enterprise.url=https://ge.solutions-team.gradle.com
-        env:
-          GRADLE_ENTERPRISE_ACCESS_KEY: ${{ secrets.GE_SOLUTIONS_ACCESS_TOKEN }}
+        run: ./gradlew tasks -Ddevelocity.url=https://ge.solutions-team.gradle.com
       - name: Inject data capture script into Gradle build using Kotlin DSL
         working-directory: common-develocity-gradle-configuration-kotlin
         run: |
@@ -59,6 +59,4 @@ jobs:
           echo "apply(from = \"../build-data-capturing-gradle-samples/${{matrix.sample-file}}.kts\")" >> build.gradle.kts
       - name: Run Gradle build using Kotlin DSL
         working-directory: common-develocity-gradle-configuration-kotlin
-        run: ./gradlew tasks -Dgradle.enterprise.url=https://ge.solutions-team.gradle.com
-        env:
-          GRADLE_ENTERPRISE_ACCESS_KEY: ${{ secrets.GE_SOLUTIONS_ACCESS_TOKEN }}
+        run: ./gradlew tasks -Ddevelocity.url=https://ge.solutions-team.gradle.com
