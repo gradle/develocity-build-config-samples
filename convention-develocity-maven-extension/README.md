@@ -10,7 +10,7 @@ This project is structured as follows:
 
 * `extension` - Contains the convention extension
 * `examples` - Contains example builds that apply the convention extension for different Maven versions
-  * `maven_3` - Applies the convention extension on a Maven 3 build (the Develocity and CCUD plugins are applied)
+  * `maven_3` - Applies the convention extension on a Maven 3 build (the Develocity and CCUD extensions are applied)
 
 ### Running the example builds
 

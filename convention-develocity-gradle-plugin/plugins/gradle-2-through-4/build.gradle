@@ -25,7 +25,7 @@ java {
 
 gradlePlugin {
     plugins {
-        gradleEnterpriseConventions {
+        develocityConventions {
             // CHANGE ME: change for your organization
             id = 'com.myorg.convention-develocity-gradle-2-through-4'
             displayName = 'Develocity Convention Plugin for Gradle 2.0 through Gradle 4.10.3'
