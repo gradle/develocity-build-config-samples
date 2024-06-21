@@ -6,7 +6,7 @@ pluginManagement {
 }
 
 plugins {
-    id 'com.myorg.convention-develocity-gradle-5-or-newer' version '1.0.0-SNAPSHOT'
+    id 'com.myorg.convention-develocity-gradle-5-or-newer' version '1.0-SNAPSHOT'
 }
 
 rootProject.name = 'example-build'
