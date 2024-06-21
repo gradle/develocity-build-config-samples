@@ -3,8 +3,10 @@ name: Verify Convention Develocity Maven Extension
 on:
   push:
     branches: [ main ]
+    paths: [ 'convention-develocity-maven-extension/**' ]
   pull_request:
     branches: [ main ]
+    paths: [ 'convention-develocity-maven-extension/**' ]
   workflow_dispatch:
 
 jobs:

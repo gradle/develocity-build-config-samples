@@ -3,8 +3,10 @@ name: Verify Maven Build Caching Samples
 on:
   push:
     branches: [ main ]
+    paths: [ 'build-caching-maven-samples/**' ]
   pull_request:
     branches: [ main ]
+    paths: [ 'build-caching-maven-samples/**' ]
   workflow_dispatch:
 
 jobs:
