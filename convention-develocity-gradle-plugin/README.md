@@ -9,18 +9,23 @@ Note the inline comments in the build and source code for things to adjust speci
 #### Using a dynamic version
 
 For builds using Gradle 6.9 and later, it's recommended to apply the convention plugin using a [dynamic version](https://docs.gradle.org/current/userguide/dynamic_versions.html).
-This approach ensures that the latest version of the plugin is resolved, up to the specified maximum version.
-For example, the following resolves the latest version of the plugin up to, but excluding, version `2.0.0`:
+This approach ensures that the latest version of the plugin is automatically used, but only for the specified major version.
+For example, the following will automatically use the latest `1.x` version of the plugin up to, but excluding, version `2.0`:
 
 ```groovy
 plugins {
-    id 'com.myorg.convention-develocity-gradle-5-or-newer' version '(,2.0.0)'
+    id 'com.myorg.convention-develocity-gradle-5-or-newer' version '1.+'
 }
 ```
 
 This allows you to quickly roll out non-breaking changes to all consumers of the convention plugin.
-Breaking changes in the plugin should be released under a new major version (e.g., `2.0.0`).
-All consumers of the plugin will then need to update the upper boundary of the dynamic version to the next major version (e.g., `(,3.0.0)`).
+Breaking changes in the plugin should be released under a new major version, e.g., `2.0`.
+All consumers of the plugin will then need to update the specified major version, e.g., `2.+`.
+
+> [!IMPORTANT]
+> Using dynamic versions should only be done when releases and development versions are published to separate repositories.
+> Not having this separation introduces the risk that consumers will use a development version of the plugin not yet ready to be used.
+> In these scenarios, using a static version is preferred.
 
 #### Using a static version
 
@@ -29,11 +34,11 @@ For example:
 
 ```groovy
 plugins {
-    id 'com.myorg.convention-develocity-gradle-5-or-newer' version '1.0.0'
+    id 'com.myorg.convention-develocity-gradle-5-or-newer' version '1.0'
 }
 ```
 
-For each new release of the convention plugin, builds will need to be manually updated.
+For each new release of the convention plugin, builds will need to be explicitly updated.
 
 ### Content
 
@@ -68,7 +73,8 @@ cd examples/gradle_6_and_later
 ./gradlew build
 ```
 
-Note that you would publish your convention plugins to your internal artifact provider, e.g., Artifactory or Nexus, for production usage.
+> [!NOTE]
+> You would publish your convention plugins to your internal artifact provider, e.g., Artifactory or Nexus, for production usage.
 
 #### Requirements
 
