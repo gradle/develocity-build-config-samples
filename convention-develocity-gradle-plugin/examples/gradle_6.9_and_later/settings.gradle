@@ -1,0 +1,12 @@
+pluginManagement {
+    repositories {
+        mavenLocal()
+        gradlePluginPortal()
+    }
+}
+
+plugins {
+    id 'com.myorg.convention-develocity-gradle-5-or-newer' version '(,2.0.0)'
+}
+
+rootProject.name = 'example-build'
