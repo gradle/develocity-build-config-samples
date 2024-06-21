@@ -3,10 +3,8 @@ name: Validate Shell Scripts
 on:
   push:
     branches: [ main ]
-    paths: [ 'custom-maven-**', 'git-user-count/**', 'rollout-maven-extension/**' ]
   pull_request:
     branches: [ main ]
-    paths: [ 'custom-maven-**', 'git-user-count/**', 'rollout-maven-extension/**' ]
   workflow_dispatch:
 
 jobs:
