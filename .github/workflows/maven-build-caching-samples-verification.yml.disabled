@@ -43,7 +43,7 @@ jobs:
             -f -e 2>&1 | tee -a /tmp/build.log
           echo "hasUnknownParams=$(grep "Build caching was not enabled for this goal execution because the following parameters were not handled" /tmp/build.log | wc -l)" >> $GITHUB_OUTPUT
         env:
-          GRADLE_ENTERPRISE_ACCESS_KEY: ${{ secrets.GE_SOLUTIONS_ACCESS_TOKEN }}
+          DEVELOCITY_ACCESS_KEY: ${{ secrets.DV_SOLUTIONS_ACCESS_KEY }}
       - name: Verify no unmapped mojo parameters
         if: (success() || failure()) && steps.build.outputs.hasUnknownParams != '0'
         run: exit 1

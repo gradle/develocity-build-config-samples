@@ -53,7 +53,7 @@ jobs:
           echo "$(mvn -f common-develocity-maven-configuration/pom.xml -Ddevelocity.url=https://ge.solutions-team.gradle.com -X -B clean validate)" >> $GITHUB_OUTPUT
           echo "${delimiter}" >> $GITHUB_OUTPUT
         env:
-          DEVELOCITY_ACCESS_KEY: ${{ secrets.GE_SOLUTIONS_ACCESS_TOKEN }}
+          DEVELOCITY_ACCESS_KEY: ${{ secrets.DV_SOLUTIONS_ACCESS_KEY }}
       - name: Validate extension loaded
         # Asserting that extension was loaded checking a log entry
         run: exit 1
