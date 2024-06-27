@@ -47,13 +47,15 @@ jobs:
         versions:
           - sample: '5'
             version: '5.0'
-          - sample: '6_and_later'
+          - sample: '6'
             version: '6.0.1'
-          - sample: '6_and_later'
+          - sample: '6.9_and_later'
+            version: '6.9.4'
+          - sample: '6.9_and_later'
             version: '7.0.2'
-          - sample: '6_and_later'
+          - sample: '6.9_and_later'
             version: '8.0.2'
-          - sample: '6_and_later'
+          - sample: '6.9_and_later'
             version: '(Current)'
     steps:
       - name: Checkout
