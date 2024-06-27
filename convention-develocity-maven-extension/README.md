@@ -46,7 +46,7 @@ For example:
 </extensions>
 ```
 
-For each new release of the convention extension, builds will need to be explicitly updated.
+For each new release of the convention extension, consuming builds will need to be explicitly updated.
 
 ### Content
 

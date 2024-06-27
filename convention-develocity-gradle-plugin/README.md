@@ -38,7 +38,7 @@ plugins {
 }
 ```
 
-For each new release of the convention plugin, builds will need to be explicitly updated.
+For each new release of the convention plugin, consuming builds will need to be explicitly updated.
 
 ### Content
 
