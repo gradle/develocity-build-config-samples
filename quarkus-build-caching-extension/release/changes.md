@@ -1,3 +1,6 @@
+### 1.3
+- Add `quarkus-artifact.properties` as goal output 
+
 ### 1.2
 - Fix cache disabled due to unrecognized Jar package type when deprecated key `quarkus.package.type` is used instead of `quarkus.package.jar.type`
 

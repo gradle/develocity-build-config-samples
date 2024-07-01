@@ -38,7 +38,7 @@ Reference the extension in `.mvn/extensions.xml` (this extension requires the de
     <extension>
         <groupId>com.gradle</groupId>
         <artifactId>quarkus-build-caching-extension</artifactId>
-        <version>1.2</version>
+        <version>1.3</version>
     </extension>
 </extensions>
 ```
@@ -217,6 +217,7 @@ Here are the files added as output:
 - `target/<project.build.finalName>-runner`
 - `target/<project.build.finalName>.jar`
 - `target/<project.build.finalName>-runner.jar`
+- `target/quarkus-artifact.properties`
 
 ## Quarkus Test goals
 
