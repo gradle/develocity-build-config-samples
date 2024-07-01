@@ -47,6 +47,10 @@ final class QuarkusBuildCache {
     // Quarkus' properties which should be ignored (the JDK / GraalVM version are extra inputs)
     private static final List<String> QUARKUS_IGNORED_PROPERTIES = Arrays.asList(QUARKUS_CONFIG_KEY_GRAALVM_HOME, QUARKUS_CONFIG_KEY_JAVA_HOME);
 
+    // this file contains some metadata required for running the Failsafe tests
+    // it also contains the full GraalVM version
+    private static final String QUARKUS_ARTIFACT_PROPERTIES_FILE_NAME = "target/quarkus-artifact.properties";
+
     void configureBuildCache(BuildCacheApi buildCache) {
         buildCache.registerNormalizationProvider(context -> {
             QuarkusExtensionConfiguration extensionConfiguration = new QuarkusExtensionConfiguration(context.getProject());
@@ -63,6 +67,7 @@ final class QuarkusBuildCache {
             });
             context.withPlugin("maven-failsafe-plugin", () -> {
                 configureQuarkusExtraTestInputs(context, extensionConfiguration);
+                context.inputs(inputs -> addQuarkusArtifactPropertiesInput(inputs, extensionConfiguration));
             });
         });
     }
@@ -264,6 +269,10 @@ final class QuarkusBuildCache {
         inputs.fileSet("quarkusDependencyChecksums", new File(extensionConfiguration.getCurrentDependencyChecksumsFileName()), fileSet -> fileSet.normalizationStrategy(MojoMetadataProvider.Context.FileSet.NormalizationStrategy.RELATIVE_PATH));
     }
 
+    private void addQuarkusArtifactPropertiesInput(MojoMetadataProvider.Context.Inputs inputs, QuarkusExtensionConfiguration extensionConfiguration) {
+        inputs.fileSet("quarkusArtifactProperties", new File(QUARKUS_ARTIFACT_PROPERTIES_FILE_NAME), fileSet -> fileSet.normalizationStrategy(MojoMetadataProvider.Context.FileSet.NormalizationStrategy.RELATIVE_PATH));
+    }
+
     private void addQuarkusDependenciesInputs(MojoMetadataProvider.Context.Inputs inputs, QuarkusExtensionConfiguration extensionConfiguration) {
         File quarkusDependencyFile = new File(extensionConfiguration.getCurrentDependencyFileName());
         if (quarkusDependencyFile.exists()) {
@@ -288,6 +297,7 @@ final class QuarkusBuildCache {
             outputs.file("quarkusExe", quarkusExeFileName);
             outputs.file("quarkusJar", quarkusJarFileName);
             outputs.file("quarkusUberJar", quarkusUberJarFileName);
+            outputs.file("quarkusArtifactProperties", QUARKUS_ARTIFACT_PROPERTIES_FILE_NAME);
         });
     }
 
