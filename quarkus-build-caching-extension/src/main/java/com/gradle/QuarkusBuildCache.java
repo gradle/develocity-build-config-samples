@@ -67,7 +67,8 @@ final class QuarkusBuildCache {
             });
             context.withPlugin("maven-failsafe-plugin", () -> {
                 configureQuarkusExtraTestInputs(context, extensionConfiguration);
-                context.inputs(inputs -> addQuarkusArtifactPropertiesInput(inputs, extensionConfiguration));
+                // For now, we don't add this one as an input but it might be a good idea to add it in the future
+                //context.inputs(inputs -> addQuarkusArtifactPropertiesInput(inputs, extensionConfiguration));
             });
         });
     }
