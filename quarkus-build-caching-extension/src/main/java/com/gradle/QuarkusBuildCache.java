@@ -27,6 +27,8 @@ final class QuarkusBuildCache {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(QuarkusBuildCache.class);
 
+    private static final String TARGET_DIR = "target/";
+
     // Quarkus' configuration keys
     private static final List<String> QUARKUS_CONFIG_KEY_NATIVE_CONTAINER_BUILD = Arrays.asList("quarkus.native.container-build", "quarkus.native.remote-container-build");
     private static final String QUARKUS_CONFIG_KEY_NATIVE_BUILDER_IMAGE = "quarkus.native.builder-image";
@@ -47,9 +49,8 @@ final class QuarkusBuildCache {
     // Quarkus' properties which should be ignored (the JDK / GraalVM version are extra inputs)
     private static final List<String> QUARKUS_IGNORED_PROPERTIES = Arrays.asList(QUARKUS_CONFIG_KEY_GRAALVM_HOME, QUARKUS_CONFIG_KEY_JAVA_HOME);
 
-    // this file contains some metadata required for running the Failsafe tests
-    // it also contains the full GraalVM version
-    private static final String QUARKUS_ARTIFACT_PROPERTIES_FILE_NAME = "target/quarkus-artifact.properties";
+    // Quarkus artifact descriptor
+    private static final String QUARKUS_ARTIFACT_PROPERTIES_FILE_NAME = "quarkus-artifact.properties";
 
     void configureBuildCache(BuildCacheApi buildCache) {
         buildCache.registerNormalizationProvider(context -> {
@@ -67,8 +68,7 @@ final class QuarkusBuildCache {
             });
             context.withPlugin("maven-failsafe-plugin", () -> {
                 configureQuarkusExtraTestInputs(context, extensionConfiguration);
-                // For now, we don't add this one as an input but it might be a good idea to add it in the future
-                //context.inputs(inputs -> addQuarkusArtifactPropertiesInput(inputs, extensionConfiguration));
+                configureQuarkusExtraIntegrationTestInputs(context, extensionConfiguration);
             });
         });
     }
@@ -76,15 +76,22 @@ final class QuarkusBuildCache {
     private void configureNormalization(NormalizationProvider.Context context, QuarkusExtensionConfiguration extensionConfiguration) {
         if (extensionConfiguration.isQuarkusCacheEnabled()) {
             context.configureRuntimeClasspathNormalization(
-                    normalization -> normalization.addPropertiesNormalization(extensionConfiguration.getCurrentConfigFileName(), QUARKUS_IGNORED_PROPERTIES)
+                normalization -> normalization.addPropertiesNormalization(extensionConfiguration.getCurrentConfigFileName(), QUARKUS_IGNORED_PROPERTIES)
             );
         }
     }
 
     private void configureQuarkusExtraTestInputs(MojoMetadataProvider.Context context, QuarkusExtensionConfiguration extensionConfiguration) {
         if (isQuarkusExtraTestInputsExpected(context, extensionConfiguration)) {
+            LOGGER.debug(QuarkusExtensionUtil.getLogMessage("Adding Quarkus extra test inputs"));
             context.inputs(inputs -> addQuarkusDependencyChecksumsInput(inputs, extensionConfiguration));
             context.inputs(inputs -> addQuarkusDependenciesInputs(inputs, extensionConfiguration));
+        }
+    }
+
+    private void configureQuarkusExtraIntegrationTestInputs(MojoMetadataProvider.Context context, QuarkusExtensionConfiguration extensionConfiguration) {
+        if (isQuarkusExtraTestInputsExpected(context, extensionConfiguration)) {
+            context.inputs(this::addQuarkusArtifactPropertiesInput);
         }
     }
 
@@ -135,11 +142,11 @@ final class QuarkusBuildCache {
     }
 
     private boolean isQuarkusDumpConfigFilePresent(Properties quarkusPreviousProperties, Properties quarkusCurrentProperties) {
-        if (quarkusPreviousProperties.size() == 0) {
+        if (quarkusPreviousProperties.isEmpty()) {
             LOGGER.info(QuarkusExtensionUtil.getLogMessage("Quarkus previous configuration not found"));
             return false;
         }
-        if (quarkusCurrentProperties.size() == 0) {
+        if (quarkusCurrentProperties.isEmpty()) {
             LOGGER.info(QuarkusExtensionUtil.getLogMessage("Quarkus current configuration not found"));
             return false;
         }
@@ -156,7 +163,7 @@ final class QuarkusBuildCache {
         // Remove properties which should be ignored
         quarkusPropertiesCopy.removeIf(e -> QUARKUS_IGNORED_PROPERTIES.contains(e.getKey().toString()));
 
-        if (quarkusPropertiesCopy.size() > 0) {
+        if (!quarkusPropertiesCopy.isEmpty()) {
             LOGGER.info(QuarkusExtensionUtil.getLogMessage("Quarkus properties have changed"));
             LOGGER.debug(QuarkusExtensionUtil.getLogMessage("[" + quarkusPropertiesCopy.stream().map(e -> e.getKey().toString()).collect(Collectors.joining(", ")) + "]"));
         } else {
@@ -270,8 +277,8 @@ final class QuarkusBuildCache {
         inputs.fileSet("quarkusDependencyChecksums", new File(extensionConfiguration.getCurrentDependencyChecksumsFileName()), fileSet -> fileSet.normalizationStrategy(MojoMetadataProvider.Context.FileSet.NormalizationStrategy.RELATIVE_PATH));
     }
 
-    private void addQuarkusArtifactPropertiesInput(MojoMetadataProvider.Context.Inputs inputs, QuarkusExtensionConfiguration extensionConfiguration) {
-        inputs.fileSet("quarkusArtifactProperties", new File(QUARKUS_ARTIFACT_PROPERTIES_FILE_NAME), fileSet -> fileSet.normalizationStrategy(MojoMetadataProvider.Context.FileSet.NormalizationStrategy.RELATIVE_PATH));
+    private void addQuarkusArtifactPropertiesInput(MojoMetadataProvider.Context.Inputs inputs) {
+        inputs.fileSet("quarkusArtifactProperties", new File(TARGET_DIR + QUARKUS_ARTIFACT_PROPERTIES_FILE_NAME), fileSet -> fileSet.normalizationStrategy(MojoMetadataProvider.Context.FileSet.NormalizationStrategy.RELATIVE_PATH));
     }
 
     private void addQuarkusDependenciesInputs(MojoMetadataProvider.Context.Inputs inputs, QuarkusExtensionConfiguration extensionConfiguration) {
@@ -290,15 +297,16 @@ final class QuarkusBuildCache {
 
     private void configureOutputs(MojoMetadataProvider.Context context) {
         context.outputs(outputs -> {
-            String quarkusExeFileName = "target/" + context.getProject().getBuild().getFinalName() + "-runner";
-            String quarkusJarFileName = "target/" + context.getProject().getBuild().getFinalName() + ".jar";
-            String quarkusUberJarFileName = "target/" + context.getProject().getBuild().getFinalName() + "-runner.jar";
+            String quarkusExeFileName = TARGET_DIR + context.getProject().getBuild().getFinalName() + "-runner";
+            String quarkusJarFileName = TARGET_DIR + context.getProject().getBuild().getFinalName() + ".jar";
+            String quarkusUberJarFileName = TARGET_DIR + context.getProject().getBuild().getFinalName() + "-runner.jar";
+            String quarkusArtifactProperties = TARGET_DIR + QUARKUS_ARTIFACT_PROPERTIES_FILE_NAME;
 
             outputs.cacheable("this plugin has CPU-bound goals with well-defined inputs and outputs");
             outputs.file("quarkusExe", quarkusExeFileName);
             outputs.file("quarkusJar", quarkusJarFileName);
             outputs.file("quarkusUberJar", quarkusUberJarFileName);
-            outputs.file("quarkusArtifactProperties", QUARKUS_ARTIFACT_PROPERTIES_FILE_NAME);
+            outputs.file("quarkusArtifactProperties", quarkusArtifactProperties);
         });
     }
 
