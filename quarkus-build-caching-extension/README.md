@@ -221,8 +221,10 @@ Here are the files added as output:
 
 ## Quarkus Test goals
 
-When the test goals (`maven-surefire-plugin` and `maven-test-plugin`) are running some `@QuarkusTest` or `@QuarkusIntegrationTest`, 
-it is important for consistency to add [implicit dependencies](#quarkus-dependency-checksums) as goal [additional input](https://docs.gradle.com/enterprise/maven-extension/#declaring_additional_inputs).
+When the test goals (`maven-surefire-plugin` and `maven-failsafe-plugin`) are running some `@QuarkusTest` or `@QuarkusIntegrationTest`, 
+it is important for consistency to add [implicit dependencies](#quarkus-extra-dependencies) as goal [additional input](https://docs.gradle.com/enterprise/maven-extension/#declaring_additional_inputs).
+
+Specifically for `maven-failsafe-plugin`, the Quarkus artifact descriptor `quarkus-artifact.properties` also needs to be added. 
 
 This can be achieved by declaring a property `addQuarkusInputs` on the test goal:
 
