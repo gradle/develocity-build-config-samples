@@ -98,29 +98,53 @@ It is also possible to have different Maven profiles with specific file suffixes
 
 ## Configuration
 
+### Environment variables
+
 The caching can be disabled by setting an environment variable:
-```
+```properties
 DEVELOCITY_QUARKUS_CACHE_ENABLED=false
 ```
-
 By default, the values below are used to compute the dump-config (`.quarkus/quarkus-prod-config-dump`) and
 config-check (`target/quarkus-prod-config-check`) file names:
-- _file prefix_: quarkus
 - _build profile_: prod
+- _file prefix_: quarkus
 - _file suffix_: config-dump
 
-Those values can be overridden with a file, when CI and local have different Quarkus properties for instance:
+Those values can be overridden, when CI and local have different Quarkus properties for instance:
 ```properties
-DUMP_CONFIG_PREFIX=quarkus
-BUILD_PROFILE=prod
-DUMP_CONFIG_SUFFIX=config-dump-ci
+DEVELOCITY_QUARKUS_BUILD_PROFILE=prod
+DEVELOCITY_QUARKUS_DUMP_CONFIG_PREFIX=quarkus
+DEVELOCITY_QUARKUS_DUMP_CONFIG_SUFFIX=config-dump-ci
 ```
 
-The configuration file location can either be defined:
+It is also possible to configure some properties to be ignored when checking equality between `target/quarkus-prod-config-check` and `.quarkus/quarkus-prod-config-dump`, see [this section](#quarkus-configuration-dump) for more details.
+This is relevant when a property is volatile but does not impact the produced artifact.
+```properties
+DEVELOCITY_QUARKUS_DUMP_IGNORED_PROPERTIES=quarkus.container-image.tag,quarkus.application.version
+```
+
+### Maven properties
+
+The same configuration can be achieved with Maven properties:
+```xml
+<properties>
+    <develocity.quarkus.cache.enabled>false</develocity.quarkus.cache.enabled>
+    <develocity.quarkus.build.profile>config-dump</develocity.quarkus.build.profile>
+    <develocity.quarkus.dump.config.prefix>quarkus</develocity.quarkus.dump.config.prefix>
+    <develocity.quarkus.dump.config.suffix>prod</develocity.quarkus.dump.config.suffix>
+    <develocity.quarkus.dump.ignored.properties>quarkus.container-image.tag,quarkus.application.version</develocity.quarkus.dump.ignored.properties>
+</properties>
+```
+
+### Configuration file
+
+A configuration file can be used instead by defining its location (relative to the project root folder) either:
 - as an environment variable:
-`DEVELOCITY_QUARKUS_EXTENSION_CONFIG_FILE=.quarkus/extension-ci.properties`
+`DEVELOCITY_QUARKUS_CONFIG_FILE=.quarkus/develocity-ci.properties`
 - as a maven property:
-`<develocity.quarkus.extension.config.file>.quarkus/extension-local.properties</develocity.quarkus.extension.config.file>`
+`<develocity.quarkus.config.file>.quarkus/extension-local.properties</develocity.quarkus.config.file>`
+
+Its content can be created like described in the [environment variables](#environment-variables) section.
 
 ## Implementation details
 

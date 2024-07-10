@@ -2,58 +2,88 @@ package com.gradle;
 
 import org.apache.maven.project.MavenProject;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Properties;
 
 final class QuarkusExtensionConfiguration {
 
-    // Environment variable key to disable caching
+    // Disable caching flag key
     private static final String DEVELOCITY_QUARKUS_KEY_CACHE_ENABLED = "DEVELOCITY_QUARKUS_CACHE_ENABLED";
 
-    // Environment variable or Maven property key to define extension configuration file location
-    private static final String DEVELOCITY_QUARKUS_KEY_CONFIG_FILE = "DEVELOCITY_QUARKUS_EXTENSION_CONFIG_FILE";
+    // Configuration file location key
+    private static final String DEVELOCITY_QUARKUS_KEY_CONFIG_FILE = "DEVELOCITY_QUARKUS_CONFIG_FILE";
 
-    // Extension configuration build profile key
-    private static final String DEVELOCITY_QUARKUS_KEY_BUILD_PROFILE = "BUILD_PROFILE";
+    // Build profile key
+    private static final String DEVELOCITY_QUARKUS_KEY_BUILD_PROFILE = "DEVELOCITY_QUARKUS_BUILD_PROFILE";
 
-    // Extension configuration default profile
+    // Default build profile
     private static final String DEVELOCITY_QUARKUS_DEFAULT_BUILD_PROFILE = "prod";
 
-    // Extension configuration dump config file prefix
-    private static final String DEVELOCITY_QUARKUS_KEY_DUMP_CONFIG_PREFIX = "DUMP_CONFIG_PREFIX";
+    // Dump config file prefix key
+    private static final String DEVELOCITY_QUARKUS_KEY_DUMP_CONFIG_PREFIX = "DEVELOCITY_QUARKUS_DUMP_CONFIG_PREFIX";
 
-    // Extension configuration default dump config file prefix
+    // Default dump config file prefix
     private static final String DEVELOCITY_QUARKUS_DEFAULT_DUMP_CONFIG_PREFIX = "quarkus";
 
-    // Extension configuration dump config file suffix
-    private static final String DEVELOCITY_QUARKUS_KEY_DUMP_CONFIG_SUFFIX = "DUMP_CONFIG_SUFFIX";
+    // Dump config file suffix key
+    private static final String DEVELOCITY_QUARKUS_KEY_DUMP_CONFIG_SUFFIX = "DEVELOCITY_QUARKUS_DUMP_CONFIG_SUFFIX";
 
-    // Extension configuration default dump config file suffix
+    // Default dump config file suffix
     private static final String DEVELOCITY_QUARKUS_DEFAULT_DUMP_CONFIG_SUFFIX = "config-dump";
+
+    // Dump config ignored properties key
+    private static final String DEVELOCITY_QUARKUS_KEY_DUMP_CONFIG_IGNORED_PROPERTIES = "DEVELOCITY_QUARKUS_DUMP_IGNORED_PROPERTIES";
 
     private final Properties configuration = new Properties();
 
     QuarkusExtensionConfiguration(MavenProject project) {
         // loading default properties
-        String isQuarkusCacheEnabledFromEnv = System.getenv(DEVELOCITY_QUARKUS_KEY_CACHE_ENABLED);
-        configuration.setProperty(DEVELOCITY_QUARKUS_KEY_CACHE_ENABLED, isQuarkusCacheEnabledFromEnv != null ? isQuarkusCacheEnabledFromEnv : "");
+        initWithDefault();
+
+        // override from environment
+        overrideFromEnvironment();
+
+        // override from Maven properties
+        overrideFromMaven(project);
+
+        // override from configuration file
+        overrideFromConfigurationFile(project);
+    }
+
+    private void initWithDefault() {
+        configuration.setProperty(DEVELOCITY_QUARKUS_KEY_CACHE_ENABLED, Boolean.TRUE.toString());
         configuration.setProperty(DEVELOCITY_QUARKUS_KEY_BUILD_PROFILE, DEVELOCITY_QUARKUS_DEFAULT_BUILD_PROFILE);
         configuration.setProperty(DEVELOCITY_QUARKUS_KEY_DUMP_CONFIG_PREFIX, DEVELOCITY_QUARKUS_DEFAULT_DUMP_CONFIG_PREFIX);
         configuration.setProperty(DEVELOCITY_QUARKUS_KEY_DUMP_CONFIG_SUFFIX, DEVELOCITY_QUARKUS_DEFAULT_DUMP_CONFIG_SUFFIX);
+        configuration.setProperty(DEVELOCITY_QUARKUS_KEY_DUMP_CONFIG_IGNORED_PROPERTIES, "");
+        configuration.setProperty(DEVELOCITY_QUARKUS_KEY_CONFIG_FILE, "");
+    }
 
-        // loading optional overridden locations
-        String extensionConfigurationFileFromEnv = System.getenv(DEVELOCITY_QUARKUS_KEY_CONFIG_FILE);
-        String extensionConfigurationFileFromMaven =
-                project.getProperties().getProperty(
-                        DEVELOCITY_QUARKUS_KEY_CONFIG_FILE.toLowerCase().replace("_", "."),
-                        ""
-                );
+    private void overrideFromEnvironment() {
+        configuration.stringPropertyNames().forEach((key) -> {
+            String envValue = System.getenv(key);
+            if (envValue != null && !envValue.isEmpty()) {
+                configuration.setProperty(key, envValue);
+            }
+        });
+    }
 
-        if (extensionConfigurationFileFromEnv != null && !extensionConfigurationFileFromEnv.isEmpty()) {
-            // override default properties from configuration file defined in the environment
-            configuration.putAll(QuarkusExtensionUtil.loadProperties(project.getBasedir().getAbsolutePath(), extensionConfigurationFileFromEnv));
-        } else if (!extensionConfigurationFileFromMaven.isEmpty()) {
-            // override default properties from configuration file defined as Maven property
-            configuration.putAll(QuarkusExtensionUtil.loadProperties(project.getBasedir().getAbsolutePath(), extensionConfigurationFileFromMaven));
+    private void overrideFromMaven(MavenProject project) {
+        configuration.stringPropertyNames().forEach((key) -> {
+            String mavenProperty = project.getProperties().getProperty(
+                    key.toLowerCase().replace("_", "."), ""
+            );
+            if (mavenProperty != null && !mavenProperty.isEmpty()) {
+                configuration.setProperty(key, mavenProperty);
+            }
+        });
+    }
+
+    private void overrideFromConfigurationFile(MavenProject project) {
+        String configurationFile = configuration.getProperty(DEVELOCITY_QUARKUS_KEY_CONFIG_FILE);
+        if(!configurationFile.isEmpty()) {
+            configuration.putAll(QuarkusExtensionUtil.loadProperties(project.getBasedir().getAbsolutePath(), configurationFile));
         }
     }
 
@@ -92,6 +122,11 @@ final class QuarkusExtensionConfiguration {
         );
     }
 
+    /**
+     * This file contains the list of absolute paths to runtime dependencies used by the Quarkus application.
+     *
+     * @return dependency file name
+     */
     String getCurrentDependencyFileName() {
         return String.format("target/%s-%s-dependencies.txt",
                 configuration.getProperty(DEVELOCITY_QUARKUS_KEY_DUMP_CONFIG_PREFIX),
@@ -99,6 +134,11 @@ final class QuarkusExtensionConfiguration {
         );
     }
 
+    /**
+     * This file contains the list of Runtime dependencies used by the Quarkus application.
+     *
+     * @return dependency file name
+     */
     String getCurrentDependencyChecksumsFileName() {
         return String.format("target/%s-%s-dependency-checksums.txt",
                 configuration.getProperty(DEVELOCITY_QUARKUS_KEY_DUMP_CONFIG_PREFIX),
@@ -106,4 +146,15 @@ final class QuarkusExtensionConfiguration {
         );
     }
 
+    /**
+     * @return list of properties to ignore when comparing config dump and current config
+     */
+    List<String> getDumpConfigIgnoredProperties() {
+        return Arrays.asList(configuration.getProperty(DEVELOCITY_QUARKUS_KEY_DUMP_CONFIG_IGNORED_PROPERTIES).split(","));
+    }
+
+    @Override
+    public String toString() {
+        return configuration.toString();
+    }
 }
