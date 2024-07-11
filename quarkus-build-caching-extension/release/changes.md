@@ -1,3 +1,6 @@
+### 1.4
+- Add configuration of ignored properties in Quarkus configuration dump file
+
 ### 1.3
 - Add `quarkus-artifact.properties` as goal output 
 

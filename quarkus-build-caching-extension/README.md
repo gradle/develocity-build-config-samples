@@ -38,7 +38,7 @@ Reference the extension in `.mvn/extensions.xml` (this extension requires the de
     <extension>
         <groupId>com.gradle</groupId>
         <artifactId>quarkus-build-caching-extension</artifactId>
-        <version>1.3</version>
+        <version>1.4</version>
     </extension>
 </extensions>
 ```
