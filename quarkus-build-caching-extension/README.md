@@ -128,7 +128,7 @@ DEVELOCITY_QUARKUS_DUMP_IGNORED_PROPERTIES=quarkus.container-image.tag,quarkus.a
 The same configuration can be achieved with Maven properties:
 ```xml
 <properties>
-    <develocity.quarkus.cache.enabled>false</develocity.quarkus.cache.enabled>
+    <develocity.quarkus.cache.enabled>true</develocity.quarkus.cache.enabled>
     <develocity.quarkus.build.profile>config-dump</develocity.quarkus.build.profile>
     <develocity.quarkus.dump.config.prefix>quarkus</develocity.quarkus.dump.config.prefix>
     <develocity.quarkus.dump.config.suffix>prod</develocity.quarkus.dump.config.suffix>
