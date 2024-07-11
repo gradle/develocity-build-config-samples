@@ -60,7 +60,6 @@ final class QuarkusBuildCache {
         });
         buildCache.registerMojoMetadataProvider(context -> {
             QuarkusExtensionConfiguration extensionConfiguration = new QuarkusExtensionConfiguration(context.getProject());
-            LOGGER.debug(QuarkusExtensionUtil.getLogMessage(extensionConfiguration.toString()));
 
             context.withPlugin("quarkus-maven-plugin", () -> {
                 configureQuarkusBuildGoal(context, extensionConfiguration);
@@ -112,6 +111,7 @@ final class QuarkusBuildCache {
 
     private void configureQuarkusBuildGoal(MojoMetadataProvider.Context context, QuarkusExtensionConfiguration extensionConfiguration) {
         if ("build".equals(context.getMojoExecution().getGoal())) {
+            LOGGER.debug(QuarkusExtensionUtil.getLogMessage(extensionConfiguration.toString()));
             if (extensionConfiguration.isQuarkusCacheEnabled()) {
                 LOGGER.debug(QuarkusExtensionUtil.getLogMessage("Quarkus caching is enabled"));
 

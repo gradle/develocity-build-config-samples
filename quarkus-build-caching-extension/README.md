@@ -146,6 +146,13 @@ A configuration file can be used instead by defining its location (relative to t
 
 Its content can be created like described in the [environment variables](#environment-variables) section.
 
+## Troubleshooting
+Debug logging on the extension can be configured with the following property
+
+```shell
+mvn -Dorg.slf4j.simpleLogger.log.com.gradle=debug clean install
+```
+
 ## Implementation details
 
 The logic to make the Quarkus `build` goal cacheable is isolated to the [QuarkusBuildCache](./src/main/java/com/gradle/QuarkusBuildCache.java) class.
