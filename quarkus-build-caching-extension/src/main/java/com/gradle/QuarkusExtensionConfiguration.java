@@ -38,6 +38,9 @@ final class QuarkusExtensionConfiguration {
     // Extra output files key
     private static final String DEVELOCITY_QUARKUS_KEY_EXTRA_OUTPUT_FILES = "DEVELOCITY_QUARKUS_EXTRA_OUTPUT_FILES";
 
+    // Native build in container required key
+    private static final String DEVELOCITY_QUARKUS_KEY_NATIVE_BUILD_IN_CONTAINER_REQUIRED = "DEVELOCITY_QUARKUS_NATIVE_BUILD_IN_CONTAINER_REQUIRED";
+
     private final Properties configuration = new Properties();
 
     QuarkusExtensionConfiguration(MavenProject project) {
@@ -62,6 +65,7 @@ final class QuarkusExtensionConfiguration {
         configuration.setProperty(DEVELOCITY_QUARKUS_KEY_CONFIG_FILE, "");
         configuration.setProperty(DEVELOCITY_QUARKUS_KEY_EXTRA_OUTPUT_DIRS, "");
         configuration.setProperty(DEVELOCITY_QUARKUS_KEY_EXTRA_OUTPUT_FILES, "");
+        configuration.setProperty(DEVELOCITY_QUARKUS_KEY_NATIVE_BUILD_IN_CONTAINER_REQUIRED, Boolean.TRUE.toString());
     }
 
     private void overrideFromEnvironment() {
@@ -97,6 +101,13 @@ final class QuarkusExtensionConfiguration {
     boolean isQuarkusCacheEnabled() {
         // Quarkus cache is enabled by default
         return !Boolean.FALSE.toString().equals(configuration.get(DEVELOCITY_QUARKUS_KEY_CACHE_ENABLED));
+    }
+
+    /**
+     * @return whether native build requires in-container build strategy or not
+     */
+    boolean isNativeBuildInContainerRequired() {
+        return !Boolean.FALSE.toString().equals(configuration.get(DEVELOCITY_QUARKUS_KEY_NATIVE_BUILD_IN_CONTAINER_REQUIRED));
     }
 
     /**

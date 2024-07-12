@@ -122,7 +122,7 @@ final class QuarkusBuildCache {
                 Properties quarkusCurrentProperties = QuarkusExtensionUtil.loadProperties(baseDir, extensionConfiguration.getCurrentConfigFileName());
 
                 // Check required configuration
-                if (isQuarkusBuildCacheable(quarkusPreviousProperties, quarkusCurrentProperties)) {
+                if (isQuarkusBuildCacheable(quarkusPreviousProperties, quarkusCurrentProperties, extensionConfiguration.isNativeBuildInContainerRequired())) {
                     LOGGER.info(QuarkusExtensionUtil.getLogMessage("Quarkus build goal marked as cacheable"));
                     configureInputs(context, extensionConfiguration, quarkusCurrentProperties);
                     configureOutputs(context, extensionConfiguration.getExtraOutputDirs(), extensionConfiguration.getExtraOutputFiles());
@@ -135,10 +135,10 @@ final class QuarkusBuildCache {
         }
     }
 
-    private boolean isQuarkusBuildCacheable(Properties quarkusPreviousProperties, Properties quarkusCurrentProperties) {
+    private boolean isQuarkusBuildCacheable(Properties quarkusPreviousProperties, Properties quarkusCurrentProperties, boolean isNativeBuildInContainerRequired) {
         return isQuarkusDumpConfigFilePresent(quarkusPreviousProperties, quarkusCurrentProperties)
                 && isJarPackagingTypeSupported(quarkusCurrentProperties)
-                && isNotNativeOrInContainerNativeBuild(quarkusCurrentProperties)
+                && isNotNativeOrInContainerNativeBuild(quarkusCurrentProperties, isNativeBuildInContainerRequired)
                 && isQuarkusPropertiesUnchanged(quarkusPreviousProperties, quarkusCurrentProperties);
     }
 
@@ -178,18 +178,24 @@ final class QuarkusBuildCache {
         return Boolean.parseBoolean(quarkusCurrentProperties.getProperty(QUARKUS_CONFIG_KEY_NATIVE)) || PACKAGE_NATIVE.equals(quarkusCurrentProperties.getProperty(QUARKUS_CONFIG_KEY_DEPRECATED_PACKAGE_TYPE));
     }
 
-    private boolean isNotNativeOrInContainerNativeBuild(Properties quarkusCurrentProperties) {
+    private boolean isNotNativeOrInContainerNativeBuild(Properties quarkusCurrentProperties, boolean isNativeBuildInContainerRequired) {
         if (isNativeBuild(quarkusCurrentProperties)) {
-            String builderImage = quarkusCurrentProperties.getProperty(QUARKUS_CONFIG_KEY_NATIVE_BUILDER_IMAGE, "");
-            if (builderImage.isEmpty()) {
-                LOGGER.info(QuarkusExtensionUtil.getLogMessage("Quarkus build is not using a fixed image"));
-                return false;
-            }
+            if(isNativeBuildInContainerRequired) {
+                String builderImage = quarkusCurrentProperties.getProperty(QUARKUS_CONFIG_KEY_NATIVE_BUILDER_IMAGE, "");
+                if (builderImage.isEmpty()) {
+                    LOGGER.info(QuarkusExtensionUtil.getLogMessage("Quarkus build is not using a fixed image"));
+                    return false;
+                }
 
-            if (QUARKUS_CONFIG_KEY_NATIVE_CONTAINER_BUILD.stream().noneMatch(key -> Boolean.parseBoolean(quarkusCurrentProperties.getProperty(key)))) {
-                LOGGER.info(QuarkusExtensionUtil.getLogMessage("Quarkus build strategy is not in-container"));
-                return false;
+                if (QUARKUS_CONFIG_KEY_NATIVE_CONTAINER_BUILD.stream().noneMatch(key -> Boolean.parseBoolean(quarkusCurrentProperties.getProperty(key)))) {
+                    LOGGER.info(QuarkusExtensionUtil.getLogMessage("Quarkus build strategy is not in-container"));
+                    return false;
+                }
+            } else {
+                LOGGER.info(QuarkusExtensionUtil.getLogMessage("Quarkus in-container build strategy is not required"));
             }
+        } else {
+            LOGGER.debug(QuarkusExtensionUtil.getLogMessage("Quarkus build is not native"));
         }
 
         return true;
