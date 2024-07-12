@@ -1,3 +1,8 @@
+### 1.5
+- Allow to configure extra outputs
+- Allow to disable in-container strategy requirement for native builds
+- Remove configuration of ignored properties in Quarkus configuration dump file
+
 ### 1.4
 - Add configuration of ignored properties in Quarkus configuration dump file
 
