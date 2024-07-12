@@ -117,15 +117,28 @@ DEVELOCITY_QUARKUS_DUMP_CONFIG_PREFIX=quarkus
 DEVELOCITY_QUARKUS_DUMP_CONFIG_SUFFIX=config-dump-ci
 ```
 
+Some additional outputs can be configured if necessary (if using the [quarkus-helm](https://quarkus.io/blog/quarkus-helm/#getting-started-with-the-quarkus-helm-extension) extension for instance). The path are relative to the `target` folder.
+
+Directories can be added (csv list):
+```properties
+DEVELOCITY_QUARKUS_KEY_EXTRA_OUTPUT_DIRS=helm
+```
+or Specific files (csv list):
+```properties
+DEVELOCITY_QUARKUS_KEY_EXTRA_OUTPUT_FILES=helm/kubernetes/my-project/Chart.yaml,helm/kubernetes/my-project/values.yaml
+```
+
 ### Maven properties
 
 The same configuration can be achieved with Maven properties:
 ```xml
 <properties>
     <develocity.quarkus.cache.enabled>true</develocity.quarkus.cache.enabled>
-    <develocity.quarkus.build.profile>config-dump</develocity.quarkus.build.profile>
+    <develocity.quarkus.build.profile>config-dump-ci</develocity.quarkus.build.profile>
     <develocity.quarkus.dump.config.prefix>quarkus</develocity.quarkus.dump.config.prefix>
     <develocity.quarkus.dump.config.suffix>prod</develocity.quarkus.dump.config.suffix>
+    <develocity.quarkus.extra.output.dirs>helm</develocity.quarkus.extra.output.dirs>
+    <develocity.quarkus.extra.output.files>helm/kubernetes/${project.artifactId}/Chart.yaml,helm/kubernetes/${project.artifactId}/values.yaml</develocity.quarkus.extra.output.files>
 </properties>
 ```
 

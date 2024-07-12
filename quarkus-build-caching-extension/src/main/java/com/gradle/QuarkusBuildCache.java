@@ -125,7 +125,7 @@ final class QuarkusBuildCache {
                 if (isQuarkusBuildCacheable(quarkusPreviousProperties, quarkusCurrentProperties)) {
                     LOGGER.info(QuarkusExtensionUtil.getLogMessage("Quarkus build goal marked as cacheable"));
                     configureInputs(context, extensionConfiguration, quarkusCurrentProperties);
-                    configureOutputs(context);
+                    configureOutputs(context, extensionConfiguration.getExtraOutputDirs(), extensionConfiguration.getExtraOutputFiles());
                 } else {
                     LOGGER.info(QuarkusExtensionUtil.getLogMessage("Quarkus build goal marked as not cacheable"));
                 }
@@ -296,7 +296,7 @@ final class QuarkusBuildCache {
         }
     }
 
-    private void configureOutputs(MojoMetadataProvider.Context context) {
+    private void configureOutputs(MojoMetadataProvider.Context context, List<String> extraOutputDirs, List<String> extraOutputFiles) {
         context.outputs(outputs -> {
             String quarkusExeFileName = TARGET_DIR + context.getProject().getBuild().getFinalName() + "-runner";
             String quarkusJarFileName = TARGET_DIR + context.getProject().getBuild().getFinalName() + ".jar";
@@ -308,6 +308,20 @@ final class QuarkusBuildCache {
             outputs.file("quarkusJar", quarkusJarFileName);
             outputs.file("quarkusUberJar", quarkusUberJarFileName);
             outputs.file("quarkusArtifactProperties", quarkusArtifactProperties);
+
+            extraOutputDirs.forEach(extraOutput -> {
+                if(!extraOutput.isEmpty()) {
+                    LOGGER.debug(QuarkusExtensionUtil.getLogMessage("Adding extra output dir " + extraOutput));
+                    outputs.directory(extraOutput, TARGET_DIR + extraOutput);
+                }
+            });
+
+            extraOutputFiles.forEach(extraOutput -> {
+                if(!extraOutput.isEmpty()) {
+                    LOGGER.debug(QuarkusExtensionUtil.getLogMessage("Adding extra output file " + extraOutput));
+                    outputs.file(extraOutput, TARGET_DIR + extraOutput);
+                }
+            });
         });
     }
 

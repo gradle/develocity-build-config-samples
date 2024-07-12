@@ -2,6 +2,8 @@ package com.gradle;
 
 import org.apache.maven.project.MavenProject;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Properties;
 
 final class QuarkusExtensionConfiguration {
@@ -30,6 +32,12 @@ final class QuarkusExtensionConfiguration {
     // Default dump config file suffix
     private static final String DEVELOCITY_QUARKUS_DEFAULT_DUMP_CONFIG_SUFFIX = "config-dump";
 
+    // Extra output dirs key
+    private static final String DEVELOCITY_QUARKUS_KEY_EXTRA_OUTPUT_DIRS = "DEVELOCITY_QUARKUS_EXTRA_OUTPUT_DIRS";
+
+    // Extra output files key
+    private static final String DEVELOCITY_QUARKUS_KEY_EXTRA_OUTPUT_FILES = "DEVELOCITY_QUARKUS_EXTRA_OUTPUT_FILES";
+
     private final Properties configuration = new Properties();
 
     QuarkusExtensionConfiguration(MavenProject project) {
@@ -52,6 +60,8 @@ final class QuarkusExtensionConfiguration {
         configuration.setProperty(DEVELOCITY_QUARKUS_KEY_DUMP_CONFIG_PREFIX, DEVELOCITY_QUARKUS_DEFAULT_DUMP_CONFIG_PREFIX);
         configuration.setProperty(DEVELOCITY_QUARKUS_KEY_DUMP_CONFIG_SUFFIX, DEVELOCITY_QUARKUS_DEFAULT_DUMP_CONFIG_SUFFIX);
         configuration.setProperty(DEVELOCITY_QUARKUS_KEY_CONFIG_FILE, "");
+        configuration.setProperty(DEVELOCITY_QUARKUS_KEY_EXTRA_OUTPUT_DIRS, "");
+        configuration.setProperty(DEVELOCITY_QUARKUS_KEY_EXTRA_OUTPUT_FILES, "");
     }
 
     private void overrideFromEnvironment() {
@@ -139,6 +149,21 @@ final class QuarkusExtensionConfiguration {
                 configuration.getProperty(DEVELOCITY_QUARKUS_KEY_BUILD_PROFILE)
         );
     }
+
+    /**
+     * @return extra goal output directories to cache
+     */
+    List<String> getExtraOutputDirs() {
+        return Arrays.asList(configuration.getProperty(DEVELOCITY_QUARKUS_KEY_EXTRA_OUTPUT_DIRS).split(","));
+    }
+
+    /**
+     * @return extra goal output files to cache
+     */
+    List<String> getExtraOutputFiles() {
+        return Arrays.asList(configuration.getProperty(DEVELOCITY_QUARKUS_KEY_EXTRA_OUTPUT_FILES).split(","));
+    }
+
 
     @Override
     public String toString() {
