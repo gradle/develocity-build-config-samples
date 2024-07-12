@@ -2,8 +2,6 @@ package com.gradle;
 
 import org.apache.maven.project.MavenProject;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.Properties;
 
 final class QuarkusExtensionConfiguration {
@@ -32,9 +30,6 @@ final class QuarkusExtensionConfiguration {
     // Default dump config file suffix
     private static final String DEVELOCITY_QUARKUS_DEFAULT_DUMP_CONFIG_SUFFIX = "config-dump";
 
-    // Dump config ignored properties key
-    private static final String DEVELOCITY_QUARKUS_KEY_DUMP_CONFIG_IGNORED_PROPERTIES = "DEVELOCITY_QUARKUS_DUMP_IGNORED_PROPERTIES";
-
     private final Properties configuration = new Properties();
 
     QuarkusExtensionConfiguration(MavenProject project) {
@@ -56,7 +51,6 @@ final class QuarkusExtensionConfiguration {
         configuration.setProperty(DEVELOCITY_QUARKUS_KEY_BUILD_PROFILE, DEVELOCITY_QUARKUS_DEFAULT_BUILD_PROFILE);
         configuration.setProperty(DEVELOCITY_QUARKUS_KEY_DUMP_CONFIG_PREFIX, DEVELOCITY_QUARKUS_DEFAULT_DUMP_CONFIG_PREFIX);
         configuration.setProperty(DEVELOCITY_QUARKUS_KEY_DUMP_CONFIG_SUFFIX, DEVELOCITY_QUARKUS_DEFAULT_DUMP_CONFIG_SUFFIX);
-        configuration.setProperty(DEVELOCITY_QUARKUS_KEY_DUMP_CONFIG_IGNORED_PROPERTIES, "");
         configuration.setProperty(DEVELOCITY_QUARKUS_KEY_CONFIG_FILE, "");
     }
 
@@ -144,13 +138,6 @@ final class QuarkusExtensionConfiguration {
                 configuration.getProperty(DEVELOCITY_QUARKUS_KEY_DUMP_CONFIG_PREFIX),
                 configuration.getProperty(DEVELOCITY_QUARKUS_KEY_BUILD_PROFILE)
         );
-    }
-
-    /**
-     * @return list of properties to ignore when comparing config dump and current config
-     */
-    List<String> getDumpConfigIgnoredProperties() {
-        return Arrays.asList(configuration.getProperty(DEVELOCITY_QUARKUS_KEY_DUMP_CONFIG_IGNORED_PROPERTIES).split(","));
     }
 
     @Override

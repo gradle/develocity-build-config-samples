@@ -19,7 +19,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Caching instructions for the Quarkus build goal.
@@ -123,7 +122,7 @@ final class QuarkusBuildCache {
                 Properties quarkusCurrentProperties = QuarkusExtensionUtil.loadProperties(baseDir, extensionConfiguration.getCurrentConfigFileName());
 
                 // Check required configuration
-                if (isQuarkusBuildCacheable(quarkusPreviousProperties, quarkusCurrentProperties, extensionConfiguration.getDumpConfigIgnoredProperties())) {
+                if (isQuarkusBuildCacheable(quarkusPreviousProperties, quarkusCurrentProperties)) {
                     LOGGER.info(QuarkusExtensionUtil.getLogMessage("Quarkus build goal marked as cacheable"));
                     configureInputs(context, extensionConfiguration, quarkusCurrentProperties);
                     configureOutputs(context);
@@ -136,11 +135,11 @@ final class QuarkusBuildCache {
         }
     }
 
-    private boolean isQuarkusBuildCacheable(Properties quarkusPreviousProperties, Properties quarkusCurrentProperties, List<String> dumpConfigIgnoredProperties) {
+    private boolean isQuarkusBuildCacheable(Properties quarkusPreviousProperties, Properties quarkusCurrentProperties) {
         return isQuarkusDumpConfigFilePresent(quarkusPreviousProperties, quarkusCurrentProperties)
                 && isJarPackagingTypeSupported(quarkusCurrentProperties)
                 && isNotNativeOrInContainerNativeBuild(quarkusCurrentProperties)
-                && isQuarkusPropertiesUnchanged(quarkusPreviousProperties, quarkusCurrentProperties, dumpConfigIgnoredProperties);
+                && isQuarkusPropertiesUnchanged(quarkusPreviousProperties, quarkusCurrentProperties);
     }
 
     private boolean isQuarkusDumpConfigFilePresent(Properties quarkusPreviousProperties, Properties quarkusCurrentProperties) {
@@ -156,14 +155,14 @@ final class QuarkusBuildCache {
         return true;
     }
 
-    private boolean isQuarkusPropertiesUnchanged(Properties quarkusPreviousProperties, Properties quarkusCurrentProperties, List<String> dumpConfigIgnoredProperties) {
+    private boolean isQuarkusPropertiesUnchanged(Properties quarkusPreviousProperties, Properties quarkusCurrentProperties) {
         Set<Map.Entry<Object, Object>> quarkusPropertiesCopy = new HashSet<>(quarkusPreviousProperties.entrySet());
 
         // Remove properties identical between current and previous build
         quarkusPropertiesCopy.removeAll(quarkusCurrentProperties.entrySet());
 
         // Remove properties which should be ignored
-        quarkusPropertiesCopy.removeIf(e -> getIgnoredProperties(dumpConfigIgnoredProperties).contains(e.getKey().toString()));
+        quarkusPropertiesCopy.removeIf(e -> QUARKUS_IGNORED_PROPERTIES.contains(e.getKey().toString()));
 
         if (!quarkusPropertiesCopy.isEmpty()) {
             LOGGER.info(QuarkusExtensionUtil.getLogMessage("Quarkus properties have changed"));
@@ -173,10 +172,6 @@ final class QuarkusBuildCache {
         }
 
         return false;
-    }
-
-    private List<String> getIgnoredProperties(List<String> dumpConfigIgnoredProperties) {
-        return Stream.concat(QUARKUS_IGNORED_PROPERTIES.stream(), dumpConfigIgnoredProperties.stream()).collect(Collectors.toList());
     }
 
     private boolean isNativeBuild(Properties quarkusCurrentProperties) {
