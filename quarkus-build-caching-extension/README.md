@@ -117,12 +117,6 @@ DEVELOCITY_QUARKUS_DUMP_CONFIG_PREFIX=quarkus
 DEVELOCITY_QUARKUS_DUMP_CONFIG_SUFFIX=config-dump-ci
 ```
 
-It is also possible to configure some properties to be ignored when checking equality between `target/quarkus-prod-config-check` and `.quarkus/quarkus-prod-config-dump`, see [this section](#quarkus-configuration-dump) for more details.
-This is relevant when a property is volatile but does not impact the produced artifact.
-```properties
-DEVELOCITY_QUARKUS_DUMP_IGNORED_PROPERTIES=quarkus.container-image.tag,quarkus.application.version
-```
-
 ### Maven properties
 
 The same configuration can be achieved with Maven properties:
@@ -132,7 +126,6 @@ The same configuration can be achieved with Maven properties:
     <develocity.quarkus.build.profile>config-dump</develocity.quarkus.build.profile>
     <develocity.quarkus.dump.config.prefix>quarkus</develocity.quarkus.dump.config.prefix>
     <develocity.quarkus.dump.config.suffix>prod</develocity.quarkus.dump.config.suffix>
-    <develocity.quarkus.dump.ignored.properties>quarkus.container-image.tag,quarkus.application.version</develocity.quarkus.dump.ignored.properties>
 </properties>
 ```
 
@@ -145,6 +138,17 @@ A configuration file can be used instead by defining its location (relative to t
 `<develocity.quarkus.config.file>.quarkus/extension-local.properties</develocity.quarkus.config.file>`
 
 Its content can be created like described in the [environment variables](#environment-variables) section.
+
+### Ignore properties in Quarkus configuration dump
+
+It is also possible to configure some properties to be excluded from configuration tracking (more details in the [Quarkus documentation](https://quarkus.io/guides/config-reference#filtering-configuration-options)). 
+This is relevant when a property is volatile but does not impact the produced artifact, see [this section](#quarkus-configuration-dump) for more details.
+
+```xml
+<properties>
+    <quarkus.config-tracking.exclude>quarkus.container-image.tag,quarkus.application.version</quarkus.config-tracking.exclude>
+</properties>
+```
 
 ## Troubleshooting
 Debug logging on the extension can be configured with the following property
