@@ -32,8 +32,14 @@ final class QuarkusExtensionConfiguration {
     // Default dump config file suffix
     private static final String DEVELOCITY_QUARKUS_DEFAULT_DUMP_CONFIG_SUFFIX = "config-dump";
 
-    // Dump config ignored properties key
-    private static final String DEVELOCITY_QUARKUS_KEY_DUMP_CONFIG_IGNORED_PROPERTIES = "DEVELOCITY_QUARKUS_DUMP_IGNORED_PROPERTIES";
+    // Extra output dirs key
+    private static final String DEVELOCITY_QUARKUS_KEY_EXTRA_OUTPUT_DIRS = "DEVELOCITY_QUARKUS_EXTRA_OUTPUT_DIRS";
+
+    // Extra output files key
+    private static final String DEVELOCITY_QUARKUS_KEY_EXTRA_OUTPUT_FILES = "DEVELOCITY_QUARKUS_EXTRA_OUTPUT_FILES";
+
+    // Native build in container required key
+    private static final String DEVELOCITY_QUARKUS_KEY_NATIVE_BUILD_IN_CONTAINER_REQUIRED = "DEVELOCITY_QUARKUS_NATIVE_BUILD_IN_CONTAINER_REQUIRED";
 
     private final Properties configuration = new Properties();
 
@@ -56,8 +62,10 @@ final class QuarkusExtensionConfiguration {
         configuration.setProperty(DEVELOCITY_QUARKUS_KEY_BUILD_PROFILE, DEVELOCITY_QUARKUS_DEFAULT_BUILD_PROFILE);
         configuration.setProperty(DEVELOCITY_QUARKUS_KEY_DUMP_CONFIG_PREFIX, DEVELOCITY_QUARKUS_DEFAULT_DUMP_CONFIG_PREFIX);
         configuration.setProperty(DEVELOCITY_QUARKUS_KEY_DUMP_CONFIG_SUFFIX, DEVELOCITY_QUARKUS_DEFAULT_DUMP_CONFIG_SUFFIX);
-        configuration.setProperty(DEVELOCITY_QUARKUS_KEY_DUMP_CONFIG_IGNORED_PROPERTIES, "");
         configuration.setProperty(DEVELOCITY_QUARKUS_KEY_CONFIG_FILE, "");
+        configuration.setProperty(DEVELOCITY_QUARKUS_KEY_EXTRA_OUTPUT_DIRS, "");
+        configuration.setProperty(DEVELOCITY_QUARKUS_KEY_EXTRA_OUTPUT_FILES, "");
+        configuration.setProperty(DEVELOCITY_QUARKUS_KEY_NATIVE_BUILD_IN_CONTAINER_REQUIRED, Boolean.TRUE.toString());
     }
 
     private void overrideFromEnvironment() {
@@ -93,6 +101,13 @@ final class QuarkusExtensionConfiguration {
     boolean isQuarkusCacheEnabled() {
         // Quarkus cache is enabled by default
         return !Boolean.FALSE.toString().equals(configuration.get(DEVELOCITY_QUARKUS_KEY_CACHE_ENABLED));
+    }
+
+    /**
+     * @return whether native build requires in-container build strategy or not
+     */
+    boolean isNativeBuildInContainerRequired() {
+        return !Boolean.FALSE.toString().equals(configuration.get(DEVELOCITY_QUARKUS_KEY_NATIVE_BUILD_IN_CONTAINER_REQUIRED));
     }
 
     /**
@@ -147,11 +162,19 @@ final class QuarkusExtensionConfiguration {
     }
 
     /**
-     * @return list of properties to ignore when comparing config dump and current config
+     * @return extra goal output directories to cache
      */
-    List<String> getDumpConfigIgnoredProperties() {
-        return Arrays.asList(configuration.getProperty(DEVELOCITY_QUARKUS_KEY_DUMP_CONFIG_IGNORED_PROPERTIES).split(","));
+    List<String> getExtraOutputDirs() {
+        return Arrays.asList(configuration.getProperty(DEVELOCITY_QUARKUS_KEY_EXTRA_OUTPUT_DIRS).split(","));
     }
+
+    /**
+     * @return extra goal output files to cache
+     */
+    List<String> getExtraOutputFiles() {
+        return Arrays.asList(configuration.getProperty(DEVELOCITY_QUARKUS_KEY_EXTRA_OUTPUT_FILES).split(","));
+    }
+
 
     @Override
     public String toString() {

@@ -9,20 +9,26 @@ A native executable can be a very large file. Copying it from/to the local cache
 ## Requirements
 Quarkus 3.2.4 and above which brings [track-config-changes goal](https://quarkus.io/guides/config-reference#tracking-build-time-configuration-changes-between-builds)
 
-*Note:*<br>
-Although Quarkus 3.2.4 is required, 3.9.0 and above is recommended as it exposes [Quarkus extra dependencies](#quarkus-extra-dependencies) which is added as extra input by the current extension. 
+> [!NOTE]  
+> Although Quarkus 3.2.4 is required, 3.9.0 and above is recommended as it exposes [Quarkus extra dependencies](#quarkus-extra-dependencies) which is added as extra input by the current extension. 
 
 This additional input is necessary when using snapshot versions (or when overwriting fixed version) of
 - The Quarkus dependencies
 - A custom Quarkus extension 
 
 ## Limitations
-- Only the `native`, `uber-jar`, `jar` and `legacy-jar` [packaging types](https://quarkus.io/guides/maven-tooling#quarkus-package-pkg-package-config_quarkus.package.type) can be made cacheable
-- The `native` packaging is cacheable only if the in-container build strategy (`quarkus.native.container-build=true`) is configured along with a fixed build image (`quarkus.native.builder-image`).
 
-**Note:**<br>
-- When the in-container build strategy is used as a fallback the caching feature will be disabled. The fallback may happen due to GraalVM requirements not met. The recommendation is to explicitly set the in-container strategy (`quarkus.native.container-build=true`) to benefit from caching
-- The in-container build strategy means the build is as reproducible as possible. Even so, some timestamps and instruction ordering may be different even when built on the same system in the same environment.
+### Supported package types
+Only the `native`, `uber-jar`, `jar` and `legacy-jar` [packaging types](https://quarkus.io/guides/maven-tooling#quarkus-package-pkg-package-config_quarkus.package.type) can be made cacheable
+
+### Build strategy
+By default, the `native` packaging is cacheable only if the in-container build strategy (`quarkus.native.container-build=true`) is configured along with a fixed build image (`quarkus.native.builder-image`).
+The in-container build strategy means the build is as reproducible as possible. Even so, some timestamps and instruction ordering may be different even when built on the same system in the same environment.
+
+If the build environments are strictly identical, this restriction can be removed by setting `DEVELOCITY_QUARKUS_NATIVE_BUILD_IN_CONTAINER_REQUIRED=false`. See [configuration section](#build-strategy-1) for more details.
+
+> [!NOTE]
+> When the in-container build strategy is used as a fallback the caching feature will be disabled. The fallback may happen due to GraalVM requirements not met. The recommendation is to explicitly set the in-container strategy (`quarkus.native.container-build=true`) to benefit from caching
 
 ## Usage
 
@@ -98,12 +104,22 @@ It is also possible to have different Maven profiles with specific file suffixes
 
 ## Configuration
 
+Configuration can be set with (listed in order of precedence ):
+- [Environment variables](#environment-variables)
+- [Maven properties](#maven-properties)
+- [Configuration file](#configuration-file)
+
 ### Environment variables
 
-The caching can be disabled by setting an environment variable:
+#### Feature toggle
+
+The caching can be disabled by setting:
 ```properties
 DEVELOCITY_QUARKUS_CACHE_ENABLED=false
 ```
+
+#### Quarkus configuration dump
+
 By default, the values below are used to compute the dump-config (`.quarkus/quarkus-prod-config-dump`) and
 config-check (`target/quarkus-prod-config-check`) file names:
 - _build profile_: prod
@@ -117,15 +133,39 @@ DEVELOCITY_QUARKUS_DUMP_CONFIG_PREFIX=quarkus
 DEVELOCITY_QUARKUS_DUMP_CONFIG_SUFFIX=config-dump-ci
 ```
 
+#### Extra outputs
+
+Some additional outputs can be configured if necessary (when using the [quarkus-helm](https://quarkus.io/blog/quarkus-helm/#getting-started-with-the-quarkus-helm-extension) extension for instance). The paths are relative to the `target` folder.
+
+Directories can be added (csv list):
+```properties
+DEVELOCITY_QUARKUS_KEY_EXTRA_OUTPUT_DIRS=helm
+```
+or Specific files (csv list):
+```properties
+DEVELOCITY_QUARKUS_KEY_EXTRA_OUTPUT_FILES=helm/kubernetes/my-project/Chart.yaml,helm/kubernetes/my-project/values.yaml
+```
+
+#### Build strategy
+
+The default is to enable caching only when the in-container build strategy is used. 
+If the build environments are strictly identical build over build, the restriction can be removed by setting:
+```properties
+DEVELOCITY_QUARKUS_NATIVE_BUILD_IN_CONTAINER_REQUIRED=false
+```
+
 ### Maven properties
 
 The same configuration can be achieved with Maven properties:
 ```xml
 <properties>
     <develocity.quarkus.cache.enabled>true</develocity.quarkus.cache.enabled>
-    <develocity.quarkus.build.profile>config-dump</develocity.quarkus.build.profile>
+    <develocity.quarkus.build.profile>config-dump-ci</develocity.quarkus.build.profile>
     <develocity.quarkus.dump.config.prefix>quarkus</develocity.quarkus.dump.config.prefix>
     <develocity.quarkus.dump.config.suffix>prod</develocity.quarkus.dump.config.suffix>
+    <develocity.quarkus.extra.output.dirs>helm</develocity.quarkus.extra.output.dirs>
+    <develocity.quarkus.extra.output.files>helm/kubernetes/${project.artifactId}/Chart.yaml,helm/kubernetes/${project.artifactId}/values.yaml</develocity.quarkus.extra.output.files>
+    <develocity.quarkus.native.build.in.container.required>false</develocity.quarkus.native.build.in.container.required>
 </properties>
 ```
 
@@ -253,6 +293,9 @@ Here are the files added as output:
 - `target/<project.build.finalName>.jar`
 - `target/<project.build.finalName>-runner.jar`
 - `target/quarkus-artifact.properties`
+
+> [!NOTE]
+> Some additional outputs can be configured. See the [configuration section](#extra-outputs) for more details.
 
 ## Quarkus Test goals
 
