@@ -10,11 +10,11 @@ A native executable can be a very large file. Copying it from/to the local cache
 Quarkus 3.2.4 and above which brings [track-config-changes goal](https://quarkus.io/guides/config-reference#tracking-build-time-configuration-changes-between-builds)
 
 > [!NOTE]  
-> Although Quarkus 3.2.4 is required, 3.9.0 and above is recommended as it exposes [Quarkus extra dependencies](#quarkus-extra-dependencies) which is added as extra input by the current extension. 
-
-This additional input is necessary when using snapshot versions (or when overwriting fixed version) of
-- The Quarkus dependencies
-- A custom Quarkus extension 
+> Although Quarkus 3.2.4 is required, 3.9.0 and above is recommended as it exposes [Quarkus extra dependencies](#quarkus-extra-dependencies) which is added as extra input by the current extension.
+> 
+> This additional input is necessary when using snapshot versions (or when overwriting fixed version) of
+> - The Quarkus dependencies
+> - A custom Quarkus extension
 
 ## Limitations
 
@@ -44,7 +44,7 @@ Reference the extension in `.mvn/extensions.xml` (this extension requires the de
     <extension>
         <groupId>com.gradle</groupId>
         <artifactId>quarkus-build-caching-extension</artifactId>
-        <version>1.5</version>
+        <version>1.6</version>
     </extension>
 </extensions>
 ```
@@ -275,14 +275,12 @@ Some properties are pointing to a file which has to be declared as file input. T
 
 #### Quarkus extra dependencies
 
-For compatibility reasons, both the [current version](#current-version) and the [legacy version](#legacy-version) coexist.
-
-##### Current version
+##### Since Quarkus 3.13.0
 Quarkus dynamically adds some dependencies to the build which will be listed in the `target/quarkus-prod-dependencies.txt` file. 
 This file is created by the Quarkus `track-config-changes` goal and contains the absolute path to each dependency (one dependency per line).
 This fileset is added as goal input with a `RUNTIME_CLASSPATH` normalization strategy.
 
-##### Legacy version
+##### Quarkus [3.9.0,3.13.0[
 Quarkus dynamically adds some dependencies to the build which will be listed in the `target/quarkus-prod-dependency-checksums.txt` file.
 This file is created by the Quarkus `track-config-changes` goal and contains the list of dependencies along with their checksum for snapshot versions (one dependency per line).
 This file is added as goal input with a `RELATIVE_PATH` normalization strategy.
@@ -304,7 +302,7 @@ it is important for consistency to add [implicit dependencies](#quarkus-extra-de
 
 Specifically for `maven-failsafe-plugin`, the Quarkus artifact descriptor `quarkus-artifact.properties` also needs to be added. 
 
-This can be achieved by declaring a property `addQuarkusInputs` on the test goal:
+With Quarkus 3.9.0+, This can be achieved by declaring a property `addQuarkusInputs` on the test goal:
 
 ```xml
 <plugins>
@@ -321,6 +319,28 @@ This can be achieved by declaring a property `addQuarkusInputs` on the test goal
         <configuration>
             <properties>
                 <addQuarkusInputs>true</addQuarkusInputs>>
+            </properties>
+        </configuration>
+    </plugin>
+</plugins>
+```
+
+Prior to Quarkus 3.9.0:
+```xml
+<plugins>
+    <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+            <properties>
+                <addQuarkusPackageInputs>true</addQuarkusPackageInputs>>
+            </properties>
+        </configuration>
+    </plugin>
+    <plugin>
+        <artifactId>maven-failsafe-plugin</artifactId>
+        <configuration>
+            <properties>
+                <addQuarkusPackageInputs>true</addQuarkusPackageInputs>>
             </properties>
         </configuration>
     </plugin>

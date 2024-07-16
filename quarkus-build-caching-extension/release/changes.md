@@ -1,3 +1,6 @@
+### 1.6
+- Support Quarkus extra properties on test goals using Quarkus lower than 3.9.0
+
 ### 1.5
 - Allow to configure extra outputs
 - Allow to disable in-container strategy requirement for native builds
