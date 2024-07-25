@@ -254,8 +254,10 @@ This extension makes the Quarkus build goal cacheable by configuring the followi
 #### General inputs
 - The compilation classpath
 - Generated sources directory
-- OS details (name, version, arch)
 - JDK version
+
+#### Inputs specific to the non in-container build strategy
+- OS details (name, version, arch)
 
 #### Quarkus properties
 See [here](https://quarkus.io/guides/config-reference#configuration-sources) for details
