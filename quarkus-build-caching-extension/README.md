@@ -44,7 +44,7 @@ Reference the extension in `.mvn/extensions.xml` (this extension requires the de
     <extension>
         <groupId>com.gradle</groupId>
         <artifactId>quarkus-build-caching-extension</artifactId>
-        <version>1.6</version>
+        <version>1.7</version>
     </extension>
 </extensions>
 ```
