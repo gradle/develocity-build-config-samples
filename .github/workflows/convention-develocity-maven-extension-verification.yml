@@ -54,6 +54,8 @@ jobs:
           java-version: '8'
           distribution: 'temurin'
           cache: maven
+      - name: Set up Maven
+        uses: gradle/develocity-actions/maven-setup@9e625be2d563a4e39c7da23533a750fc3df32c9f
       - name: Download extension
         uses: actions/download-artifact@v4
         with:
@@ -66,7 +68,11 @@ jobs:
         env:
           DEVELOCITY_ACCESS_KEY: ${{ secrets.GE_SOLUTIONS_ACCESS_TOKEN }}
       - name: Verify example build
+        id: build
         working-directory: convention-develocity-maven-extension/examples/maven_${{ matrix.versions.sample }}
         run: ./mvnw clean verify -Ddevelocity.url=https://ge.solutions-team.gradle.com
         env:
-          DEVELOCITY_ACCESS_KEY: ${{ secrets.GE_SOLUTIONS_ACCESS_TOKEN }}
+          DEVELOCITY_ACCESS_KEY: ${{ secrets.DV_SOLUTIONS_ACCESS_KEY }}
+      - name: Verify Build Scan published
+        if: ${{ !steps.build.outputs.build-scan-url }}
+        run: echo "::error ::No Build Scan published"; exit 1
