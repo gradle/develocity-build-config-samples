@@ -84,7 +84,7 @@ jobs:
         if: ${{ !steps.build.outputs.build-scan-url }}
         run: echo "::error ::No Build Scan published"; exit 1
 
-  verification:
+  verification_maven:
     name: Verify Example Build for Maven ${{ matrix.versions.version }}
     needs: [build]
     runs-on: ubuntu-latest
