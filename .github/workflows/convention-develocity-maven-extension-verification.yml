@@ -70,7 +70,7 @@ jobs:
       - name: Verify example build
         id: build
         working-directory: convention-develocity-maven-extension/examples/maven_${{ matrix.versions.sample }}
-        run: ./mvnw clean verify -Ddevelocity.url=https://ge.solutions-team.gradle.com
+        run: ./mvnw clean verify -Ddevelocity.url=https:/example.com
         env:
           DEVELOCITY_ACCESS_KEY: ${{ secrets.DV_SOLUTIONS_ACCESS_KEY }}
       - name: Verify Build Scan published
