@@ -1,4 +1,4 @@
-## Develocity Conventions
+## Convention Develocity Shared
 
 This project demonstrates how a convention Gradle plugin and Maven extension can share the same Develocity build configuration across multiple projects.
 It is intended to serve as a starting point for creating your own Gradle plugin and Maven extension that applies your specific Develocity configuration.
