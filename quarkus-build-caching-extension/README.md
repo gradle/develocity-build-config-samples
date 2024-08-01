@@ -160,9 +160,9 @@ The same configuration can be achieved with Maven properties:
 ```xml
 <properties>
     <develocity.quarkus.cache.enabled>true</develocity.quarkus.cache.enabled>
-    <develocity.quarkus.build.profile>config-dump-ci</develocity.quarkus.build.profile>
+    <develocity.quarkus.build.profile>prod</develocity.quarkus.build.profile>
     <develocity.quarkus.dump.config.prefix>quarkus</develocity.quarkus.dump.config.prefix>
-    <develocity.quarkus.dump.config.suffix>prod</develocity.quarkus.dump.config.suffix>
+    <develocity.quarkus.dump.config.suffix>config-dump-ci</develocity.quarkus.dump.config.suffix>
     <develocity.quarkus.extra.output.dirs>helm</develocity.quarkus.extra.output.dirs>
     <develocity.quarkus.extra.output.files>helm/kubernetes/${project.artifactId}/Chart.yaml,helm/kubernetes/${project.artifactId}/values.yaml</develocity.quarkus.extra.output.files>
     <develocity.quarkus.native.build.in.container.required>false</develocity.quarkus.native.build.in.container.required>
