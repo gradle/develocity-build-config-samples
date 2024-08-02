@@ -62,7 +62,7 @@ jobs:
       - name: Set Maven version
         if: ${{ matrix.versions.version != '(Current)' }}
         working-directory: convention-develocity-maven-extension/examples/maven_${{ matrix.versions.sample }}
-        run: ./mvnw wrapper:wrapper -Dmaven=${{ matrix.versions.version }} -Ddevelocity.url=https://ge.solutions-team.gradle.com
+        run: ./mvnw wrapper:wrapper -Dmaven=${{ matrix.versions.version }} -Ddevelocity.scan.disabled
         env:
           DEVELOCITY_ACCESS_KEY: ${{ secrets.DV_SOLUTIONS_ACCESS_KEY }}
       - name: Verify example build
