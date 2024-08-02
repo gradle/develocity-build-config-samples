@@ -3,10 +3,10 @@ name: Verify Convention Develocity Gradle Plugin
 on:
   push:
     branches: [ main ]
-    paths: [ 'convention-develocity-gradle-plugin/**' ]
+    paths: [ 'convention-develocity-gradle-plugin/**', '.github/workflows/**' ]
   pull_request:
     branches: [ main ]
-    paths: [ 'convention-develocity-gradle-plugin/**' ]
+    paths: [ 'convention-develocity-gradle-plugin/**', '.github/workflows/**' ]
   workflow_dispatch:
 
 jobs:
