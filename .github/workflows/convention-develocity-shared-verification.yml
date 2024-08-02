@@ -3,10 +3,10 @@ name: Verify Convention Develocity Shared
 on:
   push:
     branches: [ main ]
-    paths: [ 'convention-develocity-shared/**' ]
+    paths: [ 'convention-develocity-shared/**', '.github/workflows/convention-develocity-shared-verification.yml' ]
   pull_request:
     branches: [ main ]
-    paths: [ 'convention-develocity-shared/**' ]
+    paths: [ 'convention-develocity-shared/**', '.github/workflows/convention-develocity-shared-verification.yml' ]
   workflow_dispatch:
 
 jobs:
@@ -107,6 +107,8 @@ jobs:
           java-version: '8'
           distribution: 'temurin'
           cache: maven
+      - name: Set up Maven
+        uses: gradle/develocity-actions/maven-setup@v1.1
       - name: Download extension
         uses: actions/download-artifact@v4
         with:
@@ -117,7 +119,11 @@ jobs:
         working-directory: convention-develocity-shared/examples/maven_${{ matrix.versions.sample }}
         run: ./mvnw wrapper:wrapper -Dmaven=${{ matrix.versions.version }} -Ddevelocity.scan.disabled
       - name: Verify example build
+        id: build
         working-directory: convention-develocity-shared/examples/maven_${{ matrix.versions.sample }}
         run: ./mvnw clean verify -Ddevelocity.url=https://ge.solutions-team.gradle.com
         env:
           DEVELOCITY_ACCESS_KEY: ${{ secrets.DV_SOLUTIONS_ACCESS_KEY }}
+      - name: Verify Build Scan published
+        if: ${{ !steps.build.outputs.build-scan-url }}
+        run: echo "::error ::No Build Scan published"; exit 1
