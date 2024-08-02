@@ -64,9 +64,9 @@ jobs:
         working-directory: convention-develocity-maven-extension/examples/maven_${{ matrix.versions.sample }}
         run: ./mvnw wrapper:wrapper -Dmaven=${{ matrix.versions.version }} -Ddevelocity.url=https://ge.solutions-team.gradle.com
         env:
-          DEVELOCITY_ACCESS_KEY: ${{ secrets.GE_SOLUTIONS_ACCESS_TOKEN }}
+          DEVELOCITY_ACCESS_KEY: ${{ secrets.DV_SOLUTIONS_ACCESS_KEY }}
       - name: Verify example build
         working-directory: convention-develocity-maven-extension/examples/maven_${{ matrix.versions.sample }}
         run: ./mvnw clean verify -Ddevelocity.url=https://ge.solutions-team.gradle.com
         env:
-          DEVELOCITY_ACCESS_KEY: ${{ secrets.GE_SOLUTIONS_ACCESS_TOKEN }}
+          DEVELOCITY_ACCESS_KEY: ${{ secrets.DV_SOLUTIONS_ACCESS_KEY }}
