@@ -1,3 +1,6 @@
+### 1.7
+- Allow cross-OS cache hits when using the in-container build strategy
+
 ### 1.6
 - Support Quarkus extra properties on test goals using Quarkus lower than 3.9.0
 

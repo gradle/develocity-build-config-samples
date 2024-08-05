@@ -161,7 +161,9 @@ final class QuarkusBuildCache {
 
         if (!quarkusPropertiesCopy.isEmpty()) {
             LOGGER.info(QuarkusExtensionUtil.getLogMessage("Quarkus properties have changed"));
-            LOGGER.debug(QuarkusExtensionUtil.getLogMessage("[" + quarkusPropertiesCopy.stream().map(e -> e.getKey().toString()).collect(Collectors.joining(", ")) + "]"));
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug(QuarkusExtensionUtil.getLogMessage("[" + quarkusPropertiesCopy.stream().map(e -> e.getKey().toString()).collect(Collectors.joining(", ")) + "]"));
+            }
         } else {
             return true;
         }
@@ -175,22 +177,32 @@ final class QuarkusBuildCache {
 
     private boolean isNotNativeOrInContainerNativeBuild(Properties quarkusCurrentProperties, boolean isNativeBuildInContainerRequired) {
         if (isNativeBuild(quarkusCurrentProperties)) {
-            if(isNativeBuildInContainerRequired) {
-                String builderImage = quarkusCurrentProperties.getProperty(QUARKUS_CONFIG_KEY_NATIVE_BUILDER_IMAGE, "");
-                if (builderImage.isEmpty()) {
-                    LOGGER.info(QuarkusExtensionUtil.getLogMessage("Quarkus build is not using a fixed image"));
-                    return false;
-                }
-
-                if (QUARKUS_CONFIG_KEY_NATIVE_CONTAINER_BUILD.stream().noneMatch(key -> Boolean.parseBoolean(quarkusCurrentProperties.getProperty(key)))) {
-                    LOGGER.info(QuarkusExtensionUtil.getLogMessage("Quarkus build strategy is not in-container"));
-                    return false;
-                }
+            if (isNativeBuildInContainerRequired) {
+                return isInContainerWithFixedImageBuild(quarkusCurrentProperties, true);
             } else {
                 LOGGER.info(QuarkusExtensionUtil.getLogMessage("Quarkus in-container build strategy is not required"));
             }
         } else {
             LOGGER.debug(QuarkusExtensionUtil.getLogMessage("Quarkus build is not native"));
+        }
+
+        return true;
+    }
+
+    private boolean isInContainerWithFixedImageBuild(Properties quarkusCurrentProperties, boolean isLoggingRequired) {
+        String builderImage = quarkusCurrentProperties.getProperty(QUARKUS_CONFIG_KEY_NATIVE_BUILDER_IMAGE, "");
+        if (builderImage.isEmpty()) {
+            if(isLoggingRequired) {
+                LOGGER.info(QuarkusExtensionUtil.getLogMessage("Quarkus build is not using a fixed image"));
+            }
+            return false;
+        }
+
+        if (QUARKUS_CONFIG_KEY_NATIVE_CONTAINER_BUILD.stream().noneMatch(key -> Boolean.parseBoolean(quarkusCurrentProperties.getProperty(key)))) {
+            if(isLoggingRequired) {
+                LOGGER.info(QuarkusExtensionUtil.getLogMessage("Quarkus build strategy is not in-container"));
+            }
+            return false;
         }
 
         return true;
@@ -218,7 +230,10 @@ final class QuarkusBuildCache {
 
     private void configureInputs(MojoMetadataProvider.Context context, QuarkusExtensionConfiguration extensionConfiguration, Properties quarkusCurrentProperties) {
         context.inputs(inputs -> {
-            addOsInputs(inputs);
+            if (!isInContainerWithFixedImageBuild(quarkusCurrentProperties, false)) {
+                // do not add OS inputs when using the in-container build strategy
+                addOsInputs(inputs);
+            }
             addCompilerInputs(inputs);
             addClasspathInput(context, inputs);
             addMojoInputs(inputs);

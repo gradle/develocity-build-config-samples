@@ -44,7 +44,7 @@ Reference the extension in `.mvn/extensions.xml` (this extension requires the de
     <extension>
         <groupId>com.gradle</groupId>
         <artifactId>quarkus-build-caching-extension</artifactId>
-        <version>1.6</version>
+        <version>1.7</version>
     </extension>
 </extensions>
 ```
@@ -160,9 +160,9 @@ The same configuration can be achieved with Maven properties:
 ```xml
 <properties>
     <develocity.quarkus.cache.enabled>true</develocity.quarkus.cache.enabled>
-    <develocity.quarkus.build.profile>config-dump-ci</develocity.quarkus.build.profile>
+    <develocity.quarkus.build.profile>prod</develocity.quarkus.build.profile>
     <develocity.quarkus.dump.config.prefix>quarkus</develocity.quarkus.dump.config.prefix>
-    <develocity.quarkus.dump.config.suffix>prod</develocity.quarkus.dump.config.suffix>
+    <develocity.quarkus.dump.config.suffix>config-dump-ci</develocity.quarkus.dump.config.suffix>
     <develocity.quarkus.extra.output.dirs>helm</develocity.quarkus.extra.output.dirs>
     <develocity.quarkus.extra.output.files>helm/kubernetes/${project.artifactId}/Chart.yaml,helm/kubernetes/${project.artifactId}/values.yaml</develocity.quarkus.extra.output.files>
     <develocity.quarkus.native.build.in.container.required>false</develocity.quarkus.native.build.in.container.required>
@@ -254,8 +254,10 @@ This extension makes the Quarkus build goal cacheable by configuring the followi
 #### General inputs
 - The compilation classpath
 - Generated sources directory
-- OS details (name, version, arch)
 - JDK version
+
+#### Inputs specific to the non in-container build strategy
+- OS details (name, version, arch)
 
 #### Quarkus properties
 See [here](https://quarkus.io/guides/config-reference#configuration-sources) for details
