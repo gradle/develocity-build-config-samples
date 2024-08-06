@@ -20,6 +20,8 @@ jobs:
             sample-file: 'capture-develocity-plugin-version/gradle-develocity-plugin-version.gradle'
           - name: 'Git diffs'
             sample-file: 'capture-git-diffs/gradle-git-diffs.gradle'
+          - name: 'Max parallel forks'
+            sample-file: 'capture-max-parallel-forks/gradle-max-parallel-forks.gradle'
           - name: 'OS processes'
             sample-file: 'capture-os-processes/gradle-os-processes.gradle'
           - name: 'Processor arch'
