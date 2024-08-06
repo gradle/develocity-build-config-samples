@@ -1,12 +1,12 @@
 #!/bin/bash
 
-# Command line options for GRADLE_ENTERPRISE_URL and ACCESS_KEY
+# Command line options for DEVELOCITY_URL and ACCESS_KEY
 if [[ $# -lt 2 ]]; then
-    echo "Usage: $0 <gradle_enterprise_url> <access_key> [number_of_days]"
+    echo "Usage: $0 <develocity_url> <access_key> [number_of_days]"
     exit 1
 fi
 
-GRADLE_ENTERPRISE_URL="$1"
+DEVELOCITY_URL="$1"
 ACCESS_KEY="$2"
 NUMBER_OF_DAYS="${3:-7}" # Default to 7 days if not provided
 FROM_INSTANT=$(date -d "$NUMBER_OF_DAYS days ago" +%s)000  # Days ago in milliseconds
@@ -14,7 +14,7 @@ FROM_INSTANT=$(date -d "$NUMBER_OF_DAYS days ago" +%s)000  # Days ago in millise
 # Function to fetch builds
 fetch_builds() {
     local from_build=$1
-    local url="$GRADLE_ENTERPRISE_URL/api/builds?models=gradle-attributes&models=maven-attributes&fromInstant=$FROM_INSTANT&maxBuilds=1000"
+    local url="$DEVELOCITY_URL/api/builds?models=gradle-attributes&models=maven-attributes&fromInstant=$FROM_INSTANT&maxBuilds=1000"
     if [[ -n "$from_build" ]]; then
         url="$url&fromBuild=$from_build"
     fi
