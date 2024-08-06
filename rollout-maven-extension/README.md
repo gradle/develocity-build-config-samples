@@ -2,7 +2,7 @@
 
 ### Overview
 
-The Develocity Maven Extension rollout script provides a means to automate the application and upgrade of the [Develocity Maven extension](https://docs.gradle.com/enterprise/maven-extension) on multiple Maven projects stored in separate Git repositories.
+The Develocity Maven Extension rollout script provides a means to automate the application and upgrade of the [Develocity Maven extension](https://docs.gradle.com/develocity/maven-extension/current/) on multiple Maven projects stored in separate Git repositories.
 
 ### Usage
 
