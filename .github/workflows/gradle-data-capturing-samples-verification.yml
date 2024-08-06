@@ -3,10 +3,10 @@ name: Verify Gradle Data Capturing Samples
 on:
   push:
     branches: [ main ]
-    paths: [ 'build-data-capturing-gradle-samples/**' ]
+    paths: [ 'build-data-capturing-gradle-samples/**', '.github/workflows/gradle-data-capturing-samples-verification.yml' ]
   pull_request:
     branches: [ main ]
-    paths: [ 'build-data-capturing-gradle-samples/**' ]
+    paths: [ 'build-data-capturing-gradle-samples/**', '.github/workflows/gradle-data-capturing-samples-verification.yml' ]
   workflow_dispatch:
 
 jobs:
