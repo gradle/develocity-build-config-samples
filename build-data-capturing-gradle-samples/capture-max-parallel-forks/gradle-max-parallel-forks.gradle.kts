@@ -1,6 +1,6 @@
-import com.gradle.enterprise.gradleplugin.GradleEnterpriseExtension
+import com.gradle.develocity.agent.gradle.DevelocityConfiguration
 
-project.extensions.configure<GradleEnterpriseExtension>() {
+project.extensions.configure<DevelocityConfiguration>() {
     buildScan {
         allprojects {
             tasks.withType<Test>().configureEach {
