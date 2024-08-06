@@ -1,12 +1,12 @@
-import com.gradle.enterprise.gradleplugin.GradleEnterpriseExtension
-import com.gradle.scan.plugin.BuildScanExtension
+import com.gradle.develocity.agent.gradle.DevelocityConfiguration
+import com.gradle.develocity.agent.gradle.scan.BuildScanConfiguration
 
 /**
  * This Gradle script captures all tasks of a given type taking longer to execute than a certain threshold,
  * and adds these as custom values.
  */
 
-project.extensions.configure<GradleEnterpriseExtension>() {
+project.extensions.configure<DevelocityConfiguration>() {
     buildScan {
         val THRESHOLD_MILLIS = 15 * 60 * 1000 // 15 min
         val api = buildScan
@@ -29,7 +29,7 @@ project.extensions.configure<GradleEnterpriseExtension>() {
 
 class Capture {
     companion object {
-        fun addbuildScanValue(api: BuildScanExtension, key: String, value: String) {
+        fun addbuildScanValue(api: BuildScanConfiguration, key: String, value: String) {
             api.value(key, value)
         }
     }

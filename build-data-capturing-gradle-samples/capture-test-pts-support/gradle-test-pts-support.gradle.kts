@@ -1,5 +1,5 @@
-import com.gradle.enterprise.gradleplugin.GradleEnterpriseExtension
-import com.gradle.scan.plugin.BuildScanExtension
+import com.gradle.develocity.agent.gradle.DevelocityConfiguration
+import com.gradle.develocity.agent.gradle.scan.BuildScanConfiguration
 import org.gradle.util.internal.VersionNumber
 import java.nio.charset.StandardCharsets
 import java.util.Collections
@@ -14,7 +14,7 @@ import groovy.transform.Field
  * adding a flag as custom value.
  */
 
-project.extensions.configure<GradleEnterpriseExtension>() {
+project.extensions.configure<DevelocityConfiguration>() {
     buildScan {
         val api = buildScan
         val capture = Capture(api, gradle.rootProject.logger)
@@ -28,7 +28,7 @@ project.extensions.configure<GradleEnterpriseExtension>() {
     }
 }
 
-class Capture(val api: BuildScanExtension, val logger: Logger) {
+class Capture(val api: BuildScanConfiguration, val logger: Logger) {
     val supportedEngines: Map<String, String> = mapOf(
         "org.junit.support.testng.engine.TestNGTestEngine" to "testng",
         "org.junit.jupiter.engine.JupiterTestEngine" to "junit-jupiter",

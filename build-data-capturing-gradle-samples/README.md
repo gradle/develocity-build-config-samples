@@ -24,7 +24,7 @@ This directory contains samples demonstrating various ways to extend and customi
 tags, links, and custom values.
 
 To learn more, see the Develocity documentation
-on [Extending build scans](https://docs.gradle.com/enterprise/gradle-plugin/#extending_build_scans).
+on [Extending build scans](https://docs.gradle.com/develocity/gradle-plugin/current/#extending_build_scans).
 
 ### Capture Develocity Plugin Version
 
