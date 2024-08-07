@@ -1,6 +1,6 @@
 <develocity>
     <server>
-        <url>https://localhost</url>
+        <url>https://ge.solutions-team.gradle.com</url>
         <allowUntrusted>true</allowUntrusted>
     </server>
     <buildCache>
