@@ -1,17 +1,14 @@
-import com.gradle.enterprise.gradleplugin.GradleEnterpriseExtension
-import com.gradle.scan.plugin.BuildScanExtension
+import com.gradle.develocity.agent.gradle.DevelocityConfiguration
 import groovy.xml.XmlSlurper
-import groovy.xml.slurpersupport.Node
 import groovy.xml.slurpersupport.NodeChild
 import groovy.xml.slurpersupport.NodeChildren
-import groovy.xml.slurpersupport.GPathResult
 
 /**
  * This Gradle script captures issues found by reporting tasks,
  * and adds these as custom values.
  */
 
-project.extensions.configure<GradleEnterpriseExtension>() {
+project.extensions.configure<DevelocityConfiguration>() {
     buildScan {
         gradle.taskGraph.beforeTask {
             if (this.reportingSupported && this is Reporting<*>) {

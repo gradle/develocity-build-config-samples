@@ -1,5 +1,5 @@
-import com.gradle.enterprise.gradleplugin.GradleEnterpriseExtension
-import com.gradle.scan.plugin.BuildScanExtension
+import com.gradle.develocity.agent.gradle.DevelocityConfiguration
+import com.gradle.develocity.agent.gradle.scan.BuildScanConfiguration
 import java.nio.charset.StandardCharsets
 import java.security.MessageDigest
 
@@ -8,7 +8,7 @@ import java.security.MessageDigest
  * and adds these as custom values.
  */
 
-project.extensions.configure<GradleEnterpriseExtension>() {
+project.extensions.configure<DevelocityConfiguration>() {
     buildScan {
         val api = buildScan
         allprojects {
@@ -25,7 +25,7 @@ class Capture {
     companion object {
         val MESSAGE_DIGEST = MessageDigest.getInstance("SHA-256")
 
-        fun addbuildScanValue(api: BuildScanExtension, key: String, value: Any?) {
+        fun addbuildScanValue(api: BuildScanConfiguration, key: String, value: Any?) {
             api.value(key, hash(value))
         }
 

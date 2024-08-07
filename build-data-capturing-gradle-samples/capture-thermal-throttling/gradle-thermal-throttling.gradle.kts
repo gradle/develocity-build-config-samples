@@ -1,9 +1,9 @@
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
-import com.gradle.enterprise.gradleplugin.GradleEnterpriseExtension
+import com.gradle.develocity.agent.gradle.DevelocityConfiguration
+import com.gradle.develocity.agent.gradle.scan.BuildScanConfiguration
 import org.gradle.internal.os.OperatingSystem
-import com.gradle.scan.plugin.BuildScanExtension
 
 import java.nio.charset.Charset
 import java.util.concurrent.ConcurrentLinkedQueue
@@ -26,7 +26,7 @@ import org.gradle.tooling.events.FinishEvent
  * - This is supported on MacOS only.
  */
 
-project.extensions.configure<GradleEnterpriseExtension>() {
+project.extensions.configure<DevelocityConfiguration>() {
     buildScan {
         val api = buildScan
         if (OperatingSystem.current().isMacOsX()) {
@@ -92,7 +92,7 @@ abstract class ThermalThrottlingService : BuildService<BuildServiceParameters.No
         }
     }
 
-    fun processResults(api: BuildScanExtension) {
+    fun processResults(api: BuildScanConfiguration) {
         if (!samples.isEmpty()) {
             val average = samples.stream().mapToInt{ it as Int }.average().getAsDouble()
             if (average < 100.0) {

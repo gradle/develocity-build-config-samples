@@ -1,5 +1,5 @@
-import com.gradle.enterprise.gradleplugin.GradleEnterpriseExtension
-import com.gradle.scan.plugin.BuildScanExtension
+import com.gradle.develocity.agent.gradle.DevelocityConfiguration
+import com.gradle.develocity.agent.gradle.scan.BuildScanConfiguration
 import java.nio.charset.Charset
 import java.util.concurrent.TimeUnit
 
@@ -8,7 +8,7 @@ import java.util.concurrent.TimeUnit
  * and adds these as a custom value.
  */
 
-project.extensions.configure<GradleEnterpriseExtension>() {
+project.extensions.configure<DevelocityConfiguration>() {
     buildScan {
         background {
             Capture.captureProcessorArch(buildScan)
@@ -18,7 +18,7 @@ project.extensions.configure<GradleEnterpriseExtension>() {
 
 class Capture {
     companion object {
-        fun captureProcessorArch(api: BuildScanExtension) {
+        fun captureProcessorArch(api: BuildScanConfiguration) {
             val osName = System.getProperty("os.name")
             api.value("os.name", osName)
 

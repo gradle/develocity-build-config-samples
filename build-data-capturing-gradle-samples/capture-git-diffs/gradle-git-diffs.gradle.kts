@@ -1,5 +1,5 @@
-import com.gradle.enterprise.gradleplugin.GradleEnterpriseExtension
-import com.gradle.scan.plugin.BuildScanExtension
+import com.gradle.develocity.agent.gradle.DevelocityConfiguration
+import com.gradle.develocity.agent.gradle.scan.BuildScanConfiguration
 import groovy.json.JsonBuilder
 import groovy.json.JsonSlurper
 
@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit
  * See https://docs.github.com/en/rest/gists/gists#create-a-gist for reference.
  */
 
-project.extensions.configure<GradleEnterpriseExtension>() {
+project.extensions.configure<DevelocityConfiguration> {
 
     val capture = Capture(gradle.startParameter.isOffline,
         gradle.startParameter.isContinuous,
@@ -49,7 +49,7 @@ class Capture(val offline: Boolean,
         return true
     }
 
-    fun captureGitDiffInGist(api: BuildScanExtension) {
+    fun captureGitDiffInGist(api: BuildScanConfiguration) {
         val hasCredentials = gistTokenProvider.isPresent
         if (!hasCredentials) {
             logger.warn("User has not set 'gistToken'. Cannot publish gist.")
