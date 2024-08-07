@@ -122,6 +122,9 @@
                             <name>forceJava</name>
                           </property>
                           <property>
+                            <name>includePluginDependencies</name>
+                          </property>
+                          <property>
                             <name>skip</name>
                           </property>
                           <property>
