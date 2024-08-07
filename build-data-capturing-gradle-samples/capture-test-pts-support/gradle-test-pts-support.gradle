@@ -1,4 +1,4 @@
-import com.gradle.scan.plugin.BuildScanExtension
+import com.gradle.develocity.agent.gradle.scan.BuildScanConfiguration
 import org.gradle.util.internal.VersionNumber
 import java.nio.charset.StandardCharsets
 import java.util.Collections
@@ -12,7 +12,7 @@ import java.util.stream.Collectors
  * adding a flag as custom value.
  */
 
-def buildScanApi = project.extensions.findByName('buildScan')
+def buildScanApi = project.extensions.findByName('develocity').getBuildScan();
 if (!buildScanApi) {
     return
 }
@@ -38,9 +38,9 @@ class Capture {
         'io.cucumber.junit.platform.engine.CucumberTestEngine' : 'cucumber-junit-platform'
     ]
     private Logger logger
-    private BuildScanExtension buildScanApi
+    private BuildScanConfiguration buildScanApi
 
-    Capture(BuildScanExtension buildScanApi, Logger logger) {
+    Capture(BuildScanConfiguration buildScanApi, Logger logger) {
         this.buildScanApi = buildScanApi
         this.logger = logger
     }
