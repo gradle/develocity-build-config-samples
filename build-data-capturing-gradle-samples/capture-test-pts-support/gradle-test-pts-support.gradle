@@ -12,11 +12,11 @@ import java.util.stream.Collectors
  * adding a flag as custom value.
  */
 
-def buildScanApi = project.extensions.findByName('develocity').getBuildScan();
-if (!buildScanApi) {
+def develocityApi = project.extensions.findByName('develocity')
+if (!develocityApi) {
     return
 }
-def capture = new Capture(buildScanApi, gradle.rootProject.logger)
+def capture = new Capture(develocityApi.getBuildScan(), gradle.rootProject.logger)
 allprojects {
     tasks.withType(Test).configureEach { t ->
         doFirst {
