@@ -66,7 +66,7 @@ cd plugins/gradle-5-or-newer
 ./gradlew publishToMavenLocal
 ```
 
-Once you have published the plugins, you can run the four example builds under `examples`:
+Once you have published the plugins, you can run the example builds under `examples`:
 
 ```bash
 cd examples/gradle_6_and_later

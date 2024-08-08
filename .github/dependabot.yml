@@ -56,6 +56,13 @@ updates:
     schedule:
       interval: "daily"
       time: "02:00"
+  - package-ecosystem: "gradle"
+    directory: "convention-develocity-shared"
+    registries:
+      - gradle-plugin-portal
+    schedule:
+      interval: "daily"
+      time: "02:00"
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
