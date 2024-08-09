@@ -1,4 +1,4 @@
-import com.gradle.scan.plugin.BuildScanExtension
+import com.gradle.develocity.agent.gradle.scan.BuildScanConfiguration
 import org.gradle.util.internal.VersionNumber
 import java.nio.charset.StandardCharsets
 import java.util.Collections
@@ -12,11 +12,11 @@ import java.util.stream.Collectors
  * adding a flag as custom value.
  */
 
-def buildScanApi = project.extensions.findByName('buildScan')
-if (!buildScanApi) {
+def develocityApi = project.extensions.findByName('develocity')
+if (!develocityApi) {
     return
 }
-def capture = new Capture(buildScanApi, gradle.rootProject.logger)
+def capture = new Capture(develocityApi.getBuildScan(), gradle.rootProject.logger)
 allprojects {
     tasks.withType(Test).configureEach { t ->
         doFirst {
@@ -38,9 +38,9 @@ class Capture {
         'io.cucumber.junit.platform.engine.CucumberTestEngine' : 'cucumber-junit-platform'
     ]
     private Logger logger
-    private BuildScanExtension buildScanApi
+    private BuildScanConfiguration buildScanApi
 
-    Capture(BuildScanExtension buildScanApi, Logger logger) {
+    Capture(BuildScanConfiguration buildScanApi, Logger logger) {
         this.buildScanApi = buildScanApi
         this.logger = logger
     }
