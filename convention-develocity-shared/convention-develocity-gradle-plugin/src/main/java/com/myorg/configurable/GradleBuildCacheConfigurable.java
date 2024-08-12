@@ -3,7 +3,7 @@ package com.myorg.configurable;
 import com.gradle.develocity.agent.gradle.buildcache.DevelocityBuildCache;
 import org.gradle.caching.configuration.BuildCacheConfiguration;
 
-public final class GradleBuildCacheConfigurable implements BuildCacheConfigurable {
+final class GradleBuildCacheConfigurable implements BuildCacheConfigurable {
 
     private final LocalBuildCacheConfigurable localBuildCache;
     private final RemoteBuildCacheConfigurable remoteBuildCache;

@@ -6,10 +6,12 @@ public final class MavenDevelocityConfigurable implements DevelocityConfigurable
 
     private final DevelocityApi develocity;
     private final BuildScanConfigurable buildScan;
+    private final BuildCacheConfigurable buildCache;
 
     public MavenDevelocityConfigurable(DevelocityApi develocity) {
         this.develocity = develocity;
         this.buildScan = new MavenBuildScanConfigurable(develocity.getBuildScan());
+        this.buildCache = new MavenBuildCacheConfigurable(develocity.getBuildCache());
     }
 
     @Override
@@ -35,6 +37,11 @@ public final class MavenDevelocityConfigurable implements DevelocityConfigurable
     @Override
     public BuildScanConfigurable getBuildScan() {
         return buildScan;
+    }
+
+    @Override
+    public BuildCacheConfigurable getBuildCache() {
+        return buildCache;
     }
 
 }

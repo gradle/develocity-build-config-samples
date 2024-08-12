@@ -2,7 +2,6 @@ package com.myorg;
 
 import com.gradle.develocity.agent.maven.api.DevelocityApi;
 import com.gradle.develocity.agent.maven.api.DevelocityListener;
-import com.myorg.configurable.MavenBuildCacheConfigurable;
 import com.myorg.configurable.MavenDevelocityConfigurable;
 import org.apache.maven.execution.MavenSession;
 import org.codehaus.plexus.component.annotations.Component;
@@ -19,9 +18,7 @@ final class ConventionDevelocityMavenExtensionListener implements DevelocityList
 
     @Override
     public void configure(DevelocityApi develocity, MavenSession session) {
-        DevelocityConventions develocityConventions = new DevelocityConventions();
-        develocityConventions.configureDevelocity(new MavenDevelocityConfigurable(develocity));
-        develocityConventions.configureBuildCache(new MavenBuildCacheConfigurable(develocity.getBuildCache()));
+        new DevelocityConventions().configureDevelocity(new MavenDevelocityConfigurable(develocity));
     }
 
 }

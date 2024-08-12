@@ -3,7 +3,6 @@ package com.myorg;
 import com.gradle.CommonCustomUserDataGradlePlugin;
 import com.gradle.develocity.agent.gradle.DevelocityConfiguration;
 import com.gradle.develocity.agent.gradle.DevelocityPlugin;
-import com.myorg.configurable.GradleBuildCacheConfigurable;
 import com.myorg.configurable.GradleDevelocityConfigurable;
 import org.gradle.api.GradleException;
 import org.gradle.api.Plugin;
@@ -41,20 +40,15 @@ final class ConventionDevelocityGradlePlugin implements Plugin<Object> {
     private void configureGradle6OrNewer(Settings settings) {
         settings.getPluginManager().apply(DevelocityPlugin.class);
         settings.getPluginManager().apply(CommonCustomUserDataGradlePlugin.class);
-
         DevelocityConfiguration develocity = settings.getExtensions().getByType(DevelocityConfiguration.class);
-        DevelocityConventions develocityConventions = new DevelocityConventions();
-        develocityConventions.configureDevelocity(new GradleDevelocityConfigurable(develocity));
-        develocityConventions.configureBuildCache(new GradleBuildCacheConfigurable(develocity.getBuildCache(), settings.getBuildCache()));
+        new DevelocityConventions().configureDevelocity(new GradleDevelocityConfigurable(develocity, settings.getBuildCache()));
     }
 
     private void configureGradle5(Project project) {
         project.getPluginManager().apply(DevelocityPlugin.class);
         project.getPluginManager().apply(CommonCustomUserDataGradlePlugin.class);
-
-        DevelocityConventions develocityConventions = new DevelocityConventions();
-        develocityConventions.configureDevelocity(new GradleDevelocityConfigurable(project.getExtensions().getByType(DevelocityConfiguration.class)));
-        // develocityConventions.configureBuildCache is not called because the build cache cannot be configured via a plugin prior to Gradle 6.0
+        DevelocityConfiguration develocity = project.getExtensions().getByType(DevelocityConfiguration.class);
+        new DevelocityConventions().configureDevelocity(new GradleDevelocityConfigurable(develocity));
     }
 
     private static boolean isGradle6OrNewer() {

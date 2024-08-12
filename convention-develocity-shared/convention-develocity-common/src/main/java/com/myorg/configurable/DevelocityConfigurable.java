@@ -12,4 +12,6 @@ public interface DevelocityConfigurable {
 
     BuildScanConfigurable getBuildScan();
 
+    BuildCacheConfigurable getBuildCache();
+
 }

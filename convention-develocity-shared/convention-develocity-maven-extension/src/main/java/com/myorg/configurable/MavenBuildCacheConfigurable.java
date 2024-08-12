@@ -2,7 +2,7 @@ package com.myorg.configurable;
 
 import com.gradle.develocity.agent.maven.api.cache.BuildCacheApi;
 
-public final class MavenBuildCacheConfigurable implements BuildCacheConfigurable {
+final class MavenBuildCacheConfigurable implements BuildCacheConfigurable {
 
     private final LocalBuildCacheConfigurable localBuildCache;
     private final RemoteBuildCacheConfigurable remoteBuildCache;

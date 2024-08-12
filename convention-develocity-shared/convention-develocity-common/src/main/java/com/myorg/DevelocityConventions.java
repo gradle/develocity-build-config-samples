@@ -10,6 +10,7 @@ final class DevelocityConventions {
         // CHANGE ME: Apply your Develocity configuration here
         develocity.setServer("https://develocity-samples.gradle.com");
         configureBuildScan(develocity.getBuildScan());
+        configureBuildCache(develocity.getBuildCache());
     }
 
     private void configureBuildScan(BuildScanConfigurable buildScan) {
@@ -17,7 +18,7 @@ final class DevelocityConventions {
         buildScan.setUploadInBackground(!isCi());
     }
 
-    void configureBuildCache(BuildCacheConfigurable buildCache) {
+    private void configureBuildCache(BuildCacheConfigurable buildCache) {
         // CHANGE ME: Apply your Build Cache configuration here
         buildCache.getLocal().setEnabled(true);
         buildCache.getLocal().setStoreEnabled(true);
