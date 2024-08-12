@@ -3,10 +3,10 @@ name: Verify Convention Develocity Gradle Plugin
 on:
   push:
     branches: [ main ]
-    paths: [ 'convention-develocity-gradle-plugin/**' ]
+    paths: [ 'convention-develocity-gradle-plugin/**', '.github/workflows/**' ]
   pull_request:
     branches: [ main ]
-    paths: [ 'convention-develocity-gradle-plugin/**' ]
+    paths: [ 'convention-develocity-gradle-plugin/**', '.github/workflows/**' ]
   workflow_dispatch:
 
 jobs:
@@ -80,13 +80,13 @@ jobs:
           ./gradlew wrapper --gradle-version=${{ matrix.versions.version }} --no-scan
           ./gradlew wrapper --gradle-version=${{ matrix.versions.version }} --no-scan
         env:
-          DEVELOCITY_ACCESS_KEY: ${{ secrets.GE_SOLUTIONS_ACCESS_TOKEN }}
+          DEVELOCITY_ACCESS_KEY: ${{ secrets.DV_SOLUTIONS_ACCESS_KEY }}
       - name: Verify example build
         id: build
         working-directory: convention-develocity-gradle-plugin/examples/gradle_${{ matrix.versions.sample }}
         run: ./gradlew build -Ddevelocity.url=https://ge.solutions-team.gradle.com
         env:
-          DEVELOCITY_ACCESS_KEY: ${{ secrets.GE_SOLUTIONS_ACCESS_TOKEN }}
+          DEVELOCITY_ACCESS_KEY: ${{ secrets.DV_SOLUTIONS_ACCESS_KEY }}
       - name: Verify Build Scan published
         if: ${{ !steps.build.outputs.build-scan-url }}
         run: echo "::error ::No Build Scan published"; exit 1
