@@ -14,7 +14,7 @@ dependencies {
 
     implementation("com.gradle:develocity-maven-extension:1.21.5")
     implementation("com.gradle:common-custom-user-data-maven-extension:2.0")
-    implementation(project(":convention-develocity-shared"))
+    implementation(project(":convention-develocity-common"))
 }
 
 publishing {

@@ -4,6 +4,6 @@ plugins {
 
 rootProject.name = "convention-develocity-shared"
 
+include("convention-develocity-common")
 include("convention-develocity-gradle-plugin")
 include("convention-develocity-maven-extension")
-include("convention-develocity-shared")

@@ -90,9 +90,9 @@ For each new release of the convention extension, consuming builds will need to 
 
 This project is structured as follows:
 
+* `convention-develocity-common` - Contains the common convention logic shared between build tools
 * `convention-develocity-gradle-plugin` - Contains the convention Gradle plugin
 * `convention-develocity-maven-extension` - Contains the convention Maven extension
-* `convention-develocity-shared` - Contains the convention logic shared between build tools
 * `examples` - Contains example builds that apply the convention Gradle plugin or Maven extension for different Gradle and Maven versions
     * `gradle_5` - Applies the convention Gradle plugin on a Gradle 5 build
     * `gradle_6` - Applies the convention Gradle plugin on a Gradle 6 build
