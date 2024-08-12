@@ -22,7 +22,7 @@ The samples can be grouped into the following categories:
  - Configuration snippets to capture additional data in build scans
  - Configuration snippets to optimize build performance
  - Template projects for Gradle and Maven when using Develocity
- - Scripts and code to apply and reuse Develocity across multiple projects
+ - Scripts and code to apply and reuse Develocity across multiple projects and build tools
 
 ## Learn more
 
