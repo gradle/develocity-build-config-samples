@@ -3,10 +3,10 @@ name: Verify Convention Develocity Shared
 on:
   push:
     branches: [ main ]
-    paths: [ 'convention-develocity-shared/**', '.github/workflows/convention-develocity-shared-verification.yml' ]
+    paths: [ 'convention-develocity-shared/**', '.github/workflows/**' ]
   pull_request:
     branches: [ main ]
-    paths: [ 'convention-develocity-shared/**', '.github/workflows/convention-develocity-shared-verification.yml' ]
+    paths: [ 'convention-develocity-shared/**', '.github/workflows/**' ]
   workflow_dispatch:
 
 jobs:
