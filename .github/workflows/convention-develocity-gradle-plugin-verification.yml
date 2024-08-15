@@ -79,8 +79,6 @@ jobs:
           sed -i '/distributionSha256Sum.*/d' gradle/wrapper/gradle-wrapper.properties
           ./gradlew wrapper --gradle-version=${{ matrix.versions.version }} --no-scan
           ./gradlew wrapper --gradle-version=${{ matrix.versions.version }} --no-scan
-        env:
-          DEVELOCITY_ACCESS_KEY: ${{ secrets.DV_SOLUTIONS_ACCESS_KEY }}
       - name: Verify example build
         id: build
         working-directory: convention-develocity-gradle-plugin/examples/gradle_${{ matrix.versions.sample }}
