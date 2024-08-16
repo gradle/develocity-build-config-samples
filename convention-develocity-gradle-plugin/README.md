@@ -69,7 +69,7 @@ cd plugins/gradle-5-or-newer
 Once you have published the plugins, you can run the example builds under `examples`:
 
 ```bash
-cd examples/gradle_6_and_later
+cd examples/gradle_6.9_and_later
 ./gradlew build
 ```
 

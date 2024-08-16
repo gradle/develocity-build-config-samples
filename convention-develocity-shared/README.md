@@ -122,7 +122,7 @@ cd examples/gradle_5
 cd examples/gradle_6
 ./gradlew build
 
-cd examples/gradle_6_and_later
+cd examples/gradle_6.9_and_later
 ./gradlew build
 ``` 
 
