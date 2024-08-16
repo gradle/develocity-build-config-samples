@@ -22,7 +22,7 @@ jobs:
           java-version: '8'
           distribution: 'temurin'
       - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v3
+        uses: gradle/actions/setup-gradle@v4
       - name: Build with Gradle
         working-directory: convention-develocity-shared
         run: ./gradlew build publishToMavenLocal
@@ -61,7 +61,7 @@ jobs:
           java-version: '8'
           distribution: 'temurin'
       - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v3
+        uses: gradle/actions/setup-gradle@v4
       - name: Download plugin
         uses: actions/download-artifact@v4
         with:
