@@ -57,19 +57,18 @@ public class ConventionDevelocityGradlePlugin implements Plugin<Object> {
     private void configureDevelocity(DevelocityConfiguration develocity, StartParameter startParameter) {
         // CHANGE ME: Apply your Develocity configuration here
         develocity.getServer().set("https://develocity-samples.gradle.com");
-        if (!containsPropertiesTask(startParameter)) {
-            configureBuildScan(develocity.getBuildScan());
-        }
+        configureBuildScan(develocity.getBuildScan(), startParameter);
+    }
+
+    private void configureBuildScan(BuildScanConfiguration buildScan, StartParameter startParameter) {
+        // CHANGE ME: Apply your Build Scan configuration here
+        buildScan.getUploadInBackground().set(!isCi());
+        buildScan.getCapture().getBuildLogging().set(!containsPropertiesTask(startParameter));
     }
 
     private boolean containsPropertiesTask(StartParameter startParameter) {
         return startParameter.getTaskNames().contains("properties")
                 || startParameter.getTaskNames().stream().anyMatch(it -> it.endsWith(":properties"));
-    }
-
-    private void configureBuildScan(BuildScanConfiguration buildScan) {
-        // CHANGE ME: Apply your Build Scan configuration here
-        buildScan.getUploadInBackground().set(!isCi());
     }
 
     private void configureBuildCache(BuildCacheConfiguration buildCache, DevelocityConfiguration develocity) {
