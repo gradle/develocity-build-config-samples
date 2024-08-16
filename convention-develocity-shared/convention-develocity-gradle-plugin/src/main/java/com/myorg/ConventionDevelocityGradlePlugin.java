@@ -3,7 +3,9 @@ package com.myorg;
 import com.gradle.CommonCustomUserDataGradlePlugin;
 import com.gradle.develocity.agent.gradle.DevelocityConfiguration;
 import com.gradle.develocity.agent.gradle.DevelocityPlugin;
+import com.gradle.develocity.agent.gradle.scan.BuildScanConfiguration;
 import com.myorg.configurable.GradleDevelocityConfigurable;
+import org.gradle.StartParameter;
 import org.gradle.api.GradleException;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
@@ -42,6 +44,7 @@ final class ConventionDevelocityGradlePlugin implements Plugin<Object> {
         settings.getPluginManager().apply(CommonCustomUserDataGradlePlugin.class);
         DevelocityConfiguration develocity = settings.getExtensions().getByType(DevelocityConfiguration.class);
         new DevelocityConventions().configureDevelocity(new GradleDevelocityConfigurable(develocity, settings.getBuildCache()));
+        configureBuildScan(develocity.getBuildScan(), settings.getGradle().getStartParameter());
     }
 
     private void configureGradle5(Project project) {
@@ -49,6 +52,16 @@ final class ConventionDevelocityGradlePlugin implements Plugin<Object> {
         project.getPluginManager().apply(CommonCustomUserDataGradlePlugin.class);
         DevelocityConfiguration develocity = project.getExtensions().getByType(DevelocityConfiguration.class);
         new DevelocityConventions().configureDevelocity(new GradleDevelocityConfigurable(develocity));
+        configureBuildScan(develocity.getBuildScan(), project.getGradle().getStartParameter());
+    }
+
+    private void configureBuildScan(BuildScanConfiguration buildScan, StartParameter startParameter) {
+        buildScan.getCapture().getBuildLogging().set(!containsPropertiesTask(startParameter));
+    }
+
+    private boolean containsPropertiesTask(StartParameter startParameter) {
+        return startParameter.getTaskNames().contains("properties")
+                || startParameter.getTaskNames().stream().anyMatch(it -> it.endsWith(":properties"));
     }
 
     private static boolean isGradle6OrNewer() {
