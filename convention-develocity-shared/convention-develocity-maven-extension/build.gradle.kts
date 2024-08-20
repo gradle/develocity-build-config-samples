@@ -9,7 +9,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly("org.apache.maven:maven-core:3.9.8")
+    compileOnly("org.apache.maven:maven-core:3.9.9")
     compileOnly("org.codehaus.plexus:plexus-component-annotations:2.2.0")
 
     implementation("com.gradle:develocity-maven-extension:1.22")
