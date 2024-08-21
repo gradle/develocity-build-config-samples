@@ -1,3 +1,6 @@
+### 1.8
+- Add support for Quarkus `BuildMojo.attachSboms` parameter introduced in Quarkus 3.14.0
+
 ### 1.7
 - Allow cross-OS cache hits when using the in-container build strategy
 
