@@ -58,7 +58,7 @@ Note on the Compatibility with The Develocity extension:
 | `com.gradle:develocity-maven-extension`        | 1.+                |
 | `com.gradle:gradle-enterprise-maven-extension` | 0.12               |
 
-### quarkus-maven-plugin configuration
+### The `quarkus-maven-plugin` configuration
 
 Enable [Quarkus config tracking](https://quarkus.io/guides/config-reference#dumping-build-time-configuration-options-read-during-the-build) in `pom.xml`:
 
@@ -98,7 +98,7 @@ Add the `track-prod-config-changes` execution to the `quarkus-maven-plugin` conf
 </plugin>
 ```
 
-### quarkus configuration dump initialization
+### Quarkus configuration dump initialization
 
 After applying the quarkus-maven-plugin [configuration step](#quarkus-maven-plugin-configuration), invoke the Quarkus `build` goal to generate the `.quarkus/quarkus-prod-config-dump` file.
 This file is required to make the Quarkus `build` goal cacheable.
