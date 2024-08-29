@@ -9,14 +9,26 @@ import org.gradle.api.GradleException;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.initialization.Settings;
+import org.gradle.api.provider.Provider;
+import org.gradle.api.provider.ProviderFactory;
 import org.gradle.caching.configuration.BuildCacheConfiguration;
 import org.gradle.util.GradleVersion;
+
+import javax.inject.Inject;
+import java.util.Optional;
 
 /**
  * An example Gradle plugin for enabling and configuring Develocity features for
  * Gradle versions 5.x and higher.
  */
 public class ConventionDevelocityGradlePlugin implements Plugin<Object> {
+
+    private final ProviderFactory providers;
+
+    @Inject
+    public ConventionDevelocityGradlePlugin(ProviderFactory providers) {
+        this.providers = providers;
+    }
 
     @Override
     public void apply(Object target) {
@@ -83,9 +95,27 @@ public class ConventionDevelocityGradlePlugin implements Plugin<Object> {
         });
     }
 
-    private static boolean isCi() {
+    private boolean isCi() {
         // CHANGE ME: Apply your environment detection logic here
-        return System.getenv().containsKey("CI");
+        return environmentVariable("CI").isPresent();
+    }
+
+    // Environment variables must be accessed differently in some Gradle
+    // versions in order to detect changes when configuration cache is enabled.
+    private Optional<String> environmentVariable(String name) {
+        if (isGradle65OrNewer() && !isGradle74OrNewer()) {
+            @SuppressWarnings("deprecation") Provider<String> variable = providers.environmentVariable(name).forUseAtConfigurationTime();
+            return Optional.ofNullable(variable.getOrNull());
+        }
+        return Optional.ofNullable(System.getenv(name));
+    }
+
+    private static boolean isGradle74OrNewer() {
+        return GradleVersion.current().compareTo(GradleVersion.version("7.4")) >= 0;
+    }
+
+    private static boolean isGradle65OrNewer() {
+        return GradleVersion.current().compareTo(GradleVersion.version("6.5")) >= 0;
     }
 
     private static boolean isGradle6OrNewer() {

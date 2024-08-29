@@ -5,17 +5,28 @@ import com.gradle.develocity.agent.gradle.DevelocityConfiguration;
 import com.gradle.develocity.agent.gradle.DevelocityPlugin;
 import com.gradle.develocity.agent.gradle.scan.BuildScanConfiguration;
 import com.myorg.configurable.GradleDevelocityConfigurable;
+import com.myorg.configurable.GradleExecutionContext;
 import org.gradle.StartParameter;
 import org.gradle.api.GradleException;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.initialization.Settings;
+import org.gradle.api.provider.ProviderFactory;
 import org.gradle.util.GradleVersion;
+
+import javax.inject.Inject;
 
 /**
  * An example Gradle plugin for enabling and configuring Develocity features
  */
 final class ConventionDevelocityGradlePlugin implements Plugin<Object> {
+
+    private final ProviderFactory providers;
+
+    @Inject
+    public ConventionDevelocityGradlePlugin(ProviderFactory providers) {
+        this.providers = providers;
+    }
 
     @Override
     public void apply(Object target) {
@@ -43,7 +54,8 @@ final class ConventionDevelocityGradlePlugin implements Plugin<Object> {
         settings.getPluginManager().apply(DevelocityPlugin.class);
         settings.getPluginManager().apply(CommonCustomUserDataGradlePlugin.class);
         DevelocityConfiguration develocity = settings.getExtensions().getByType(DevelocityConfiguration.class);
-        new DevelocityConventions().configureDevelocity(new GradleDevelocityConfigurable(develocity, settings.getBuildCache()));
+        GradleExecutionContext context = new GradleExecutionContext(providers);
+        new DevelocityConventions(context).configureDevelocity(new GradleDevelocityConfigurable(develocity, settings.getBuildCache()));
         configureBuildScan(develocity.getBuildScan(), settings.getGradle().getStartParameter());
     }
 
@@ -51,7 +63,8 @@ final class ConventionDevelocityGradlePlugin implements Plugin<Object> {
         project.getPluginManager().apply(DevelocityPlugin.class);
         project.getPluginManager().apply(CommonCustomUserDataGradlePlugin.class);
         DevelocityConfiguration develocity = project.getExtensions().getByType(DevelocityConfiguration.class);
-        new DevelocityConventions().configureDevelocity(new GradleDevelocityConfigurable(develocity));
+        GradleExecutionContext context = new GradleExecutionContext(providers);
+        new DevelocityConventions(context).configureDevelocity(new GradleDevelocityConfigurable(develocity));
         configureBuildScan(develocity.getBuildScan(), project.getGradle().getStartParameter());
     }
 

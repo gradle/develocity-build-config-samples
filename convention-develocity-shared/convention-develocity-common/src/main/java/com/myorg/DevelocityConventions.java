@@ -3,8 +3,15 @@ package com.myorg;
 import com.myorg.configurable.BuildCacheConfigurable;
 import com.myorg.configurable.BuildScanConfigurable;
 import com.myorg.configurable.DevelocityConfigurable;
+import com.myorg.configurable.ExecutionContext;
 
 final class DevelocityConventions {
+
+    private final ExecutionContext context;
+
+    DevelocityConventions(ExecutionContext context) {
+        this.context = context;
+    }
 
     void configureDevelocity(DevelocityConfigurable develocity) {
         // CHANGE ME: Apply your Develocity configuration here
@@ -26,9 +33,9 @@ final class DevelocityConventions {
         buildCache.getRemote().setStoreEnabled(isCi());
     }
 
-    private static boolean isCi() {
+    private boolean isCi() {
         // CHANGE ME: Apply your environment detection logic here
-        return System.getenv().containsKey("CI");
+        return context.environmentVariable("CI").isPresent();
     }
 
 }
