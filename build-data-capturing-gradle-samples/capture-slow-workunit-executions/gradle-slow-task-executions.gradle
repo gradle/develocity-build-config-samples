@@ -3,8 +3,8 @@
  * and adds these as custom values.
  */
 
-def buildScanApi = project.extensions.findByName('buildScan')
-if (!buildScanApi) {
+def develocityApi = project.extensions.findByName('develocity')
+if (!develocityApi) {
     return
 }
 
@@ -19,7 +19,7 @@ allprojects {
         doLast {
             long duration = System.currentTimeMillis() - start
             if (duration > THRESHOLD_MILLIS) {
-                Capture.addbuildScanValue buildScanApi, 'Slow task', t.identityPath as String
+                Capture.addbuildScanValue(develocityApi.getBuildScan(), 'Slow task', t.identityPath as String)
             }
          }
     }
@@ -28,7 +28,7 @@ allprojects {
 class Capture {
 
     static void addbuildScanValue(api, key, value) {
-        api.value key, value
+        api.value(key, value)
     }
 
 }

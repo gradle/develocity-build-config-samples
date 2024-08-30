@@ -6,12 +6,12 @@ import java.util.concurrent.TimeUnit
  * and adds these as a custom value.
  */
 
-def buildScanApi = project.extensions.findByName('buildScan')
-if (!buildScanApi) {
+def develocityApi = project.extensions.findByName('develocity')
+if (!develocityApi) {
     return
 }
 
-buildScan.background { api ->
+develocityApi.getBuildScan().background { api ->
     Capture.captureProcessorArch(api)
 }
 
