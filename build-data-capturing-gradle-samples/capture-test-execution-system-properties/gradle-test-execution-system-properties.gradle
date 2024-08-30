@@ -6,15 +6,15 @@ import java.security.MessageDigest
  * and adds these as custom values.
  */
 
-def buildScanApi = project.extensions.findByName('buildScan')
-if (!buildScanApi) {
+def develocityApi = project.extensions.findByName('develocity')
+if (!develocityApi) {
     return
 }
 
 allprojects {
     tasks.withType(Test).configureEach { t ->
         doFirst {
-            t.systemProperties.forEach { key, val -> Capture.addBuildScanValue(buildScanApi, "${t.identityPath}#sysProps-$key", val) }
+            t.systemProperties.forEach { key, val -> Capture.addBuildScanValue(develocityApi.getBuildScan(), "${t.identityPath}#sysProps-$key", "$val") }
         }
     }
 }

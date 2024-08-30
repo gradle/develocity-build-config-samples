@@ -22,8 +22,8 @@ import org.gradle.tooling.events.FinishEvent
  */
 
 if (OperatingSystem.current().macOsX) {
-  def buildScanApi = project.extensions.findByName('buildScan')
-  if (!buildScanApi) {
+  def develocityApi = project.extensions.findByName('develocity')
+  if (!develocityApi) {
     return
   }
 
@@ -33,10 +33,10 @@ if (OperatingSystem.current().macOsX) {
   // We register a BuildEventsListenerRegistry in order to mark the BuildService as configuration cache compatible but is otherwise unused.
   gradle.services.get(BuildEventsListenerRegistry).onTaskCompletion(throttlingServiceProvider)
 
-  buildScan.buildFinished { def result ->
+  develocityApi.getBuildScan().buildFinished { def result ->
     try (def service = throttlingServiceProvider.get()) {
       // process results on build completion
-      service.processResults(buildScanApi)
+      service.processResults(develocityApi.getBuildScan())
     }
   }
 } else {
@@ -98,12 +98,12 @@ abstract class ThermalThrottlingService implements BuildService<BuildServicePara
     if (!samples.isEmpty()) {
       def average = samples.stream().mapToInt(Integer::intValue).average().getAsDouble()
       if (average < 100) {
-        buildScanApi.value "CPU Thermal Throttling Average", String.format("%.2f", average) + "%"
+        buildScanApi.value("CPU Thermal Throttling Average", String.format("%.2f", average) + "%")
 
         THROTTLING_LEVEL.findAll { entry ->
           entry.range.from <= average && average < entry.range.to
         }.each { entry ->
-          buildScanApi.tag entry.level
+          buildScanApi.tag(entry.level)
         }
       }
     }

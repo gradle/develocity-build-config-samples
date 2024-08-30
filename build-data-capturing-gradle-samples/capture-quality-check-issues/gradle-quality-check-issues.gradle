@@ -3,8 +3,8 @@
  * and adds these as custom values.
  */
 
-def buildScanApi = project.extensions.findByName('buildScan')
-if (!buildScanApi) {
+def develocityApi = project.extensions.findByName('develocity')
+if (!develocityApi) {
     return
 }
 
@@ -66,7 +66,7 @@ gradle.taskGraph.afterTask { task, TaskState state ->
         }.flatten() as List<String>
     }
 
-    errors.each { buildScan.value valueName, it }
+    errors.each { develocityApi.getBuildScan().value(valueName, it) }
 }
 
 static String appendIfMissing(String str, String suffix) {

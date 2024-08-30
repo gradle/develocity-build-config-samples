@@ -14,16 +14,16 @@ import java.util.concurrent.TimeUnit
  * See https://docs.github.com/en/rest/gists/gists#create-a-gist for reference.
  */
 
-def buildScanApi = project.extensions.findByName('buildScan')
-if (!buildScanApi) {
+def develocityApi = project.extensions.findByName('develocity')
+if (!develocityApi) {
     return
 }
 
 def capture = new Capture(gradle.startParameter.offline, gradle.startParameter.continuous, gradle.rootProject.logger, providers.gradleProperty('gistToken'), rootProject.name)
 
-buildScan.background {
+develocityApi.getBuildScan().background {
     if(capture.isEnabled()) {
-        capture.captureGitDiffInGist(buildScanApi)
+        capture.captureGitDiffInGist(develocityApi.getBuildScan())
     }
 }
 
