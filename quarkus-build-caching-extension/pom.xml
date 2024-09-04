@@ -143,6 +143,15 @@
                 </executions>
             </plugin>
         </plugins>
+        <resources>
+            <resource>
+                <targetPath>META-INF</targetPath>
+                <directory>${basedir}</directory>
+                <includes>
+                    <include>LICENSE</include>
+                </includes>
+            </resource>
+        </resources>
     </build>
 
     <profiles>
