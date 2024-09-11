@@ -12,7 +12,7 @@ dependencies {
     compileOnly("org.apache.maven:maven-core:3.9.9")
     compileOnly("org.codehaus.plexus:plexus-component-annotations:2.2.0")
 
-    implementation("com.gradle:develocity-maven-extension:1.22")
+    implementation("com.gradle:develocity-maven-extension:1.22.1")
     implementation("com.gradle:common-custom-user-data-maven-extension:2.0.1")
     implementation(project(":convention-develocity-common"))
 }
