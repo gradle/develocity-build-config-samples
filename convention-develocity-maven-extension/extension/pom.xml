@@ -32,7 +32,7 @@
         <dependency>
             <groupId>com.gradle</groupId>
             <artifactId>develocity-maven-extension</artifactId>
-            <version>1.22</version>
+            <version>1.22.1</version>
         </dependency>
         <dependency>
             <groupId>com.gradle</groupId>
