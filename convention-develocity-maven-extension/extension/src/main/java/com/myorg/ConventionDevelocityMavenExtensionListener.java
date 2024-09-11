@@ -3,9 +3,12 @@ package com.myorg;
 import com.gradle.develocity.agent.maven.api.DevelocityApi;
 import com.gradle.develocity.agent.maven.api.DevelocityListener;
 import com.gradle.develocity.agent.maven.api.cache.BuildCacheApi;
+import com.gradle.develocity.agent.maven.api.cache.NormalizationProvider.RuntimeClasspathNormalization;
 import com.gradle.develocity.agent.maven.api.scan.BuildScanApi;
 import org.apache.maven.execution.MavenSession;
 import org.codehaus.plexus.component.annotations.Component;
+
+import java.util.function.Consumer;
 
 /**
  * An example Maven extension for enabling and configuring Develocity features.
@@ -16,11 +19,13 @@ import org.codehaus.plexus.component.annotations.Component;
         description = "Configures the Develocity Maven extension for com.myorg"
 )
 public final class ConventionDevelocityMavenExtensionListener implements DevelocityListener {
+    private static final String DISABLE_DEFAULT_NORMALIZATIONS_SYS_PROP = "develocity.disableDefaultNormalizations";
 
     @Override
     public void configure(DevelocityApi develocity, MavenSession session) {
         configureDevelocity(develocity);
         configureBuildCache(develocity.getBuildCache());
+        configureDefaultNormalizations(develocity);
     }
 
     private void configureDevelocity(DevelocityApi develocity) {
@@ -48,4 +53,18 @@ public final class ConventionDevelocityMavenExtensionListener implements Develoc
         return System.getenv().containsKey("CI");
     }
 
+    private void configureDefaultNormalizations(DevelocityApi develocity) {
+        String disableDefaultNormalizations = System.getProperty(DISABLE_DEFAULT_NORMALIZATIONS_SYS_PROP, "false");
+        if (Boolean.parseBoolean(disableDefaultNormalizations)) {
+            return;
+        }
+
+        Consumer<RuntimeClasspathNormalization> runtimeClasspathNormalization = n -> n.addIgnoredFiles(
+                "**/build-info.properties",
+                "**/git.properties"
+        );
+
+        develocity.getBuildCache().registerNormalizationProvider(context ->
+                context.configureRuntimeClasspathNormalization(runtimeClasspathNormalization));
+    }
 }
