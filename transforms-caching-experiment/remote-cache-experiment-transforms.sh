@@ -40,7 +40,7 @@ echo "------------------------------------------------------------"
 echo "Priming build with task '$task' and HOME=$homeDir"
 echo "------------------------------------------------------------"
 set -x
-./gradlew $task -g $homeDir -Dscan.tag.remote-cache-experiment-init --no-configuration-cache -Ddevelocity.deprecation.muteWarnings=true -Dscan.uploadInBackground=false -Ddevelocity.url=$develocityUrl
+./gradlew "$task" -g $homeDir -Dscan.tag.remote-cache-experiment-init --no-configuration-cache -Ddevelocity.deprecation.muteWarnings=true -Dscan.uploadInBackground=false -Ddevelocity.url=$develocityUrl
 set +x
 
 cache='transforms'
@@ -77,7 +77,7 @@ do
         # Always remove the local build cache, since we are testing connection with remote build cache
         rm -rf $homeDir/caches/build-cache-1
 
-        ./gradlew $task -g $homeDir --no-configuration-cache -Ddevelocity.deprecation.muteWarnings=true -Dscan.uploadInBackground=false -Ddevelocity.url=$develocityUrl $args
+        ./gradlew "$task" -g $homeDir --no-configuration-cache -Ddevelocity.deprecation.muteWarnings=true -Dscan.uploadInBackground=false -Ddevelocity.url=$develocityUrl "$args"
 
         set +x
         echo ""
