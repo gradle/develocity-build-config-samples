@@ -5,11 +5,11 @@
 
 gradleVersion=$(./gradlew --version | grep "Gradle" | awk '{print $2}')
 
-major=$(echo $gradleVersion | cut -d. -f1)
-minor=$(echo $gradleVersion | cut -d. -f2)
+major=$(echo "$gradleVersion" | cut -d. -f1)
+minor=$(echo "$gradleVersion" | cut -d. -f2)
 
 # Check if the version is lower than 8.9
-if [ $major -lt 8 ] || ([ $major -eq 8 ] && [ $minor -lt 9 ]); then
+if [ "$major" -lt 8 ] || { [ "$major" -eq 8 ] && [ "$minor" -lt 9 ]; }; then
   echo "Gradle version $gradleVersion is lower than 8.9"
   exit 1
 else
@@ -25,9 +25,9 @@ tasks=${*:-help}
 echo "Initializing Gradle User Home directory at $homeDir"
 rm -rf $homeDir
 mkdir -p $homeDir
-mkdir -p $homeDir/caches/$gradleVersion/
+mkdir -p $homeDir/caches/"$gradleVersion"/
 cp ~/.gradle/gradle.properties $homeDir
-cp -r ~/.gradle/caches/$gradleVersion/generated-gradle-jars $homeDir/caches/$gradleVersion/
+cp -r ~/.gradle/caches/"$gradleVersion"/generated-gradle-jars $homeDir/caches/"$gradleVersion"/
 
 # Note: This is expecting that CCUD gradle plugin is applied
 export GRADLE_CACHE_REMOTE_PUSH=true
