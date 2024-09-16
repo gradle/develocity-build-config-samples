@@ -10,22 +10,22 @@ It will run 3 builds:
 2. Transform caching enabled - pulls from remote cache. The scan for this build will have a tag of `baseline-transforms`.
 3. Transform caching disabled - executes the transforms. The scan for this build will have a tag of `disabled-cache-transforms`.
 
-You can then compare the build times to see how transforms caching affects your builds.
+You can then use the published build scans to evaluate how caching artifact transforms affects your overall build time.
 
 ## Requirements
 
 - A Develocity instance to publish scans to
 - Access key with remote build cache write permission
 - Gradle version 8.9 or higher
-- The [Common Custom User Data Gradle plugin](https://github.com/gradle/common-custom-user-data-gradle-plugin) is expected to be applied to the project.
+- The [Common Custom User Data Gradle plugin](https://github.com/gradle/common-custom-user-data-gradle-plugin) is expected to be applied to the project
 
 ## Usage
 
 1. Prepare an access key with remote build cache write permission. 
 2. Copy the script into your project directory.
 3. (Optional) If you're using a HTTP cache connector, uncomment line 31 and set the remote cache URL in the script to use a cache shard instead of the default cache. 
-4. Having the key set in the environment is expected - note that remote build cache write is requiered. You can set the key in the environment by running `export DEVELOCITY_ACCESS_KEY=<develocity-url>=<your-access-key>`, either in the script, or in the terminal before running the script.
-5. Run the script with `./transforms-caching-experiment.sh`. It will run the gradle `help` task by default, but you can specify a different task by passing it as an argument to the script. 
+4. Having the key set in the environment is expected - note that remote build cache write is required. You can set the key in the environment by running `export DEVELOCITY_ACCESS_KEY=<develocity-url>=<your-access-key>`, either in the script, or in the terminal before running the script.
+5. Run the script with `./transforms-caching-experiment.sh`. It will run the Gradle `help` task by default, but you can specify a different task by passing it as an argument to the script. 
 6. Inspect and compare build times 
 
 ## Advanced usage - disabling specific transforms caching

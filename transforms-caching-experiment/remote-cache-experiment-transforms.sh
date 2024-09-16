@@ -29,7 +29,7 @@ mkdir -p $homeDir/caches/"$gradleVersion"/
 cp ~/.gradle/gradle.properties $homeDir
 cp -r ~/.gradle/caches/"$gradleVersion"/generated-gradle-jars $homeDir/caches/"$gradleVersion"/
 
-# Note: This is expecting that CCUD gradle plugin is applied
+# Note: This is expecting that CCUD Gradle plugin is applied
 export GRADLE_CACHE_REMOTE_PUSH=true
 export GRADLE_CACHE_REMOTE_PATH="cache/$USER-exp-non-task"
 #export GRADLE_CACHE_REMOTE_URL="<develocityUrl>/cache/$USER-exp-non-task"  # Needed if the HTTP cache connector is used
