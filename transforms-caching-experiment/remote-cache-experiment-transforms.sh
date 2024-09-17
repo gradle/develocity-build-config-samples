@@ -67,7 +67,7 @@ do
         echo "------------------------------------------------------------"
         set -x
         ./gradlew --stop
-        killall -9 java
+        pkill -f 'org.gradle.launcher.daemon.bootstrap.GradleDaemon'
 
         echo "Removing transforms from $homeDir/caches"
         rm -rf $homeDir/caches/*/transforms

@@ -14,6 +14,8 @@ You can then use the published build scans to evaluate how caching artifact tran
 
 If results show that (remote) caching of transforms is not beneficial for your project, you can disable caching for (specific) transforms using the flags in this script.
 
+Note: Killing all gradle daemons is necessary for the experiments to give conclusive results. This may impact your ongoing work, so it is recommended to pause other work while the script is running.
+
 ## Requirements
 
 - A Develocity instance to publish scans to
@@ -39,7 +41,7 @@ To run the script with the `help` task (default), use the following command:
 
 To run the script with a specific Gradle task(s), use the following command:
 ```bash
-./transforms-caching-experiment.sh <gradle-tasks> <args>
+./transforms-caching-experiment.sh <gradle-tasks-and-args>
 ```
 
 ## Advanced usage - disabling specific transforms caching
