@@ -41,7 +41,7 @@ echo "Priming build with task '$tasks' and HOME=$homeDir"
 echo "------------------------------------------------------------"
 set -x
 # shellcheck disable=SC2086
-./gradlew $tasks -g $homeDir -Dscan.tag.remote-cache-experiment-init --no-configuration-cache -Ddevelocity.deprecation.muteWarnings=true -Dscan.uploadInBackground=false -Dgradle.cache.local.enabled=false
+./gradlew $tasks -g $homeDir -Dscan.tag.remote-cache-experiment-init --no-configuration-cache -Ddevelocity.deprecation.muteWarnings=true -Dscan.uploadInBackground=false -Dgradle.cache.local.enabled=false --no-daemon
 set +x
 
 runs='transforms'
@@ -67,14 +67,13 @@ do
         echo "------------------------------------------------------------"
         set -x
         ./gradlew --stop
-        pkill -f 'org.gradle.launcher.daemon.bootstrap.GradleDaemon'
 
         echo "Removing transforms from $homeDir/caches"
         rm -rf $homeDir/caches/*/transforms
         rm -rf $homeDir/caches/transforms-* # Also remove the transforms for Gradle 8.7
 
         # shellcheck disable=SC2086
-        ./gradlew $tasks -g $homeDir --no-configuration-cache -Ddevelocity.deprecation.muteWarnings=true -Dscan.uploadInBackground=false -Dgradle.cache.local.enabled=false $args
+        ./gradlew $tasks -g $homeDir --no-configuration-cache -Ddevelocity.deprecation.muteWarnings=true -Dscan.uploadInBackground=false -Dgradle.cache.local.enabled=false --no-daemon $args
 
         set +x
         echo ""
