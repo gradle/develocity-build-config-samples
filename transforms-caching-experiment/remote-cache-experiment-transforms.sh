@@ -66,7 +66,6 @@ do
         echo "Test caches/*/transforms removal with $args"
         echo "------------------------------------------------------------"
         set -x
-        ./gradlew --stop
 
         echo "Removing transforms from $homeDir/caches"
         rm -rf $homeDir/caches/*/transforms
