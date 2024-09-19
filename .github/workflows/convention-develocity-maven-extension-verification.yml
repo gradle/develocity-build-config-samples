@@ -55,7 +55,7 @@ jobs:
           distribution: 'temurin'
           cache: maven
       - name: Set up Maven
-        uses: gradle/develocity-actions/maven-setup@v1.1
+        uses: gradle/develocity-actions/maven-setup@v1.2
       - name: Download extension
         uses: actions/download-artifact@v4
         with:
