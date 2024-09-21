@@ -9,7 +9,7 @@ import org.apache.maven.execution.MavenSession;
 /**
  * An example Maven extension for enabling and configuring Develocity features.
  */
-final class ConventionDevelocityMavenExtensionListener implements DevelocityListener {
+final class ConventionDevelocityListener implements DevelocityListener {
 
     @Override
     public void configure(DevelocityApi develocity, MavenSession session) {
