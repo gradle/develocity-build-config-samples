@@ -11,6 +11,7 @@ import org.gradle.api.GradleException;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.initialization.Settings;
+import org.gradle.api.invocation.Gradle;
 import org.gradle.api.provider.ProviderFactory;
 import org.gradle.util.GradleVersion;
 
@@ -56,7 +57,7 @@ final class ConventionDevelocityGradlePlugin implements Plugin<Object> {
         DevelocityConfiguration develocity = settings.getExtensions().getByType(DevelocityConfiguration.class);
         GradleExecutionContext context = new GradleExecutionContext(providers);
         new DevelocityConventions(context).configureDevelocity(new GradleDevelocityConfigurable(develocity, settings.getBuildCache()));
-        configureBuildScan(develocity.getBuildScan(), settings.getGradle().getStartParameter());
+        configureBuildScan(develocity.getBuildScan(), settings.getGradle());
     }
 
     private void configureGradle5(Project project) {
@@ -65,11 +66,12 @@ final class ConventionDevelocityGradlePlugin implements Plugin<Object> {
         DevelocityConfiguration develocity = project.getExtensions().getByType(DevelocityConfiguration.class);
         GradleExecutionContext context = new GradleExecutionContext(providers);
         new DevelocityConventions(context).configureDevelocity(new GradleDevelocityConfigurable(develocity));
-        configureBuildScan(develocity.getBuildScan(), project.getGradle().getStartParameter());
+        configureBuildScan(develocity.getBuildScan(), project.getGradle());
     }
 
-    private void configureBuildScan(BuildScanConfiguration buildScan, StartParameter startParameter) {
-        buildScan.getCapture().getBuildLogging().set(!containsPropertiesTask(startParameter));
+    private void configureBuildScan(BuildScanConfiguration buildScan, Gradle gradle) {
+        buildScan.getCapture().getBuildLogging().set(!containsPropertiesTask(gradle.getStartParameter()));
+        new CustomGradleBuildScanEnhancements(buildScan, gradle).apply();
     }
 
     private boolean containsPropertiesTask(StartParameter startParameter) {
