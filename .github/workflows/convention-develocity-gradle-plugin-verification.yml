@@ -26,6 +26,9 @@ jobs:
       - name: Build with Gradle - Gradle 2 through 4
         working-directory: convention-develocity-gradle-plugin/plugins/gradle-2-through-4
         run: ./gradlew build
+      - name: Configure Develocity Solutions instance
+        working-directory: convention-develocity-gradle-plugin/plugins/gradle-5-or-newer/src/main/java/com/myorg
+        run: sed -i 's/develocity-samples.gradle.com/ge.solutions-team.gradle.com/g' ConventionDevelocityGradlePlugin.java
       - name: Build with Gradle - Gradle 5 or newer
         working-directory: convention-develocity-gradle-plugin/plugins/gradle-5-or-newer
         run: ./gradlew build publishToMavenLocal
@@ -82,7 +85,7 @@ jobs:
       - name: Verify example build
         id: build
         working-directory: convention-develocity-gradle-plugin/examples/gradle_${{ matrix.versions.sample }}
-        run: ./gradlew build -Ddevelocity.url=https://ge.solutions-team.gradle.com
+        run: ./gradlew build
         env:
           DEVELOCITY_ACCESS_KEY: ${{ secrets.DV_SOLUTIONS_ACCESS_KEY }}
       - name: Verify Build Scan published
