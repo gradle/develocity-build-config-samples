@@ -22,6 +22,11 @@ jobs:
           java-version: '8'
           distribution: 'temurin'
           cache: maven
+      - name: Set up Maven
+        uses: gradle/develocity-actions/setup-maven@v1.2
+      - name: Configure Develocity Solutions instance
+        working-directory: convention-develocity-maven-extension/extension/src/main/java/com/myorg
+        run: sed -i 's/develocity-samples.gradle.com/ge.solutions-team.gradle.com/g' ConventionDevelocityListener.java
       - name: Build with Maven
         working-directory: convention-develocity-maven-extension/extension
         run: ./mvnw clean install
@@ -68,7 +73,7 @@ jobs:
       - name: Verify example build
         id: build
         working-directory: convention-develocity-maven-extension/examples/maven_${{ matrix.versions.sample }}
-        run: ./mvnw clean verify -Ddevelocity.url=https://ge.solutions-team.gradle.com
+        run: ./mvnw clean verify
         env:
           DEVELOCITY_ACCESS_KEY: ${{ secrets.DV_SOLUTIONS_ACCESS_KEY }}
       - name: Verify Build Scan published
