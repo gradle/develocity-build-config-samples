@@ -16,13 +16,6 @@ tags, links, and custom values.
 To learn more, see the Develocity documentation
 on [Extending build scans](https://docs.gradle.com/develocity/maven-extension/current/#extending_build_scans).
 
-### Capture Develocity Extension Version
-
-_Demonstrates: Custom values_
-
-This sample demonstrates how to capture the Develocity Maven extension version as a custom value. This can be 
-used to identify and filter for projects using a certain version of the extension on the Develocity dashboards.
-
 ### Capture OS Processes
 
 _Demonstrates: Custom values_

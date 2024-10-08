@@ -26,13 +26,6 @@ tags, links, and custom values.
 To learn more, see the Develocity documentation
 on [Extending build scans](https://docs.gradle.com/develocity/gradle-plugin/current/#extending_build_scans).
 
-### Capture Develocity Plugin Version
-
-_Demonstrates: Custom values_
-
-This sample demonstrates how to capture the Develocity Gradle plugin version as a custom value. This can be used
-to identify and filter for projects using a certain version of the plugin on the Develocity dashboards.
-
 ### Capture Git Diffs
 
 _Demonstrates: Custom links_
