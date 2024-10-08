@@ -16,8 +16,6 @@ jobs:
     strategy:
       matrix:
         include:
-          - name: 'Develocity Gradle plugin version'
-            sample-file: 'capture-develocity-plugin-version/gradle-develocity-plugin-version.gradle'
           - name: 'Git diffs'
             sample-file: 'capture-git-diffs/gradle-git-diffs.gradle'
           - name: 'Max parallel forks'
