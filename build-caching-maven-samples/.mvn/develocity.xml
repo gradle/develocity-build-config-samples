@@ -1,8 +1,21 @@
-<develocity>
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<develocity
+        xmlns="https://www.gradle.com/develocity-maven" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="https://www.gradle.com/develocity-maven https://www.gradle.com/schema/develocity-maven.xsd">
     <server>
         <url>https://ge.solutions-team.gradle.com</url>
-        <allowUntrusted>true</allowUntrusted>
     </server>
+    <buildScan>
+        <backgroundBuildScanUpload>#{isFalse(env['GITHUB_ACTIONS'])}</backgroundBuildScanUpload>
+        <publishing>
+            <onlyIf>
+                <![CDATA[authenticated]]>
+            </onlyIf>
+        </publishing>
+        <obfuscation>
+            <ipAddresses>#{{'0.0.0.0'}}</ipAddresses>
+        </obfuscation>
+    </buildScan>
     <buildCache>
         <local>
             <enabled>true</enabled>
