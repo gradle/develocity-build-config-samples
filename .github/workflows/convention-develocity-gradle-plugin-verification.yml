@@ -26,6 +26,9 @@ jobs:
       - name: Build with Gradle - Gradle 2 through 4
         working-directory: convention-develocity-gradle-plugin/plugins/gradle-2-through-4
         run: ./gradlew build
+      - name: Configure Develocity Solutions instance
+        working-directory: convention-develocity-gradle-plugin/plugins/gradle-5-or-newer/src/main/java/com/myorg
+        run: sed -i 's/develocity-samples.gradle.com/ge.solutions-team.gradle.com/g' ConventionDevelocityGradlePlugin.java
       - name: Build with Gradle - Gradle 5 or newer
         working-directory: convention-develocity-gradle-plugin/plugins/gradle-5-or-newer
         run: ./gradlew build publishToMavenLocal
@@ -56,7 +59,7 @@ jobs:
           - sample: '6.9_and_later'
             version: '8.0.2'
           - sample: '6.9_and_later'
-            version: '(Current)'
+            version: 'wrapper'
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -67,22 +70,17 @@ jobs:
           distribution: 'temurin'
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: ${{ matrix.versions.version }}
       - name: Download plugin
         uses: actions/download-artifact@v4
         with:
           name: convention-develocity-gradle-plugin
           path: ~/.m2/repository/com/myorg
-      - name: Set Gradle version
-        if: ${{ matrix.versions.version != '(Current)' }}
-        working-directory: convention-develocity-gradle-plugin/examples/gradle_${{ matrix.versions.sample }}
-        run: |
-          sed -i '/distributionSha256Sum.*/d' gradle/wrapper/gradle-wrapper.properties
-          ./gradlew wrapper --gradle-version=${{ matrix.versions.version }} --no-scan
-          ./gradlew wrapper --gradle-version=${{ matrix.versions.version }} --no-scan
       - name: Verify example build
         id: build
         working-directory: convention-develocity-gradle-plugin/examples/gradle_${{ matrix.versions.sample }}
-        run: ./gradlew build -Ddevelocity.url=https://ge.solutions-team.gradle.com
+        run: gradle build
         env:
           DEVELOCITY_ACCESS_KEY: ${{ secrets.DV_SOLUTIONS_ACCESS_KEY }}
       - name: Verify Build Scan published

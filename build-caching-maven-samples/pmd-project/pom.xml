@@ -68,30 +68,35 @@
                             <name>excludeFromFailureFile</name>
                             <normalization>NAME_ONLY</normalization>
                           </fileSet>
+                          <fileSet>
+                            <name>siteDirectory</name>
+                          </fileSet>
                         </fileSets>
-
                         <properties>
-                          <property><name>skip</name></property>
-                          <property><name>format</name></property>
-                          <property><name>linkXRef</name></property>
-                          <property><name>includeTests</name></property>
                           <property><name>aggregate</name></property>
-                          <property><name>inputEncoding</name></property>
-                          <property><name>includeXmlInSite</name></property>
-                          <property><name>skipEmptyReport</name></property>
-                          <property><name>jdkToolchain</name></property>
-                          <property><name>targetJdk</name></property>
-                          <property><name>language</name></property>
-                          <property><name>minimumPriority</name></property>
-                          <property><name>rulesets</name></property>
-                          <property><name>typeResolution</name></property>
                           <property><name>benchmark</name></property>
-                          <property><name>suppressMarker</name></property>
-                          <property><name>skipPmdError</name></property>
+                          <property><name>format</name></property>
+                          <property><name>includeTests</name></property>
+                          <property><name>includeXmlInReports</name></property>
+                          <property><name>inputEncoding</name></property>
+                          <property><name>jdkToolchain</name></property>
+                          <property><name>language</name></property>
+                          <property><name>linkXRef</name></property>
+                          <property><name>locale</name></property>
+                          <property><name>minimumPriority</name></property>
+                          <property><name>outputFormat</name></property>
+                          <property><name>outputTimestamp</name></property>
                           <property><name>renderProcessingErrors</name></property>
                           <property><name>renderRuleViolationPriority</name></property>
                           <property><name>renderSuppressedViolations</name></property>
                           <property><name>renderViolationsByPriority</name></property>
+                          <property><name>rulesets</name></property>
+                          <property><name>skip</name></property>
+                          <property><name>skipEmptyReport</name></property>
+                          <property><name>skipPmdError</name></property>
+                          <property><name>suppressMarker</name></property>
+                          <property><name>targetJdk</name></property>
+                          <property><name>typeResolution</name></property>
                         </properties>
                         <ignoredProperties>
                           <!-- Ignore property that has no impact on plugin outputs -->
@@ -124,26 +129,17 @@
                           <!-- In general this is unimportant, since `clean` will remove the analysis cache. -->
                           <ignore>analysisCache</ignore>
                           <ignore>analysisCacheLocation</ignore>
+
+                          <!-- Maven project state cannot be part of cache key. -->
+                          <ignore>mojoExecution</ignore>
+
+                          <!-- Maven project state cannot be part of cache key. -->
+                          <ignore>repoSession</ignore>
                         </ignoredProperties>
                       </inputs>
-                      <nestedProperties>
-                        <property>
-                          <name>localRepository</name>
-                          <inputs>
-                            <properties>
-                              <property>
-                                <name>id</name>
-                              </property>
-                              <property>
-                                <name>url</name>
-                              </property>
-                            </properties>
-                          </inputs>
-                        </property>
-                      </nestedProperties>                      
                       <iteratedProperties>
                         <property>
-                          <name>remoteRepositories</name>
+                          <name>remoteProjectRepositories</name>
                           <inputs>
                             <properties>
                               <property>
@@ -197,24 +193,28 @@
                             <name>excludeFromFailureFile</name>
                             <normalization>NAME_ONLY</normalization>
                           </fileSet>
+                          <fileSet>
+                            <name>siteDirectory</name>
+                          </fileSet>
                         </fileSets>
                         <properties>
-                          <property><name>skip</name></property>
-                          <property><name>format</name></property>
-                          <property><name>linkXRef</name></property>
-                          <property><name>includeTests</name></property>
                           <property><name>aggregate</name></property>
-                          <property><name>inputEncoding</name></property>
-                          <property><name>includeXmlInSite</name></property>
-                          <property><name>skipEmptyReport</name></property>
-                          <property><name>language</name></property>
-                          <property><name>jdkToolchain</name></property>
-
+                          <property><name>format</name></property>
                           <property><name>ignoreAnnotations</name></property>
-                          <property><name>ignoreLiterals</name></property>
                           <property><name>ignoreIdentifiers</name></property>
+                          <property><name>ignoreLiterals</name></property>
+                          <property><name>includeTests</name></property>
+                          <property><name>includeXmlInReports</name></property>
+                          <property><name>inputEncoding</name></property>
+                          <property><name>jdkToolchain</name></property>
+                          <property><name>language</name></property>
+                          <property><name>linkXRef</name></property>
+                          <property><name>locale</name></property>
                           <property><name>minimumTokens</name></property>
-
+                          <property><name>outputFormat</name></property>
+                          <property><name>outputTimestamp</name></property>
+                          <property><name>skip</name></property>
+                          <property><name>skipEmptyReport</name></property>
                         </properties>
                         <ignoredProperties>
                           <!-- Ignore property that has no impact on plugin outputs -->
@@ -240,26 +240,17 @@
                           <!-- Ignored because no single property represents each output reports. -->
                           <!-- There is no way to automatically combine this property value and the 'format' into a single output file name. -->
                           <ignore>targetDirectory</ignore>
+
+                          <!-- Maven project state cannot be part of cache key. -->
+                          <ignore>mojoExecution</ignore>
+
+                          <!-- Maven project state cannot be part of cache key. -->
+                          <ignore>repoSession</ignore>
                         </ignoredProperties>
                       </inputs>
-                      <nestedProperties>
-                        <property>
-                          <name>localRepository</name>
-                          <inputs>
-                            <properties>
-                              <property>
-                                <name>id</name>
-                              </property>
-                              <property>
-                                <name>url</name>
-                              </property>
-                            </properties>
-                          </inputs>
-                        </property>
-                      </nestedProperties>                      
                       <iteratedProperties>
                         <property>
-                          <name>remoteRepositories</name>
+                          <name>remoteProjectRepositories</name>
                           <inputs>
                             <properties>
                               <property>

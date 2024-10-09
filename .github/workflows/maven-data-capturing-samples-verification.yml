@@ -19,8 +19,6 @@ jobs:
     strategy:
       matrix:
         include:
-          - name: 'Develocity Maven extension version'
-            sample-file: 'capture-develocity-extension-version/maven-develocity-extension-version.groovy'
           - name: 'OS processes'
             sample-file: 'capture-os-processes/maven-os-processes.groovy'
           - name: 'Processor arch'
