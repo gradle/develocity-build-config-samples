@@ -66,7 +66,6 @@
 
                           <property><name>includeTests</name></property>
                           <property><name>addSourceDirs</name></property>
-                          <property><name>xmlEncoding</name></property>
                           <property><name>sourceEncoding</name></property>
                           <property><name>threshold</name></property>
                           <property><name>effort</name></property>
@@ -103,11 +102,8 @@
                           <ignore>maxHeap</ignore>
                           <ignore>timeout</ignore>
                           <ignore>jvmArgs</ignore>
-                          <ignore>compileSourceRoots</ignore> <!-- Read-only -->
-                          <ignore>testSourceRoots</ignore> <!-- Read-only -->
                           <ignore>remoteRepositories</ignore>
                           <ignore>localRepository</ignore>
-                          <ignore>remoteArtifactRepositories</ignore>
 
                           <!-- Ignore Maven state, as it cannot be part of cache key -->
                           <ignore>pluginArtifacts</ignore>
