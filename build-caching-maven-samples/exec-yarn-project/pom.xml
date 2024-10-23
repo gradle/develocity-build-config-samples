@@ -15,7 +15,7 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>exec-maven-plugin</artifactId>
-        <version>3.4.1</version>
+        <version>3.5.0</version>
         <executions>
           <execution>
             <id>yarn-install</id>
@@ -162,6 +162,9 @@
                           <ignore>inheritIo</ignore>
                           <ignore>project</ignore>
                           <ignore>session</ignore>
+                          <!-- Defines the *name* of the environment variable used to find the toolchain home -->
+                          <!-- Does not define the toolchain home itself -->
+                          <ignore>toolchainJavaHomeEnvName</ignore>
                         </ignoredProperties>
                       </inputs>
                       <outputs>
