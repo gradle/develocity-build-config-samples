@@ -162,6 +162,9 @@
                           <ignore>inheritIo</ignore>
                           <ignore>project</ignore>
                           <ignore>session</ignore>
+                          <!-- Defines the *name* of the environment variable used to find the toolchain home -->
+                          <!-- Does not define the toolchain home itself -->
+                          <ignore>toolchainJavaHomeEnvName</ignore>
                         </ignoredProperties>
                       </inputs>
                       <outputs>
