@@ -12,7 +12,7 @@ It will run 3 builds:
 
 You can then use the published build scans to evaluate how caching artifact transforms affects your overall build time. 
 
-If results show that (remote) caching of transforms is not beneficial for your project, you can disable caching for (specific) transforms using the flags in this script.
+If results show that (remote) caching of transforms is not beneficial for your project, you can disable caching for (specific) transforms using the flag `-Dorg.gradle.internal.transform-caching-disabled`, which is also used in this script.
 
 ## Requirements
 
