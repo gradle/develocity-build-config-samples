@@ -141,3 +141,19 @@ cd examples/maven_3
 #### Requirements
 
 To run the example builds, use Java 8 or higher.
+
+---
+
+Example scans showing test caching disabled by default:
+  - Gradle 5.0: https://ge.solutions-team.gradle.com/s/ml355gcshr2je/timeline?details=si6uhuz4tdufw
+  - Gradle 6.0.1: https://ge.solutions-team.gradle.com/s/fqm4bohx7oouy/timeline?details=si6uhuz4tdufw
+  - Gradle 8.11.1: https://ge.solutions-team.gradle.com/s/qpzccsbovorka/timeline?details=si6uhuz4tdufw
+  - Maven 3.9.9 (Surefire): https://ge.solutions-team.gradle.com/s/rfgck3uzv7zgq/timeline?details=dvp4sj4dsdhru
+  - Maven 3.9.9 (Failsafe): https://ge.solutions-team.gradle.com/s/rfgck3uzv7zgq/timeline?details=tg55nc6hywfxo
+
+Example scans showing test caching re-enabled:
+  - Gradle 5.0: https://ge.solutions-team.gradle.com/s/dk5j62ccwj4ci/timeline?details=si6uhuz4tdufw
+  - Gradle 6.0.1: https://ge.solutions-team.gradle.com/s/k7bo2hrplpdhy/timeline?details=si6uhuz4tdufw
+  - Gradle 8.11.1: https://ge.solutions-team.gradle.com/s/3e3orwlfc6wdk/timeline?details=si6uhuz4tdufw
+  - Maven 3.9.9 (Surefire): https://ge.solutions-team.gradle.com/s/k7et7vnf4tozo/timeline?details=dvp4sj4dsdhru
+  - Maven 3.9.9 (Failsafe): https://ge.solutions-team.gradle.com/s/k7et7vnf4tozo/timeline?details=tg55nc6hywfxo

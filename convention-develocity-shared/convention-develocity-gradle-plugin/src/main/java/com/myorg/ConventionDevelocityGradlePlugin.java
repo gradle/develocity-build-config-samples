@@ -11,10 +11,19 @@ import org.gradle.api.GradleException;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.initialization.Settings;
+import org.gradle.api.provider.Provider;
 import org.gradle.api.provider.ProviderFactory;
-import org.gradle.util.GradleVersion;
+import org.gradle.api.tasks.testing.Test;
 
 import javax.inject.Inject;
+
+import static com.myorg.DevelocityConventions.TEST_CACHING_DISABLED_REASON;
+import static com.myorg.DevelocityConventions.TEST_CACHING_PROPERTY_NAME;
+import static com.myorg.GradleUtils.configureAllProjects;
+import static com.myorg.GradleUtils.doNotCacheTaskIf;
+import static com.myorg.GradleUtils.getBooleanProperty;
+import static com.myorg.GradleUtils.isGradle5OrNewer;
+import static com.myorg.GradleUtils.isGradle6OrNewer;
 
 /**
  * An example Gradle plugin for enabling and configuring Develocity features
@@ -57,6 +66,7 @@ final class ConventionDevelocityGradlePlugin implements Plugin<Object> {
         GradleExecutionContext context = new GradleExecutionContext(providers);
         new DevelocityConventions(context).configureDevelocity(new GradleDevelocityConfigurable(develocity, settings.getBuildCache()));
         configureBuildScan(develocity.getBuildScan(), settings.getGradle().getStartParameter());
+        configureBuildCacheDefaults(settings);
     }
 
     private void configureGradle5(Project project) {
@@ -66,6 +76,7 @@ final class ConventionDevelocityGradlePlugin implements Plugin<Object> {
         GradleExecutionContext context = new GradleExecutionContext(providers);
         new DevelocityConventions(context).configureDevelocity(new GradleDevelocityConfigurable(develocity));
         configureBuildScan(develocity.getBuildScan(), project.getGradle().getStartParameter());
+        configureBuildCacheDefaults(project);
     }
 
     private void configureBuildScan(BuildScanConfiguration buildScan, StartParameter startParameter) {
@@ -77,12 +88,17 @@ final class ConventionDevelocityGradlePlugin implements Plugin<Object> {
                 || startParameter.getTaskNames().stream().anyMatch(it -> it.endsWith(":properties"));
     }
 
-    private static boolean isGradle6OrNewer() {
-        return GradleVersion.current().compareTo(GradleVersion.version("6.0")) >= 0;
+    private void configureBuildCacheDefaults(Settings settings) {
+        configureAllProjects(settings, this::disableTestCachingByDefault);
     }
 
-    private static boolean isGradle5OrNewer() {
-        return GradleVersion.current().compareTo(GradleVersion.version("5.0")) >= 0;
+    private void configureBuildCacheDefaults(Project project) {
+        configureAllProjects(project, this::disableTestCachingByDefault);
+    }
+
+    private void disableTestCachingByDefault(Project project) {
+        Provider<Boolean> enableTestCaching = getBooleanProperty(project, TEST_CACHING_PROPERTY_NAME);
+        doNotCacheTaskIf(project, Test.class, TEST_CACHING_DISABLED_REASON, () -> !enableTestCaching.get());
     }
 
 }

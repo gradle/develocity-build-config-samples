@@ -7,6 +7,11 @@ import com.myorg.configurable.ExecutionContext;
 
 final class DevelocityConventions {
 
+    public static final String TEST_CACHING_DISABLED_REASON = "more information would be required to cache tests as " +
+            "they may verify integration with other systems and always need to rerun";
+
+    public static final String TEST_CACHING_PROPERTY_NAME = "enableTestCaching";
+
     private final ExecutionContext context;
 
     DevelocityConventions(ExecutionContext context) {
