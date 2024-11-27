@@ -14,7 +14,7 @@
     <dependency>
       <groupId>org.springframework.cloud</groupId>
       <artifactId>spring-cloud-starter-contract-verifier</artifactId>
-      <version>4.1.4</version>
+      <version>4.1.5</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -24,7 +24,7 @@
       <plugin>
         <groupId>org.springframework.cloud</groupId>
         <artifactId>spring-cloud-contract-maven-plugin</artifactId>
-        <version>4.1.4</version>
+        <version>4.1.5</version>
         <extensions>true</extensions>
         <configuration></configuration>
       </plugin>
