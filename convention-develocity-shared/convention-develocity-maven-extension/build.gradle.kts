@@ -23,3 +23,9 @@ publishing {
         }
     }
 }
+
+tasks.jar {
+    from(zipTree(configurations.compileClasspath.map { it.files.first { jar -> jar.name.contains("develocity-maven-extension") }})) {
+        include("META-INF/maven/extension.xml")
+    }
+}
