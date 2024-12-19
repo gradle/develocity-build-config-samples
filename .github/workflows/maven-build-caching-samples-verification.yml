@@ -25,7 +25,7 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
       - name: Set up Maven
-        uses: gradle/develocity-actions/maven-setup@v1.2
+        uses: gradle/develocity-actions/setup-maven@v1.3
         with:
           develocity-access-key: ${{ secrets.DV_SOLUTIONS_ACCESS_KEY }}
       - name: Setup Node.js and Npm
