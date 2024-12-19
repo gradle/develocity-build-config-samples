@@ -35,11 +35,11 @@ jobs:
       - name: Set up Yarn
         run: npm install -g yarn
       - name: Download latest version of the Develocity Build Validation Scripts
-        uses: gradle/gradle-enterprise-build-validation-scripts/.github/actions/maven/download@actions-stable
+        uses: gradle/develocity-build-validation-scripts/.github/actions/maven/download@actions-stable
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
       - name: Run experiment 1
-        uses: gradle/gradle-enterprise-build-validation-scripts/.github/actions/maven/experiment-1@actions-stable
+        uses: gradle/develocity-build-validation-scripts/.github/actions/maven/experiment-1@actions-stable
         with:
           gitRepo: ${{ github.server_url }}/${{ github.repository }}
           gitCommitId: ${{ github.sha }}
@@ -48,7 +48,7 @@ jobs:
           args: ${{ env.ARGS }}
           failIfNotFullyCacheable: true
       - name: Run experiment 2
-        uses: gradle/gradle-enterprise-build-validation-scripts/.github/actions/maven/experiment-2@actions-stable
+        uses: gradle/develocity-build-validation-scripts/.github/actions/maven/experiment-2@actions-stable
         with:
           gitRepo: ${{ github.server_url }}/${{ github.repository }}
           gitCommitId: ${{ github.sha }}
