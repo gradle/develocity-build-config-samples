@@ -27,10 +27,10 @@ echo "Initializing Gradle User Home directory at $homeDir"
 rm -rf $homeDir
 mkdir -p $homeDir
 mkdir -p $homeDir/caches/"$gradleVersion"/
-cp ~/.gradle/gradle.properties $homeDir
-cp -r ~/.gradle/caches/"$gradleVersion"/generated-gradle-jars $homeDir/caches/"$gradleVersion"/
-cp -r ~/.gradle/develocity/ $homeDir/develocity/
-cp -r ~/.gradle/enterprise/ $homeDir/enterprise/
+cp ~/.gradle/gradle.properties $homeDir || :
+cp -r ~/.gradle/caches/"$gradleVersion"/generated-gradle-jars $homeDir/caches/"$gradleVersion"/ || :
+cp -r ~/.gradle/develocity/ $homeDir/develocity/ || :
+cp -r ~/.gradle/enterprise/ $homeDir/enterprise/ || :
 
 # Note: This is expecting that CCUD Gradle plugin is applied
 export GRADLE_CACHE_REMOTE_PUSH=true
