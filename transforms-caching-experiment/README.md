@@ -27,19 +27,19 @@ If results show that (remote) caching of transforms is not beneficial for your p
 2. Copy the script into your project directory.
 3. (Optional) If you're using a HTTP cache connector, uncomment line 31 and set the remote cache URL in the script to use a cache shard instead of the default cache. 
 4. Having the key set in the environment is expected - note that **remote build cache write is required**. If the key stored in your Gradle user home is missing the remote build cache write permission you can set the key in the environment by running `export DEVELOCITY_ACCESS_KEY=<develocity-url>=<your-access-key>`, either in the script, or in the terminal before running the script.
-5. Run the script with `./transforms-caching-experiment.sh`. It will run the Gradle `help` task by default, but you can specify a different task by passing it as an argument to the script. 
+5. Run the script with `./remote-cache-experiment-transforms.sh`. It will run the Gradle `help` task by default, but you can specify a different task by passing it as an argument to the script. 
 6. Inspect and compare build times 
 
 ### Invocation
 
 To run the script with the `help` task (default), use the following command:
 ```bash
-./transforms-caching-experiment.sh
+./remote-cache-experiment-transforms.sh
 ```
 
 To run the script with a specific Gradle task(s), use the following command:
 ```bash
-./transforms-caching-experiment.sh <gradle-tasks-and-args>
+./remote-cache-experiment-transforms.sh <gradle-tasks-and-args>
 ```
 
 ## Advanced usage - disabling specific transforms caching

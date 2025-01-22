@@ -45,37 +45,19 @@ set -x
 ./gradlew $tasks -g $homeDir -Dscan.tag.remote-cache-experiment-init --no-configuration-cache -Ddevelocity.deprecation.muteWarnings=true -Dscan.uploadInBackground=false -Dgradle.cache.local.enabled=false --no-daemon
 set +x
 
-runs='transforms'
-# runs='transforms transforms-selected' # Uncomment to test with selected transforms disabled
-
-for run in $runs
+for args in "-Dscan.tag.kotlin-script-caching-enabled" "-Dscan.tag.kotlin-script-caching-disabled -Dorg.gradle.internal.kotlin-script-caching-disabled"
 do
-    # Set args based on cache
-    if [ "$run" == 'transforms' ]
-    then
-        disabledCacheArgs='-Dorg.gradle.internal.transform-caching-disabled'
-    elif [ "$run" == 'transforms-selected' ]
-    then
-        # Specify the transforms to disable. Example below:
-        disabledTransforms='org.jetbrains.kotlin.gradle.internal.transforms.BuildToolsApiClasspathEntrySnapshotTransform,org.jetbrains.kotlin.gradle.internal.transforms.ClasspathEntrySnapshotTransform'
-        disabledCacheArgs="-Dorg.gradle.internal.transform-caching-disabled=$disabledTransforms"
-    fi
+    echo "------------------------------------------------------------"
+    echo "Test caches/*/kotlin-dsl removal with $args"
+    echo "------------------------------------------------------------"
+    set -x
 
-    for args in "-Dscan.tag.baseline-$run" "-Dscan.tag.disabled-cache-$run $disabledCacheArgs"
-    do
-        echo "------------------------------------------------------------"
-        echo "Test caches/*/transforms removal with $args"
-        echo "------------------------------------------------------------"
-        set -x
+    echo "Removing locally cached kotlin scripts from $homeDir/caches"
+    rm -rf $homeDir/caches/*/kotlin-dsl
 
-        echo "Removing transforms from $homeDir/caches"
-        rm -rf $homeDir/caches/*/transforms
-        rm -rf $homeDir/caches/transforms-* # Also remove the transforms for Gradle 8.7
+    # shellcheck disable=SC2086
+    ./gradlew $tasks -g $homeDir --no-configuration-cache -Ddevelocity.deprecation.muteWarnings=true -Dscan.uploadInBackground=false -Dgradle.cache.local.enabled=false --no-daemon $args
 
-        # shellcheck disable=SC2086
-        ./gradlew $tasks -g $homeDir --no-configuration-cache -Ddevelocity.deprecation.muteWarnings=true -Dscan.uploadInBackground=false -Dgradle.cache.local.enabled=false --no-daemon $args
-
-        set +x
-        echo ""
-    done
+    set +x
+    echo ""
 done
