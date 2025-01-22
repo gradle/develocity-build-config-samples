@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 
 # REQUIRED: Having the key set in the environment is expected - note that remote build cache write is requiered. It can be set here or exported in the terminal before running the script.
 #export DEVELOCITY_ACCESS_KEY=$develocityUrl=<access-key>
