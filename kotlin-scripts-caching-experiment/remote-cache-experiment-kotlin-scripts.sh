@@ -45,7 +45,7 @@ set -x
 ./gradlew $tasks -g $homeDir -Dscan.tag.remote-cache-experiment-init --no-configuration-cache -Ddevelocity.deprecation.muteWarnings=true -Dscan.uploadInBackground=false -Dgradle.cache.local.enabled=false --no-daemon
 set +x
 
-for args in "-Dscan.tag.baseline-kotlin-scripts" "-Dscan.tag.disabled-cache-kotlin-scripts -Dorg.gradle.internal.kotlin-script-caching-disabled"
+for args in "-Dscan.tag.kotlin-script-caching-enabled" "-Dscan.tag.kotlin-script-caching-disabled -Dorg.gradle.internal.kotlin-script-caching-disabled"
 do
     echo "------------------------------------------------------------"
     echo "Test caches/*/kotlin-dsl removal with $args"

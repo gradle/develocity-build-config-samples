@@ -2,17 +2,17 @@
 
 ## Overview
 
-This script is used to test the performance of remote caching for kotlin scripts.
+This script is used to test the performance of remote caching for Kotlin scripts.
 
 It will run 3 builds:
 
 1. Init/seed build, that writes to remote build cache. The scan for this build will have a tag of `remote-cache-experiment-init`.
-2. Kotlin script caching enabled - pulls from remote cache. The scan for this build will have a tag of `baseline-kotlin-scripts`.
-3. Kotlin script caching disabled - compiles the kotlin scripts. The scan for this build will have a tag of `disabled-cache-kotlin-scripts`.
+2. Kotlin script caching enabled - pulls from remote cache. The scan for this build will have a tag of `kotlin-script-caching-enabled`.
+3. Kotlin script caching disabled - compiles the Kotlin scripts. The scan for this build will have a tag of `kotlin-script-caching-disabled`.
 
-You can then use the published build scans to evaluate how caching kotlin script compilation affects your overall build time.
+You can then use the published build scans to evaluate how caching Kotlin script compilation affects your overall build time.
 
-If results show that (remote) caching of kotlin script compilation is not beneficial for your project, you can disable caching for kotlin script compilation using the flag `-Dorg.gradle.internal.kotlin-script-caching-disabled`, which is also used in this script.
+If results show that (remote) caching of Kotlin script compilation is not beneficial for your project, you can disable caching for Kotlin script compilation using the flag `-Dorg.gradle.internal.kotlin-script-caching-disabled`, which is also used in this script.
 
 ## Requirements
 
