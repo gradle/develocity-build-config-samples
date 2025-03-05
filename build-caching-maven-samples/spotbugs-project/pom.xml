@@ -57,6 +57,9 @@
                           <fileSet>
                             <name>testClassFilesDirectory</name>
                           </fileSet>
+                          <fileSet>
+                            <name>siteDirectory</name>
+                          </fileSet>
                         </fileSets>
                         <properties>
                           <property><name>skip</name></property>
@@ -92,6 +95,8 @@
                           <property><name>excludeBugsFile</name></property>
                           <property><name>includeFilterFiles</name></property>
                           <property><name>excludeFilterFiles</name></property>
+                          <property><name>outputFormat</name></property>
+                          <property><name>outputTimestamp</name></property>
                           <property><name>excludeBugsFiles</name></property>
                         </properties>
                         <ignoredProperties>
@@ -102,8 +107,10 @@
                           <ignore>maxHeap</ignore>
                           <ignore>timeout</ignore>
                           <ignore>jvmArgs</ignore>
-                          <ignore>remoteRepositories</ignore>
-                          <ignore>localRepository</ignore>
+                          <ignore>remoteProjectRepositories</ignore>
+                          <ignore>repoSession</ignore>
+                          <ignore>mojoExecution</ignore>
+                          <ignore>reactorProjects</ignore>
 
                           <!-- Ignore Maven state, as it cannot be part of cache key -->
                           <ignore>pluginArtifacts</ignore>
@@ -125,6 +132,18 @@
 
                         </ignoredProperties>
                       </inputs>
+                      <nestedProperties>
+                        <property>
+                          <name>locale</name>
+                          <inputs>
+                            <properties>
+                              <property>
+                                <name>toString</name>
+                              </property>
+                            </properties>
+                          </inputs>
+                        </property>
+                      </nestedProperties>
                       <outputs>
                         <files>
                           <file>
