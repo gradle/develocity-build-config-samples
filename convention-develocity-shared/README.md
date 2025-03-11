@@ -136,7 +136,7 @@ cd examples/maven_3
 ```
 
 > [!IMPORTANT]
-> The artifact provider must be configured as a [Mirror](https://maven.apache.org/guides/mini/guide-mirror-settings.html) to Maven Central in order to correctly resolve the extension.
+> The artifact provider must be configured as a [Plugin Repository](https://maven.apache.org/settings.html#Plugin_Repositories) in order to correctly resolve the extension.
 
 #### Requirements
 
