@@ -1,10 +1,11 @@
 # Develocity Build Validation Scripts post clone logic
 
 Develocity Build Validation Scripts must run builds on a fresh clone of your repository.
-This is an example of how to run custom logic after cloning, such as copying dependencies,
-setting up configuration files, or any shell command.
+It might be the case that your project requires additional setup after cloning, such as copying dependencies, setting up configuration files, or any shell command.
+To run custom logic after cloning, you can tell Git to include files from a [template directory][1] when cloning.
+This directory can contain any git hooks you need, including a `post-checkout` script.
 
-Place your logic in a `post-checkout` hook, to be used as a git template dir:
+Create a dir with a `hooks` directory and a `post-checkout` hook:
 
 ```shell
 # Create a new directory for the git template
@@ -13,7 +14,9 @@ echo "#!/usr/bin/env bash" > git-template-dir/hooks/post-checkout
 chmod +x git-template-dir/hooks/post-checkout
 ```
 
-Place your logic inside the `post-checkout` file. For example,
+The `post-checkout` file is a regular shell script, in which you can run any shell command.
+Place your logic in that file.
+For example:
 
 ```shell
 echo "[post-checkout] Running project's setup script..."
@@ -27,7 +30,7 @@ When running a build validation script, tell it to use Git's `--template` option
 ./01-validate-incremental-building.sh --git-options '--template ~/git-template-dir'
 ```
 
-This will copy the hooks to the `.git` directory of the new clone, and the `post-checkout` script will run automatically after cloning and any checkout. The example logic above would produce this output:
+The `post-checkout` script will run automatically after cloning and any checkout. The example logic above would produce this output:
 
 ```
 Cloning into '.data/01-validate-incremental-building/20250313T144734-67d2f006/build_my-app'...
@@ -37,3 +40,5 @@ remote: Enumerating objects: 10980, done.
 [...]
 [post-checkout] Done!
 ```
+
+[1]: https://git-scm.com/docs/git-init#_template_directory
