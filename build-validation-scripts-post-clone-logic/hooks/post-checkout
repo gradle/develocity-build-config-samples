@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+# Run arbitrary commands after clone/checkout here.
+# For example, create a file or download React Native dependencies.
+
+echo "[post-checkout] Running setup.sh"
+./setup.sh
