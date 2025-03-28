@@ -10,7 +10,7 @@ repositories {
 
 dependencies {
     implementation("com.gradle:develocity-gradle-plugin:3.19.2")
-    implementation("com.gradle:common-custom-user-data-gradle-plugin:2.2")
+    implementation("com.gradle:common-custom-user-data-gradle-plugin:2.2.1")
     implementation(project(":convention-develocity-common"))
 }
 
