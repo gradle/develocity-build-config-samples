@@ -19,7 +19,7 @@ public final class ConventionDevelocityListener implements DevelocityListener {
 
     private void configureDevelocity(DevelocityApi develocity) {
         // CHANGE ME: Apply your Develocity configuration here
-        develocity.setServer("https://develocity-samples.gradle.com");
+        develocity.setServer("https://ge.solutions-team.gradle.com");
         configureBuildScan(develocity.getBuildScan());
     }
 
