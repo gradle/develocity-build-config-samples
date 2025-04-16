@@ -18,6 +18,11 @@ public class OpenApiConfigurer extends AbstractMavenLifecycleParticipant {
 
     @Override
     public void afterProjectsRead(MavenSession session) {
+        String suppressTimestamp = System.getProperty("openapi.suppressTimestampGeneration", "true");
+        if (!Boolean.parseBoolean(suppressTimestamp)) {
+            return;
+        }
+
         session.getProjects().stream()
                 .flatMap(getPluginsWithId(OPENAPI_PLUGIN_ARTIFACT_ID))
                 .flatMap(plugin -> plugin.getExecutions().stream())
