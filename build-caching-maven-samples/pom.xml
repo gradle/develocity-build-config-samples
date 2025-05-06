@@ -14,6 +14,7 @@
     <module>aspectj-project</module>
     <module>avro-project</module>
     <module>clojure-project</module>
+    <module>cxf-codegen-plugin</module>
     <module>duplicate-finder-project</module>
     <module>enforcer-project</module>
     <module>exec-yarn-project</module>

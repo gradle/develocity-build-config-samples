@@ -13,6 +13,7 @@ The following Maven plugins are demonstrated:
 - AspectJ: `org.codehaus.mojo:aspectj-maven-plugin`
 - Avro (Apache): `org.apache.avro:avro-maven-plugin`
 - Clojure: `com.theoryinpractise:clojure-maven-plugin`
+- CXF codegen plugin: `org.apache.cxf:cxf-codegen-plugin` 
 - Duplicate Finder Plugin: `org.basepom.maven:duplicate-finder-maven-plugin`
 - Enforcer: `org.apache.maven.plugins:maven-enforcer-plugin`
 - Exec (driving Yarn Package Manager): `org.codehaus.mojo:exec-maven-plugin`
