@@ -3,7 +3,6 @@ package com.myorg;
 import com.gradle.CommonCustomUserDataGradlePlugin;
 import com.gradle.scan.plugin.BuildScanExtension;
 import com.gradle.scan.plugin.BuildScanPlugin;
-import org.gradle.StartParameter;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.util.GradleVersion;
@@ -19,10 +18,6 @@ public class ConventionDevelocityGradlePlugin implements Plugin<Project> {
 
     @Override
     public void apply(Project project) {
-        if (containsPropertiesTask(project.getGradle().getStartParameter())) {
-            return;
-        }
-
         Map<String, Object> args = new HashMap<>();
         args.put("plugin", BuildScanPlugin.class);
         project.apply(args);
@@ -37,11 +32,6 @@ public class ConventionDevelocityGradlePlugin implements Plugin<Project> {
         BuildScanExtension buildScan = project.getExtensions().getByType(BuildScanExtension.class);
         buildScan.setServer("https://develocity-samples.gradle.com");
         buildScan.publishAlways();
-    }
-
-    private boolean containsPropertiesTask(StartParameter startParameter) {
-        return startParameter.getTaskNames().contains("properties")
-                || startParameter.getTaskNames().stream().anyMatch(it -> it.endsWith(":properties"));
     }
 
     private static boolean isGradle4OrNewer() {
