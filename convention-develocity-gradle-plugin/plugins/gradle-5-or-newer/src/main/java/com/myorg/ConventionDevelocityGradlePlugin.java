@@ -4,7 +4,6 @@ import com.gradle.CommonCustomUserDataGradlePlugin;
 import com.gradle.develocity.agent.gradle.DevelocityConfiguration;
 import com.gradle.develocity.agent.gradle.DevelocityPlugin;
 import com.gradle.develocity.agent.gradle.scan.BuildScanConfiguration;
-import org.gradle.StartParameter;
 import org.gradle.api.GradleException;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
@@ -55,32 +54,26 @@ public class ConventionDevelocityGradlePlugin implements Plugin<Object> {
     private void configureGradle6OrNewer(Settings settings) {
         settings.getPluginManager().apply(DevelocityPlugin.class);
         settings.getPluginManager().apply(CommonCustomUserDataGradlePlugin.class);
-        configureDevelocity(settings.getExtensions().getByType(DevelocityConfiguration.class), settings.getGradle().getStartParameter());
+        configureDevelocity(settings.getExtensions().getByType(DevelocityConfiguration.class));
         configureBuildCache(settings.getBuildCache(), settings.getExtensions().getByType(DevelocityConfiguration.class));
     }
 
     private void configureGradle5(Project project) {
         project.getPluginManager().apply(DevelocityPlugin.class);
         project.getPluginManager().apply(CommonCustomUserDataGradlePlugin.class);
-        configureDevelocity(project.getExtensions().getByType(DevelocityConfiguration.class), project.getGradle().getStartParameter());
+        configureDevelocity(project.getExtensions().getByType(DevelocityConfiguration.class));
         // configureBuildCache is not called because the build cache cannot be configured via a plugin prior to Gradle 6.0
     }
 
-    private void configureDevelocity(DevelocityConfiguration develocity, StartParameter startParameter) {
+    private void configureDevelocity(DevelocityConfiguration develocity) {
         // CHANGE ME: Apply your Develocity configuration here
         develocity.getServer().set("https://develocity-samples.gradle.com");
-        configureBuildScan(develocity.getBuildScan(), startParameter);
+        configureBuildScan(develocity.getBuildScan());
     }
 
-    private void configureBuildScan(BuildScanConfiguration buildScan, StartParameter startParameter) {
+    private void configureBuildScan(BuildScanConfiguration buildScan) {
         // CHANGE ME: Apply your Build Scan configuration here
         buildScan.getUploadInBackground().set(!isCi());
-        buildScan.getCapture().getBuildLogging().set(!containsPropertiesTask(startParameter));
-    }
-
-    private boolean containsPropertiesTask(StartParameter startParameter) {
-        return startParameter.getTaskNames().contains("properties")
-                || startParameter.getTaskNames().stream().anyMatch(it -> it.endsWith(":properties"));
     }
 
     private void configureBuildCache(BuildCacheConfiguration buildCache, DevelocityConfiguration develocity) {

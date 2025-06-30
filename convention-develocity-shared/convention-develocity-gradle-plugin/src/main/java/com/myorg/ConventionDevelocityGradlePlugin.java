@@ -56,7 +56,6 @@ final class ConventionDevelocityGradlePlugin implements Plugin<Object> {
         DevelocityConfiguration develocity = settings.getExtensions().getByType(DevelocityConfiguration.class);
         GradleExecutionContext context = new GradleExecutionContext(providers);
         new DevelocityConventions(context).configureDevelocity(new GradleDevelocityConfigurable(develocity, settings.getBuildCache()));
-        configureBuildScan(develocity.getBuildScan(), settings.getGradle().getStartParameter());
     }
 
     private void configureGradle5(Project project) {
@@ -65,16 +64,6 @@ final class ConventionDevelocityGradlePlugin implements Plugin<Object> {
         DevelocityConfiguration develocity = project.getExtensions().getByType(DevelocityConfiguration.class);
         GradleExecutionContext context = new GradleExecutionContext(providers);
         new DevelocityConventions(context).configureDevelocity(new GradleDevelocityConfigurable(develocity));
-        configureBuildScan(develocity.getBuildScan(), project.getGradle().getStartParameter());
-    }
-
-    private void configureBuildScan(BuildScanConfiguration buildScan, StartParameter startParameter) {
-        buildScan.getCapture().getBuildLogging().set(!containsPropertiesTask(startParameter));
-    }
-
-    private boolean containsPropertiesTask(StartParameter startParameter) {
-        return startParameter.getTaskNames().contains("properties")
-                || startParameter.getTaskNames().stream().anyMatch(it -> it.endsWith(":properties"));
     }
 
     private static boolean isGradle6OrNewer() {
