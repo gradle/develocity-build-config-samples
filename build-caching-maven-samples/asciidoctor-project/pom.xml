@@ -75,10 +75,42 @@
                         </normalization>
                       </fileSet>
                       <fileSet>
+                        <name>baseDir</name> <!--(not Maven’s basedir), sets the root path for resources (e.g. included files) -->
+                        <normalization>
+                          <ignoreEmptyDirectories>true</ignoreEmptyDirectories>
+                          <ignoreLineEndings>true</ignoreLineEndings>
+                        </normalization>
+                      </fileSet>
+                      <fileSet>
                         <name>templateDirs</name>
                       </fileSet>
+                      <!-- Also define other input directories paths, such as `imagesdir`, which is defined in the attributes. -->
                     </fileSets>
                     <properties>
+                      <property>
+                        <name>attributes</name>
+                      </property>
+                      <property>
+                        <name>attributesChain</name>
+                      </property>
+                      <property>
+                        <name>backend</name>
+                      </property>
+                      <property>
+                        <name>catalogAssets</name>
+                      </property>
+                      <property>
+                        <name>doctype</name>
+                      </property>
+                      <property>
+                        <name>embedAssets</name>
+                      </property>
+                      <property>
+                        <name>enableVerbose</name>
+                      </property>
+                      <property>
+                        <name>extensions</name>
+                      </property>
                       <property>
                         <name>preserveDirectories</name>
                       </property>
@@ -86,62 +118,36 @@
                         <name>relativeBaseDir</name>
                       </property>
                       <property>
-                        <name>skip</name>
-                      </property>
-                      <property>
                         <name>requires</name>
                       </property>
                       <property>
-                        <name>attributes</name>
-                      </property>
-                      <property>
-                        <name>backend</name>
-                      </property>
-                      <property>
-                        <name>doctype</name>
-                      </property>
-                      <property>
-                        <name>standalone</name>
-                      </property>
-                      <property>
-                        <name>templateEngine</name>
-                      </property>
-                      <property>
-                        <name>templateCache</name>
-                      </property>
-                      <property>
-                        <name>sourceDocumentName</name>
+                        <name>skip</name>
                       </property>
                       <property>
                         <name>sourceDocumentExtensions</name>
                       </property>
                       <property>
+                        <name>sourceDocumentName</name>
+                      </property>
+                      <property>
                         <name>sourcemap</name>
                       </property>
                       <property>
-                        <name>catalogAssets</name>
+                        <name>standalone</name>
                       </property>
                       <property>
-                        <name>extensions</name>
+                        <name>templateCache</name>
                       </property>
                       <property>
-                        <name>embedAssets</name>
-                      </property>
-                      <property>
-                        <name>attributesChain</name>
+                        <name>templateEngine</name>
                       </property>
                     </properties>
                     <ignoredProperties>
-                      <!-- These properties should not impact goal output -->
+                      <ignore>eruby</ignore>
+                      <ignore>gemPath</ignore>
+                      <ignore>project</ignore>
                       <ignore>projectDirectory</ignore>
                       <ignore>rootDir</ignore>
-                      <ignore>baseDir</ignore>
-                      <ignore>gemPath</ignore>
-
-                      <ignore>eruby</ignore>
-                      <ignore>project</ignore>
-                      <ignore>enableVerbose</ignore>
-                      <ignore>logHandler</ignore>
                     </ignoredProperties>
                   </inputs>
                   <iteratedProperties>
@@ -150,15 +156,38 @@
                       <inputs>
                         <properties>
                           <property>
-                            <name>targetPath</name>
+                            <name>directory</name>
                           </property>
                           <property>
-                            <name>filtering</name>
+                            <name>excludes</name>
+                          </property>
+                          <property>
+                            <name>includes</name>
+                          </property>
+                          <property>
+                            <name>targetPath</name>
                           </property>
                         </properties>
                       </inputs>
                     </property>
                   </iteratedProperties>
+                  <nestedProperties>
+                    <property>
+                      <name>logHandler</name>
+                      <inputs>
+                        <properties>
+                          <property>
+                            <name>failIf</name>
+                          </property>
+                          <property>
+                            <name>outputToConsole</name>
+                          </property>
+                        </properties>
+                      </inputs>
+                    </property>
+                  </nestedProperties>
+
+                  <!-- Configure outputs. -->
                   <outputs>
                     <directories>
                       <directory>
@@ -170,7 +199,7 @@
                         <name>outputFile</name>
                       </file>
                     </files>
-                    <cacheableBecause>generates consistent outputs for declared inputs</cacheableBecause>
+                    <cacheableBecause>Generates consistent outputs for declared inputs.</cacheableBecause>
                   </outputs>
                 </plugin>
               </plugins>
