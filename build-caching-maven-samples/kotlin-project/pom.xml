@@ -136,9 +136,6 @@
                                                 <name>pluginOptions</name>
                                             </property>
                                             <property>
-                                                <name>multiPlatform</name>
-                                            </property>
-                                            <property>
                                                 <name>languageVersion</name>
                                             </property>
                                             <property>
