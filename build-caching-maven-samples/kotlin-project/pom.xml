@@ -12,7 +12,7 @@
     </parent>
 
     <properties>
-        <kotlin.version>2.1.21</kotlin.version>
+        <kotlin.version>2.2.0</kotlin.version>
         <junit-jupiter.version>5.13.3</junit-jupiter.version>
         <kotlin.compiler.incremental>true</kotlin.compiler.incremental>
     </properties>
@@ -134,9 +134,6 @@
                                             </property>
                                             <property>
                                                 <name>pluginOptions</name>
-                                            </property>
-                                            <property>
-                                                <name>multiPlatform</name>
                                             </property>
                                             <property>
                                                 <name>languageVersion</name>
