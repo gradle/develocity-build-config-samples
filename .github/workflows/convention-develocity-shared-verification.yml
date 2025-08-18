@@ -64,7 +64,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Set up JDK 8
+      - name: Set up JDK
         uses: actions/setup-java@v4
         with:
           java-version: ${{ matrix.versions.java }}
@@ -81,8 +81,8 @@ jobs:
         working-directory: convention-develocity-shared/examples/gradle_${{ matrix.versions.sample }}
         run: |
           sed -i '/distributionSha256Sum.*/d' gradle/wrapper/gradle-wrapper.properties
-          ./gradlew wrapper --gradle-version=${{ matrix.versions.version }} --no-scan
-          ./gradlew wrapper --gradle-version=${{ matrix.versions.version }} --no-scan
+          gradle wrapper --gradle-version=${{ matrix.versions.version }} --no-scan
+          gradle wrapper --gradle-version=${{ matrix.versions.version }} --no-scan
       - name: Verify example build
         id: build
         working-directory: convention-develocity-shared/examples/gradle_${{ matrix.versions.sample }}

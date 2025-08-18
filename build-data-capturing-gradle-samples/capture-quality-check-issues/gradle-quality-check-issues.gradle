@@ -3,6 +3,8 @@
  * and adds these as custom values.
  */
 
+import groovy.xml.XmlSlurper;
+
 def develocityApi = project.extensions.findByName('develocity')
 if (!develocityApi) {
     return
