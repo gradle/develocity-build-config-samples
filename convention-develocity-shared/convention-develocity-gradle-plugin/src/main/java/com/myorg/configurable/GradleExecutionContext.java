@@ -4,6 +4,7 @@ import org.gradle.api.provider.Provider;
 import org.gradle.api.provider.ProviderFactory;
 import org.gradle.util.GradleVersion;
 
+import java.lang.reflect.Method;
 import java.util.Optional;
 
 public final class GradleExecutionContext implements ExecutionContext {
@@ -19,7 +20,7 @@ public final class GradleExecutionContext implements ExecutionContext {
     @Override
     public Optional<String> environmentVariable(String name) {
         if (isGradle65OrNewer() && !isGradle74OrNewer()) {
-            @SuppressWarnings("deprecation") Provider<String> variable = providers.environmentVariable(name).forUseAtConfigurationTime();
+            Provider<String> variable = forUseAtConfigurationTime(providers.environmentVariable(name));
             return Optional.ofNullable(variable.getOrNull());
         }
         return Optional.ofNullable(System.getenv(name));
@@ -30,7 +31,7 @@ public final class GradleExecutionContext implements ExecutionContext {
     @Override
     public Optional<String> systemProperty(String name) {
         if (isGradle65OrNewer() && !isGradle74OrNewer()) {
-            @SuppressWarnings("deprecation") Provider<String> property = providers.systemProperty(name).forUseAtConfigurationTime();
+            Provider<String> property = forUseAtConfigurationTime(providers.systemProperty(name));
             return Optional.ofNullable(property.getOrNull());
         }
         return Optional.ofNullable(System.getProperty(name));
@@ -43,6 +44,20 @@ public final class GradleExecutionContext implements ExecutionContext {
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     private static boolean isGradle74OrNewer() {
         return GradleVersion.current().compareTo(GradleVersion.version("7.4")) >= 0;
+    }
+
+    private static Provider<String> forUseAtConfigurationTime(Provider<String> provider) {
+        if (isGradle65OrNewer() && !isGradle74OrNewer()) {
+            try {
+                // Use reflection to access the forUseAtConfigurationTime method as it was removed in Gradle 9.
+                Method method = Provider.class.getMethod("forUseAtConfigurationTime");
+                return (Provider<String>) method.invoke(provider);
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to invoke forUseAtConfigurationTime via reflection", e);
+            }
+        } else {
+            return provider;
+        }
     }
 
 }

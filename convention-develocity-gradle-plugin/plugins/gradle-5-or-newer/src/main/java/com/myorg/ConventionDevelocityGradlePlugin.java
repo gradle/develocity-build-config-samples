@@ -14,6 +14,7 @@ import org.gradle.caching.configuration.BuildCacheConfiguration;
 import org.gradle.util.GradleVersion;
 
 import javax.inject.Inject;
+import java.lang.reflect.Method;
 import java.util.Optional;
 
 /**
@@ -97,7 +98,7 @@ public class ConventionDevelocityGradlePlugin implements Plugin<Object> {
     // versions in order to detect changes when configuration cache is enabled.
     private Optional<String> environmentVariable(String name) {
         if (isGradle65OrNewer() && !isGradle74OrNewer()) {
-            @SuppressWarnings("deprecation") Provider<String> variable = providers.environmentVariable(name).forUseAtConfigurationTime();
+            Provider<String> variable = forUseAtConfigurationTime(providers.environmentVariable(name));
             return Optional.ofNullable(variable.getOrNull());
         }
         return Optional.ofNullable(System.getenv(name));
@@ -117,6 +118,20 @@ public class ConventionDevelocityGradlePlugin implements Plugin<Object> {
 
     private static boolean isGradle5OrNewer() {
         return GradleVersion.current().compareTo(GradleVersion.version("5.0")) >= 0;
+    }
+
+    private static Provider<String> forUseAtConfigurationTime(Provider<String> provider) {
+        if (isGradle65OrNewer() && !isGradle74OrNewer()) {
+            try {
+                // Use reflection to access the forUseAtConfigurationTime method as it was removed in Gradle 9.
+                Method method = Provider.class.getMethod("forUseAtConfigurationTime");
+                return (Provider<String>) method.invoke(provider);
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to invoke forUseAtConfigurationTime via reflection", e);
+            }
+        } else {
+            return provider;
+        }
     }
 
 }
