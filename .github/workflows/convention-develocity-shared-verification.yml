@@ -45,16 +45,22 @@ jobs:
         versions:
           - sample: '5'
             version: '5.0'
+            java: '8'
           - sample: '6'
             version: '6.0.1'
+            java: '8'
           - sample: '6.9_and_later'
             version: '6.9.4'
+            java: '8'
           - sample: '6.9_and_later'
             version: '7.0.2'
+            java: '11'
           - sample: '6.9_and_later'
             version: '8.0.2'
+            java: '17'
           - sample: '6.9_and_later'
             version: '(Current)'
+            java: '21'
     steps:
       - name: Checkout
         uses: actions/checkout@v4
