@@ -59,6 +59,9 @@ jobs:
             version: '8.0.2'
             java: '17'
           - sample: '6.9_and_later'
+            version: '9.0.0'
+            java: '21'
+          - sample: '6.9_and_later'
             version: '(Current)'
             java: '21'
     steps:
