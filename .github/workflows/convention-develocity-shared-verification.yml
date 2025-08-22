@@ -59,18 +59,23 @@ jobs:
             version: '8.0.2'
             java: '17'
           - sample: '6.9_and_later'
+            version: '9.0.0'
+            java: '21'
+          - sample: '6.9_and_later'
             version: '(Current)'
             java: '21'
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Set up JDK 8
+      - name: Set up JDK
         uses: actions/setup-java@v4
         with:
           java-version: ${{ matrix.versions.java }}
           distribution: 'temurin'
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: ${{ matrix.versions.version != '(Current)' && matrix.versions.version || 'wrapper' }}
       - name: Download plugin
         uses: actions/download-artifact@v4
         with:
@@ -81,8 +86,8 @@ jobs:
         working-directory: convention-develocity-shared/examples/gradle_${{ matrix.versions.sample }}
         run: |
           sed -i '/distributionSha256Sum.*/d' gradle/wrapper/gradle-wrapper.properties
-          ./gradlew wrapper --gradle-version=${{ matrix.versions.version }} --no-scan
-          ./gradlew wrapper --gradle-version=${{ matrix.versions.version }} --no-scan
+          gradle wrapper --gradle-version=${{ matrix.versions.version }} --no-scan
+          gradle wrapper --gradle-version=${{ matrix.versions.version }} --no-scan
       - name: Verify example build
         id: build
         working-directory: convention-develocity-shared/examples/gradle_${{ matrix.versions.sample }}

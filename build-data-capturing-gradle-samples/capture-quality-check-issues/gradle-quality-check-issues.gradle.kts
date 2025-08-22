@@ -37,7 +37,7 @@ project.extensions.configure<DevelocityConfiguration>() {
                         val files = report.getProperty("file") as NodeChildren
                         files.forEach { f ->
                             val file = f as NodeChild
-                            val filePath = project.rootProject.relativePath(file.attributes()["name"])
+                            val filePath = project.rootProject.relativePath(file.attributes()["name"]!!)
                             val checkErrors = file.getProperty("error") as NodeChildren
                             checkErrors.forEach { e ->
                                 val error = e as NodeChild
