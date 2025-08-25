@@ -62,7 +62,7 @@ jobs:
             version: '9.0.0'
             java: '21'
           - sample: '6.9_and_later'
-            version: '(Current)'
+            version: 'wrapper'
             java: '21'
     steps:
       - name: Checkout
@@ -75,23 +75,16 @@ jobs:
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
         with:
-          gradle-version: ${{ matrix.versions.version != '(Current)' && matrix.versions.version || 'wrapper' }}
+          gradle-version: ${{ matrix.versions.version }}
       - name: Download plugin
         uses: actions/download-artifact@v4
         with:
           name: convention-develocity-shared
           path: ~/.m2/repository/com/myorg
-      - name: Set Gradle version
-        if: ${{ matrix.versions.version != '(Current)' }}
-        working-directory: convention-develocity-shared/examples/gradle_${{ matrix.versions.sample }}
-        run: |
-          sed -i '/distributionSha256Sum.*/d' gradle/wrapper/gradle-wrapper.properties
-          gradle wrapper --gradle-version=${{ matrix.versions.version }} --no-scan
-          gradle wrapper --gradle-version=${{ matrix.versions.version }} --no-scan
       - name: Verify example build
         id: build
         working-directory: convention-develocity-shared/examples/gradle_${{ matrix.versions.sample }}
-        run: ./gradlew build
+        run: gradle build
         env:
           DEVELOCITY_ACCESS_KEY: ${{ secrets.DV_SOLUTIONS_ACCESS_KEY }}
       - name: Verify Build Scan published
