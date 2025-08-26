@@ -45,11 +45,11 @@ jobs:
       matrix:
         versions:
           - sample: '3'
-            version: '3.6.3'
+            maven-version: '3.6.3'
           - sample: '3'
-            version: '3.8.8'
+            maven-version: '3.8.8'
           - sample: '3'
-            version: '(Current)'
+            maven-version: '(Current)'
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -67,9 +67,9 @@ jobs:
           name: convention-develocity-maven-extension
           path: ~/.m2/repository/com/myorg
       - name: Set Maven version
-        if: ${{ matrix.versions.version != '(Current)' }}
+        if: ${{ matrix.versions.maven-version != '(Current)' }}
         working-directory: convention-develocity-maven-extension/examples/maven_${{ matrix.versions.sample }}
-        run: ./mvnw wrapper:wrapper -Dmaven=${{ matrix.versions.version }} -Ddevelocity.scan.disabled
+        run: ./mvnw wrapper:wrapper -Dmaven=${{ matrix.versions.maven-version }} -Ddevelocity.scan.disabled
       - name: Verify example build
         id: build
         working-directory: convention-develocity-maven-extension/examples/maven_${{ matrix.versions.sample }}
