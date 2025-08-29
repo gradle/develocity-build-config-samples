@@ -44,54 +44,47 @@ jobs:
       matrix:
         versions:
           - sample: '5'
-            version: '5.0'
-            java: '8'
+            gradle-version: '5.0'
+            java-version: '8'
           - sample: '6'
-            version: '6.0.1'
-            java: '8'
+            gradle-version: '6.0.1'
+            java-version: '8'
           - sample: '6.9_and_later'
-            version: '6.9.4'
-            java: '8'
+            gradle-version: '6.9.4'
+            java-version: '8'
           - sample: '6.9_and_later'
-            version: '7.0.2'
-            java: '11'
+            gradle-version: '7.0.2'
+            java-version: '11'
           - sample: '6.9_and_later'
-            version: '8.0.2'
-            java: '17'
+            gradle-version: '8.0.2'
+            java-version: '17'
           - sample: '6.9_and_later'
-            version: '9.0.0'
-            java: '21'
+            gradle-version: '9.0.0'
+            java-version: '21'
           - sample: '6.9_and_later'
-            version: '(Current)'
-            java: '21'
+            gradle-version: 'wrapper'
+            java-version: '21'
     steps:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:
-          java-version: ${{ matrix.versions.java }}
+          java-version: ${{ matrix.versions.java-version }}
           distribution: 'temurin'
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
         with:
-          gradle-version: ${{ matrix.versions.version != '(Current)' && matrix.versions.version || 'wrapper' }}
+          gradle-version: ${{ matrix.versions.gradle-version }}
       - name: Download plugin
         uses: actions/download-artifact@v4
         with:
           name: convention-develocity-shared
           path: ~/.m2/repository/com/myorg
-      - name: Set Gradle version
-        if: ${{ matrix.versions.version != '(Current)' }}
-        working-directory: convention-develocity-shared/examples/gradle_${{ matrix.versions.sample }}
-        run: |
-          sed -i '/distributionSha256Sum.*/d' gradle/wrapper/gradle-wrapper.properties
-          gradle wrapper --gradle-version=${{ matrix.versions.version }} --no-scan
-          gradle wrapper --gradle-version=${{ matrix.versions.version }} --no-scan
       - name: Verify example build
         id: build
         working-directory: convention-develocity-shared/examples/gradle_${{ matrix.versions.sample }}
-        run: ./gradlew build
+        run: gradle build
         env:
           DEVELOCITY_ACCESS_KEY: ${{ secrets.DV_SOLUTIONS_ACCESS_KEY }}
       - name: Verify Build Scan published
@@ -107,11 +100,11 @@ jobs:
       matrix:
         versions:
           - sample: '3'
-            version: '3.6.3'
+            maven-version: '3.6.3'
           - sample: '3'
-            version: '3.8.8'
+            maven-version: '3.8.8'
           - sample: '3'
-            version: '(Current)'
+            maven-version: '(Current)'
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -129,9 +122,9 @@ jobs:
           name: convention-develocity-shared
           path: ~/.m2/repository/com/myorg
       - name: Set Maven version
-        if: ${{ matrix.versions.version != '(Current)' }}
+        if: ${{ matrix.versions.maven-version != '(Current)' }}
         working-directory: convention-develocity-shared/examples/maven_${{ matrix.versions.sample }}
-        run: ./mvnw wrapper:wrapper -Dmaven=${{ matrix.versions.version }} -Ddevelocity.scan.disabled
+        run: ./mvnw wrapper:wrapper -Dmaven=${{ matrix.versions.maven-version }} -Ddevelocity.scan.disabled
       - name: Verify example build
         id: build
         working-directory: convention-develocity-shared/examples/maven_${{ matrix.versions.sample }}
