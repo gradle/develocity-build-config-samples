@@ -1,4 +1,6 @@
 name: Gradle Future Versions Verifications
+permissions:
+  contents: read
 on:
   schedule:
     - cron: '0 4 * * *'
