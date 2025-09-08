@@ -15,7 +15,7 @@
       <plugin>
         <groupId>com.github.spotbugs</groupId>
         <artifactId>spotbugs-maven-plugin</artifactId>
-        <version>4.9.4.1</version>
+        <version>4.9.4.2</version>
         <configuration>
           <effort>Max</effort>
           <threshold>Low</threshold>
@@ -75,6 +75,7 @@
                           <property><name>relaxed</name></property>
                           <property><name>visitors</name></property>
                           <property><name>omitVisitors</name></property>
+                          <property><name>chooseVisitors</name></property>
                           <property><name>pluginList</name></property>
                           <property><name>onlyAnalyze</name></property>
                           <property><name>nested</name></property>
