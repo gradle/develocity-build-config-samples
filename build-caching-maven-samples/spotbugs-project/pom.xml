@@ -75,6 +75,7 @@
                           <property><name>relaxed</name></property>
                           <property><name>visitors</name></property>
                           <property><name>omitVisitors</name></property>
+                          <property><name>chooseVisitors</name></property>
                           <property><name>pluginList</name></property>
                           <property><name>onlyAnalyze</name></property>
                           <property><name>nested</name></property>
