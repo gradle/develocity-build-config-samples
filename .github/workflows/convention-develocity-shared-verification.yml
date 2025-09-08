@@ -84,7 +84,7 @@ jobs:
       - name: Verify example build
         id: build
         working-directory: convention-develocity-shared/examples/gradle_${{ matrix.versions.sample }}
-        run: gradle build
+        run: gradle build "-Dscan.value.gradle-version=${{ matrix.gradle-version }}" "-Dscan.value.java-version=${{ matrix.java-version }}"
         env:
           DEVELOCITY_ACCESS_KEY: ${{ secrets.DV_SOLUTIONS_ACCESS_KEY }}
       - name: Verify Build Scan published

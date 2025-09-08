@@ -1,0 +1,68 @@
+name: Verify Gradle Data Capturing Samples (Nightly)
+permissions:
+  contents: read
+on:
+  schedule:
+    - cron: '0 4 * * *'
+  push:
+    paths:
+      - "build-data-capturing-gradle-samples-verification-nightly.yml"
+  workflow_dispatch:
+
+jobs:
+  samples:
+    name: Verification of sample ${{ matrix.name }} with Gradle ${{ matrix.gradle-version }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        gradle-version: [ 'current', 'release-candidate', 'nightly' ]
+        java-version: [ '21' ]
+        name: [ 'Git diffs', 'Max parallel forks', 'OS processes', 'Processor arch', 'Quality checks', 'Slow tasks', 'Test task system properties', 'Test PTS support', 'Thermal throttling' ]
+        include:
+          - name: 'Git diffs'
+            sample-file: 'capture-git-diffs/gradle-git-diffs.gradle'
+          - name: 'Max parallel forks'
+            sample-file: 'capture-max-parallel-forks/gradle-max-parallel-forks.gradle'
+          - name: 'OS processes'
+            sample-file: 'capture-os-processes/gradle-os-processes.gradle'
+          - name: 'Processor arch'
+            sample-file: 'capture-processor-arch/gradle-processor-arch.gradle'
+          - name: 'Quality checks'
+            sample-file: 'capture-quality-check-issues/gradle-quality-check-issues.gradle'
+          - name: 'Slow tasks'
+            sample-file: 'capture-slow-workunit-executions/gradle-slow-task-executions.gradle'
+          - name: 'Test task system properties'
+            sample-file: 'capture-test-execution-system-properties/gradle-test-execution-system-properties.gradle'
+          - name: 'Test PTS support'
+            sample-file: 'capture-test-pts-support/gradle-test-pts-support.gradle'
+          - name: 'Thermal throttling'
+            sample-file: 'capture-thermal-throttling/gradle-thermal-throttling.gradle'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+      - name: Set up JDK
+        uses: actions/setup-java@v5
+        with:
+          java-version: '${{ matrix.java-version }}'
+          distribution: 'temurin'
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          develocity-access-key: ${{ secrets.DV_SOLUTIONS_ACCESS_KEY }}
+          gradle-version: ${{ matrix.gradle-version }}
+      - name: Inject data capture script into Gradle build using Groovy DSL
+        working-directory: common-develocity-gradle-configuration-groovy
+        run: |
+          # apply sample file
+          echo "apply from: file(\"../build-data-capturing-gradle-samples/${{matrix.sample-file}}\")" >> build.gradle
+      - name: Run Gradle build using Groovy DSL
+        working-directory: common-develocity-gradle-configuration-groovy
+        run: gradle tasks -Ddevelocity.url=https://ge.solutions-team.gradle.com "-Dscan.value.gradle-version=${{ matrix.gradle-version }}" "-Dscan.value.java-version=${{ matrix.java-version }}"
+      - name: Inject data capture script into Gradle build using Kotlin DSL
+        working-directory: common-develocity-gradle-configuration-kotlin
+        run: |
+          # apply sample file
+          echo "apply(from = \"../build-data-capturing-gradle-samples/${{matrix.sample-file}}.kts\")" >> build.gradle.kts
+      - name: Run Gradle build using Kotlin DSL
+        working-directory: common-develocity-gradle-configuration-kotlin
+        run: gradle tasks -Ddevelocity.url=https://ge.solutions-team.gradle.com "-Dscan.value.gradle-version=${{ matrix.gradle-version }}" "-Dscan.value.java-version=${{ matrix.java-version }}"

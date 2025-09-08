@@ -1,12 +1,12 @@
-name: Verify Convention Develocity Gradle Plugin
-
+name: Verify Convention Develocity Gradle Plugin (Nightly)
+permissions:
+  contents: read
 on:
+  schedule:
+    - cron: '0 4 * * *'
   push:
-    branches: [ main ]
-    paths: [ 'convention-develocity-gradle-plugin/**', '.github/workflows/**' ]
-  pull_request:
-    branches: [ main ]
-    paths: [ 'convention-develocity-gradle-plugin/**', '.github/workflows/**' ]
+    paths:
+      - "convention-develocity-gradle-plugin-verification-nightly.yml"
   workflow_dispatch:
 
 jobs:
@@ -15,80 +15,57 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Set up JDK 21
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: '21'
           distribution: 'temurin'
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
-      - name: Build with Gradle - Gradle 2 through 4
-        working-directory: convention-develocity-gradle-plugin/plugins/gradle-2-through-4
-        run: ./gradlew build
+        with:
+          gradle-version: 'release-candidate'
       - name: Configure Develocity Solutions instance
         working-directory: convention-develocity-gradle-plugin/plugins/gradle-5-or-newer/src/main/java/com/myorg
         run: sed -i 's/develocity-samples.gradle.com/ge.solutions-team.gradle.com/g' ConventionDevelocityGradlePlugin.java
       - name: Build with Gradle - Gradle 5 or newer
         working-directory: convention-develocity-gradle-plugin/plugins/gradle-5-or-newer
-        run: ./gradlew build publishToMavenLocal
+        run: gradle build publishToMavenLocal
       - name: Upload plugin
         uses: actions/upload-artifact@v4
         with:
           name: convention-develocity-gradle-plugin
           path: ~/.m2/repository/com/myorg
-
+          
   verification:
     name: Verify Example Build for Gradle ${{ matrix.versions.version }}
-    needs: [build]
+    needs: [ build ]
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        # Gradle 3 and earlier is not tested because it does not apply CCUD and overriding the server URL is not possible.
-        # Gradle 4 is not tested because it does not support publishing to authenticated servers.
-        versions:
-          - sample: '5'
-            gradle-version: '5.0'
-            java-version: '8'
-          - sample: '6'
-            gradle-version: '6.0.1'
-            java-version: '8'
-          - sample: '6.9_and_later'
-            gradle-version: '6.9.4'
-            java-version: '8'
-          - sample: '6.9_and_later'
-            gradle-version: '7.0.2'
-            java-version: '11'
-          - sample: '6.9_and_later'
-            gradle-version: '8.0.2'
-            java-version: '17'
-          - sample: '6.9_and_later'
-            gradle-version: '9.0.0'
-            java-version: '21'
-          - sample: '6.9_and_later'
-            gradle-version: 'wrapper'
-            java-version: '21'
+        gradle-version: ['current', 'release-candidate', 'nightly']
+        java-version: ['21']
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Set up JDK
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
-          java-version: ${{ matrix.versions.java-version }}
+          java-version: '${{ matrix.java-version }}'
           distribution: 'temurin'
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
         with:
-          gradle-version: ${{ matrix.versions.gradle-version }}
+          gradle-version: ${{ matrix.gradle-version }}
       - name: Download plugin
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           name: convention-develocity-gradle-plugin
           path: ~/.m2/repository/com/myorg
       - name: Verify example build
         id: build
-        working-directory: convention-develocity-gradle-plugin/examples/gradle_${{ matrix.versions.sample }}
+        working-directory: convention-develocity-gradle-plugin/examples/gradle_6.9_and_later
         run: gradle build "-Dscan.value.gradle-version=${{ matrix.gradle-version }}" "-Dscan.value.java-version=${{ matrix.java-version }}"
         env:
           DEVELOCITY_ACCESS_KEY: ${{ secrets.DV_SOLUTIONS_ACCESS_KEY }}

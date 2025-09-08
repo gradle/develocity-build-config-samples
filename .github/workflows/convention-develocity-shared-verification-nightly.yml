@@ -1,0 +1,75 @@
+name: Verify Convention Develocity Shared (Nightly)
+permissions:
+  contents: read
+on:
+  schedule:
+    - cron: '0 4 * * *'
+  push:
+    paths:
+      - "convention-develocity-shared-verification-nightly.yml"
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build Convention Develocity Shared
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+      - name: Set up JDK 21
+        uses: actions/setup-java@v5
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: 'release-candidate'
+      - name: Configure Develocity Solutions instance
+        working-directory: convention-develocity-shared/convention-develocity-common/src/main/java/com/myorg
+        run: sed -i 's/develocity-samples.gradle.com/ge.solutions-team.gradle.com/g' DevelocityConventions.java
+      - name: Build with Gradle
+        working-directory: convention-develocity-shared
+        run: gradle build publishToMavenLocal
+      - name: Upload convention
+        uses: actions/upload-artifact@v4
+        with:
+          name: convention-develocity-shared
+          path: ~/.m2/repository/com/myorg
+
+  verification:
+    name: Verify Example Build for Gradle ${{ matrix.versions.version }}
+    needs: [ build ]
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        gradle-version: [ 'current', 'release-candidate', 'nightly' ]
+        java-version: [ '21' ]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+      - name: Set up JDK
+        uses: actions/setup-java@v5
+        with:
+          java-version: '${{ matrix.java-version }}'
+          distribution: 'temurin'
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: ${{ matrix.gradle-version }}
+      - name: Download plugin
+        uses: actions/download-artifact@v5
+        with:
+          name: convention-develocity-shared
+          path: ~/.m2/repository/com/myorg
+      - name: Verify example build
+        id: build
+        working-directory: convention-develocity-shared/examples/gradle_6.9_and_later
+        run: gradle build "-Dscan.value.gradle-version=${{ matrix.gradle-version }}" "-Dscan.value.java-version=${{ matrix.java-version }}"
+        env:
+          DEVELOCITY_ACCESS_KEY: ${{ secrets.DV_SOLUTIONS_ACCESS_KEY }}
+      - name: Verify Build Scan published
+        if: ${{ !steps.build.outputs.build-scan-url }}
+        run: echo "::error ::No Build Scan published"; exit 1          
+
