@@ -6,7 +6,7 @@ on:
     - cron: '0 4 * * *'
   push:
     paths:
-      - "convention-develocity-shared-verification-nightly.yml"
+      - ".github/workflows/convention-develocity-shared-verification-nightly.yml"
   workflow_dispatch:
 
 jobs:

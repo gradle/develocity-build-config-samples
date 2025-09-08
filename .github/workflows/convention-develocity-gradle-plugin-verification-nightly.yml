@@ -6,7 +6,7 @@ on:
     - cron: '0 4 * * *'
   push:
     paths:
-      - "convention-develocity-gradle-plugin-verification-nightly.yml"
+      - ".github/workflows/convention-develocity-gradle-plugin-verification-nightly.yml"
   workflow_dispatch:
 
 jobs:

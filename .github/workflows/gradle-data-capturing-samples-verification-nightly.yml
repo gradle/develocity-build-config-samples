@@ -6,7 +6,7 @@ on:
     - cron: '0 4 * * *'
   push:
     paths:
-      - "build-data-capturing-gradle-samples-verification-nightly.yml"
+      - ".github/workflows/gradle-data-capturing-samples-verification-nightly.yml"
   workflow_dispatch:
 
 jobs:
