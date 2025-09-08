@@ -40,12 +40,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v5
-      - name: Set up JDK
+      - name: Set up JDK ${{ matrix.java-version }}
         uses: actions/setup-java@v5
         with:
           java-version: '${{ matrix.java-version }}'
           distribution: 'temurin'
-      - name: Set up Gradle
+      - name: Set up Gradle ${{ matrix.gradle-version }}
         uses: gradle/actions/setup-gradle@v4
         with:
           develocity-access-key: ${{ secrets.DV_SOLUTIONS_ACCESS_KEY }}

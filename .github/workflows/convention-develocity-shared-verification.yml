@@ -36,7 +36,7 @@ jobs:
           path: ~/.m2/repository/com/myorg
 
   verification_gradle:
-    name: Verify Example Build for Gradle ${{ matrix.versions.version }}
+    name: Verify Example Build for Gradle ${{ matrix.versions.gradle-version }}
     needs: [build]
     runs-on: ubuntu-latest
     strategy:
@@ -67,12 +67,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Set up JDK
+      - name: Set up JDK ${{ matrix.versions.java-version }}
         uses: actions/setup-java@v4
         with:
           java-version: ${{ matrix.versions.java-version }}
           distribution: 'temurin'
-      - name: Set up Gradle
+      - name: Set up Gradle ${{ matrix.versions.gradle-version }}
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: ${{ matrix.versions.gradle-version }}
@@ -92,7 +92,7 @@ jobs:
         run: echo "::error ::No Build Scan published"; exit 1
 
   verification_maven:
-    name: Verify Example Build for Maven ${{ matrix.versions.version }}
+    name: Verify Example Build for Maven ${{ matrix.versions.maven-version }}
     needs: [build]
     runs-on: ubuntu-latest
     strategy:
@@ -114,21 +114,21 @@ jobs:
           java-version: '8'
           distribution: 'temurin'
           cache: maven
-      - name: Set up Maven
+      - name: Set up Maven ${{ matrix.versions.maven-version }}
         uses: gradle/develocity-actions/setup-maven@v1.3
       - name: Download extension
         uses: actions/download-artifact@v4
         with:
           name: convention-develocity-shared
           path: ~/.m2/repository/com/myorg
-      - name: Set Maven version
+      - name: Set Maven version ${{ matrix.versions.maven-version }}
         if: ${{ matrix.versions.maven-version != '(Current)' }}
         working-directory: convention-develocity-shared/examples/maven_${{ matrix.versions.sample }}
         run: ./mvnw wrapper:wrapper -Dmaven=${{ matrix.versions.maven-version }} -Ddevelocity.scan.disabled
       - name: Verify example build
         id: build
         working-directory: convention-develocity-shared/examples/maven_${{ matrix.versions.sample }}
-        run: ./mvnw clean verify
+        run: ./mvnw clean verify "-Dscan.value.maven-version=${{ matrix.versions.maven-version }}"
         env:
           DEVELOCITY_ACCESS_KEY: ${{ secrets.DV_SOLUTIONS_ACCESS_KEY }}
       - name: Verify Build Scan published
