@@ -1,6 +1,7 @@
 name: Verify Convention Develocity Gradle Plugin (Nightly)
 permissions:
   contents: read
+  id-token: write
 on:
   schedule:
     - cron: '0 4 * * *'
@@ -72,3 +73,20 @@ jobs:
       - name: Verify Build Scan published
         if: ${{ !steps.build.outputs.build-scan-url }}
         run: echo "::error ::No Build Scan published"; exit 1
+      - name: Get secrets
+        uses: gradle/security/actions/gradle-secrets-action@master
+        with:
+          role-to-assume: arn:aws:iam::992382829881:role/GHASecrets_develocity-build-config-samples_all
+          secret-ids: |
+            DV_SOLUTIONS_SCHEDULED_WORKFLOWS_WEBHOOK_URL,gha/develocity-build-config-samples/_all/dv_solutions_scheduled_workflows_webhook_url
+      - name: Report scheduled workflow failure
+        uses: slackapi/slack-github-action@v2.1.1
+        with:
+          webhook: ${{ env.DV_SOLUTIONS_SCHEDULED_WORKFLOWS_WEBHOOK_URL }}
+          webhook-type: webhook-trigger
+          payload-templated: true
+          payload: |
+            {
+              "workflow_name": "Testing: Verify Convention Develocity Gradle Plugin (Nightly)",
+              "workflow_run_url": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+            }
