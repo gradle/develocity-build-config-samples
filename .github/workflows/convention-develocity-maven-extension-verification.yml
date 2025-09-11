@@ -73,7 +73,7 @@ jobs:
       - name: Verify example build
         id: build
         working-directory: convention-develocity-maven-extension/examples/maven_${{ matrix.versions.sample }}
-        run: ./mvnw clean verify
+        run: ./mvnw clean verify "-Dscan.value.maven-version=${{ matrix.versions.maven-version }}"
         env:
           DEVELOCITY_ACCESS_KEY: ${{ secrets.DV_SOLUTIONS_ACCESS_KEY }}
       - name: Verify Build Scan published
