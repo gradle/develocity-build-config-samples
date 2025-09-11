@@ -168,6 +168,15 @@
                                             <property>
                                                 <name>myIncremental</name>
                                             </property>
+                                            <property>
+                                                <name>daemonShutdownDelayMs</name>
+                                            </property>
+                                            <property>
+                                                <name>kotlinDaemonJvmArgs</name>
+                                            </property>
+                                            <property>
+                                                <name>useDaemon</name>
+                                            </property>
                                         </properties>
                                         <ignoredProperties>
                                             <ignore>module</ignore>
