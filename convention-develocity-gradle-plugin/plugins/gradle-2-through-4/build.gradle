@@ -14,7 +14,7 @@ repositories {
 dependencies {
     // must not be newer than 1.16 to be compatible with Gradle 2.x - 4.x
     implementation "com.gradle:build-scan-plugin:1.16"
-    implementation 'com.gradle:common-custom-user-data-gradle-plugin:2.3'
+    implementation 'com.gradle:common-custom-user-data-gradle-plugin:2.4.0'
 }
 
 java {
