@@ -96,6 +96,6 @@ jobs:
           payload-templated: true
           payload: |
             {
-              "workflow_name": "Testing: Verify Convention Develocity Gradle Plugin (Nightly)",
+              "workflow_name": "Verify Convention Develocity Gradle Plugin (Nightly)",
               "workflow_run_url": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
             }
