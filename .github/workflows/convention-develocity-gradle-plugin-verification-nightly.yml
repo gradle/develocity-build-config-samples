@@ -37,6 +37,26 @@ jobs:
         with:
           name: convention-develocity-gradle-plugin
           path: ~/.m2/repository/com/myorg
+      - name: Get secrets
+        uses: gradle/actions-internal/get-aws-secrets@v1
+        if: ${{ failure() }}
+        with:
+          role-to-assume: arn:aws:iam::992382829881:role/GHASecrets_develocity-build-config-samples_all
+          secret-ids: |
+            DV_SOLUTIONS_SCHEDULED_WORKFLOWS_WEBHOOK_URL,gha/develocity-build-config-samples/_all/dv_solutions_scheduled_workflows_webhook_url
+      - name: Report scheduled workflow failure
+        uses: slackapi/slack-github-action@v2.1.1
+        if: ${{ failure() }}
+        with:
+          webhook: ${{ env.DV_SOLUTIONS_SCHEDULED_WORKFLOWS_WEBHOOK_URL }}
+          webhook-type: webhook-trigger
+          payload-templated: true
+          payload: |
+            {
+              "workflow_name": "Testing: Verify Convention Develocity Gradle Plugin (Nightly)",
+              "workflow_run_url": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+            }
+      
           
   verification:
     name: Verify Example Build for Gradle ${{ matrix.gradle-version }}
@@ -75,12 +95,14 @@ jobs:
         run: echo "::error ::No Build Scan published"; exit 1
       - name: Get secrets
         uses: gradle/actions-internal/get-aws-secrets@v1
+        if: ${{ failure() }}
         with:
           role-to-assume: arn:aws:iam::992382829881:role/GHASecrets_develocity-build-config-samples_all
           secret-ids: |
             DV_SOLUTIONS_SCHEDULED_WORKFLOWS_WEBHOOK_URL,gha/develocity-build-config-samples/_all/dv_solutions_scheduled_workflows_webhook_url
       - name: Report scheduled workflow failure
         uses: slackapi/slack-github-action@v2.1.1
+        if: ${{ failure() }}
         with:
           webhook: ${{ env.DV_SOLUTIONS_SCHEDULED_WORKFLOWS_WEBHOOK_URL }}
           webhook-type: webhook-trigger
