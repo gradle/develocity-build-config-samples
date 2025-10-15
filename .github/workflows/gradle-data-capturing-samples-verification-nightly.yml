@@ -1,6 +1,7 @@
 name: Verify Gradle Data Capturing Samples (Nightly)
 permissions:
   contents: read
+  id-token: write
 on:
   schedule:
     - cron: '0 4 * * *'
