@@ -32,6 +32,8 @@ jobs:
       - name: Build with Gradle - Gradle 5 or newer
         working-directory: convention-develocity-gradle-plugin/plugins/gradle-5-or-newer
         run: gradle build publishToMavenLocal
+        env:
+          DEVELOCITY_ACCESS_KEY: ${{ secrets.DV_SOLUTIONS_ACCESS_KEY }}
       - name: Upload plugin
         uses: actions/upload-artifact@v4
         with:
