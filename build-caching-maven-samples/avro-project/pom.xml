@@ -14,7 +14,7 @@
     <dependency>
       <groupId>org.apache.avro</groupId>
       <artifactId>avro</artifactId>
-      <version>1.12.0</version>
+      <version>1.12.1</version>
     </dependency>
   </dependencies>
 
@@ -23,7 +23,7 @@
       <plugin>
         <groupId>org.apache.avro</groupId>
         <artifactId>avro-maven-plugin</artifactId>
-        <version>1.12.0</version>
+        <version>1.12.1</version>
         <executions>
           <execution>
             <phase>generate-sources</phase>
@@ -97,6 +97,8 @@
                       <property><name>fieldVisibility</name></property>
                       <property><name>gettersReturnOptional</name></property>
                       <property><name>imports</name></property>
+                      <property><name>nullSafeAnnotationNotNull</name></property>
+                      <property><name>nullSafeAnnotationNullable</name></property>
                       <property><name>optionalGettersForNullableFieldsOnly</name></property>
                       <property><name>recordSpecificClass</name></property>
                       <property><name>stringType</name></property>
