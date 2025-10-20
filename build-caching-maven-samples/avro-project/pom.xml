@@ -97,6 +97,8 @@
                       <property><name>fieldVisibility</name></property>
                       <property><name>gettersReturnOptional</name></property>
                       <property><name>imports</name></property>
+                      <property><name>nullSafeAnnotationNotNull</name></property>
+                      <property><name>nullSafeAnnotationNullable</name></property>
                       <property><name>optionalGettersForNullableFieldsOnly</name></property>
                       <property><name>recordSpecificClass</name></property>
                       <property><name>stringType</name></property>
