@@ -14,6 +14,7 @@ jobs:
     name: Verification of ${{ matrix.name }}
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         include:
           - name: 'Git diffs'
