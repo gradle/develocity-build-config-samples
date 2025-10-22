@@ -10,8 +10,12 @@ import groovy.xml.slurpersupport.NodeChildren
 
 project.extensions.configure<DevelocityConfiguration>() {
     buildScan {
-        gradle.taskGraph.beforeTask {
-            if (this.reportingSupported && this is Reporting<*>) {
+        project.tasks.configureEach {
+            if (!this.reportingSupported) {
+                return@configureEach
+            }
+
+            if (this is Reporting<*>) {
                 val reportTask = this as Reporting<ReportContainer<*>>
                 reportTask.reports.withGroovyBuilder { "xml" { setProperty("enabled", true) } }
             } else if (ReportingTask.SPOTBUGS.isTask(this)) {
@@ -22,10 +26,8 @@ project.extensions.configure<DevelocityConfiguration>() {
                     }
                 }
             }
-        }
 
-        gradle.taskGraph.afterTask {
-            if (this.reportingSupported) {
+            doLast {
                 val reportFile = reportFromTask(this)
                 if (reportFile.exists()) {
                     val report = XmlSlurper().parse(reportFile)
