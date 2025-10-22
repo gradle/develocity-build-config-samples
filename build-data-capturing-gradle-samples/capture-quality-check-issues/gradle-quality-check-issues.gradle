@@ -10,65 +10,61 @@ if (!develocityApi) {
     return
 }
 
-gradle.taskGraph.beforeTask { task ->
+project.tasks.configureEach { task ->
     if (!ReportingTask.isSupported(task)) {
         return
     }
 
     task.reports.xml.required = true
-}
 
-gradle.taskGraph.afterTask { task, TaskState state ->
-    if (!ReportingTask.isSupported(task)) {
-        return
+    task.doLast {
+        def reportFile = task.reports.xml.outputLocation.get().asFile
+        if (!reportFile.exists()) {
+            return
+        }
+
+        def report = new XmlSlurper().parse(reportFile)
+        def valueName = '' as String
+        def errors = [] as List<String>
+
+        if (ReportingTask.CHECKSTYLE.isTask(task)) {
+            valueName = 'Verification Checkstyle'
+            errors = report.file.collect {
+                String filePath = task.project.rootProject.relativePath(it.@name.text())
+                it.error.collect { "${filePath}:${it.@line}:${it.@column} \u2192 ${it.@message}" }
+            }.flatten() as List<String>
+        } else if (ReportingTask.CODENARC.isTask(task)) {
+            valueName = 'Verification CodeNarc'
+            errors = report.Package.collect {
+                def sourceDirectories = it.parent().Project.SourceDirectory.collect {
+                    appendIfMissing(it.text() as String, '/')
+                }.unique()
+                it.File.collect {
+                    File fileWithViolation = sourceDirectories.collect { sourceDirectory ->
+                        task.project.file(sourceDirectory + (it.@name.text() as String))
+                    }.find {
+                        it.exists()
+                    }
+                    String filePath = task.project.rootProject.relativePath(fileWithViolation)
+                    it.Violation.collect { "${filePath}:${it.@lineNumber} \u2192 ${it.Message.text()}" }
+                }.flatten()
+            }.flatten() as List<String>
+        } else if (ReportingTask.SPOTBUGS.isTask(task)) {
+            valueName = 'Verification SpotBugs'
+            errors = report.BugInstance.collect { bugInstance ->
+                String type = bugInstance.@type.text()
+                def error = bugInstance.breadthFirst().findAll { it.name() == 'SourceLine' }.sort(false) { it.parent().name() as SpotBugsParent }.first()
+                String startLine = error.@start.text()
+                String endLine = error.@end.text()
+                String lineNumber = endLine == startLine ? startLine : "$startLine-$endLine"
+                def absoluteFilePath = bugInstance.parent().Project.SrcDir.collect { it.text() }.find { it.endsWith(error.@sourcepath.text()) }
+                String relativePath = task.project.rootProject.relativePath(absoluteFilePath)
+                "${relativePath}:${lineNumber} \u2192 ${type}"
+            }.flatten() as List<String>
+        }
+
+        errors.each { develocityApi.getBuildScan().value(valueName, it) }
     }
-
-    def reportFile = task.reports.xml.outputLocation.get().asFile
-    if (!reportFile.exists()) {
-        return
-    }
-
-    def report = new XmlSlurper().parse(reportFile)
-    def valueName = '' as String
-    def errors = [] as List<String>
-
-    if (ReportingTask.CHECKSTYLE.isTask(task)) {
-        valueName = 'Verification Checkstyle'
-        errors = report.file.collect {
-            String filePath = task.project.rootProject.relativePath(it.@name.text())
-            it.error.collect { "${filePath}:${it.@line}:${it.@column} \u2192 ${it.@message}" }
-        }.flatten() as List<String>
-    } else if (ReportingTask.CODENARC.isTask(task)) {
-        valueName = 'Verification CodeNarc'
-        errors = report.Package.collect {
-            def sourceDirectories = it.parent().Project.SourceDirectory.collect {
-                appendIfMissing(it.text() as String, '/')
-            }.unique()
-            it.File.collect {
-                File fileWithViolation = sourceDirectories.collect { sourceDirectory ->
-                    task.project.file(sourceDirectory + (it.@name.text() as String))
-                }.find {
-                    it.exists()
-                }
-                String filePath = task.project.rootProject.relativePath(fileWithViolation)
-                it.Violation.collect { "${filePath}:${it.@lineNumber} \u2192 ${it.Message.text()}" }
-            }.flatten()
-        }.flatten() as List<String>
-    } else if (ReportingTask.SPOTBUGS.isTask(task)) {
-        valueName = 'Verification SpotBugs'
-        errors = report.BugInstance.collect { bugInstance ->
-            String type = bugInstance.@type.text()
-            def error = bugInstance.breadthFirst().findAll { it.name() == 'SourceLine' }.sort(false) { it.parent().name() as SpotBugsParent }.first()
-            String startLine = error.@start.text()
-            String endLine = error.@end.text()
-            String lineNumber = endLine == startLine ? startLine : "$startLine-$endLine"
-            def absoluteFilePath = bugInstance.parent().Project.SrcDir.collect { it.text() }.find { it.endsWith(error.@sourcepath.text()) }
-            String relativePath = task.project.rootProject.relativePath(absoluteFilePath)
-            "${relativePath}:${lineNumber} \u2192 ${type}"
-        }.flatten() as List<String>
-    }
-
-    errors.each { develocityApi.getBuildScan().value(valueName, it) }
 }
 
 static String appendIfMissing(String str, String suffix) {
