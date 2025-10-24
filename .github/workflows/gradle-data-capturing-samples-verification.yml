@@ -1,5 +1,8 @@
 name: Verify Gradle Data Capturing Samples
 
+permissions:
+  contents: read
+
 on:
   push:
     branches: [ main ]

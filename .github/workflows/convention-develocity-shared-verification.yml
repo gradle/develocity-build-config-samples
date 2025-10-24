@@ -1,5 +1,8 @@
 name: Verify Convention Develocity Shared
 
+permissions:
+  contents: read
+
 on:
   push:
     branches: [ main ]

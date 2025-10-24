@@ -1,5 +1,8 @@
 name: Verify Maven Build Caching Samples
 
+permissions:
+  contents: read
+
 on:
   push:
     branches: [ main ]

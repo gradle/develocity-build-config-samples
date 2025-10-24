@@ -1,5 +1,8 @@
 name: Verify Convention Develocity Gradle Plugin
 
+permissions:
+  contents: read
+
 on:
   push:
     branches: [ main ]
