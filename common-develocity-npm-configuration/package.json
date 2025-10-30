@@ -1,0 +1,13 @@
+{
+  "name": "common-develocity-npm-configuration",
+  "version": "1.0.0",
+  "description": "Minimal npm build for testing purposes",
+  "main": "index.js",
+  "scripts": {
+    "build": "node build.js",
+    "test": "echo \"No tests defined\" && exit 0"
+  },
+  "keywords": ["test", "build", "sample"],
+  "author": "",
+  "license": "MIT"
+}
