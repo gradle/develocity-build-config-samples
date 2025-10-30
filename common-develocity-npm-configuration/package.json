@@ -1,0 +1,12 @@
+{
+  "name": "common-develocity-npm-configuration",
+  "version": "1.0.0",
+  "description": "Common Develocity npm configuration sample",
+  "scripts": {
+    "build": "echo \"No build defined\" && exit 0",
+    "test": "echo \"No tests defined\" && exit 0"
+  },
+  "keywords": ["develocity", "configuration", "sample"],
+  "author": "",
+  "license": "MIT"
+}
