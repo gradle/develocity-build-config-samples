@@ -12,7 +12,7 @@ dependencies {
     compileOnly("org.apache.maven:maven-core:3.9.11")
 
     implementation("com.gradle:develocity-maven-extension:2.2")
-    implementation("com.gradle:common-custom-user-data-maven-extension:2.0.6")
+    implementation("com.gradle:common-custom-user-data-maven-extension:2.0.7")
     implementation(project(":convention-develocity-common"))
 }
 
