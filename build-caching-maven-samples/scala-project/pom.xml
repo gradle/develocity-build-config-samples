@@ -77,6 +77,16 @@
                                             <inputs>
                                                 <fileSets>
                                                     <fileSet>
+                                                        <name>sourceDirectory</name>
+                                                        <paths>
+                                                            <path>src/main/scala</path>
+                                                        </paths>
+                                                        <normalization>
+                                                            <ignoreLineEndings>true</ignoreLineEndings>
+                                                            <ignoreEmptyDirectories>true</ignoreEmptyDirectories>
+                                                        </normalization>
+                                                    </fileSet>
+                                                    <fileSet>
                                                         <name>sourceDir</name>
                                                         <includesProperty>includes</includesProperty>
                                                         <excludesProperty>excludes</excludesProperty>
@@ -254,6 +264,16 @@
                                             </skipIfTrue>
                                             <inputs>
                                                 <fileSets>
+                                                    <fileSet>
+                                                        <name>testSourceDirectory</name>
+                                                        <paths>
+                                                            <path>src/test/scala</path>
+                                                        </paths>
+                                                        <normalization>
+                                                            <ignoreLineEndings>true</ignoreLineEndings>
+                                                            <ignoreEmptyDirectories>true</ignoreEmptyDirectories>
+                                                        </normalization>
+                                                    </fileSet>
                                                     <fileSet>
                                                         <name>testSourceDir</name>
                                                         <includesProperty>includes</includesProperty>
