@@ -184,6 +184,7 @@
                                             <ignore>nowarn</ignore>
                                             <ignore>mojoExecution</ignore>
                                             <ignore>project</ignore>
+                                            <ignore>classLoaderCacheTimeoutSeconds</ignore>
                                         </ignoredProperties>
                                     </inputs>
                                     <outputs>
