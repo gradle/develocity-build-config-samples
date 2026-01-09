@@ -21,6 +21,7 @@
     <module>kotlin-project</module>
     <module>pmd-project</module>
     <module>protobuf-project</module>
+    <module>scala-project</module>
     <module>spotbugs-project</module>
     <module>spring-cloud-contract-project</module>
 
