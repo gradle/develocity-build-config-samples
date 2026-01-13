@@ -23,6 +23,7 @@ final class DevelocityConventions {
     private void configureBuildScan(BuildScanConfigurable buildScan) {
         // CHANGE ME: Apply your Build Scan configuration here
         buildScan.setUploadInBackground(!isCi());
+        buildScan.background(new CaptureGitHubCustomPropertyAction(context));
     }
 
     private void configureBuildCache(BuildCacheConfigurable buildCache) {
