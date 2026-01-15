@@ -54,12 +54,16 @@ final class CaptureGitHubCustomPropertyAction implements Consumer<BuildScanConfi
     public void accept(BuildScanConfigurable buildScan) {
         try {
             if (writableDirectory == null) {
-                captureWritableDirectoryNotFoundWarning(buildScan);
+                captureWarning(buildScan, "Property not cached because a writable directory was not found.");
             } else {
-                Optional<String> cachedProperty = loadCachedProperty(writableDirectory);
-                if (cachedProperty.isPresent()) {
-                    captureProperty(buildScan, cachedProperty.get());
-                    return;
+                try {
+                    Optional<String> cachedProperty = loadCachedProperty(writableDirectory);
+                    if (cachedProperty.isPresent()) {
+                        captureProperty(buildScan, cachedProperty.get());
+                        return;
+                    }
+                } catch (Exception e) {
+                    captureWarning(buildScan, "Property could not be read from cache", e);
                 }
             }
 
@@ -96,7 +100,11 @@ final class CaptureGitHubCustomPropertyAction implements Consumer<BuildScanConfi
             }
 
             if (propertyCache != null) {
-                propertyCache.writeProperty(propertyString);
+                try {
+                    propertyCache.writeProperty(propertyString);
+                } catch (Exception e) {
+                    captureWarning(buildScan, "Property could not be written to cache", e);
+                }
             }
 
             captureProperty(buildScan, propertyString);
@@ -105,7 +113,7 @@ final class CaptureGitHubCustomPropertyAction implements Consumer<BuildScanConfi
         }
     }
 
-    private Optional<String> loadCachedProperty(Path path) {
+    private Optional<String> loadCachedProperty(Path path) throws IOException {
         if (propertyCache == null) {
             propertyCache = new PropertyCache(path.resolve(PROPERTY_CACHE_PATH));
         }
@@ -131,8 +139,14 @@ final class CaptureGitHubCustomPropertyAction implements Consumer<BuildScanConfi
         buildScan.value(GITHUB_CUSTOM_PROPERTY_NAME, property);
     }
 
-    private static void captureWritableDirectoryNotFoundWarning(BuildScanConfigurable buildScan) {
-        buildScan.value(GITHUB_CUSTOM_PROPERTY_NAME + " warning", "Property not cached because a writable directory was not found.");
+    private static void captureWarning(BuildScanConfigurable buildScan, String message) {
+        buildScan.value(GITHUB_CUSTOM_PROPERTY_NAME + " warning", message);
+    }
+
+    private static void captureWarning(BuildScanConfigurable buildScan, String prefix, Exception e) {
+        captureWarning(buildScan, String.format("%s because: %s", prefix, e.getMessage()));
+        String stackTrace = readStackTrace(e).orElse("Error reading stack trace.");
+        buildScan.value(GITHUB_CUSTOM_PROPERTY_NAME + " warning stack trace", stackTrace);
     }
 
     private static void captureError(BuildScanConfigurable buildScan, String message) {
@@ -142,7 +156,7 @@ final class CaptureGitHubCustomPropertyAction implements Consumer<BuildScanConfi
     private static void captureError(BuildScanConfigurable buildScan, Exception e) {
         captureError(buildScan, e.getMessage());
         String stackTrace = readStackTrace(e).orElse("Error reading stack trace.");
-        buildScan.value(GITHUB_CUSTOM_PROPERTY_NAME + " stack trace", stackTrace);
+        buildScan.value(GITHUB_CUSTOM_PROPERTY_NAME + " error stack trace", stackTrace);
     }
 
     private static void captureEmptyPropertyError(BuildScanConfigurable buildScan) {

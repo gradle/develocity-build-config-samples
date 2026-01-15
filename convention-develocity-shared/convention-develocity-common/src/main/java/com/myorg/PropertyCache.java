@@ -5,7 +5,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Duration;
 import java.time.Instant;
-import java.time.format.DateTimeParseException;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -23,17 +22,12 @@ final class PropertyCache {
         this.propertyCacheFile = propertyCacheFile;
     }
 
-    Optional<String> loadProperty() {
-        try {
-            return loadProperty(propertyCacheFile);
-        } catch (IOException ignored) { }
-        return Optional.empty();
+    Optional<String> loadProperty() throws IOException {
+        return loadProperty(propertyCacheFile);
     }
 
-    void writeProperty(String value) {
-        try {
-            writeProperty(propertyCacheFile, value);
-        } catch (IOException ignored) { }
+    void writeProperty(String value) throws IOException {
+        writeProperty(propertyCacheFile, value);
     }
 
     private static Optional<String> loadProperty(Path propertyCacheFile) throws IOException {
@@ -41,17 +35,15 @@ final class PropertyCache {
             return Optional.empty();
         }
 
-        try {
-            String[] content = new String(Files.readAllBytes(propertyCacheFile)).split(DELIMITER);
-            if (content.length >= 2) {
-                Instant createdOn = Instant.parse(content[0]);
-                Duration age = Duration.between(createdOn, Instant.now());
-                if (age.compareTo(ttl) < 0) {
-                    String value = Arrays.stream(content).skip(1).collect(Collectors.joining(DELIMITER));
-                    return Optional.of(value.trim());
-                }
+        String[] content = new String(Files.readAllBytes(propertyCacheFile)).split(DELIMITER);
+        if (content.length >= 2) {
+            Instant createdOn = Instant.parse(content[0]);
+            Duration age = Duration.between(createdOn, Instant.now());
+            if (age.compareTo(ttl) < 0) {
+                String value = Arrays.stream(content).skip(1).collect(Collectors.joining(DELIMITER));
+                return Optional.of(value.trim());
             }
-        } catch (IOException | DateTimeParseException ignored) { }
+        }
 
         invalidateProperty(propertyCacheFile);
         return Optional.empty();
