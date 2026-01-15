@@ -48,7 +48,7 @@ final class PropertyCache {
                 Duration age = Duration.between(createdOn, Instant.now());
                 if (age.compareTo(ttl) < 0) {
                     String value = Arrays.stream(content).skip(1).collect(Collectors.joining(DELIMITER));
-                    return Optional.of(value);
+                    return Optional.of(value.trim());
                 }
             }
         } catch (IOException | DateTimeParseException ignored) { }

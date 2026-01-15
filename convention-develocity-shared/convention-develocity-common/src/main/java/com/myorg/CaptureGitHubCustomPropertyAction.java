@@ -75,9 +75,12 @@ final class CaptureGitHubCustomPropertyAction implements Consumer<BuildScanConfi
                 return;
             }
 
-            Optional<String> property = fetchCustomProperty(ownerAndRepository.get());
+            Optional<String> property = fetchCustomProperty(ownerAndRepository.get()).map(String::trim);
             if (!property.isPresent()) {
                 captureError(buildScan, "Custom property '" + GITHUB_CUSTOM_PROPERTY_NAME + "' does not exist for repository.");
+                return;
+            } else if (property.get().isEmpty()) {
+                captureError(buildScan, "Custom property '" + GITHUB_CUSTOM_PROPERTY_NAME + "' is empty.");
                 return;
             }
 
