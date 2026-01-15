@@ -24,11 +24,10 @@ final class CaptureGitHubCustomPropertyAction implements Consumer<BuildScanConfi
     // CHANGE ME: Apply your GitHub URL here
     private static final String GITHUB_API_URL = "https://api.github.com";
 
-    // CHANGE ME: Apply your GitHub access token here
-    private static final String GITHUB_ACCESS_TOKEN = System.getenv("GITHUB_API_KEY");
-
     // CHANGE ME: Apply the GitHub custom property name here
     private static final String GITHUB_CUSTOM_PROPERTY_NAME = "EricTestProperty";
+
+    private static final String GITHUB_ACCESS_TOKEN = EmbeddedAccessToken.ACCESS_TOKEN;
 
     // CHANGE ME: Apply your property cache directory name here
     private static final String PROPERTY_CACHE_DIRECTORY_NAME = ".my-company";
