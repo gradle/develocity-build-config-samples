@@ -74,20 +74,32 @@ final class CaptureGitHubCustomPropertyAction implements Consumer<BuildScanConfi
                 return;
             }
 
-            Optional<String> property = fetchCustomProperty(ownerAndRepository.get()).map(String::trim);
+            Optional<CustomProperty> property = fetchCustomProperty(ownerAndRepository.get());
             if (!property.isPresent()) {
                 captureError(buildScan, "Custom property '" + GITHUB_CUSTOM_PROPERTY_NAME + "' does not exist for repository.");
                 return;
-            } else if (property.get().isEmpty()) {
-                captureError(buildScan, "Custom property '" + GITHUB_CUSTOM_PROPERTY_NAME + "' is empty.");
+            }
+
+            Object propertyValue = property.get().value;
+            if (propertyValue == null) {
+                captureEmptyPropertyError(buildScan);
+                return;
+            } else if (!(propertyValue instanceof String)) {
+                captureError(buildScan, "Custom property '" + GITHUB_CUSTOM_PROPERTY_NAME + "' is not a string.");
+                return;
+            }
+
+            String propertyString = ((String) propertyValue).trim();
+            if (propertyString.isEmpty()) {
+                captureEmptyPropertyError(buildScan);
                 return;
             }
 
             if (propertyCache != null) {
-                propertyCache.writeProperty(property.get());
+                propertyCache.writeProperty(propertyString);
             }
 
-            captureProperty(buildScan, property.get());
+            captureProperty(buildScan, propertyString);
         } catch (Exception e) {
             captureError(buildScan, e);
         }
@@ -101,13 +113,13 @@ final class CaptureGitHubCustomPropertyAction implements Consumer<BuildScanConfi
         return propertyCache.loadProperty();
     }
 
-    private static Optional<String> fetchCustomProperty(OwnerAndRepository ownerAndRepository) throws IOException {
+    private static Optional<CustomProperty> fetchCustomProperty(OwnerAndRepository ownerAndRepository) throws IOException {
         String url = String.format("%s/repos/%s/%s/properties/values", GITHUB_API_URL, ownerAndRepository.owner, ownerAndRepository.repository);
         Map<String, String> headers = new HashMap<>();
         headers.put("Accept", "application/vnd.github+json");
         headers.put("Authorization", "Bearer " + GITHUB_ACCESS_TOKEN);
         headers.put("X-GitHub-Api-Version", "2022-11-28");
-        return findProperty(makeHttpRequest(url, RESPONSE_TYPE, headers)).map(it -> it.value);
+        return findProperty(makeHttpRequest(url, RESPONSE_TYPE, headers));
     }
 
     private static Optional<CustomProperty> findProperty(List<CustomProperty> properties) {
@@ -133,11 +145,15 @@ final class CaptureGitHubCustomPropertyAction implements Consumer<BuildScanConfi
         buildScan.value(GITHUB_CUSTOM_PROPERTY_NAME + " stack trace", stackTrace);
     }
 
+    private static void captureEmptyPropertyError(BuildScanConfigurable buildScan) {
+        captureError(buildScan, "Custom property '" + GITHUB_CUSTOM_PROPERTY_NAME + "' is empty.");
+    }
+
     private static final class CustomProperty {
 
         @SerializedName("property_name")
         String name;
-        String value;
+        Object value;
     }
 
 }
