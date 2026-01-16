@@ -9,8 +9,10 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.util.Map;
@@ -18,6 +20,8 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 final class Utils {
 
@@ -50,6 +54,14 @@ final class Utils {
         }
 
         throw new IOException(String.format("Received HTTP response code %s from %s.", responseCode, url));
+    }
+
+    static String urlEncode(String value) {
+        try {
+            return URLEncoder.encode(value, UTF_8.toString());
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     static Optional<String> readStackTrace(Throwable throwable) {

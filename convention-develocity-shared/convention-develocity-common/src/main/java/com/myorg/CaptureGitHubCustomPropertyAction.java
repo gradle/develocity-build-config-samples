@@ -14,10 +14,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 import static com.myorg.Utils.makeHttpRequest;
 import static com.myorg.Utils.readOwnerAndRepository;
 import static com.myorg.Utils.readStackTrace;
+import static com.myorg.Utils.urlEncode;
 
 final class CaptureGitHubCustomPropertyAction implements Consumer<BuildScanConfigurable> {
 
@@ -36,6 +38,8 @@ final class CaptureGitHubCustomPropertyAction implements Consumer<BuildScanConfi
 
     private static final TypeToken<List<CustomProperty>> RESPONSE_TYPE = new TypeToken<List<CustomProperty>>() {};
 
+    private final Supplier<String> getDevelocityServer;
+
     @Nullable
     private final Path projectDirectory;
 
@@ -45,7 +49,8 @@ final class CaptureGitHubCustomPropertyAction implements Consumer<BuildScanConfi
     @Nullable
     private PropertyCache propertyCache;
 
-    CaptureGitHubCustomPropertyAction(ExecutionContext context) {
+    CaptureGitHubCustomPropertyAction(ExecutionContext context, Supplier<String> getDevelocityServer) {
+        this.getDevelocityServer = getDevelocityServer;
         this.projectDirectory = context.getProjectDirectory().orElse(null);
         this.writableDirectory = context.getWritableDirectory().orElse(null);
     }
@@ -59,7 +64,7 @@ final class CaptureGitHubCustomPropertyAction implements Consumer<BuildScanConfi
                 try {
                     Optional<String> cachedProperty = loadCachedProperty(writableDirectory);
                     if (cachedProperty.isPresent()) {
-                        captureProperty(buildScan, cachedProperty.get());
+                        captureProperty(buildScan, cachedProperty.get(), getDevelocityServer);
                         return;
                     }
                 } catch (Exception e) {
@@ -107,7 +112,7 @@ final class CaptureGitHubCustomPropertyAction implements Consumer<BuildScanConfi
                 }
             }
 
-            captureProperty(buildScan, propertyString);
+            captureProperty(buildScan, propertyString, getDevelocityServer);
         } catch (Exception e) {
             captureError(buildScan, e);
         }
@@ -134,9 +139,19 @@ final class CaptureGitHubCustomPropertyAction implements Consumer<BuildScanConfi
         return properties.stream().filter(property -> GITHUB_CUSTOM_PROPERTY_NAME.equals(property.name)).findFirst();
     }
 
-    private static void captureProperty(BuildScanConfigurable buildScan, String property) {
+    private static void captureProperty(BuildScanConfigurable buildScan, String property, Supplier<String> getDevelocityServer) {
         buildScan.tag(property);
         buildScan.value(GITHUB_CUSTOM_PROPERTY_NAME, property);
+        capturePropertyLink(buildScan, property, getDevelocityServer);
+    }
+
+    private static void capturePropertyLink(BuildScanConfigurable buildScan, String property, Supplier<String> getDevelocityServer) {
+        buildScan.buildFinished(result -> {
+            String develocityServer = getDevelocityServer.get();
+            develocityServer = develocityServer.endsWith("/") ? develocityServer.substring(0, develocityServer.length() - 1) : develocityServer;
+            String link = String.format("%s/scans?search.names=%s&search.values=%s", develocityServer, urlEncode(GITHUB_CUSTOM_PROPERTY_NAME), urlEncode(property));
+            buildScan.link(GITHUB_CUSTOM_PROPERTY_NAME + " build scans", link);
+        });
     }
 
     private static void captureWarning(BuildScanConfigurable buildScan, String message) {

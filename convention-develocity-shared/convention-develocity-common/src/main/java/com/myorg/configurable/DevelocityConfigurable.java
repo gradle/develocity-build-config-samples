@@ -1,6 +1,10 @@
 package com.myorg.configurable;
 
+import java.util.function.Supplier;
+
 public interface DevelocityConfigurable {
+
+    Supplier<String> getServer();
 
     void setServer(String server);
 
