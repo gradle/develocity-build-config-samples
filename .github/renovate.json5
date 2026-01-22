@@ -25,6 +25,16 @@
       "datasourceTemplate": "maven"
     }
   ],
+  // config:recommended extends :ignoreModulesAndTests which ignores **/examples/**
+  // https://docs.renovatebot.com/presets-default/#ignoremodulesandtests
+  // Explicitly include gradle_6.9_and_later examples in gradle-wrapper scanning
+  "gradle-wrapper": {
+    "fileMatch": [
+      "(^|/)gradle/wrapper/gradle-wrapper\\.properties$",
+      "convention-develocity-gradle-plugin/examples/gradle_6\\.9_and_later/gradle/wrapper/gradle-wrapper\\.properties",
+      "convention-develocity-shared/examples/gradle_6\\.9_and_later/gradle/wrapper/gradle-wrapper\\.properties"
+    ]
+  },
   "packageRules": [
     {
       "matchManagers": ["gradle-wrapper"],
