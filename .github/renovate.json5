@@ -19,6 +19,14 @@
       "groupName": "GitHub Actions"
     },
     {
+      "matchManagers": ["sbt"],
+      "groupName": "sbt dependencies"
+    },
+    {
+      "matchManagers": ["npm"],
+      "groupName": "npm dependencies"
+    },
+    {
       "matchManagers": ["gradle"],
       "matchFileNames": ["convention-develocity-gradle-plugin/plugins/gradle-2-through-4/**"],
       "matchPackageNames": ["com.gradle:build-scan-plugin"],
