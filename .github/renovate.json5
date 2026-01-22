@@ -1,0 +1,28 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    "github>gradle/renovate-agent//presets/dv-automerge-minor.json5",
+    ":disableDependencyDashboard"
+  ],
+  "packageRules": [
+    {
+      "matchManagers": ["gradle"],
+      "groupName": "Gradle dependencies"
+    },
+    {
+      "matchManagers": ["maven"],
+      "groupName": "Maven dependencies"
+    },
+    {
+      "matchManagers": ["github-actions"],
+      "groupName": "GitHub Actions"
+    },
+    {
+      "matchManagers": ["gradle"],
+      "matchFileNames": ["convention-develocity-gradle-plugin/plugins/gradle-2-through-4/**"],
+      "matchPackageNames": ["com.gradle:build-scan-plugin"],
+      "enabled": false
+    }
+  ]
+}
