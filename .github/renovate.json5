@@ -27,6 +27,17 @@
       "groupName": "sbt dependencies"
     },
     {
+      "matchManagers": ["gradle-wrapper"],
+      "matchPaths": [
+        "convention-develocity-gradle-plugin/examples/gradle_3_and_earlier/**",
+        "convention-develocity-gradle-plugin/examples/gradle_4/**",
+        "convention-develocity-gradle-plugin/examples/gradle_5/**",
+        "convention-develocity-gradle-plugin/examples/gradle_6/**",
+        "convention-develocity-shared/examples/gradle_5/**"
+      ],
+      "enabled": false
+    },
+    {
       "matchManagers": ["npm"],
       "groupName": "npm dependencies"
     },
