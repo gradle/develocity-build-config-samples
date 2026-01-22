@@ -21,7 +21,7 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-logging</artifactId>
-      <version>2.7.18</version>
+      <version>4.0.2</version>
     </dependency>
   </dependencies>
 
