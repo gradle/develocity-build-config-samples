@@ -18,15 +18,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
       - name: Set up JDK 21
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5
         with:
           java-version: '21'
           distribution: 'temurin'
           cache: maven
       - name: Set up Maven
-        uses: gradle/develocity-actions/setup-maven@v1.3
+        uses: gradle/develocity-actions/setup-maven@974e8dbcbda40db6828fc35f349c80a7c0e71529 # v2.1
       - name: Configure Develocity Solutions instance
         working-directory: convention-develocity-maven-extension/extension/src/main/java/com/myorg
         run: sed -i 's/develocity-samples.gradle.com/ge.solutions-team.gradle.com/g' ConventionDevelocityListener.java
@@ -34,7 +34,7 @@ jobs:
         working-directory: convention-develocity-maven-extension/extension
         run: ./mvnw clean install
       - name: Upload extension
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
         with:
           name: convention-develocity-maven-extension
           path: ~/.m2/repository/com/myorg
@@ -55,17 +55,17 @@ jobs:
             maven-version: '(Current)'
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
       - name: Set up JDK 8
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5
         with:
           java-version: '8'
           distribution: 'temurin'
           cache: maven
       - name: Set up Maven
-        uses: gradle/develocity-actions/setup-maven@v1.3
+        uses: gradle/develocity-actions/setup-maven@974e8dbcbda40db6828fc35f349c80a7c0e71529 # v2.1
       - name: Download extension
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7
         with:
           name: convention-develocity-maven-extension
           path: ~/.m2/repository/com/myorg
