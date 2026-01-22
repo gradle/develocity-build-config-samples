@@ -5,6 +5,17 @@
     "github>gradle/renovate-agent//presets/dv-automerge-minor.json5",
     ":disableDependencyDashboard"
   ],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "fileMatch": ["custom-maven-distribution/create-custom-maven-distribution\\.sh"],
+      "matchStrings": [
+        "develocity_ext_version=(?<currentValue>\\d+\\.\\d+(\\.\\d+)?)"
+      ],
+      "depNameTemplate": "com.gradle:develocity-maven-extension",
+      "datasourceTemplate": "maven"
+    }
+  ],
   "packageRules": [
     {
       "matchManagers": ["gradle-wrapper"],
@@ -16,6 +27,11 @@
     },
     {
       "matchManagers": ["maven"],
+      "groupName": "Maven dependencies"
+    },
+    {
+      "matchManagers": ["regex"],
+      "matchPackageNames": ["com.gradle:develocity-maven-extension"],
       "groupName": "Maven dependencies"
     },
     {
