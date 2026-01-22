@@ -61,7 +61,8 @@
         "convention-develocity-gradle-plugin/examples/gradle_4/**",
         "convention-develocity-gradle-plugin/examples/gradle_5/**",
         "convention-develocity-gradle-plugin/examples/gradle_6/**",
-        "convention-develocity-shared/examples/gradle_5/**"
+        "convention-develocity-shared/examples/gradle_5/**",
+        "convention-develocity-shared/examples/gradle_6/**"
       ],
       "enabled": false
     },
