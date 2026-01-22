@@ -14,6 +14,15 @@
       ],
       "depNameTemplate": "com.gradle:develocity-maven-extension",
       "datasourceTemplate": "maven"
+    },
+    {
+      "customType": "regex",
+      "fileMatch": ["custom-maven-distribution/create-custom-maven-distribution\\.sh"],
+      "matchStrings": [
+        "develocity_sample_ext_version=(?<currentValue>\\d+\\.\\d+(\\.\\d+)?)"
+      ],
+      "depNameTemplate": "com.gradle:common-custom-user-data-maven-extension",
+      "datasourceTemplate": "maven"
     }
   ],
   "packageRules": [
@@ -31,7 +40,10 @@
     },
     {
       "matchManagers": ["regex"],
-      "matchPackageNames": ["com.gradle:develocity-maven-extension"],
+      "matchPackageNames": [
+        "com.gradle:develocity-maven-extension",
+        "com.gradle:common-custom-user-data-maven-extension"
+      ],
       "groupName": "Maven dependencies"
     },
     {
