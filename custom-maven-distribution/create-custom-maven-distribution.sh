@@ -32,7 +32,7 @@ maven_conf=${maven_dir}/conf
 custom_maven_version=1.0.0
 custom_maven_zip=${maven_dir}-sample-${custom_maven_version}-bin.zip
 
-develocity_ext_version=2.3.1
+develocity_ext_version=2.3.2
 develocity_ext_jar=develocity-maven-extension-${develocity_ext_version}.jar
 
 develocity_sample_ext_version=2.1.0
