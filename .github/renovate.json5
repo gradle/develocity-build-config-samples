@@ -1,0 +1,92 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    "github>gradle/renovate-agent//presets/dv-automerge-minor.json5",
+    ":disableDependencyDashboard"
+  ],
+  // Override :ignoreModulesAndTests to remove **/examples/** from ignorePaths
+  // https://docs.renovatebot.com/presets-default/#ignoremodulesandtests
+  "ignorePresets": [":ignoreModulesAndTests"],
+  "ignorePaths": [
+    "**/node_modules/**",
+    "**/bower_components/**",
+    "**/vendor/**",
+    "**/__tests__/**",
+    "**/test/**",
+    "**/tests/**",
+    "**/__fixtures__/**"
+  ],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "fileMatch": ["custom-maven-distribution/create-custom-maven-distribution\\.sh"],
+      "matchStrings": [
+        "develocity_ext_version=(?<currentValue>\\d+\\.\\d+(\\.\\d+)?)"
+      ],
+      "depNameTemplate": "com.gradle:develocity-maven-extension",
+      "datasourceTemplate": "maven"
+    },
+    {
+      "customType": "regex",
+      "fileMatch": ["custom-maven-distribution/create-custom-maven-distribution\\.sh"],
+      "matchStrings": [
+        "develocity_sample_ext_version=(?<currentValue>\\d+\\.\\d+(\\.\\d+)?)"
+      ],
+      "depNameTemplate": "com.gradle:common-custom-user-data-maven-extension",
+      "datasourceTemplate": "maven"
+    }
+  ],
+  "packageRules": [
+    {
+      "matchManagers": ["gradle-wrapper"],
+      "groupName": "Gradle wrapper"
+    },
+    {
+      "matchManagers": ["gradle"],
+      "groupName": "Gradle dependencies"
+    },
+    {
+      "matchManagers": ["maven"],
+      "groupName": "Maven dependencies"
+    },
+    {
+      "matchManagers": ["regex"],
+      "matchPackageNames": [
+        "com.gradle:develocity-maven-extension",
+        "com.gradle:common-custom-user-data-maven-extension"
+      ],
+      "groupName": "Maven dependencies"
+    },
+    {
+      "matchManagers": ["github-actions"],
+      "groupName": "GitHub Actions"
+    },
+    {
+      "matchManagers": ["sbt"],
+      "groupName": "sbt dependencies"
+    },
+    {
+      "matchManagers": ["gradle-wrapper"],
+      "matchPaths": [
+        "convention-develocity-gradle-plugin/examples/gradle_3_and_earlier/**",
+        "convention-develocity-gradle-plugin/examples/gradle_4/**",
+        "convention-develocity-gradle-plugin/examples/gradle_5/**",
+        "convention-develocity-gradle-plugin/examples/gradle_6/**",
+        "convention-develocity-shared/examples/gradle_5/**",
+        "convention-develocity-shared/examples/gradle_6/**"
+      ],
+      "enabled": false
+    },
+    {
+      "matchManagers": ["npm"],
+      "groupName": "npm dependencies"
+    },
+    {
+      "matchManagers": ["gradle"],
+      "matchFileNames": ["convention-develocity-gradle-plugin/plugins/gradle-2-through-4/**"],
+      "matchPackageNames": ["com.gradle:build-scan-plugin"],
+      "enabled": false
+    }
+  ]
+}

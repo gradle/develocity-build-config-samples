@@ -9,10 +9,9 @@ repositories {
 }
 
 dependencies {
-    compileOnly("org.apache.maven:maven-core:3.9.11")
-
-    implementation("com.gradle:develocity-maven-extension:2.2")
-    implementation("com.gradle:common-custom-user-data-maven-extension:2.0.6")
+    compileOnly("org.apache.maven:maven-core:3.9.12")
+    implementation("com.gradle:develocity-maven-extension:2.3.2")
+    implementation("com.gradle:common-custom-user-data-maven-extension:2.1.0")
     implementation(project(":convention-develocity-common"))
 }
 
