@@ -4,10 +4,6 @@ plugins {
     id("java")
 }
 
-repositories {
-    mavenCentral()
-}
-
 dependencies {
     compileOnly("org.apache.maven:maven-core:3.9.12")
     implementation("com.gradle:develocity-maven-extension:2.3.3")
