@@ -10,7 +10,7 @@ Note the inline comments in the build and source code for things to adjust speci
 
 For builds using Gradle 6.9 and later, it's recommended to apply the convention plugin using a [dynamic version](https://docs.gradle.org/current/userguide/dynamic_versions.html).
 This approach ensures that the latest version of the plugin is automatically used, but only for the specified major version.
-For example, the following will automatically use the latest `1.x` version of the plugin up to, but excluding, version `2.0`:
+For example, the following will automatically use the latest `1.x` version of the plugin up to, but excluding, version `2.0.0`:
 
 ```groovy
 plugins {
@@ -19,7 +19,7 @@ plugins {
 ```
 
 This allows you to quickly roll out non-breaking changes to all consumers of the convention plugin.
-Breaking changes in the plugin should be released under a new major version, e.g., `2.0`.
+Breaking changes in the plugin should be released under a new major version, e.g., `2.0.0`.
 All consumers of the plugin will then need to update the specified major version, e.g., `2.+`.
 
 > [!IMPORTANT]
@@ -34,7 +34,7 @@ For example:
 
 ```groovy
 plugins {
-    id 'com.myorg.convention-develocity-gradle-5-or-newer' version '1.0'
+    id 'com.myorg.convention-develocity-gradle-5-or-newer' version '1.0.0'
 }
 ```
 
