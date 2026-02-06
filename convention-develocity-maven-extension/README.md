@@ -10,21 +10,21 @@ Note the inline comments in the build and source code for things to adjust speci
 
 It's recommended to apply the convention extension using a [version range](https://maven.apache.org/enforcer/enforcer-rules/versionRanges.html).
 This approach ensures that the latest version of the extension is automatically used, up to the specified maximum version.
-For example, the following will automatically use the latest version of the extension up to, but excluding, version `2.0`:
+For example, the following will automatically use the latest version of the extension up to, but excluding, version `2.0.0`:
 
 ```xml
 <extensions>
     <extension>
         <groupId>com.myorg</groupId>
         <artifactId>convention-develocity-maven-extension</artifactId>
-        <version>(,2.0)</version>
+        <version>(,2.0.0)</version>
     </extension>
 </extensions>
 ```
 
 This allows you to quickly roll out non-breaking changes to all consumers of the convention extension.
-Breaking changes in the extension should be released under a new major version, e.g., `2.0`.
-All consumers of the extension will then need to update the upper boundary of the version range to the next major version, e.g., `(,3.0)`.
+Breaking changes in the extension should be released under a new major version, e.g., `2.0.0`.
+All consumers of the extension will then need to update the upper boundary of the version range to the next major version, e.g., `(,3.0.0)`.
 
 > [!IMPORTANT]
 > Using version ranges should only be done when releases and development versions are published to separate repositories.
@@ -41,7 +41,7 @@ For example:
     <extension>
         <groupId>com.myorg</groupId>
         <artifactId>convention-develocity-maven-extension</artifactId>
-        <version>1.0</version>
+        <version>1.0.0</version>
     </extension>
 </extensions>
 ```
