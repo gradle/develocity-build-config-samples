@@ -6,6 +6,8 @@ import com.gradle.develocity.agent.maven.api.cache.BuildCacheApi;
 import com.gradle.develocity.agent.maven.api.scan.BuildScanApi;
 import org.apache.maven.execution.MavenSession;
 
+import java.util.function.Supplier;
+
 /**
  * An example Maven extension for enabling and configuring Develocity features.
  */
@@ -20,12 +22,15 @@ public final class ConventionDevelocityListener implements DevelocityListener {
     private void configureDevelocity(DevelocityApi develocity) {
         // CHANGE ME: Apply your Develocity configuration here
         develocity.setServer("https://develocity-samples.gradle.com");
-        configureBuildScan(develocity.getBuildScan());
+        configureBuildScan(develocity.getBuildScan(), develocity::getServer);
     }
 
-    private void configureBuildScan(BuildScanApi buildScan) {
+    private void configureBuildScan(BuildScanApi buildScan, Supplier<String> getDevelocityServer) {
         // CHANGE ME: Apply your Build Scan configuration here
         buildScan.setUploadInBackground(!isCi());
+
+        // Optionally, run expensive operation to capture organizational metadata in the background
+        buildScan.background(new CaptureOrganizationalMetadataAction(getDevelocityServer));
     }
 
     private void configureBuildCache(BuildCacheApi buildCache) {
