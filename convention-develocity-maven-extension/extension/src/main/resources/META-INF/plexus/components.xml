@@ -8,5 +8,12 @@
             <description>Configures the Develocity Maven extension for com.myorg</description>
             <isolated-realm>false</isolated-realm>
         </component>
+        <component>
+            <role>org.apache.maven.AbstractMavenLifecycleParticipant</role>
+            <role-hint>openapi-configurer</role-hint>
+            <implementation>com.myorg.OpenApiConfigurer</implementation>
+            <description>Configures OpenAPI to hide timestamps in Generated annotations</description>
+            <isolated-realm>false</isolated-realm>
+        </component>
     </components>
 </component-set>
