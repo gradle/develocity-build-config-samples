@@ -2,6 +2,8 @@ package com.myorg.configurable;
 
 import com.gradle.develocity.agent.maven.api.DevelocityApi;
 
+import java.util.function.Supplier;
+
 public final class MavenDevelocityConfigurable implements DevelocityConfigurable {
 
     private final DevelocityApi develocity;
@@ -12,6 +14,11 @@ public final class MavenDevelocityConfigurable implements DevelocityConfigurable
         this.develocity = develocity;
         this.buildScan = new MavenBuildScanConfigurable(develocity.getBuildScan());
         this.buildCache = new MavenBuildCacheConfigurable(develocity.getBuildCache());
+    }
+
+    @Override
+    public Supplier<String> getServer() {
+        return develocity::getServer;
     }
 
     @Override
