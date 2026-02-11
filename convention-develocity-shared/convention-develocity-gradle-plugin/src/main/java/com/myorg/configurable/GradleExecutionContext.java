@@ -3,16 +3,33 @@ package com.myorg.configurable;
 import org.gradle.api.provider.Provider;
 import org.gradle.api.provider.ProviderFactory;
 import org.gradle.util.GradleVersion;
+import org.jspecify.annotations.NonNull;
 
 import java.lang.reflect.Method;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Optional;
 
 public final class GradleExecutionContext implements ExecutionContext {
 
     private final ProviderFactory providers;
 
-    public GradleExecutionContext(ProviderFactory providers) {
+    @NonNull
+    private final Path rootDirectory;
+
+    public GradleExecutionContext(ProviderFactory providers, @NonNull Path rootDirectory) {
         this.providers = providers;
+        this.rootDirectory = rootDirectory;
+    }
+
+    @Override
+    public Optional<Path> getProjectDirectory() {
+        return Optional.of(rootDirectory).filter(Files::isDirectory);
+    }
+
+    @Override
+    public Optional<Path> getWritableDirectory() {
+        return Optional.of(rootDirectory.resolve(".gradle")).filter(Files::isDirectory);
     }
 
     // Environment variables must be accessed differently in some Gradle

@@ -3,6 +3,8 @@ package com.myorg.configurable;
 import com.gradle.develocity.agent.gradle.DevelocityConfiguration;
 import org.gradle.caching.configuration.BuildCacheConfiguration;
 
+import java.util.function.Supplier;
+
 public final class GradleDevelocityConfigurable implements DevelocityConfigurable {
 
     private final DevelocityConfiguration develocity;
@@ -19,6 +21,11 @@ public final class GradleDevelocityConfigurable implements DevelocityConfigurabl
         this.develocity = develocity;
         this.buildScan = new GradleBuildScanConfigurable(develocity.getBuildScan());
         this.buildCache = new GradleBuildCacheConfigurable(develocity.getBuildCache(), buildCache);
+    }
+
+    @Override
+    public Supplier<String> getServer() {
+        return () -> develocity.getServer().get();
     }
 
     @Override

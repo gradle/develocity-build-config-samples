@@ -5,6 +5,8 @@ import com.myorg.configurable.BuildScanConfigurable;
 import com.myorg.configurable.DevelocityConfigurable;
 import com.myorg.configurable.ExecutionContext;
 
+import java.util.function.Supplier;
+
 final class DevelocityConventions {
 
     private final ExecutionContext context;
@@ -16,13 +18,14 @@ final class DevelocityConventions {
     void configureDevelocity(DevelocityConfigurable develocity) {
         // CHANGE ME: Apply your Develocity configuration here
         develocity.setServer("https://develocity-samples.gradle.com");
-        configureBuildScan(develocity.getBuildScan());
+        configureBuildScan(develocity.getBuildScan(), develocity.getServer());
         configureBuildCache(develocity.getBuildCache());
     }
 
-    private void configureBuildScan(BuildScanConfigurable buildScan) {
+    private void configureBuildScan(BuildScanConfigurable buildScan, Supplier<String> getDevelocityServer) {
         // CHANGE ME: Apply your Build Scan configuration here
         buildScan.setUploadInBackground(!isCi());
+        buildScan.background(new CaptureGitHubCustomPropertyAction(context, getDevelocityServer));
     }
 
     private void configureBuildCache(BuildCacheConfigurable buildCache) {
