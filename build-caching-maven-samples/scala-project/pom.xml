@@ -13,7 +13,7 @@
     </parent>
 
     <properties>
-        <scala.version>2.13.12</scala.version>
+        <scala.version>2.13.18</scala.version>
         <scala.binary.version>2.13</scala.binary.version>
     </properties>
 
@@ -27,7 +27,7 @@
         <dependency>
             <groupId>org.scalatest</groupId>
             <artifactId>scalatest_${scala.binary.version}</artifactId>
-            <version>3.2.17</version>
+            <version>3.2.19</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
