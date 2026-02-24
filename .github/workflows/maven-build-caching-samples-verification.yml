@@ -50,6 +50,12 @@ jobs:
           goals: ${{ env.GOALS }}
           args: ${{ env.ARGS }}
           failIfNotFullyCacheable: true
+      - name: Publish .data for experiment 1
+        uses: actions/upload-artifact@v5
+        if: failure()
+        with:
+          path: develocity-maven-build-validation/.data/01-validate-local-build-caching-same-location/latest/
+          name: 01-validate-local-build-caching-same-location-data-dir
       - name: Run experiment 2
         uses: gradle/develocity-build-validation-scripts/.github/actions/maven/experiment-2@actions-stable
         with:
@@ -59,3 +65,9 @@ jobs:
           goals: ${{ env.GOALS }}
           args: ${{ env.ARGS }}
           failIfNotFullyCacheable: true
+      - name: Publish .data for experiment 2
+        uses: actions/upload-artifact@v5
+        if: failure()
+        with:
+          path: develocity-maven-build-validation/.data/02-validate-local-build-caching-different-locations/latest/
+          name: 02-validate-local-build-caching-different-locations-data-dir
