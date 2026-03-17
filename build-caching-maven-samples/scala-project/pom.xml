@@ -13,6 +13,8 @@
     </parent>
 
     <properties>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
         <scala.version>3.8.2</scala.version>
         <scala.binary.version>3</scala.binary.version>
     </properties>
