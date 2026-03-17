@@ -177,6 +177,9 @@
                                             <property>
                                                 <name>useDaemon</name>
                                             </property>
+                                            <property>
+                                                <name>generateCompilerRefIndex</name>
+                                            </property>
                                         </properties>
                                         <ignoredProperties>
                                             <ignore>module</ignore>
