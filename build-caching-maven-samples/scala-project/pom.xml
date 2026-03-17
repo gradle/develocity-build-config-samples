@@ -14,13 +14,13 @@
 
     <properties>
         <scala.version>3.8.2</scala.version>
-        <scala.binary.version>2.13</scala.binary.version>
+        <scala.binary.version>3</scala.binary.version>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>org.scala-lang</groupId>
-            <artifactId>scala-library</artifactId>
+            <artifactId>scala3-library_3</artifactId>
             <version>${scala.version}</version>
         </dependency>
 
