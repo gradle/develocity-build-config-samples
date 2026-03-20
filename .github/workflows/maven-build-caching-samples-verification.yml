@@ -32,17 +32,17 @@ jobs:
         with:
           develocity-access-key: ${{ secrets.DV_SOLUTIONS_ACCESS_KEY }}
       - name: Setup Node.js and Npm
-        uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6
+        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6
         with:
           node-version: '24'
       - name: Set up Yarn
         run: npm install -g yarn
       - name: Download latest version of the Develocity Build Validation Scripts
-        uses: gradle/develocity-build-validation-scripts/.github/actions/maven/download@actions-stable
+        uses: gradle/develocity-build-validation-scripts/.github/actions/maven/download@94c54bdb1e6a57347930c62e9254d2c3e55fd5a5 # actions-stable
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
       - name: Run experiment 1
-        uses: gradle/develocity-build-validation-scripts/.github/actions/maven/experiment-1@actions-stable
+        uses: gradle/develocity-build-validation-scripts/.github/actions/maven/experiment-1@94c54bdb1e6a57347930c62e9254d2c3e55fd5a5 # actions-stable
         with:
           gitRepo: ${{ github.server_url }}/${{ github.repository }}
           gitCommitId: ${{ github.sha }}
@@ -57,7 +57,7 @@ jobs:
           path: develocity-maven-build-validation/.data/01-validate-local-build-caching-same-location/latest/
           name: 01-validate-local-build-caching-same-location-data-dir
       - name: Run experiment 2
-        uses: gradle/develocity-build-validation-scripts/.github/actions/maven/experiment-2@actions-stable
+        uses: gradle/develocity-build-validation-scripts/.github/actions/maven/experiment-2@94c54bdb1e6a57347930c62e9254d2c3e55fd5a5 # actions-stable
         with:
           gitRepo: ${{ github.server_url }}/${{ github.repository }}
           gitCommitId: ${{ github.sha }}
