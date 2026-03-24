@@ -25,7 +25,7 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
       - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@0723195856401067f7a2779048b490ace7a47d7c # v5
+        uses: gradle/actions/setup-gradle@39e147cb9de83bb9910b8ef8bd7fff0ee20fcd6f # v6
       - name: Configure Develocity Solutions instance
         working-directory: convention-develocity-shared/convention-develocity-common/src/main/java/com/myorg
         run: sed -i 's/develocity-samples.gradle.com/ge.solutions-team.gradle.com/g' DevelocityConventions.java
@@ -76,7 +76,7 @@ jobs:
           java-version: ${{ matrix.versions.java-version }}
           distribution: 'temurin'
       - name: Set up Gradle ${{ matrix.versions.gradle-version }}
-        uses: gradle/actions/setup-gradle@0723195856401067f7a2779048b490ace7a47d7c # v5
+        uses: gradle/actions/setup-gradle@39e147cb9de83bb9910b8ef8bd7fff0ee20fcd6f # v6
         with:
           gradle-version: ${{ matrix.versions.gradle-version }}
       - name: Download plugin
