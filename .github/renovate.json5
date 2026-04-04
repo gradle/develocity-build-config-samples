@@ -35,6 +35,29 @@
       ],
       "depNameTemplate": "com.gradle:common-custom-user-data-maven-extension",
       "datasourceTemplate": "maven"
+    },
+    {
+      "customType": "regex",
+      "fileMatch": [
+        "custom-maven-distribution/create-custom-maven-distribution\\.sh",
+        "custom-maven-wrapper/create-custom-maven-wrapper\\.sh"
+      ],
+      "matchStrings": [
+        "maven_version=(?<currentValue>\\d+\\.\\d+(\\.\\d+)?)"
+      ],
+      "depNameTemplate": "org.apache.maven:apache-maven",
+      "datasourceTemplate": "maven"
+    },
+    {
+      "customType": "regex",
+      "fileMatch": [
+        "custom-maven-wrapper/create-custom-maven-wrapper\\.sh"
+      ],
+      "matchStrings": [
+        "org\\.apache\\.maven\\.plugins:maven-wrapper-plugin:(?<currentValue>\\d+\\.\\d+(\\.\\d+)?):wrapper"
+      ],
+      "depNameTemplate": "org.apache.maven.plugins:maven-wrapper-plugin",
+      "datasourceTemplate": "maven"
     }
   ],
   "packageRules": [
@@ -54,7 +77,9 @@
       "matchManagers": ["regex"],
       "matchPackageNames": [
         "com.gradle:develocity-maven-extension",
-        "com.gradle:common-custom-user-data-maven-extension"
+        "com.gradle:common-custom-user-data-maven-extension",
+        "org.apache.maven:apache-maven",
+        "org.apache.maven.plugins:maven-wrapper-plugin"
       ],
       "groupName": "Maven dependencies"
     },
