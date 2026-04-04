@@ -87,6 +87,12 @@
       "matchFileNames": ["convention-develocity-gradle-plugin/plugins/gradle-2-through-4/**"],
       "matchPackageNames": ["com.gradle:build-scan-plugin"],
       "enabled": false
+    },
+    {
+      // Local/example packages that don't exist on Maven Central
+      "matchPackagePatterns": ["^com\\.myorg"],
+      "matchPackageNames": ["com.gradle:aspectj-parent"],
+      "enabled": false
     }
   ]
 }
