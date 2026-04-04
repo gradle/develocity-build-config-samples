@@ -43,7 +43,7 @@
         "custom-maven-wrapper/create-custom-maven-wrapper\\.sh"
       ],
       "matchStrings": [
-        "^maven_version=(?<currentValue>\\d+\\.\\d+(\\.\\d+)?)"
+        "(?<![\\w])maven_version=(?<currentValue>\\d+\\.\\d+(\\.\\d+)?)"
       ],
       "depNameTemplate": "org.apache.maven:apache-maven",
       "datasourceTemplate": "maven"
