@@ -24,7 +24,7 @@ then
 fi
 
 echo -e "${yellow}Installing Maven wrapper${nc}"
-mvn -N io.takari:maven:0.7.7:wrapper -Dmaven=$maven_version
+mvn -N org.apache.maven.plugins:maven-wrapper-plugin:3.3.4:wrapper -Dmaven=$maven_version
 
 echo -e "${yellow}Customizing Maven wrapper script by adding a custom 'Wrapper' tag${nc}"
 grep -q 'scan.tag.Wrapper' mvnw || sed -i '' $'s/^MAVEN_OPTS/&="-Dscan.tag.Wrapper $&"\\\n&/' mvnw
