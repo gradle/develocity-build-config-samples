@@ -6,7 +6,7 @@ plugins {
 
 dependencies {
     implementation("com.gradle:develocity-gradle-plugin:4.4.0")
-    implementation("com.gradle:common-custom-user-data-gradle-plugin:2.4.0")
+    implementation("com.gradle:common-custom-user-data-gradle-plugin:2.5.0")
     implementation(project(":convention-develocity-common"))
 }
 
