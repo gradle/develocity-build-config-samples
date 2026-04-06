@@ -52,6 +52,8 @@ jobs:
         with:
           develocity-access-key: ${{ secrets.DV_SOLUTIONS_ACCESS_KEY }}
           gradle-version: ${{ matrix.gradle-version }}
+          build-scan-terms-of-use-url: 'https://gradle.com/terms-of-service'
+          build-scan-terms-of-use-agree: 'yes'
       - name: Inject data capture script into Gradle build using Groovy DSL
         working-directory: common-develocity-gradle-configuration-groovy
         run: |
