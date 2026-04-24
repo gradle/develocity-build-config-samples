@@ -76,13 +76,13 @@ jobs:
     if: failure()
     steps:
       - name: Get secrets
-        uses: gradle/actions-internal/get-aws-secrets@a55c5e72b27c1af819746c6846f52114af102b2d # v1
+        uses: gradle/actions-internal/get-aws-secrets@13e203b1ec5f0fc7784cf0c7f518376c23713380 # v1
         with:
           role-to-assume: arn:aws:iam::992382829881:role/GHASecrets_develocity-build-config-samples_all
           secret-ids: |
             DV_SOLUTIONS_SCHEDULED_WORKFLOWS_WEBHOOK_URL,gha/develocity-build-config-samples/_all/dv_solutions_scheduled_workflows_webhook_url
       - name: Report scheduled workflow failure
-        uses: slackapi/slack-github-action@af78098f536edbc4de71162a307590698245be95 # v3.0.1
+        uses: slackapi/slack-github-action@03ea5433c137af7c0495bc0cad1af10403fc800c # v3.0.2
         with:
           webhook: ${{ env.DV_SOLUTIONS_SCHEDULED_WORKFLOWS_WEBHOOK_URL }}
           webhook-type: webhook-trigger
