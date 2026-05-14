@@ -20,6 +20,7 @@
     <module>gemnasium-maven-plugin-project</module>
     <module>java-project</module>
     <module>kotlin-project</module>
+    <module>maven-dependency-tree-project</module>
     <module>pmd-project</module>
     <module>protobuf-project</module>
     <module>scala-project</module>
