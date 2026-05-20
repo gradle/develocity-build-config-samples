@@ -122,9 +122,13 @@
                         </property>
                       </iteratedProperties>
                       <outputs>
-                        <!-- File-typed mojo parameters (outputFile, rulesFiles, useFile) and the cacheFile localState -->
-                        <!-- are auto-detected by the Develocity Maven extension; declaring them explicitly here would -->
-                        <!-- conflict with that auto-detection and disable caching for this goal. -->
+                        <!-- The extension auto-classifies the mojo's File-typed parameters: -->
+                        <!--   * outputFile (checkstyle-result.xml)  -> output, stored and restored on cache hit -->
+                        <!--   * useFile (optional text report)      -> output, stored and restored when configured -->
+                        <!--   * rulesFiles (checkstyle-rules.xml)   -> localState (re-derived, not restored) -->
+                        <!--   * cacheFile (Checkstyle incremental)  -> localState (re-derived, not restored) -->
+                        <!-- Re-declaring any of them here would conflict with the auto-classification and -->
+                        <!-- disable caching for this goal. -->
                         <cacheableBecause>generates consistent outputs for declared inputs</cacheableBecause>
                       </outputs>
                     </execution>
