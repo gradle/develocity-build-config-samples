@@ -1,0 +1,181 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <artifactId>checkstyle-project</artifactId>
+  <packaging>jar</packaging>
+
+  <parent>
+    <groupId>com.example</groupId>
+    <artifactId>develocity-maven-caching-sample</artifactId>
+    <version>1.0-SNAPSHOT</version>
+  </parent>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+        <version>3.6.0</version>
+        <configuration>
+          <configLocation>sun_checks.xml</configLocation>
+          <consoleOutput>true</consoleOutput>
+          <failsOnError>false</failsOnError>
+          <failOnViolation>false</failOnViolation>
+          <linkXRef>false</linkXRef>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>check</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>com.gradle</groupId>
+          <artifactId>develocity-maven-extension</artifactId>
+          <configuration>
+            <develocity>
+              <plugins>
+                <plugin>
+                  <artifactId>maven-checkstyle-plugin</artifactId>
+                  <executions>
+                    <execution>
+                      <id>checkstyle</id>
+                      <inputs>
+                        <fileSets>
+                          <fileSet>
+                            <name>sourceDirectories</name>
+                            <includesProperty>includes</includesProperty>
+                            <excludesProperty>excludes</excludesProperty>
+                            <normalization>
+                              <ignoreLineEndings>true</ignoreLineEndings>
+                              <ignoreEmptyDirectories>true</ignoreEmptyDirectories>
+                            </normalization>
+                          </fileSet>
+                          <fileSet>
+                            <name>testSourceDirectories</name>
+                            <includesProperty>includes</includesProperty>
+                            <excludesProperty>excludes</excludesProperty>
+                            <normalization>
+                              <ignoreLineEndings>true</ignoreLineEndings>
+                              <ignoreEmptyDirectories>true</ignoreEmptyDirectories>
+                            </normalization>
+                          </fileSet>
+                          <fileSet>
+                            <name>resources</name>
+                            <includesProperty>resourceIncludes</includesProperty>
+                            <excludesProperty>resourceExcludes</excludesProperty>
+                          </fileSet>
+                          <fileSet>
+                            <name>testResources</name>
+                            <includesProperty>resourceIncludes</includesProperty>
+                            <excludesProperty>resourceExcludes</excludesProperty>
+                          </fileSet>
+                        </fileSets>
+                        <properties>
+                          <property><name>encoding</name></property>
+                          <property><name>inputEncoding</name></property>
+                          <property><name>failOnViolation</name></property>
+                          <property><name>failsOnError</name></property>
+                          <property><name>includeResources</name></property>
+                          <property><name>includeTestResources</name></property>
+                          <property><name>includeTestSourceDirectory</name></property>
+                          <property><name>consoleOutput</name></property>
+                          <property><name>logViolationsToConsole</name></property>
+                          <property><name>maxAllowedViolations</name></property>
+                          <property><name>omitIgnoredModules</name></property>
+                          <property><name>outputFileFormat</name></property>
+                          <property><name>outputTimestamp</name></property>
+                          <property><name>propertyExpansion</name></property>
+                          <property><name>skip</name></property>
+                          <property><name>skipExec</name></property>
+                          <property><name>sourceFileExtensions</name></property>
+                          <property><name>suppressionsFileExpression</name></property>
+                          <property><name>useFile</name></property>
+                          <property><name>violationIgnore</name></property>
+                          <property><name>violationSeverity</name></property>
+
+                          <!-- Not quite right: These should be input files so we track their content in the cache key. -->
+                          <!-- Since config/header/suppressions/properties files can be loaded from the classpath or as URLs, -->
+                          <!-- they cannot be easily added as inputs. Changes to the referenced file content will not invalidate the cache. -->
+                          <property><name>configLocation</name></property>
+                          <property><name>headerLocation</name></property>
+                          <property><name>headerFile</name></property>
+                          <property><name>propertiesLocation</name></property>
+                          <property><name>suppressionsLocation</name></property>
+                        </properties>
+                        <ignoredProperties>
+                          <!-- Local caching state that should not influence the cache key. -->
+                          <ignore>cacheFile</ignore>
+
+                          <!-- Maven session state cannot be part of cache key -->
+                          <ignore>session</ignore>
+                          <ignore>mojoExecution</ignore>
+                          <ignore>repoSession</ignore>
+                          <ignore>pluginArtifacts</ignore>
+
+                          <!-- Maven project state cannot be part of cache key. -->
+                          <!-- NOTE: This could result in an incorrect cache hit for an aggregate report if the set
+                                     of projects in the reactor has changed. -->
+                          <ignore>reactorProjects</ignore>
+                          <ignore>project</ignore>
+
+                          <!-- Ignored because we hard-code the output file: there is no single property representing every output location. -->
+                          <!-- If <outputFile> or <outputDirectory> is overridden, the <outputs> below must be updated accordingly. -->
+                          <ignore>outputDirectory</ignore>
+                          <ignore>outputFile</ignore>
+
+                          <!-- NOTE: It's not quite correct to ignore these values. This means that if _only_ these values are changed,
+                                     an invalid cache hit would result, producing the old report without the correct xref. -->
+                          <ignore>linkXRef</ignore>
+                          <ignore>xrefLocation</ignore>
+                          <ignore>xrefTestLocation</ignore>
+                          <ignore>outputXrefLocation</ignore>
+                          <ignore>outputXrefTestLocation</ignore>
+
+                          <!-- Execution strategy controls invocation order, not outputs. -->
+                          <ignore>executionStrategy</ignore>
+                        </ignoredProperties>
+                      </inputs>
+                      <iteratedProperties>
+                        <property>
+                          <name>remoteProjectRepositories</name>
+                          <inputs>
+                            <properties>
+                              <property>
+                                <name>id</name>
+                              </property>
+                              <property>
+                                <name>url</name>
+                              </property>
+                            </properties>
+                          </inputs>
+                        </property>
+                      </iteratedProperties>
+                      <outputs>
+                        <!-- There's no single property covering every output file, so we hard-code the default paths.
+                             These must be updated if <outputFile> or <outputDirectory> is overridden. -->
+                        <files>
+                          <file>
+                            <name>checkstyleResult</name>
+                            <path>${project.build.directory}/checkstyle-result.xml</path>
+                          </file>
+                        </files>
+                        <cacheableBecause>generates consistent outputs for declared inputs</cacheableBecause>
+                      </outputs>
+                    </execution>
+                  </executions>
+                </plugin>
+              </plugins>
+            </develocity>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+</project>
