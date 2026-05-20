@@ -96,13 +96,15 @@
                       </inputs>
                       <iteratedProperties>
                         <!-- Resources are List<org.apache.maven.model.Resource>. We track each Resource's -->
-                        <!-- configured directory path and filters. NOTE: file content under those directories -->
-                        <!-- is NOT tracked — changes to resource files alone will not invalidate the cache. -->
+                        <!-- include/exclude filters and targetPath. -->
+                        <!-- NOTE: `directory` is intentionally NOT tracked — Maven resolves it to an absolute -->
+                        <!-- path which would prevent cache hits across different checkout locations. -->
+                        <!-- NOTE: file content under the resource directories is also NOT tracked — changes to -->
+                        <!-- resource files alone will not invalidate the cache. -->
                         <property>
                           <name>resources</name>
                           <inputs>
                             <properties>
-                              <property><name>directory</name></property>
                               <property><name>excludes</name></property>
                               <property><name>includes</name></property>
                               <property><name>targetPath</name></property>
@@ -113,7 +115,6 @@
                           <name>testResources</name>
                           <inputs>
                             <properties>
-                              <property><name>directory</name></property>
                               <property><name>excludes</name></property>
                               <property><name>includes</name></property>
                               <property><name>targetPath</name></property>
