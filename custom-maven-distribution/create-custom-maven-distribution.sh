@@ -23,7 +23,7 @@
 #       ./create-custom-maven-distribution.sh https://develocity.mycompany.com
 #
 
-maven_version=3.9.15
+maven_version=3.9.16
 maven_dir=apache-maven-${maven_version}
 maven_zip=${maven_dir}-bin.zip
 maven_lib_ext=${maven_dir}/lib/ext
@@ -32,7 +32,7 @@ maven_conf=${maven_dir}/conf
 custom_maven_version=1.0.0
 custom_maven_zip=${maven_dir}-sample-${custom_maven_version}-bin.zip
 
-develocity_ext_version=2.4.0
+develocity_ext_version=2.4.1
 develocity_ext_jar=develocity-maven-extension-${develocity_ext_version}.jar
 
 develocity_sample_ext_version=2.2.0
