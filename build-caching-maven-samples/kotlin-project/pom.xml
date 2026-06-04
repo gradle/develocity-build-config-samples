@@ -180,6 +180,15 @@
                                             <property>
                                                 <name>generateCompilerRefIndex</name>
                                             </property>
+                                            <property>
+                                                <name>jdkRelease</name>
+                                            </property>
+                                            <property>
+                                                <name>jdkToolchain</name>
+                                            </property>
+                                            <property>
+                                                <name>shouldTrackConfigurationInputs</name>
+                                            </property>
                                         </properties>
                                         <ignoredProperties>
                                             <ignore>module</ignore>
