@@ -12,7 +12,7 @@
     </parent>
 
     <properties>
-        <kotlin.version>2.3.21</kotlin.version>
+        <kotlin.version>2.4.0</kotlin.version>
         <junit-jupiter.version>6.1.0</junit-jupiter.version>
         <kotlin.compiler.incremental>true</kotlin.compiler.incremental>
     </properties>
@@ -179,6 +179,15 @@
                                             </property>
                                             <property>
                                                 <name>generateCompilerRefIndex</name>
+                                            </property>
+                                            <property>
+                                                <name>jdkRelease</name>
+                                            </property>
+                                            <property>
+                                                <name>jdkToolchain</name>
+                                            </property>
+                                            <property>
+                                                <name>shouldTrackConfigurationInputs</name>
                                             </property>
                                         </properties>
                                         <ignoredProperties>
