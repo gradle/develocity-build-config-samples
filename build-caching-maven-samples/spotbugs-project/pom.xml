@@ -117,6 +117,7 @@
                           <ignore>pluginArtifacts</ignore>
                           <ignore>session</ignore>
                           <ignore>plugins</ignore>
+                          <ignore>pluginDocumentationUrls</ignore>
 
                           <!-- NOTE: Ignored because we hard-code the output files : there is no single property representing the location of each input file -->
                           <!-- If these values are changed, the <outputs> below should be modified accordingly -->
