@@ -92,6 +92,12 @@
       "groupName": "sbt dependencies"
     },
     {
+      // The samples do not support sbt 2.x; stay on the 1.x line.
+      "matchManagers": ["sbt"],
+      "matchPackageNames": ["sbt/sbt"],
+      "allowedVersions": "<2.0.0"
+    },
+    {
       "matchManagers": ["gradle-wrapper"],
       "matchPaths": [
         "convention-develocity-gradle-plugin/examples/gradle_3_and_earlier/**",
