@@ -1,0 +1,127 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <artifactId>antlr3-project</artifactId>
+  <packaging>jar</packaging>
+
+  <parent>
+    <groupId>com.example</groupId>
+    <artifactId>develocity-maven-caching-sample</artifactId>
+    <version>1.0-SNAPSHOT</version>
+  </parent>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.antlr</groupId>
+      <artifactId>antlr-runtime</artifactId>
+      <version>3.5.3</version>
+      <scope>compile</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.antlr</groupId>
+        <artifactId>antlr3-maven-plugin</artifactId>
+        <version>3.5.3</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>antlr</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- When resolving from cache, need to explicitly add Antlr output as source root -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <version>3.6.1</version>
+        <executions>
+          <execution>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>add-source</goal>
+            </goals>
+            <configuration>
+              <sources>
+                <source>target/generated-sources/antlr3/</source>
+              </sources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>com.gradle</groupId>
+          <artifactId>develocity-maven-extension</artifactId>
+          <configuration>
+            <develocity>
+              <plugins>
+                <plugin>
+                  <groupId>org.antlr</groupId>
+                  <artifactId>antlr3-maven-plugin</artifactId>
+                  <inputs>
+                    <fileSets>
+                      <fileSet>
+                        <name>sourceDirectory</name>
+                        <normalization>
+                          <ignoreLineEndings>true</ignoreLineEndings>
+                          <ignoreEmptyDirectories>true</ignoreEmptyDirectories>
+                        </normalization>
+                      </fileSet>
+                      <fileSet>
+                        <name>libDirectory</name>
+                        <normalization>
+                          <ignoreLineEndings>true</ignoreLineEndings>
+                          <ignoreEmptyDirectories>true</ignoreEmptyDirectories>
+                        </normalization>
+                      </fileSet>
+                    </fileSets>
+                    <properties>
+                      <property><name>excludes</name></property>
+                      <property><name>includes</name></property>
+                      <property><name>dfa</name></property>
+                      <property><name>nfa</name></property>
+                      <property><name>maxSwitchCaseLabels</name></property>
+                      <property><name>minSwitchAlts</name></property>
+                      <property><name>messageFormat</name></property>
+
+                      <!-- These "debug" properties actually impact the generated Parser sources -->
+                      <property><name>debug</name></property>
+                      <property><name>trace</name></property>
+                      <property><name>profile</name></property>
+                    </properties>
+                    <ignoredProperties>
+                      <!-- Ignore properties that do not impact output files -->
+                      <ignore>verbose</ignore>
+                      <ignore>printGrammar</ignore>
+                      <ignore>report</ignore>
+
+                      <!-- internal mojo properties -->
+                      <ignore>project</ignore>
+                    </ignoredProperties>
+                  </inputs>
+                  <outputs>
+                    <directories>
+                      <directory>
+                        <name>outputDirectory</name>
+                      </directory>
+                    </directories>
+                    <cacheableBecause>generates consistent outputs for declared inputs</cacheableBecause>
+                  </outputs>
+                </plugin>
+              </plugins>
+            </develocity>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+
+  </build>
+</project>

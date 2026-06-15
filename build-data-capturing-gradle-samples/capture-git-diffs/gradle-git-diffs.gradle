@@ -1,0 +1,120 @@
+import groovy.json.JsonBuilder
+import groovy.json.JsonSlurper
+
+import java.nio.charset.Charset
+import java.util.concurrent.TimeUnit
+
+/**
+ * This Gradle script captures the <i>Git diff</i> in a GitHub gist,
+ * and references the gist via a custom link.
+ *
+ * In order for the gist to be created successfully, you must specify the Gradle property `gistToken` where
+ * the value is a Github access token that has gist permission on the given Github repo.
+ *
+ * See https://docs.github.com/en/rest/gists/gists#create-a-gist for reference.
+ */
+
+def develocityApi = project.extensions.findByName('develocity')
+if (!develocityApi) {
+    return
+}
+
+def capture = new Capture(gradle.startParameter.offline, gradle.startParameter.continuous, gradle.rootProject.logger, providers.gradleProperty('gistToken'), rootProject.name)
+
+develocityApi.getBuildScan().background {
+    if(capture.isEnabled()) {
+        capture.captureGitDiffInGist(develocityApi.getBuildScan())
+    }
+}
+
+class Capture {
+
+    def offline
+    def continuous
+    def logger
+    def gistTokenProvider
+    def projectName
+
+    Capture(offline, continuous, logger, gistTokenProvider, projectName) {
+        this.offline = offline
+        this.continuous = continuous
+        this.logger = logger
+        this.gistTokenProvider = gistTokenProvider
+        this.projectName = projectName
+    }
+
+    boolean isEnabled(){
+        def isCapturingScan = !offline && !continuous
+        if (!isCapturingScan) {
+            logger.warn("Build is offline or continuous. Will not publish gist.")
+            return
+        }
+        return isCapturingScan
+    }
+
+    void captureGitDiffInGist(api) {
+        def hasCredentials = gistTokenProvider.present
+        if (!hasCredentials) {
+            logger.warn("User has not set 'gistToken'. Cannot publish gist.")
+            return
+        }
+
+        def diff = execAndGetStdout('git', 'diff')
+        if (diff) {
+            try {
+                def baseUrl = new URL('https://api.github.com/gists')
+                def basicAuth = "Basic ${gistTokenProvider.get().bytes.encodeBase64()}"
+
+                HttpURLConnection connection = (HttpURLConnection) baseUrl.openConnection()
+                connection.with {
+                    // request
+                    setRequestProperty('Authorization', basicAuth)
+                    setRequestProperty('Accept', 'application/vnd.github.v3+json')
+                    requestMethod = 'POST'
+                    doOutput = true
+                    outputStream.withWriter { writer ->
+                        jsonRequest(writer, diff, projectName)
+                    }
+
+                    // response
+                    def url = new JsonSlurper().parse(content.text.bytes).html_url
+                    api.link('Git diff', url)
+                }
+                logger.info('Successfully published gist.')
+            } catch (ex) {
+                logger.warn('Unable to publish gist', ex)
+            }
+        }
+    }
+
+    void jsonRequest(Writer writer, String diff, String projectName) {
+        def builder = new JsonBuilder()
+        builder {
+            description "Git diff for $projectName"
+            'public' false
+            files {
+                "${projectName}.diff" {
+                    content diff
+                }
+            }
+        }
+        builder.writeTo(writer)
+    }
+
+    String execAndGetStdout(String... args) {
+        Process process = args.toList().execute()
+        try {
+            def standardText = process.inputStream.withStream { s -> s.getText(Charset.defaultCharset().name()) }
+            def ignore = process.errorStream.withStream { s -> s.getText(Charset.defaultCharset().name()) }
+
+            def finished = process.waitFor(10, TimeUnit.SECONDS);
+            finished && process.exitValue() == 0 ? trimAtEnd(standardText) : null;
+        } finally {
+            process.destroyForcibly()
+        }
+    }
+
+    String trimAtEnd(String str) {
+        ('x' + str).trim().substring(1)
+    }
+}

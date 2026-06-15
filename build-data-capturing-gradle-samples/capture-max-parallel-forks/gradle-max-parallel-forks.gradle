@@ -1,0 +1,10 @@
+def develocityApi = project.extensions.findByName('develocity')
+if (!develocityApi) {
+    return
+}
+
+allprojects {
+    tasks.withType(Test).configureEach {
+        develocityApi.getBuildScan().value("${identityPath}#maxParallelForks", "$maxParallelForks")
+    }
+}

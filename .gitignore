@@ -1,0 +1,13 @@
+.idea/
+.gradle/
+.tmp/
+out/
+build/
+target/
+*.DS_Store
+develocity-unique-users.txt
+develocity-users.txt
+develocity-users-by-repo.csv
+
+*.iml
+.develocity/

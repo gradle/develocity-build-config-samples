@@ -1,0 +1,130 @@
+import com.gradle.develocity.agent.gradle.scan.BuildScanConfiguration
+import org.gradle.util.internal.VersionNumber
+import java.nio.charset.StandardCharsets
+import java.util.Collections
+import java.util.Optional
+import java.util.jar.JarFile
+import java.util.stream.Stream
+import java.util.stream.Collectors
+
+/**
+ * This Gradle script captures Predictive Test Selection and Test Distribution compatibility for each Test task,
+ * adding a flag as custom value.
+ */
+
+def develocityApi = project.extensions.findByName('develocity')
+if (!develocityApi) {
+    return
+}
+def capture = new Capture(develocityApi.getBuildScan(), gradle.rootProject.logger)
+allprojects {
+    tasks.withType(Test).configureEach { t ->
+        doFirst {
+            capture.capturePts(t)
+        }
+    }
+}
+
+class Capture {
+    final def supportedEngines = [
+        'org.junit.support.testng.engine.TestNGTestEngine' : 'testng',
+        'org.junit.jupiter.engine.JupiterTestEngine' : 'junit-jupiter',
+        'org.junit.vintage.engine.VintageTestEngine' : 'junit-vintage',
+        'org.spockframework.runtime.SpockEngine' : 'spock',
+        'net.jqwik.engine.JqwikTestEngine' : 'jqwik',
+        'com.tngtech.archunit.junit.ArchUnitTestEngine' : 'archunit',
+        'co.helmethair.scalatest.ScalatestEngine' : 'scalatest',
+        'io.kotest.runner.junit.platform.KotestJunitPlatformTestEngine' : 'kotest-runner',
+        'io.cucumber.junit.platform.engine.CucumberTestEngine' : 'cucumber-junit-platform'
+    ]
+    private Logger logger
+    private BuildScanConfiguration buildScanApi
+
+    Capture(BuildScanConfiguration buildScanApi, Logger logger) {
+        this.buildScanApi = buildScanApi
+        this.logger = logger
+    }
+
+    void capturePts(Test t) {
+        if (t.getTestFramework().getClass().getName() == 'org.gradle.api.internal.tasks.testing.junitplatform.JUnitPlatformTestFramework') {
+            def engines = testEngines(t)
+            buildScanApi.value("${t.identityPath}#engines", "${engines}")
+            if (ptsSupported(t, engines)) {
+                buildScanApi.value("${t.identityPath}#pts", 'SUPPORTED')
+            } else {
+                buildScanApi.value("${t.identityPath}#pts", 'ENGINES_NOT_ALL_SUPPORTED')
+            }
+        } else {
+            buildScanApi.value("${t.identityPath}#pts", 'NO_JUNIT_PLATFORM')
+        }
+    }
+
+    boolean ptsSupported(Test t, Set<String> engines) {
+        return allEnginesSupported(engines) && !cucumberUsedWithoutCompanion(t)
+    }
+
+    boolean allEnginesSupported(Set<String> engines) {
+        return !engines.isEmpty() && engines.stream().allMatch { e -> supportedEngines.containsKey(e) }
+    }
+
+    boolean cucumberUsedWithoutCompanion(Test t) {
+        def cucumberUsed = t.project.configurations.stream().filter { it.canBeResolved }.any {
+            try {
+                it.resolvedConfiguration.resolvedArtifacts.any {
+                    it.moduleVersion.id.group == "io.cucumber"
+                }
+            } catch (Exception e) {
+                logger.warn("WARN: Could not resolve ${it.name} -> Cucumber test detection might be incomplete!")
+                false
+            }
+        }
+        return cucumberUsed && !t.project.plugins.hasPlugin('com.gradle.cucumber.companion')
+    }
+
+    Set<String> testEngines(Test t) {
+        try {
+            Stream<String> engines = t.classpath.files.stream()
+                .filter { f -> f.name.endsWith('.jar') }
+                .filter { f -> supportedEngines.values().stream().anyMatch { e -> f.name.contains(e) } }
+                .filter { f -> isCompatibleVersion(f, t) }
+                .map { f -> findTestEngine(f) }
+                .flatMap { o -> o.isPresent() ? Stream.of(o.get()) : Stream.empty() }
+
+            // We take into account included/excluded engines (but only known ones)
+            def included = t.options.includeEngines
+            if (included) {
+                engines = engines.filter { e -> supportedEngines.get(e) == null || included.contains(supportedEngines.get(e)) }
+            }
+            def excluded = t.options.excludeEngines
+            if (excluded) {
+                engines = engines.filter { e -> supportedEngines.get(e) == null || !excluded.contains(supportedEngines.get(e)) }
+            }
+            return engines.collect(Collectors.toSet())
+        } catch (Exception e) {
+            logger.warn("Could not detect test engines", e)
+        }
+        return Collections.emptySet()
+    }
+
+    Optional<String> findTestEngine(File jar) {
+        try (def jarFile = new JarFile(jar)) {
+            return Optional.ofNullable(jarFile.getEntry('META-INF/services/org.junit.platform.engine.TestEngine'))
+                .map { e -> jarFile.getInputStream(e).withCloseable { it.getText(StandardCharsets.UTF_8.name()).trim() } }
+        }
+    }
+
+    boolean isCompatibleVersion(File f, Test t) {
+        if (f.name.contains("kotest-runner")) {
+            def kotestVersionString = f.name.split("-")[f.name.split("-").length - 1].replace(".jar", "")
+            def kotestVersion = VersionNumber.parse(kotestVersionString)
+            if (VersionNumber.UNKNOWN == kotestVersion) {
+                logger.error("Unable to parse kotest version from file name ${f.name}")
+                buildScanApi.value("${t.identityPath}#unknownKotestVersion", "${f.name}")
+                return false
+            }
+            return VersionNumber.parse("5.6.0") <= kotestVersion
+        } else {
+            return true
+        }
+    }
+}

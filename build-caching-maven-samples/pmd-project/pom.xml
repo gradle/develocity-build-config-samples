@@ -1,0 +1,295 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <artifactId>pmd-project</artifactId>
+  <packaging>jar</packaging>
+
+  <parent>
+    <groupId>com.example</groupId>
+    <artifactId>develocity-maven-caching-sample</artifactId>
+    <version>1.0-SNAPSHOT</version>
+  </parent>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-pmd-plugin</artifactId>
+        <version>3.28.0</version>
+        <configuration>
+          <format>txt</format>
+          <benchmark>true</benchmark>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>check</goal>
+              <goal>cpd-check</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>com.gradle</groupId>
+          <artifactId>develocity-maven-extension</artifactId>
+          <configuration>
+            <develocity>
+              <plugins>
+                <plugin>
+                  <artifactId>maven-pmd-plugin</artifactId>
+                  <executions>
+                    <execution>
+                      <id>pmd</id>
+                      <inputs>
+                        <fileSets>
+                          <fileSet>
+                            <name>compileSourceRoots</name>
+                            <includesProperty>includes</includesProperty>
+                            <excludesProperty>excludes</excludesProperty>
+                            <normalization>
+                              <ignoreLineEndings>true</ignoreLineEndings>
+                              <ignoreEmptyDirectories>true</ignoreEmptyDirectories>
+                            </normalization>
+                          </fileSet>
+                          <fileSet>
+                            <name>testSourceRoots</name>
+                            <includesProperty>includes</includesProperty>
+                            <excludesProperty>excludes</excludesProperty>
+                            <normalization>
+                              <ignoreLineEndings>true</ignoreLineEndings>
+                              <ignoreEmptyDirectories>true</ignoreEmptyDirectories>
+                            </normalization>
+                          </fileSet>
+                          <fileSet>
+                            <name>excludeFromFailureFile</name>
+                            <normalization>NAME_ONLY</normalization>
+                          </fileSet>
+                          <fileSet>
+                            <name>siteDirectory</name>
+                          </fileSet>
+                        </fileSets>
+                        <properties>
+                          <property><name>aggregate</name></property>
+                          <property><name>benchmark</name></property>
+                          <property><name>format</name></property>
+                          <property><name>includeTests</name></property>
+                          <property><name>includeXmlInReports</name></property>
+                          <property><name>inputEncoding</name></property>
+                          <property><name>jdkToolchain</name></property>
+                          <property><name>language</name></property>
+                          <property><name>linkXRef</name></property>
+                          <property><name>locale</name></property>
+                          <property><name>minimumPriority</name></property>
+                          <property><name>outputFormat</name></property>
+                          <property><name>outputTimestamp</name></property>
+                          <property><name>renderProcessingErrors</name></property>
+                          <property><name>renderRuleViolationPriority</name></property>
+                          <property><name>renderSuppressedViolations</name></property>
+                          <property><name>renderViolationsByPriority</name></property>
+                          <property><name>rulesets</name></property>
+                          <property><name>skip</name></property>
+                          <property><name>skipEmptyReport</name></property>
+                          <property><name>skipPmdError</name></property>
+                          <property><name>suppressMarker</name></property>
+                          <property><name>targetJdk</name></property>
+                          <property><name>typeResolution</name></property>
+                        </properties>
+                        <ignoredProperties>
+                          <!-- Ignore property that has no impact on plugin outputs -->
+                          <ignore>showPmdLog</ignore>
+                          <!-- Maven session state cannot be part of cache key -->
+                          <ignore>session</ignore>
+                          <!-- Temporary file location can be ignored, assuming no external process is relying on these ruleset files. -->
+                          <ignore>rulesetsTargetDirectory</ignore>
+
+                          <!-- Maven project state cannot be part of cache key. -->
+                          <!-- NOTE: This could result in an incorrect cache hit for an aggregate report if the set
+                                     of projects in the reactor has changed. -->
+                          <ignore>reactorProjects</ignore>
+
+                          <!-- NOTE: Not really correct to ignore these: this means that excluded roots will be included in the cache key,
+                                     so changes in an excluded root will result in cache misses. -->
+                          <ignore>excludeRoots</ignore>
+
+                          <!-- NOTE: It's not quite correct to ignore these values. This means that if _only_ these values are changed,
+                                     an invalid cache hit would result, producing the old report without the correct xref. -->
+                          <ignore>xrefLocation</ignore>
+                          <ignore>xrefTestLocation</ignore>
+
+                          <!-- Ignored because no single property represents each output reports. -->
+                          <!-- There is no way to automatically combine this property value and the 'format' into a single output file name. -->
+                          <ignore>targetDirectory</ignore>
+
+                          <!-- This wil ignore the analysis cache if used, leaving it in place for subsequent invocations -->
+                          <!-- It's not clear if this is actually correct, or if we should mark as <localState> to purge the analysisCache when loading results from the build cache -->
+                          <!-- In general this is unimportant, since `clean` will remove the analysis cache. -->
+                          <ignore>analysisCache</ignore>
+                          <ignore>analysisCacheLocation</ignore>
+
+                          <!-- Maven project state cannot be part of cache key. -->
+                          <ignore>mojoExecution</ignore>
+
+                          <!-- Maven project state cannot be part of cache key. -->
+                          <ignore>repoSession</ignore>
+                        </ignoredProperties>
+                      </inputs>
+                      <iteratedProperties>
+                        <property>
+                          <name>remoteProjectRepositories</name>
+                          <inputs>
+                            <properties>
+                              <property>
+                                <name>id</name>
+                              </property>
+                              <property>
+                                <name>url</name>
+                              </property>
+                            </properties>
+                          </inputs>
+                        </property>
+                      </iteratedProperties>
+                      <outputs>
+                        <!-- There's no single property for each output file, so we must compose the path.
+                        These will need to be updated if <targetDirectory> is updated. -->
+                        <files>
+                          <file>
+                            <name>xmlReport</name>
+                            <path>${project.build.directory}/pmd.xml</path>
+                          </file>
+                          <file>
+                            <name>txtReport</name>
+                            <path>${project.build.directory}/pmd.txt</path>
+                          </file>
+                          <file>
+                            <name>csvReport</name>
+                            <path>${project.build.directory}/pmd.csv</path>
+                          </file>
+                          <file>
+                            <name>benchmarkOutputFilename</name>
+                          </file>
+                        </files>
+                        <cacheableBecause>generates consistent outputs for declared inputs</cacheableBecause>
+                      </outputs>
+                    </execution>
+                    <execution>
+                      <id>cpd</id>
+                      <inputs>
+                        <fileSets>
+                          <fileSet>
+                            <name>compileSourceRoots</name>
+                            <includesProperty>includes</includesProperty>
+                            <excludesProperty>excludes</excludesProperty>
+                          </fileSet>
+                          <fileSet>
+                            <name>testSourceRoots</name>
+                            <includesProperty>includes</includesProperty>
+                            <excludesProperty>excludes</excludesProperty>
+                          </fileSet>
+                          <fileSet>
+                            <name>excludeFromFailureFile</name>
+                            <normalization>NAME_ONLY</normalization>
+                          </fileSet>
+                          <fileSet>
+                            <name>siteDirectory</name>
+                          </fileSet>
+                        </fileSets>
+                        <properties>
+                          <property><name>aggregate</name></property>
+                          <property><name>format</name></property>
+                          <property><name>ignoreAnnotations</name></property>
+                          <property><name>ignoreIdentifiers</name></property>
+                          <property><name>ignoreLiterals</name></property>
+                          <property><name>includeTests</name></property>
+                          <property><name>includeXmlInReports</name></property>
+                          <property><name>inputEncoding</name></property>
+                          <property><name>jdkToolchain</name></property>
+                          <property><name>language</name></property>
+                          <property><name>linkXRef</name></property>
+                          <property><name>locale</name></property>
+                          <property><name>minimumTokens</name></property>
+                          <property><name>outputFormat</name></property>
+                          <property><name>outputTimestamp</name></property>
+                          <property><name>skip</name></property>
+                          <property><name>skipEmptyReport</name></property>
+                        </properties>
+                        <ignoredProperties>
+                          <!-- Ignore property that has no impact on plugin outputs -->
+                          <ignore>showPmdLog</ignore>
+
+                          <!-- Maven session state cannot be part of cache key -->
+                          <ignore>session</ignore>
+
+                          <!-- Maven project state cannot be part of cache key. -->
+                          <!-- NOTE: This could result in an incorrect cache hit for an aggregate report if the set
+                                     of projects in the reactor has changed. -->
+                          <ignore>reactorProjects</ignore>
+
+                          <!-- NOTE: Not really correct to ignore these: this means that excluded roots will be included in the cache key,
+                                     so changes in an excluded root will result in cache misses. -->
+                          <ignore>excludeRoots</ignore>
+
+                          <!-- NOTE: It's not quite correct to ignore these values. This means that if _only_ these values are changed,
+                                     an invalid cache hit would result, producing the old report without the correct xref. -->
+                          <ignore>xrefLocation</ignore>
+                          <ignore>xrefTestLocation</ignore>
+
+                          <!-- Ignored because no single property represents each output reports. -->
+                          <!-- There is no way to automatically combine this property value and the 'format' into a single output file name. -->
+                          <ignore>targetDirectory</ignore>
+
+                          <!-- Maven project state cannot be part of cache key. -->
+                          <ignore>mojoExecution</ignore>
+
+                          <!-- Maven project state cannot be part of cache key. -->
+                          <ignore>repoSession</ignore>
+                        </ignoredProperties>
+                      </inputs>
+                      <iteratedProperties>
+                        <property>
+                          <name>remoteProjectRepositories</name>
+                          <inputs>
+                            <properties>
+                              <property>
+                                <name>id</name>
+                              </property>
+                              <property>
+                                <name>url</name>
+                              </property>
+                            </properties>
+                          </inputs>
+                        </property>
+                      </iteratedProperties>
+                      <outputs>
+                        <!-- There's no single property for each output file, so we must compose the path.
+                        These will need to be updated if <targetDirectory> is updated. -->
+                        <files>
+                          <file>
+                            <name>xmlReport</name>
+                            <path>${project.build.directory}/cpd.xml</path>
+                          </file>
+                          <file>
+                            <name>txtReport</name>
+                            <path>${project.build.directory}/cpd.txt</path>
+                          </file>
+                          <file>
+                            <name>csvReport</name>
+                            <path>${project.build.directory}/cpd.csv</path>
+                          </file>
+                        </files>
+                        <cacheableBecause>generates consistent outputs for declared inputs</cacheableBecause>
+                      </outputs>
+                    </execution>
+                  </executions>
+                </plugin>
+              </plugins>
+            </develocity>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+</project>

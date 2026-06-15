@@ -1,0 +1,65 @@
+name: Verify Maven Data Capturing Samples
+
+permissions:
+  contents: read
+
+on:
+  push:
+    branches: [ main ]
+    paths: [ 'build-data-capturing-maven-samples/**', '.github/workflows/**' ]
+  pull_request:
+    branches: [ main ]
+    paths: [ 'build-data-capturing-maven-samples/**', '.github/workflows/**' ]
+  workflow_dispatch:
+
+jobs:
+  verification:
+    name: Verification of ${{ matrix.name }}
+    runs-on: ubuntu-latest
+    env:
+      LOG_MSG_EXTENSION_LOADED: "Build operation 'Develocity mojo execution' completed"
+      LOG_MSG_EXECUTION_FAILED: "Error executing a DevelocityListener callback"
+    strategy:
+      matrix:
+        include:
+          - name: 'OS processes'
+            sample-file: 'capture-os-processes/maven-os-processes.groovy'
+          - name: 'Processor arch'
+            sample-file: 'capture-processor-arch/maven-processor-arch.groovy'
+          - name: 'Profiles'
+            sample-file: 'capture-profiles/maven-profiles.groovy'
+          - name: 'Quality checks'
+            sample-file: 'capture-quality-check-issues/maven-quality-check-issues.groovy'
+          - name: 'Thermal throttling'
+            sample-file: 'capture-thermal-throttling/maven-thermal-throttling.groovy'
+          - name: 'Top-level project'
+            sample-file: 'capture-top-level-project/maven-top-level-project.groovy'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+      - name: Set up JDK 21
+        uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+      - name: Provide data capture script to Maven build
+        run: |
+            # copy over sample script such that it gets pulled in by the Develocity extension
+            cp build-data-capturing-maven-samples/${{ matrix.sample-file }} common-develocity-maven-configuration/.mvn/develocity-custom-user-data.groovy
+      - name: Run Maven build
+        id: mvn-build
+        run: |
+          delimiter="$(openssl rand -hex 8)"
+          echo "mavenOutput<<${delimiter}" >> $GITHUB_OUTPUT
+          echo "$(mvn -f common-develocity-maven-configuration/pom.xml -Ddevelocity.url=https://ge.solutions-team.gradle.com -X -B clean validate)" >> $GITHUB_OUTPUT
+          echo "${delimiter}" >> $GITHUB_OUTPUT
+        env:
+          DEVELOCITY_ACCESS_KEY: ${{ secrets.DV_SOLUTIONS_ACCESS_KEY }}
+      - name: Validate extension loaded
+        # Asserting that extension was loaded checking a log entry
+        run: exit 1
+        if:  ${{ !contains(steps.mvn-build.outputs.mavenOutput, env.LOG_MSG_EXTENSION_LOADED) }}
+      - name: Validate extension executed
+        # Asserting that extension was run successfully checking absence of an error log entry
+        run: exit 1
+        if:  contains(steps.mvn-build.outputs.mavenOutput, env.LOG_MSG_EXECUTION_FAILED)

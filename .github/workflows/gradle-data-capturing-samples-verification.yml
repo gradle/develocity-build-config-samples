@@ -1,0 +1,68 @@
+name: Verify Gradle Data Capturing Samples
+
+permissions:
+  contents: read
+
+on:
+  push:
+    branches: [ main ]
+    paths: [ 'build-data-capturing-gradle-samples/**', '.github/workflows/**' ]
+  pull_request:
+    branches: [ main ]
+    paths: [ 'build-data-capturing-gradle-samples/**', '.github/workflows/**' ]
+  workflow_dispatch:
+
+jobs:
+  verification:
+    name: Verification of ${{ matrix.name }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: 'Git diffs'
+            sample-file: 'capture-git-diffs/gradle-git-diffs.gradle'
+          - name: 'Max parallel forks'
+            sample-file: 'capture-max-parallel-forks/gradle-max-parallel-forks.gradle'
+          - name: 'OS processes'
+            sample-file: 'capture-os-processes/gradle-os-processes.gradle'
+          - name: 'Processor arch'
+            sample-file: 'capture-processor-arch/gradle-processor-arch.gradle'
+          - name: 'Quality checks'
+            sample-file: 'capture-quality-check-issues/gradle-quality-check-issues.gradle'
+          - name: 'Slow tasks'
+            sample-file: 'capture-slow-workunit-executions/gradle-slow-task-executions.gradle'
+          - name: 'Test task system properties'
+            sample-file: 'capture-test-execution-system-properties/gradle-test-execution-system-properties.gradle'
+          - name: 'Test PTS support'
+            sample-file: 'capture-test-pts-support/gradle-test-pts-support.gradle'
+          - name: 'Thermal throttling'
+            sample-file: 'capture-thermal-throttling/gradle-thermal-throttling.gradle'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+      - name: Set up JDK 21
+        uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@3f131e8634966bd73d06cc69884922b02e6faf92 # v6
+        with:
+          develocity-access-key: ${{ secrets.DV_SOLUTIONS_ACCESS_KEY }}
+      - name: Inject data capture script into Gradle build using Groovy DSL
+        working-directory: common-develocity-gradle-configuration-groovy
+        run: |
+          # apply sample file
+          echo "apply from: file(\"../build-data-capturing-gradle-samples/${{matrix.sample-file}}\")" >> build.gradle
+      - name: Run Gradle build using Groovy DSL
+        working-directory: common-develocity-gradle-configuration-groovy
+        run: ./gradlew tasks -Ddevelocity.url=https://ge.solutions-team.gradle.com
+      - name: Inject data capture script into Gradle build using Kotlin DSL
+        working-directory: common-develocity-gradle-configuration-kotlin
+        run: |
+          # apply sample file
+          echo "apply(from = \"../build-data-capturing-gradle-samples/${{matrix.sample-file}}.kts\")" >> build.gradle.kts
+      - name: Run Gradle build using Kotlin DSL
+        working-directory: common-develocity-gradle-configuration-kotlin
+        run: ./gradlew tasks -Ddevelocity.url=https://ge.solutions-team.gradle.com

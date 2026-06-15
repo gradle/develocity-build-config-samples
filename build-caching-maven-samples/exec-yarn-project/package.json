@@ -1,0 +1,7 @@
+{
+  "name": "my-package",
+  "license": "MIT",
+  "scripts": {
+    "build": "mkdir target && cp -a public/. target/out && cp -a src/. target/out"
+  }
+}

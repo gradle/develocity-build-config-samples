@@ -1,0 +1,180 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <artifactId>spotbugs-project</artifactId>
+  <packaging>jar</packaging>
+
+  <parent>
+    <groupId>com.example</groupId>
+    <artifactId>develocity-maven-caching-sample</artifactId>
+    <version>1.0-SNAPSHOT</version>
+  </parent>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>com.github.spotbugs</groupId>
+        <artifactId>spotbugs-maven-plugin</artifactId>
+        <version>4.10.2.0</version>
+        <configuration>
+          <effort>Max</effort>
+          <threshold>Low</threshold>
+          <omitVisitors>FindDeadLocalStores,UnreadFields</omitVisitors>
+          <failThreshold>High</failThreshold>
+          <xmlOutput>true</xmlOutput>
+          <htmlOutput>true</htmlOutput>
+          <sarifOutput>true</sarifOutput>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>check</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>com.gradle</groupId>
+          <artifactId>develocity-maven-extension</artifactId>
+          <configuration>
+            <develocity>
+              <plugins>
+                <plugin>
+                  <groupId>com.github.spotbugs</groupId>
+                  <artifactId>spotbugs-maven-plugin</artifactId>
+                  <executions>
+                    <execution>
+                      <id>spotbugs</id>
+                      <inputs>
+                        <fileSets>
+                          <fileSet>
+                            <name>classFilesDirectory</name>
+                          </fileSet>
+                          <fileSet>
+                            <name>testClassFilesDirectory</name>
+                          </fileSet>
+                          <fileSet>
+                            <name>siteDirectory</name>
+                          </fileSet>
+                        </fileSets>
+                        <properties>
+                          <property><name>skip</name></property>
+
+                          <property><name>xmlOutput</name></property>
+                          <property><name>htmlOutput</name></property>
+
+                          <property><name>includeTests</name></property>
+                          <property><name>addSourceDirs</name></property>
+                          <property><name>sourceEncoding</name></property>
+                          <property><name>threshold</name></property>
+                          <property><name>effort</name></property>
+                          <property><name>relaxed</name></property>
+                          <property><name>visitors</name></property>
+                          <property><name>omitVisitors</name></property>
+                          <property><name>chooseVisitors</name></property>
+                          <property><name>pluginList</name></property>
+                          <property><name>onlyAnalyze</name></property>
+                          <property><name>nested</name></property>
+                          <property><name>maxRank</name></property>
+                          <property><name>failOnError</name></property>
+                          <property><name>skipEmptyReport</name></property>
+                          <property><name>userPrefs</name></property>
+                          <property><name>noClassOk</name></property>
+
+                          <property><name>sarifOutput</name></property>
+                          <property><name>sarifFullPath</name></property>
+                          <property><name>systemPropertyVariables</name></property>
+
+                          <!-- Not quite right: These should be input files so we track the content in the cache key. -->
+                          <!-- Since filter files are loaded from the classpath they cannot be easily added as inputs. -->
+                          <property><name>includeFilterFile</name></property>
+                          <property><name>excludeFilterFile</name></property>
+                          <property><name>excludeBugsFile</name></property>
+                          <property><name>includeFilterFiles</name></property>
+                          <property><name>excludeFilterFiles</name></property>
+                          <property><name>outputFormat</name></property>
+                          <property><name>outputTimestamp</name></property>
+                          <property><name>excludeBugsFiles</name></property>
+                        </properties>
+                        <ignoredProperties>
+                          <!-- Ignore properties that control Mojo execution but do not influence outputs -->
+                          <ignore>debug</ignore>
+                          <ignore>trace</ignore>
+                          <ignore>fork</ignore>
+                          <ignore>maxHeap</ignore>
+                          <ignore>timeout</ignore>
+                          <ignore>jvmArgs</ignore>
+                          <ignore>remoteProjectRepositories</ignore>
+                          <ignore>repoSession</ignore>
+                          <ignore>mojoExecution</ignore>
+                          <ignore>reactorProjects</ignore>
+
+                          <!-- Ignore Maven state, as it cannot be part of cache key -->
+                          <ignore>pluginArtifacts</ignore>
+                          <ignore>session</ignore>
+                          <ignore>plugins</ignore>
+                          <ignore>pluginDocumentationUrls</ignore>
+
+                          <!-- NOTE: Ignored because we hard-code the output files : there is no single property representing the location of each input file -->
+                          <!-- If these values are changed, the <outputs> below should be modified accordingly -->
+                          <ignore>xmlOutputDirectory</ignore>
+                          <ignore>spotbugsXmlOutputDirectory</ignore>
+                          <ignore>spotbugsXmlOutputFilename</ignore>
+                          <ignore>sarifOutputDirectory</ignore>
+
+                          <!-- NOTE: It's not quite correct to ignore these values. This means that if _only_ these values are changed,
+                                     an invalid cache hit would result, producing the old report without the correct xref. -->
+                          <ignore>xrefLocation</ignore>
+                          <ignore>xrefTestLocation</ignore>
+
+
+                        </ignoredProperties>
+                      </inputs>
+                      <nestedProperties>
+                        <property>
+                          <name>locale</name>
+                          <inputs>
+                            <properties>
+                              <property>
+                                <name>toString</name>
+                              </property>
+                            </properties>
+                          </inputs>
+                        </property>
+                      </nestedProperties>
+                      <outputs>
+                        <files>
+                          <file>
+                            <name>xmlOutputFile</name>
+                            <path>${project.build.directory}/spotbugs.xml</path>
+                          </file>
+                          <file>
+                            <name>htmlOutputFile</name>
+                            <path>${project.build.directory}/spotbugs.html</path>
+                          </file>
+                          <file>
+                            <name>spotbugsXmlOutputFile</name>
+                            <path>${project.build.directory}/spotbugsXml.xml</path>
+                          </file>
+                          <file>
+                            <name>sarifOutputFilename</name>
+                            <path>${project.build.directory}/spotbugsSarif.json</path>
+                          </file>
+                        </files>
+                        <cacheableBecause>check should only run when inputs change</cacheableBecause>
+                      </outputs>
+                    </execution>
+                  </executions>
+                </plugin>
+              </plugins>
+            </develocity>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+</project>

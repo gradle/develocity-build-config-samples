@@ -1,0 +1,28 @@
+plugins {
+    id 'com.gradle.develocity' version '4.4.2'
+    id 'com.gradle.common-custom-user-data-gradle-plugin' version '2.6.0'
+}
+
+def isCI = System.getenv('CI') != null // adjust to your CI provider
+
+develocity {
+    server = 'https://develocity-samples.gradle.com' // adjust to your Develocity server
+    allowUntrustedServer = false // ensure a trusted certificate is configured
+
+    buildScan {
+        uploadInBackground = !isCI
+    }
+}
+
+buildCache {
+    local {
+        enabled = true
+    }
+
+    remote(develocity.buildCache) {
+        enabled = true
+        push = isCI
+    }
+}
+
+rootProject.name = 'common-develocity-gradle-configuration-groovy' // adjust to your project

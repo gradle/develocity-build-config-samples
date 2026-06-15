@@ -1,0 +1,34 @@
+/**
+ * This Gradle script captures all tasks of a given type taking longer to execute than a certain threshold,
+ * and adds these as custom values.
+ */
+
+def develocityApi = project.extensions.findByName('develocity')
+if (!develocityApi) {
+    return
+}
+
+def THRESHOLD_MILLIS = 15 * 60 * 1000 // 15 min
+
+allprojects {
+    tasks.withType(JavaCompile).configureEach { t ->
+        long start
+        doFirst {
+            start = System.currentTimeMillis()
+        }
+        doLast {
+            long duration = System.currentTimeMillis() - start
+            if (duration > THRESHOLD_MILLIS) {
+                Capture.addbuildScanValue(develocityApi.getBuildScan(), 'Slow task', t.identityPath as String)
+            }
+         }
+    }
+}
+
+class Capture {
+
+    static void addbuildScanValue(api, key, value) {
+        api.value(key, value)
+    }
+
+}

@@ -1,0 +1,94 @@
+name: Verify Gradle Data Capturing Samples (Nightly)
+permissions:
+  contents: read
+  id-token: write
+on:
+  schedule:
+    - cron: '0 4 * * *'
+  push:
+    paths:
+      - ".github/workflows/gradle-data-capturing-samples-verification-nightly.yml"
+  workflow_dispatch:
+
+jobs:
+  samples:
+    name: Verification of sample ${{ matrix.name }} with Gradle ${{ matrix.gradle-version }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        gradle-version: [ 'current', 'release-candidate', 'nightly' ]
+        java-version: [ '21' ]
+        name: [ 'Git diffs', 'Max parallel forks', 'OS processes', 'Processor arch', 'Quality checks', 'Slow tasks', 'Test task system properties', 'Test PTS support', 'Thermal throttling' ]
+        include:
+          - name: 'Git diffs'
+            sample-file: 'capture-git-diffs/gradle-git-diffs.gradle'
+          - name: 'Max parallel forks'
+            sample-file: 'capture-max-parallel-forks/gradle-max-parallel-forks.gradle'
+          - name: 'OS processes'
+            sample-file: 'capture-os-processes/gradle-os-processes.gradle'
+          - name: 'Processor arch'
+            sample-file: 'capture-processor-arch/gradle-processor-arch.gradle'
+          - name: 'Quality checks'
+            sample-file: 'capture-quality-check-issues/gradle-quality-check-issues.gradle'
+          - name: 'Slow tasks'
+            sample-file: 'capture-slow-workunit-executions/gradle-slow-task-executions.gradle'
+          - name: 'Test task system properties'
+            sample-file: 'capture-test-execution-system-properties/gradle-test-execution-system-properties.gradle'
+          - name: 'Test PTS support'
+            sample-file: 'capture-test-pts-support/gradle-test-pts-support.gradle'
+          - name: 'Thermal throttling'
+            sample-file: 'capture-thermal-throttling/gradle-thermal-throttling.gradle'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+      - name: Set up JDK ${{ matrix.java-version }}
+        uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5
+        with:
+          java-version: '${{ matrix.java-version }}'
+          distribution: 'temurin'
+      - name: Set up Gradle ${{ matrix.gradle-version }}
+        uses: gradle/actions/setup-gradle@3f131e8634966bd73d06cc69884922b02e6faf92 # v6
+        with:
+          develocity-access-key: ${{ secrets.DV_SOLUTIONS_ACCESS_KEY }}
+          gradle-version: ${{ matrix.gradle-version }}
+      - name: Inject data capture script into Gradle build using Groovy DSL
+        working-directory: common-develocity-gradle-configuration-groovy
+        run: |
+          # apply sample file
+          echo "apply from: file(\"../build-data-capturing-gradle-samples/${{matrix.sample-file}}\")" >> build.gradle
+      - name: Run Gradle build using Groovy DSL
+        working-directory: common-develocity-gradle-configuration-groovy
+        run: gradle tasks -Ddevelocity.url=https://ge.solutions-team.gradle.com "-Dscan.value.gradle-version=${{ matrix.gradle-version }}" "-Dscan.value.java-version=${{ matrix.java-version }}"
+      - name: Inject data capture script into Gradle build using Kotlin DSL
+        working-directory: common-develocity-gradle-configuration-kotlin
+        run: |
+          # apply sample file
+          echo "apply(from = \"../build-data-capturing-gradle-samples/${{matrix.sample-file}}.kts\")" >> build.gradle.kts
+      - name: Run Gradle build using Kotlin DSL
+        working-directory: common-develocity-gradle-configuration-kotlin
+        run: gradle tasks -Ddevelocity.url=https://ge.solutions-team.gradle.com "-Dscan.value.gradle-version=${{ matrix.gradle-version }}" "-Dscan.value.java-version=${{ matrix.java-version }}"
+
+  failure-notification:
+    name: Matrix failure notification
+    runs-on: ubuntu-latest
+    needs: samples
+    if: failure()
+    steps:
+      - name: Get secrets
+        uses: gradle/actions-internal/get-aws-secrets@13e203b1ec5f0fc7784cf0c7f518376c23713380 # v1
+        with:
+          role-to-assume: arn:aws:iam::992382829881:role/GHASecrets_develocity-build-config-samples_all
+          secret-ids: |
+            DV_SOLUTIONS_SCHEDULED_WORKFLOWS_WEBHOOK_URL,gha/develocity-build-config-samples/_all/dv_solutions_scheduled_workflows_webhook_url
+      - name: Report scheduled workflow failure
+        uses: slackapi/slack-github-action@45a88b9581bfab2566dc881e2cd66d334e621e2c # v3.0.3
+        with:
+          webhook: ${{ env.DV_SOLUTIONS_SCHEDULED_WORKFLOWS_WEBHOOK_URL }}
+          webhook-type: webhook-trigger
+          payload-templated: true
+          payload: |
+            {
+              "workflow_name": "DV Samples: Verify Gradle Data Capturing Samples (Nightly)",
+              "workflow_run_url": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+            }
