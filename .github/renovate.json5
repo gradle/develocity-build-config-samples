@@ -98,15 +98,13 @@
       "allowedVersions": "<2.0.0"
     },
     {
-      // spring-cloud-contract 5.0.3 breaks Maven build-caching verification
-      // (HttpClient AuthCache ClassRealm conflict); bumped in #2271, rolled back
-      // in #2272. Floor at 5.0.4 to skip the broken 5.0.3; 5.0.4+ allowed when released.
+      // maven-resolver-transport-http 1.9.26/1.9.27 has a ClassRealm AuthCache bug
+      // (apache/maven-resolver#1919) that breaks the spring-cloud-contract extension
+      // realm in the build-caching verification. Pinned to 1.9.25 in that plugin's
+      // pom; skip the broken versions here and auto-bump to 1.9.28 when it ships.
       "matchManagers": ["maven"],
-      "matchPackageNames": [
-        "org.springframework.cloud:spring-cloud-starter-contract-verifier",
-        "org.springframework.cloud:spring-cloud-contract-maven-plugin"
-      ],
-      "allowedVersions": "[5.0.4,)"
+      "matchPackageNames": ["org.apache.maven.resolver:maven-resolver-transport-http"],
+      "allowedVersions": "!/^1\\.9\\.(26|27)$/"
     },
     {
       "matchManagers": ["gradle-wrapper"],

@@ -14,7 +14,7 @@
     <dependency>
       <groupId>org.springframework.cloud</groupId>
       <artifactId>spring-cloud-starter-contract-verifier</artifactId>
-      <version>5.0.2</version>
+      <version>5.0.3</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -24,9 +24,16 @@
       <plugin>
         <groupId>org.springframework.cloud</groupId>
         <artifactId>spring-cloud-contract-maven-plugin</artifactId>
-        <version>5.0.2</version>
+        <version>5.0.3</version>
         <extensions>true</extensions>
         <configuration></configuration>
+        <dependencies>
+          <dependency>
+            <groupId>org.apache.maven.resolver</groupId>
+            <artifactId>maven-resolver-transport-http</artifactId>
+            <version>1.9.25</version>
+          </dependency>
+        </dependencies>
       </plugin>
       <!-- When resolving from cache, need to explicitly register generated test sources -->
       <plugin>
