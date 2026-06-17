@@ -98,6 +98,17 @@
       "allowedVersions": "<2.0.0"
     },
     {
+      // maven-resolver-transport-http 1.9.26/1.9.27 has a ClassRealm AuthCache bug
+      // (apache/maven-resolver#1919) that breaks the spring-cloud-contract extension
+      // realm in the build-caching verification, so it is pinned to 1.9.25 in that
+      // plugin's pom. The fix is in 1.9.28: this rule skips the broken versions and
+      // lets the pin auto-bump to 1.9.28. Remove this rule and the pom pin once
+      // 1.9.28 is released.
+      "matchManagers": ["maven"],
+      "matchPackageNames": ["org.apache.maven.resolver:maven-resolver-transport-http"],
+      "allowedVersions": "!/^1\\.9\\.(26|27)$/"
+    },
+    {
       "matchManagers": ["gradle-wrapper"],
       "matchPaths": [
         "convention-develocity-gradle-plugin/examples/gradle_3_and_earlier/**",

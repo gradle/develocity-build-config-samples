@@ -14,7 +14,7 @@
     <dependency>
       <groupId>org.springframework.cloud</groupId>
       <artifactId>spring-cloud-starter-contract-verifier</artifactId>
-      <version>5.0.2</version>
+      <version>5.0.3</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -24,9 +24,23 @@
       <plugin>
         <groupId>org.springframework.cloud</groupId>
         <artifactId>spring-cloud-contract-maven-plugin</artifactId>
-        <version>5.0.2</version>
+        <version>5.0.3</version>
         <extensions>true</extensions>
         <configuration></configuration>
+        <!--
+          maven-resolver-transport-http 1.9.26/1.9.27 has a ClassRealm AuthCache bug
+          (apache/maven-resolver#1919) that breaks build-caching verification when
+          spring-cloud-contract loads it in its extensions=true realm. The fix is in
+          1.9.28. Remove this whole <dependencies> block once 1.9.28 is released and
+          pulled in by spring-cloud-contract.
+        -->
+        <dependencies>
+          <dependency>
+            <groupId>org.apache.maven.resolver</groupId>
+            <artifactId>maven-resolver-transport-http</artifactId>
+            <version>1.9.25</version>
+          </dependency>
+        </dependencies>
       </plugin>
       <!-- When resolving from cache, need to explicitly register generated test sources -->
       <plugin>
