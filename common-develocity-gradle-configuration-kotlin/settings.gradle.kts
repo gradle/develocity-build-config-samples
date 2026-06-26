@@ -4,11 +4,8 @@ plugins {
 }
 
 val isCI = System.getenv("CI") != null // adjust to your CI provider
-// If your CI runs builds from forked repositories (e.g. GitHub Actions pull_request events),
-// secrets are not passed to the runner, causing cache store attempts to fail with HTTP 403.
-// In that case, also condition isPush on the access key being present (adjust the env var name):
+// If contributions happen through forked repository, also control access key presence
 // val hasCredentials = !System.getenv("DEVELOCITY_ACCESS_KEY").isNullOrEmpty()
-
 
 develocity {
     server = "https://develocity-samples.gradle.com" // adjust to your Develocity server
