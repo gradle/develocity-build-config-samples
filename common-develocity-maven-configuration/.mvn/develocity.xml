@@ -32,6 +32,11 @@
     <remote>
       <enabled>true</enabled>
       <storeEnabled>#{isTrue(env['CI'])}</storeEnabled> <!-- adjust to your CI provider -->
+      <!-- If your CI runs builds from forked repositories (e.g. GitHub Actions pull_request events),
+           secrets are not passed to the runner, causing cache store attempts to fail with HTTP 403.
+           In that case, also condition on the access key being present:
+      <storeEnabled>#{env['CI'] != null and env['DEVELOCITY_ACCESS_KEY'] != null and env['DEVELOCITY_ACCESS_KEY'] != ''}</storeEnabled>
+           Adjust the env var name to match the one holding your Develocity access key. -->
     </remote>
   </buildCache>
 </develocity>
