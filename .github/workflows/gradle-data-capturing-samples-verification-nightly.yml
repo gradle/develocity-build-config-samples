@@ -82,7 +82,7 @@ jobs:
           secret-ids: |
             DV_SOLUTIONS_SCHEDULED_WORKFLOWS_WEBHOOK_URL,gha/develocity-build-config-samples/_all/dv_solutions_scheduled_workflows_webhook_url
       - name: Report scheduled workflow failure
-        uses: slackapi/slack-github-action@0d95c9a7becc1e6e297d76df9bc735c44f4cbcbc # v3.0.5
+        uses: slackapi/slack-github-action@dcb1066f776dd043e64d0e8ba94ca15cc7e1875d # v4.0.0
         with:
           webhook: ${{ env.DV_SOLUTIONS_SCHEDULED_WORKFLOWS_WEBHOOK_URL }}
           webhook-type: webhook-trigger
