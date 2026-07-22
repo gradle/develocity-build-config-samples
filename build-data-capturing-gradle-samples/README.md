@@ -80,8 +80,8 @@ properties which differed between two builds.
 _Demonstrates: Custom values_
 
 This sample adds a custom value
-showing [Test Distribution](https://develocity.ai/product/performance-insights/)
-and [Predictive Test Selection](https://develocity.ai/product/performance-insights/) compatibility
+showing [Test Distribution](https://develocity.ai/product/test-distribution/)
+and [Predictive Test Selection](https://develocity.ai/product/predictive-test-selection/) compatibility
 for each test task.
 
 ### Capture Thermal Throttling
