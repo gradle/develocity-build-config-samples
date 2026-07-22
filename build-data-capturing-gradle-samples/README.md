@@ -24,7 +24,7 @@ This directory contains samples demonstrating various ways to extend and customi
 tags, links, and custom values.
 
 To learn more, see the Develocity documentation
-on [Extending build scans](https://docs.gradle.com/develocity/gradle-plugin/current/#extending_build_scans).
+on [Extending build scans](https://docs.develocity.ai/gradle/current/gradle-plugin/#extending_build_scans).
 
 ### Capture Git Diffs
 
@@ -80,8 +80,8 @@ properties which differed between two builds.
 _Demonstrates: Custom values_
 
 This sample adds a custom value
-showing [Test Distribution](https://gradle.com/gradle-enterprise-solutions/test-distribution/)
-and [Predictive Test Selection](https://gradle.com/gradle-enterprise-solutions/predictive-test-selection/) compatibility
+showing [Test Distribution](https://develocity.ai/product/test-distribution/)
+and [Predictive Test Selection](https://develocity.ai/product/predictive-test-selection/) compatibility
 for each test task.
 
 ### Capture Thermal Throttling
