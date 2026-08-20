@@ -15,7 +15,7 @@
       <plugin>
         <groupId>com.github.spotbugs</groupId>
         <artifactId>spotbugs-maven-plugin</artifactId>
-        <version>4.10.3.0</version>
+        <version>4.10.4.0</version>
         <configuration>
           <effort>Max</effort>
           <threshold>Low</threshold>
@@ -69,7 +69,6 @@
 
                           <property><name>includeTests</name></property>
                           <property><name>addSourceDirs</name></property>
-                          <property><name>sourceEncoding</name></property>
                           <property><name>threshold</name></property>
                           <property><name>effort</name></property>
                           <property><name>relaxed</name></property>
