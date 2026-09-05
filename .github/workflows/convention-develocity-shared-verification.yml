@@ -118,7 +118,7 @@ jobs:
           distribution: 'temurin'
           cache: maven
       - name: Set up Maven ${{ matrix.versions.maven-version }}
-        uses: gradle/develocity-actions/setup-maven@0e1f30c14ab56d0c1ecf229a0ffc3eb3e40e4642 # v2.2
+        uses: gradle/develocity-actions/setup-maven@4b276bd81fb55e2fcbae724c48699de57e2156eb # v2.3
       - name: Download extension
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
         with:
