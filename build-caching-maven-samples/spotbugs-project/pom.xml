@@ -15,7 +15,7 @@
       <plugin>
         <groupId>com.github.spotbugs</groupId>
         <artifactId>spotbugs-maven-plugin</artifactId>
-        <version>4.10.4.0</version>
+        <version>4.10.4.1</version>
         <configuration>
           <effort>Max</effort>
           <threshold>Low</threshold>
@@ -103,7 +103,6 @@
                           <!-- Ignore properties that control Mojo execution but do not influence outputs -->
                           <ignore>debug</ignore>
                           <ignore>trace</ignore>
-                          <ignore>fork</ignore>
                           <ignore>maxHeap</ignore>
                           <ignore>timeout</ignore>
                           <ignore>jvmArgs</ignore>
