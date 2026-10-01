@@ -42,7 +42,7 @@
             <plugin>
                 <groupId>net.alchim31.maven</groupId>
                 <artifactId>scala-maven-plugin</artifactId>
-                <version>4.9.10</version>
+                <version>4.10.0</version>
                 <executions>
                     <execution>
                         <id>scala-compile</id>
@@ -202,6 +202,8 @@
                                                     <ignore>session</ignore>
                                                     <ignore>notifyCompilation</ignore>
                                                     <ignore>javacGenerateDebugSymbols</ignore>
+                                                    <ignore>reuseCompilerBridge</ignore> <!-- Only reuses the compiler bridge across modules for speed -->
+                                                    <ignore>reuseInProcessCompiler</ignore> <!-- Only keeps the in-process compiler warm across modules for speed -->
                                                     <ignore>classpath</ignore> <!-- Deprecated and included in the classpathElements -->
                                                 </ignoredProperties>
                                             </inputs>
@@ -387,6 +389,8 @@
                                                     <ignore>session</ignore>
                                                     <ignore>notifyCompilation</ignore>
                                                     <ignore>javacGenerateDebugSymbols</ignore>
+                                                    <ignore>reuseCompilerBridge</ignore> <!-- Only reuses the compiler bridge across modules for speed -->
+                                                    <ignore>reuseInProcessCompiler</ignore> <!-- Only keeps the in-process compiler warm across modules for speed -->
                                                 </ignoredProperties>
                                             </inputs>
                                             <iteratedProperties>
