@@ -4,6 +4,7 @@ import com.gradle.CommonCustomUserDataGradlePlugin;
 import com.gradle.develocity.agent.gradle.DevelocityConfiguration;
 import com.gradle.develocity.agent.gradle.DevelocityPlugin;
 import com.gradle.develocity.agent.gradle.scan.BuildScanConfiguration;
+import com.gradle.develocity.agent.gradle.test.DevelocityTestConfiguration;
 import com.myorg.configurable.GradleDevelocityConfigurable;
 import com.myorg.configurable.GradleExecutionContext;
 import org.gradle.StartParameter;
@@ -11,7 +12,9 @@ import org.gradle.api.GradleException;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.initialization.Settings;
+import org.gradle.api.invocation.Gradle;
 import org.gradle.api.provider.ProviderFactory;
+import org.gradle.api.tasks.testing.Test;
 import org.gradle.util.GradleVersion;
 
 import javax.inject.Inject;
@@ -56,6 +59,7 @@ final class ConventionDevelocityGradlePlugin implements Plugin<Object> {
         DevelocityConfiguration develocity = settings.getExtensions().getByType(DevelocityConfiguration.class);
         GradleExecutionContext context = new GradleExecutionContext(providers);
         new DevelocityConventions(context).configureDevelocity(new GradleDevelocityConfigurable(develocity, settings.getBuildCache()));
+        configureTestRetry(settings.getGradle(), context);
     }
 
     private void configureGradle5(Project project) {
@@ -64,6 +68,20 @@ final class ConventionDevelocityGradlePlugin implements Plugin<Object> {
         DevelocityConfiguration develocity = project.getExtensions().getByType(DevelocityConfiguration.class);
         GradleExecutionContext context = new GradleExecutionContext(providers);
         new DevelocityConventions(context).configureDevelocity(new GradleDevelocityConfigurable(develocity));
+        configureTestRetry(project.getGradle(), context);
+    }
+
+    private static void configureTestRetry(Gradle gradle, GradleExecutionContext context) {
+        // CHANGE ME: Remove the CI check to also retry failed tests in local builds
+        if (!context.environmentVariable("CI").isPresent()) {
+            return;
+        }
+        gradle.allprojects(project -> project.getTasks().withType(Test.class).configureEach(test ->
+            test.getExtensions().getByType(DevelocityTestConfiguration.class).testRetry(testRetry -> {
+                // CHANGE ME: Apply your test retry configuration here
+                testRetry.getMaxRetries().set(2);
+                testRetry.getFailOnPassedAfterRetry().set(true);
+            })));
     }
 
     private static boolean isGradle6OrNewer() {
