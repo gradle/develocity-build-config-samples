@@ -14,6 +14,7 @@ import org.gradle.caching.configuration.BuildCacheConfiguration;
 import org.gradle.util.GradleVersion;
 
 import javax.inject.Inject;
+import java.io.File;
 import java.lang.reflect.Method;
 import java.util.Optional;
 
@@ -55,21 +56,29 @@ public class ConventionDevelocityGradlePlugin implements Plugin<Object> {
     private void configureGradle6OrNewer(Settings settings) {
         settings.getPluginManager().apply(DevelocityPlugin.class);
         settings.getPluginManager().apply(CommonCustomUserDataGradlePlugin.class);
-        configureDevelocity(settings.getExtensions().getByType(DevelocityConfiguration.class));
+        configureDevelocity(settings.getExtensions().getByType(DevelocityConfiguration.class), settings.getRootDir());
         configureBuildCache(settings.getBuildCache(), settings.getExtensions().getByType(DevelocityConfiguration.class));
     }
 
     private void configureGradle5(Project project) {
         project.getPluginManager().apply(DevelocityPlugin.class);
         project.getPluginManager().apply(CommonCustomUserDataGradlePlugin.class);
-        configureDevelocity(project.getExtensions().getByType(DevelocityConfiguration.class));
+        configureDevelocity(project.getExtensions().getByType(DevelocityConfiguration.class), project.getRootDir());
         // configureBuildCache is not called because the build cache cannot be configured via a plugin prior to Gradle 6.0
     }
 
-    private void configureDevelocity(DevelocityConfiguration develocity) {
+    private void configureDevelocity(DevelocityConfiguration develocity, File rootDir) {
         // CHANGE ME: Apply your Develocity configuration here
         develocity.getServer().set("https://develocity-samples.gradle.com");
+        develocity.getProjectId().set(projectIdFromGitRepository(rootDir));
         configureBuildScan(develocity.getBuildScan(), develocity.getServer());
+    }
+
+    private Provider<String> projectIdFromGitRepository(File rootDir) {
+        if (isGradle61OrNewer()) {
+            return forUseAtConfigurationTime(GitRepositoryProjectIdValueSource.create(providers, rootDir));
+        }
+        return providers.provider(() -> GitRepositoryProjectId.fromGitRepository(rootDir).orElse(null));
     }
 
     private void configureBuildScan(BuildScanConfiguration buildScan, Provider<String> develocityServer) {
@@ -113,6 +122,10 @@ public class ConventionDevelocityGradlePlugin implements Plugin<Object> {
 
     private static boolean isGradle65OrNewer() {
         return GradleVersion.current().compareTo(GradleVersion.version("6.5")) >= 0;
+    }
+
+    private static boolean isGradle61OrNewer() {
+        return GradleVersion.current().compareTo(GradleVersion.version("6.1")) >= 0;
     }
 
     private static boolean isGradle6OrNewer() {
