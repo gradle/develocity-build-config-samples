@@ -1,0 +1,145 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <artifactId>checkstyle-project</artifactId>
+  <packaging>jar</packaging>
+
+  <parent>
+    <groupId>com.example</groupId>
+    <artifactId>develocity-maven-caching-sample</artifactId>
+    <version>1.0-SNAPSHOT</version>
+  </parent>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+        <version>3.6.0</version>
+        <configuration>
+          <configLocation>sun_checks.xml</configLocation>
+          <consoleOutput>true</consoleOutput>
+          <failsOnError>false</failsOnError>
+          <failOnViolation>false</failOnViolation>
+          <includeTestSourceDirectory>true</includeTestSourceDirectory>
+        </configuration>
+        <executions>
+          <execution>
+            <id>checkstyle</id>
+            <goals>
+              <goal>check</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>com.gradle</groupId>
+          <artifactId>develocity-maven-extension</artifactId>
+          <configuration>
+            <develocity>
+              <plugins>
+                <plugin>
+                  <artifactId>maven-checkstyle-plugin</artifactId>
+                  <executions>
+                    <execution>
+                      <id>checkstyle</id>
+                      <inputs>
+                        <fileSets>
+                          <fileSet>
+                            <name>sourceDirectories</name>
+                            <includesProperty>includes</includesProperty>
+                            <excludesProperty>excludes</excludesProperty>
+                            <normalization>
+                              <ignoreLineEndings>true</ignoreLineEndings>
+                              <ignoreEmptyDirectories>true</ignoreEmptyDirectories>
+                            </normalization>
+                          </fileSet>
+                          <fileSet>
+                            <name>testSourceDirectories</name>
+                            <includesProperty>includes</includesProperty>
+                            <excludesProperty>excludes</excludesProperty>
+                            <normalization>
+                              <ignoreLineEndings>true</ignoreLineEndings>
+                              <ignoreEmptyDirectories>true</ignoreEmptyDirectories>
+                            </normalization>
+                          </fileSet>
+                        </fileSets>
+                        <properties>
+                          <property><name>checkstyleRulesHeader</name></property>
+                          <property><name>excludeGeneratedSources</name></property>
+                          <property><name>failOnViolation</name></property>
+                          <property><name>failsOnError</name></property>
+                          <property><name>inputEncoding</name></property>
+                          <property><name>maxAllowedViolations</name></property>
+                          <property><name>omitIgnoredModules</name></property>
+                          <property><name>outputFileFormat</name></property>
+                          <property><name>propertyExpansion</name></property>
+                          <property><name>skipExec</name></property>
+                          <property><name>violationIgnore</name></property>
+                          <property><name>violationSeverity</name></property>
+
+                          <!-- Not quite right: these should be tracked as input files so we capture their content. -->
+                          <!-- Since they can also be loaded from the classpath or as URLs, they cannot be easily -->
+                          <!-- added as file inputs. Changes to the referenced file content will NOT invalidate the cache. -->
+                          <property><name>configLocation</name></property>
+                          <property><name>headerLocation</name></property>
+                          <property><name>suppressionsFileExpression</name></property>
+                        </properties>
+                        <ignoredProperties>
+                          <!-- Maven-injected field. -->
+                          <ignore>project</ignore>
+                        </ignoredProperties>
+                      </inputs>
+                      <iteratedProperties>
+                        <!-- Resources are List<org.apache.maven.model.Resource>. We track each Resource's -->
+                        <!-- include/exclude filters and targetPath. -->
+                        <!-- NOTE: `directory` is intentionally NOT tracked — Maven resolves it to an absolute -->
+                        <!-- path which would prevent cache hits across different checkout locations. -->
+                        <!-- NOTE: file content under the resource directories is also NOT tracked — changes to -->
+                        <!-- resource files alone will not invalidate the cache. -->
+                        <property>
+                          <name>resources</name>
+                          <inputs>
+                            <properties>
+                              <property><name>excludes</name></property>
+                              <property><name>includes</name></property>
+                              <property><name>targetPath</name></property>
+                            </properties>
+                          </inputs>
+                        </property>
+                        <property>
+                          <name>testResources</name>
+                          <inputs>
+                            <properties>
+                              <property><name>excludes</name></property>
+                              <property><name>includes</name></property>
+                              <property><name>targetPath</name></property>
+                            </properties>
+                          </inputs>
+                        </property>
+                      </iteratedProperties>
+                      <outputs>
+                        <!-- The extension auto-classifies the mojo's File-typed parameters: -->
+                        <!--   * outputFile (checkstyle-result.xml)  -> output, stored and restored on cache hit -->
+                        <!--   * useFile (optional text report)      -> output, stored and restored when configured -->
+                        <!--   * rulesFiles (checkstyle-rules.xml)   -> localState (re-derived, not restored) -->
+                        <!--   * cacheFile (Checkstyle incremental)  -> localState (re-derived, not restored) -->
+                        <!-- Re-declaring any of them here would conflict with the auto-classification and -->
+                        <!-- disable caching for this goal. -->
+                        <cacheableBecause>generates consistent outputs for declared inputs</cacheableBecause>
+                      </outputs>
+                    </execution>
+                  </executions>
+                </plugin>
+              </plugins>
+            </develocity>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+</project>
