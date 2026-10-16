@@ -4,6 +4,16 @@ plugins {
     id("java-gradle-plugin")
 }
 
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+tasks.compileJava {
+    options.release = 8
+}
+
 dependencies {
     implementation("com.gradle:develocity-gradle-plugin:4.6.0")
     implementation("com.gradle:common-custom-user-data-gradle-plugin:2.8.0")
