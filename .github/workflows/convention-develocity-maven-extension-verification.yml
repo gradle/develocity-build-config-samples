@@ -20,13 +20,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
       - name: Set up JDK 21
-        uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6
+        uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6
         with:
           java-version: '21'
           distribution: 'temurin'
           cache: maven
       - name: Set up Maven
-        uses: gradle/develocity-actions/setup-maven@f852d93dada312948b1ba533226c28e05d756866 # v2.4
+        uses: gradle/develocity-actions/setup-maven@9d8792ab22712b19790c2abce53e9ebb2694c312 # v2.5
       - name: Configure Develocity Solutions instance
         working-directory: convention-develocity-maven-extension/extension/src/main/java/com/myorg
         run: sed -i 's/develocity-samples.gradle.com/ge.solutions-team.gradle.com/g' ConventionDevelocityListener.java
@@ -57,13 +57,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
       - name: Set up JDK 8
-        uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6
+        uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6
         with:
           java-version: '8'
           distribution: 'temurin'
           cache: maven
       - name: Set up Maven
-        uses: gradle/develocity-actions/setup-maven@f852d93dada312948b1ba533226c28e05d756866 # v2.4
+        uses: gradle/develocity-actions/setup-maven@9d8792ab22712b19790c2abce53e9ebb2694c312 # v2.5
       - name: Download extension
         uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
         with:
