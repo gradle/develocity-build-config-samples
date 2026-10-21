@@ -24,6 +24,7 @@ The samples can be grouped into the following categories:
  - Configuration snippets to optimize build performance
  - Template projects for Gradle and Maven when using Develocity
  - Scripts and code to apply and reuse Develocity across multiple projects and build tools
+ - A [Claude Code skill](.claude/skills/develocity-onboarding) that onboards a repository to Develocity and opens a pull request
 
 ## Learn more
 
