@@ -27,23 +27,7 @@ The samples can be grouped into the following categories:
 
 ## Onboarding skill for Claude Code
 
-[`develocity-onboarding`](.claude/skills/develocity-onboarding) is a [Claude Code][claude-code] skill that onboards a repository to Develocity. It detects the build tool (Maven, Gradle, npm, sbt or Bazel), adapts the matching `common-develocity-*-configuration` sample from this repository, wires the access key into CI, checks that the build still loads, and opens a pull request for review.
-
-On top of the samples, it detects CI through the provider's own environment variable rather than `CI`, and only lets CI write to the remote build cache when an access key is present, so builds from forks keep working.
-
-It is available in any Claude Code session started in a checkout of this repository. To use it from any repository, symlink it into your personal skills directory:
-
-```bash
-ln -s "$(git rev-parse --show-toplevel)/.claude/skills/develocity-onboarding" ~/.claude/skills/develocity-onboarding
-```
-
-Then, from the repository to onboard:
-
-```
-/develocity-onboarding https://develocity.example.com
-```
-
-See the [skill's README](.claude/skills/develocity-onboarding/README.md) for its inputs and what it changes.
+[`develocity-onboarding`](.claude/skills/develocity-onboarding) is a [Claude Code][claude-code] skill that onboards a repository to Develocity and opens a pull request. See its [README](.claude/skills/develocity-onboarding/README.md) for installation and usage.
 
 ## Learn more
 
