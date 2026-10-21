@@ -22,6 +22,23 @@ jobs:
         with:
           java-version: '21'
           distribution: 'temurin'
+      - name: Get GitHub OIDC token for Develocity
+        id: develocity-oidc
+        run: |
+          if [ -z "$ACTIONS_ID_TOKEN_REQUEST_URL" ]; then
+            echo "::warning::No GitHub OIDC token available (e.g. PR from a fork), Develocity will not be authenticated"
+            exit 0
+          fi
+          token=$(curl -sSfG -H "Authorization: Bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
+            --data-urlencode "audience=https://ge.solutions-team.gradle.com" \
+            "$ACTIONS_ID_TOKEN_REQUEST_URL" | jq -r .value)
+          echo "::add-mask::$token"
+          echo "access-key=ge.solutions-team.gradle.com=$token" >> "$GITHUB_OUTPUT"
+          # Exchange the OIDC token for a short-lived Develocity access token, for builds that read DEVELOCITY_ACCESS_KEY directly
+          access_token=$(curl -sSf --retry 3 -X POST -H "Authorization: Bearer $token" \
+            "https://ge.solutions-team.gradle.com/api/auth/token?expiresInHours=2")
+          echo "::add-mask::$access_token"
+          echo "token-access-key=ge.solutions-team.gradle.com=$access_token" >> "$GITHUB_OUTPUT"
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@3f5f9adaf7d9fecd50b5935e54106014257a94e6 # v6
         with:
@@ -29,7 +46,7 @@ jobs:
           develocity-injection-enabled: true
           develocity-url: 'https://ge.solutions-team.gradle.com'
           develocity-plugin-version: '4.2.1'
-          develocity-access-key: ${{ secrets.DV_SOLUTIONS_ACCESS_KEY }}
+          develocity-access-key: ${{ steps.develocity-oidc.outputs.access-key }}
       - name: Configure Develocity Solutions instance
         working-directory: convention-develocity-shared/convention-develocity-common/src/main/java/com/myorg
         run: sed -i 's/develocity-samples.gradle.com/ge.solutions-team.gradle.com/g' DevelocityConventions.java
@@ -37,7 +54,7 @@ jobs:
         working-directory: convention-develocity-shared
         run: gradle build publishToMavenLocal
         env:
-          DEVELOCITY_ACCESS_KEY: ${{ secrets.DV_SOLUTIONS_ACCESS_KEY }}
+          DEVELOCITY_ACCESS_KEY: ${{ steps.develocity-oidc.outputs.token-access-key }}
       - name: Upload convention
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
@@ -70,12 +87,28 @@ jobs:
         with:
           name: convention-develocity-shared
           path: ~/.m2/repository/com/myorg
+      - name: Get GitHub OIDC token for Develocity
+        id: develocity-oidc
+        run: |
+          if [ -z "$ACTIONS_ID_TOKEN_REQUEST_URL" ]; then
+            echo "::warning::No GitHub OIDC token available (e.g. PR from a fork), Develocity will not be authenticated"
+            exit 0
+          fi
+          token=$(curl -sSfG -H "Authorization: Bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
+            --data-urlencode "audience=https://ge.solutions-team.gradle.com" \
+            "$ACTIONS_ID_TOKEN_REQUEST_URL" | jq -r .value)
+          echo "::add-mask::$token"
+          # Exchange the OIDC token for a short-lived Develocity access token, for builds that read DEVELOCITY_ACCESS_KEY directly
+          access_token=$(curl -sSf --retry 3 -X POST -H "Authorization: Bearer $token" \
+            "https://ge.solutions-team.gradle.com/api/auth/token?expiresInHours=2")
+          echo "::add-mask::$access_token"
+          echo "token-access-key=ge.solutions-team.gradle.com=$access_token" >> "$GITHUB_OUTPUT"
       - name: Verify example build
         id: build
         working-directory: convention-develocity-shared/examples/gradle_6.9_and_later
         run: gradle build "-Dscan.value.gradle-version=${{ matrix.gradle-version }}" "-Dscan.value.java-version=${{ matrix.java-version }}"
         env:
-          DEVELOCITY_ACCESS_KEY: ${{ secrets.DV_SOLUTIONS_ACCESS_KEY }}
+          DEVELOCITY_ACCESS_KEY: ${{ steps.develocity-oidc.outputs.token-access-key }}
       - name: Verify Build Scan published
         if: ${{ !steps.build.outputs.build-scan-url }}
         run: echo "::error ::No Build Scan published"; exit 1
