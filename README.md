@@ -25,9 +25,9 @@ The samples can be grouped into the following categories:
  - Template projects for Gradle and Maven when using Develocity
  - Scripts and code to apply and reuse Develocity across multiple projects and build tools
 
-## Onboarding skill for Claude Code
+## Onboarding agent skill
 
-[`develocity-onboarding`](.claude/skills/develocity-onboarding) is a [Claude Code][claude-code] skill that opens a pull request to onboard a repository to Develocity. See its [README](.claude/skills/develocity-onboarding/README.md) for installation and usage.
+[`develocity-onboarding`](agent-skills/develocity-onboarding) is an [agent skill][agent-skills] that opens a pull request to onboard a repository to Develocity. See its [README](agent-skills/develocity-onboarding/README.md) for installation and usage.
 
 ## Learn more
 
@@ -46,5 +46,5 @@ The Develocity build configuration samples are open-source software released und
 [develocity-oss-projects]: https://github.com/gradle/develocity-oss-projects
 [quarkus-build-caching-extension]: https://github.com/gradle/quarkus-build-caching-extension
 [develocity]: https://develocity.ai
-[claude-code]: https://claude.com/claude-code
+[agent-skills]: https://agentskills.io
 [apache-license]: https://www.apache.org/licenses/LICENSE-2.0.html

@@ -1,39 +1,42 @@
 # develocity-onboarding
 
-A Claude Code skill that onboards a repository to Develocity. It detects the build tool, adapts the
-official configuration sample, wires the access key into CI, checks the build still loads, opens a
-pull request and follows its checks.
+An agent skill, in the [Agent Skills](https://agentskills.io) format, that opens a pull request to
+onboard a repository to Develocity. It detects the build tool, adapts the official configuration
+sample, wires the access key into CI, checks the build still loads, opens the pull request and
+follows its checks.
 
 Maven, Gradle (Groovy and Kotlin DSL), npm, sbt, Bazel.
 
 ## Install
 
-The skill lives in this repository under `.claude/skills/`. Claude Code only picks it up in a session
-started inside a checkout of this repository, and the repository to onboard is usually elsewhere, so
-symlink it into your personal skills directory once:
+Make the skill directory available to your agent by linking or copying it into the agent's skills
+directory. With Claude Code, for example:
 
 ```bash
-ln -s "$(git rev-parse --show-toplevel)/.claude/skills/develocity-onboarding" \
+ln -s "$(git rev-parse --show-toplevel)/agent-skills/develocity-onboarding" \
   ~/.claude/skills/develocity-onboarding
 ```
 
-The symlink follows the checkout, so pulling updates the skill.
+Other agents read skills from their own location; see their documentation. A symlink follows the
+checkout, so pulling updates the skill.
 
 ## Use
 
-From the repository you want to onboard:
+Ask your agent, from the repository you want to onboard:
 
 ```
-/develocity-onboarding https://develocity.example.com
+Onboard this repository to Develocity using https://develocity.example.com
 ```
 
 Or from anywhere, with a repository URL, which it clones into a scratch directory:
 
 ```
-/develocity-onboarding https://github.com/acme/widget https://develocity.example.com
+Onboard https://github.com/acme/widget to Develocity using https://develocity.example.com
 ```
 
-Describing the task works too. It never asks for an access key and never writes one anywhere.
+Agents with slash commands can also call it by name, e.g. `/develocity-onboarding https://develocity.example.com` in Claude Code.
+
+It never asks for an access key and never writes one anywhere.
 
 | Input | Required | Default |
 | --- | --- | --- |
