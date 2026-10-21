@@ -2,6 +2,7 @@ name: Verify Maven Data Capturing Samples
 
 permissions:
   contents: read
+  id-token: write
 
 on:
   push:
@@ -46,6 +47,22 @@ jobs:
         run: |
             # copy over sample script such that it gets pulled in by the Develocity extension
             cp build-data-capturing-maven-samples/${{ matrix.sample-file }} common-develocity-maven-configuration/.mvn/develocity-custom-user-data.groovy
+      - name: Get GitHub OIDC token for Develocity
+        id: develocity-oidc
+        run: |
+          if [ -z "$ACTIONS_ID_TOKEN_REQUEST_URL" ]; then
+            echo "::warning::No GitHub OIDC token available (e.g. PR from a fork), Develocity will not be authenticated"
+            exit 0
+          fi
+          token=$(curl -sSfG -H "Authorization: Bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
+            --data-urlencode "audience=https://ge.solutions-team.gradle.com" \
+            "$ACTIONS_ID_TOKEN_REQUEST_URL" | jq -r .value)
+          echo "::add-mask::$token"
+          # Exchange the OIDC token for a short-lived Develocity access token, for builds that read DEVELOCITY_ACCESS_KEY directly
+          access_token=$(curl -sSf --retry 3 -X POST -H "Authorization: Bearer $token" \
+            "https://ge.solutions-team.gradle.com/api/auth/token?expiresInHours=2")
+          echo "::add-mask::$access_token"
+          echo "token-access-key=ge.solutions-team.gradle.com=$access_token" >> "$GITHUB_OUTPUT"
       - name: Run Maven build
         id: mvn-build
         run: |
@@ -54,7 +71,7 @@ jobs:
           echo "$(mvn -f common-develocity-maven-configuration/pom.xml -Ddevelocity.url=https://ge.solutions-team.gradle.com -X -B clean validate)" >> $GITHUB_OUTPUT
           echo "${delimiter}" >> $GITHUB_OUTPUT
         env:
-          DEVELOCITY_ACCESS_KEY: ${{ secrets.DV_SOLUTIONS_ACCESS_KEY }}
+          DEVELOCITY_ACCESS_KEY: ${{ steps.develocity-oidc.outputs.token-access-key }}
       - name: Validate extension loaded
         # Asserting that extension was loaded checking a log entry
         run: exit 1
