@@ -24,7 +24,26 @@ The samples can be grouped into the following categories:
  - Configuration snippets to optimize build performance
  - Template projects for Gradle and Maven when using Develocity
  - Scripts and code to apply and reuse Develocity across multiple projects and build tools
- - A [Claude Code skill](.claude/skills/develocity-onboarding) that onboards a repository to Develocity and opens a pull request
+
+## Onboarding skill for Claude Code
+
+[`develocity-onboarding`](.claude/skills/develocity-onboarding) is a [Claude Code][claude-code] skill that onboards a repository to Develocity. It detects the build tool (Maven, Gradle, npm, sbt or Bazel), adapts the matching `common-develocity-*-configuration` sample from this repository, wires the access key into CI, checks that the build still loads, and opens a pull request for review.
+
+On top of the samples, it detects CI through the provider's own environment variable rather than `CI`, and only lets CI write to the remote build cache when an access key is present, so builds from forks keep working.
+
+It is available in any Claude Code session started in a checkout of this repository. To use it from any repository, symlink it into your personal skills directory:
+
+```bash
+ln -s "$(git rev-parse --show-toplevel)/.claude/skills/develocity-onboarding" ~/.claude/skills/develocity-onboarding
+```
+
+Then, from the repository to onboard:
+
+```
+/develocity-onboarding https://develocity.example.com
+```
+
+See the [skill's README](.claude/skills/develocity-onboarding/README.md) for its inputs and what it changes.
 
 ## Learn more
 
@@ -43,4 +62,5 @@ The Develocity build configuration samples are open-source software released und
 [develocity-oss-projects]: https://github.com/gradle/develocity-oss-projects
 [quarkus-build-caching-extension]: https://github.com/gradle/quarkus-build-caching-extension
 [develocity]: https://develocity.ai
+[claude-code]: https://claude.com/claude-code
 [apache-license]: https://www.apache.org/licenses/LICENSE-2.0.html
