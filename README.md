@@ -27,7 +27,7 @@ The samples can be grouped into the following categories:
 
 ## Onboarding skill for Claude Code
 
-[`develocity-onboarding`](.claude/skills/develocity-onboarding) is a [Claude Code][claude-code] skill that onboards a repository to Develocity and opens a pull request. See its [README](.claude/skills/develocity-onboarding/README.md) for installation and usage.
+[`develocity-onboarding`](.claude/skills/develocity-onboarding) is a [Claude Code][claude-code] skill that opens a pull request to onboard a repository to Develocity. See its [README](.claude/skills/develocity-onboarding/README.md) for installation and usage.
 
 ## Learn more
 
