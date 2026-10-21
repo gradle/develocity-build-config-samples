@@ -9,16 +9,23 @@ Maven, Gradle (Groovy and Kotlin DSL), npm, sbt, Bazel.
 
 ## Install
 
-Make the skill directory available to your agent by linking or copying it into the agent's skills
-directory. With Claude Code, for example:
+Put the skill directory in your agent's skills directory. The examples use Claude Code's
+(`~/.claude/skills`); other agents read skills from their own location, see their documentation.
+
+From a clone of this repository, symlink it. The link follows the checkout, so pulling updates the
+skill:
 
 ```bash
 ln -s "$(git rev-parse --show-toplevel)/agent-skills/develocity-onboarding" \
   ~/.claude/skills/develocity-onboarding
 ```
 
-Other agents read skills from their own location; see their documentation. A symlink follows the
-checkout, so pulling updates the skill.
+Without cloning, download just the skill directory. Run it again to update:
+
+```bash
+curl -sL https://codeload.github.com/gradle/develocity-build-config-samples/tar.gz/main \
+  | tar -xz -C ~/.claude/skills --strip-components=2 '*/agent-skills/develocity-onboarding'
+```
 
 ## Use
 
