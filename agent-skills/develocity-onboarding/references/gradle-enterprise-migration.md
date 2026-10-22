@@ -11,7 +11,7 @@ already sets, then apply the *Modifications* on top. The official guides hold th
 | Gradle | plugin `com.gradle.enterprise` | `com.gradle.develocity` |
 | Gradle | `gradleEnterprise { }` | `develocity { }` |
 | Gradle | `remote(gradleEnterprise.buildCache)` | `remote(develocity.buildCache)` |
-| Gradle | `com.gradle.build-scan` applied in `build.gradle` (Gradle 5) | `com.gradle.develocity` in the settings file; needs Gradle 6+ |
+| Gradle | `com.gradle.build-scan` applied in `build.gradle` (Gradle 5) | `com.gradle.develocity` in the same root `build.gradle(.kts)`; see *Gradle version* in `gradle.md` |
 | Maven | `.mvn/gradle-enterprise.xml` | `.mvn/develocity.xml` |
 | Maven | root element `<gradleEnterprise>`, namespace `https://www.gradle.com/gradle-enterprise-maven` | `<develocity>`, namespace `https://www.gradle.com/develocity-maven` |
 | Maven | `com.gradle:gradle-enterprise-maven-extension` in `.mvn/extensions.xml` | `com.gradle:develocity-maven-extension` |

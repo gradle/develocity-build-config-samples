@@ -70,13 +70,13 @@ unrecorded. Grep the `scripts` of `package.json` for `NODE_OPTIONS=` and prepend
 value: `cross-env NODE_OPTIONS="$NODE_OPTIONS --max-old-space-size=8192" jest`. List every
 script changed in the pull request.
 
-## CI wiring (step 5)
+## CI wiring (step 6)
 
 The agent loads through `NODE_OPTIONS=-r @gradle-tech/develocity-agent/preload`, which must be
 scoped to the step that runs the build. Set at job level it is inherited by every step, including
 the checkout, whose Node process starts before the agent is installed and dies on `Cannot find module`.
 
-## Check (step 7)
+## Check (step 8)
 
 Install with the lockfile's package manager, then:
 

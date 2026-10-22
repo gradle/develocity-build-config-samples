@@ -39,5 +39,5 @@ Both files usually exist. Append to them; never replace them.
 - `build.sbt`: add the two `val`s and the `ThisBuild / develocityConfiguration ~=` block at the top
   level, after the imports. Take nothing else from the sample's `build.sbt`: its closing
   `lazy val … = (project in file("."))` defines the sample's own project, not this build's.
-- `project/plugins.sbt`: add the sample's `addSbtPlugin(...)` lines, with the versions from step 6,
+- `project/plugins.sbt`: add the sample's `addSbtPlugin(...)` lines, with the versions from step 7,
   next to the existing ones. Leave every other line alone.

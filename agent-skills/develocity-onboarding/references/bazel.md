@@ -38,9 +38,9 @@ providers, each one's pipeline gets the flags from *CI wiring* below.
 
 Append to an existing `.bazelrc`; never replace it. Keep its own configs and `try-import` lines,
 and add the sample's lines and the block above after them. An existing `--remote_cache`,
-`--bes_backend` or `--bes_results_url` is covered by step 1: stop and ask.
+`--bes_backend` or `--bes_results_url` is covered by step 2: stop and ask.
 
-## CI wiring (step 5)
+## CI wiring (step 6)
 
 The build command needs `--config=remote-cache --config=ci` and `--remote_cache_header` /
 `--bes_header` set to `Authorization=Bearer $DEVELOCITY_ACCESS_KEY`, **only when the key is

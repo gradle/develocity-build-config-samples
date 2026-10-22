@@ -1,14 +1,17 @@
 ---
 name: develocity-onboarding
 description: Onboards a repository to Develocity. Detects the build tool (Maven, Gradle, npm, sbt, Bazel), adapts the official configuration sample, wires the access key into CI, checks the build still loads, and opens a pull request. Use when asked to onboard a project or repository to Develocity, integrate a build with a Develocity server, or add Build Scan configuration.
+license: Apache-2.0
+compatibility: Needs git and network access. The GitHub CLI (gh) is optional; it is only used for GitHub repositories.
 ---
 
 # Develocity onboarding
 
 Integrate a repository with Develocity, and hand the result over as a reviewable pull request.
 
-The configuration is not stored here. It is fetched from [develocity-build-config-samples](https://github.com/gradle/develocity-build-config-samples), 
-which contains the most up-to-date version.
+The configuration comes from the `common-develocity-*-configuration` samples in the same repository as
+this skill, [develocity-build-config-samples](https://github.com/gradle/develocity-build-config-samples).
+The skill fetches them from `main` at run time, so it always uses their most up-to-date version.
 The goal is to automate the onboarding and apply the *Modifications* described below.
 
 Reference files (read only the ones the run needs):
@@ -30,7 +33,7 @@ Reference files (read only the ones the run needs):
 | Remote build cache | no | enabled |
 | CI provider | no | detected from the repository |
 
-Comments
+Notes
 - Ask for the server URL if it was not given (do not invent one)
 - Never ask for, read, or write an access key: it is supplied at build time
 - If a repository URL was given instead of a local path, clone it into a scratch directory and work there
@@ -52,7 +55,9 @@ them to the user with the marker each was found by, and ask which ones to onboar
 
 Take only those files. The samples are working projects, so they also carry other files not relevant to our context.
 
-Check for configuration that is already there:
+## 2. Check for existing configuration
+
+Look for Develocity, Gradle Enterprise or other build infrastructure the build already relies on:
 
 - **Already onboarded**: an existing `develocity` block or `.mvn/develocity.xml`. Report what is
   configured and stop rather than opening a PR.
@@ -66,7 +71,7 @@ Check for configuration that is already there:
   relies on, since Gradle settings take a single remote, and Bazel a single cache and BES backend. Stop and ask
   the user: keep the existing one and onboard Build Scans only, replace it, or abandon.
 
-## 2. Detect the CI provider
+## 3. Detect the CI provider
 
 Unless the provider was given as an input, infer it from the repository: `.github/workflows/`,
 `Jenkinsfile`, `.gitlab-ci.yml`, `.teamcity/`, `.circleci/`, `azure-pipelines.yml`, `.buildkite/`,
@@ -80,13 +85,15 @@ the reference file yourself: it usually sits in a shared checkout.
 **Several providers can match**, GitHub Actions for pull requests and Jenkins for releases, say.
 Take every provider whose marker is present and make the CI check an OR of their variables, so a
 build on any of them counts as CI; each tool's reference file shows the combined form. List the
-providers and variables in the pull request, and wire the key into each pipeline in step 5.
+providers and variables in the pull request, and wire the key into each pipeline in step 6.
 
-If no provider can be identified, fall back to `CI` and note in the pull request that it is a guess.
+If no provider can be identified (the pipeline may be defined outside the repository, as with a
+Jenkins job configured on the server), ask the user which CI runs the build. Fall back to `CI` only
+when they do not know, and note in the pull request that it is a guess.
 
 From here on, `<CI_VAR>` stands for that check: one variable, or the OR of several.
 
-## 3. Fetch the sample
+## 4. Fetch the sample
 
 ```
 https://raw.githubusercontent.com/gradle/develocity-build-config-samples/main/<sample directory>/<file>
@@ -96,13 +103,13 @@ If a sample no longer looks like what *Modifications* describes (a block was ren
 a condition is already expressed differently), the sample's structure wins and the modifications still apply 
 to whatever now plays that role.
 
-## 4. Modifications
+## 5. Modifications
 
 The samples are meant to be changed: they hard-code `CI`, hard-code a server, and gate the cache on nothing else. Every change below is required.
 
 - **Server URL**: the input, replacing `https://develocity-samples.gradle.com` (Bazel's sample uses a `<<develocity-server>>` placeholder, and takes the host only).
-- **`allowUntrusted` / `allowUntrustedServer`: delete the whole line unless the input was given.** A server with a trusted certificate does not need such setting.
-- **CI detection**: replace the sample's `CI` check with `<CI_VAR>` from step 2, testing for *presence*, never for a value.
+- **`allowUntrusted` / `allowUntrustedServer`: delete the whole line unless the input was given.** A server with a trusted certificate does not need it.
+- **CI detection**: replace the sample's `CI` check with `<CI_VAR>` from step 3, testing for *presence*, never for a value.
 - **Background Build Scan upload**: on when not CI, off on CI.
 - **Remote cache store**: on only when CI **and** `DEVELOCITY_ACCESS_KEY` is set and non-empty.
   For Bazel the remote cache itself is gated too.
@@ -120,7 +127,7 @@ to your Develocity server": that adjustment has been made. Ship the configuratio
 The exception is the comments the reference files prescribe verbatim, such as the `.bazelrc` block:
 they explain flags whose removal silently breaks a build, so they stay.
 
-## 5. Wire the access key into CI
+## 6. Wire the access key into CI
 
 The build publishes nothing without a key, so this belongs in the same change. How a secret reaches
 the build is provider-specific and changes over time, so **look it up rather than assuming**. 
@@ -133,8 +140,10 @@ pipeline file, and settle two questions before touching anything:
 2. **Does it need mapping per job or per step?** Some providers deliberately keep secrets out of the
    environment until a step opts in, so a single job-level declaration silently yields nothing.
 
-Apply what the documentation says, for every provider found in step 2. If the search settles neither
-question, leave the pipeline file alone and write what you found in the pull request.
+Apply what the documentation says, for every provider found in step 3. If the search settles neither
+question, leave the pipeline file alone and write what you found in the pull request. When the
+pipeline is not defined in the repository (a job configured on the CI server, a shared pipeline
+library), change nothing there and say in the pull request what has to change, and where.
 
 The result should read like this (an illustration of the shape, not a recipe to copy):
 
@@ -159,11 +168,12 @@ request must spell out the exact value for the tool it configures:
 
 The server host is the URL's host, without scheme or path. The key comes from the server under
 *My settings → Access keys*.
-The key's owner needs the permissions to publish Build Scans and to write to the build cache;
-without the second, CI logs a `403` on every cache store and the remote cache stays empty. Say this
-next to the secret in the pull request.
+Not every user may write to the build cache, so the key CI uses must belong to an account that can
+both publish Build Scans and write to the build cache, often a dedicated CI account rather than a
+person's. Without cache write access, CI logs a `403` on every cache store and the remote cache
+stays empty. Say this next to the secret in the pull request.
 
-## 6. Resolve versions
+## 7. Resolve versions
 
 The sample's versions are usually current, but check: a sample can lag a release.
 
@@ -186,10 +196,10 @@ Without a wrapper, ask the installed `gradle --version` / `mvn --version` and sa
 that the project does not pin one.
 On a mismatch, use the newest compatible version and call it out rather than shipping a config that will not load.
 
-## 7. Check it loads
+## 8. Check it loads
 
 Run the cheapest command that parses the configuration, from the repository root, with the versions
-step 6 settled. What is checked must be what ships:
+step 7 settled. What is checked must be what ships:
 
 | Tool | Command |
 | --- | --- |
@@ -222,13 +232,14 @@ once the reviewer creates the secret, so a build that logs a credential error ha
 check. If a scan does go up, say so, but never hold the pull request for one, and never create a key to manufacture it. 
 If the build tool is not available locally, say so in the pull request instead of claiming it was checked.
 
-**Commit on a new branch, never on the checked-out one**: on the user's own checkout that is
-usually the default branch. Read the target's branch naming first (step 8), create the branch, then
-commit only the files this skill changed: configuration, pipeline, `.gitignore`, lockfile, scripts.
-Check `git status` before staging rather than after pushing. If step 8 later settles a different
-name, an issue key say, rename the branch with `git branch -m` before pushing.
+**Never commit on the default or integration branch** (`main`, `master`, `develop`, or whatever the
+repository merges into). If the checkout is on one, read the target's branch naming first (step 9)
+and create a branch; if the user already checked out a feature branch, commit there. Commit only the
+files this skill changed: configuration, pipeline, `.gitignore`, lockfile, scripts. Check
+`git status` before staging rather than after pushing. If step 9 later settles a different name for
+a branch this skill created, an issue key say, rename it with `git branch -m` before pushing.
 
-## 8. Prepare and open the pull request
+## 9. Prepare and open the pull request
 
 Read the target's own rules before writing anything: `.github/pull_request_template.md`,
 `.github/PULL_REQUEST_TEMPLATE/`, `CONTRIBUTING.md` and `AI_POLICY.md`. The template is the least of
@@ -258,7 +269,7 @@ If none was given, offer to file one: show the exact title and body you would cr
 Wait for the answer. Do not open a pull request that fails the target's own rules on arrival, and do not file anything the user has not seen.
 When a tracking reference was given and the template has no field for it, cite it in the description.
 
-For a GitHub issue, write a closing keyword: `Closes #123`. 
+For a GitHub issue, write a closing keyword: `Fixes #123`. 
 
 Keep the description short: what was added, what changes for the people building the project, and
 what the reviewer still has to do:
@@ -275,9 +286,17 @@ Checked with <command> on <tool version>: <what it showed>.
 <Scan published, or the configuration resolved as intended; publishing needs the secret below.>
 
 Before merging: add DEVELOCITY_ACCESS_KEY as a repository secret, with the value
-<the exact format for this tool, from step 5: `<server host>=<key>`, or the bare key for Bazel>.
-Get a key from <server> → My settings → Access keys.
+<the exact format for this tool, from step 6: `<server host>=<key>`, or the bare key for Bazel>.
+Get a key from <server> → My settings → Access keys; see <the tool's authentication docs, from the table below>.
 ```
+
+| Tool | Authentication docs |
+| --- | --- |
+| Gradle | https://docs.develocity.ai/gradle/current/gradle-plugin/#authenticating |
+| Maven | https://docs.develocity.ai/maven/current/maven-extension/#authenticating |
+| sbt | https://docs.develocity.ai/sbt/current/sbt-plugin/#authenticating |
+| npm | https://docs.develocity.ai/npm/current/npm-agent/#authenticating-with-develocity |
+| Bazel | https://docs.develocity.ai/bazel/current/bazel-config/#authenticating |
 
 For npm, which has no build cache, the first line stops at the Build Scans.
 
@@ -289,7 +308,7 @@ State each as what changed, without commentary:
 - `NODE_OPTIONS` now inherited by the scripts that override it, each one listed
 - a test reporter added, or one that replaces the console reporter
 
-The "Checked with" line is the outcome of step 7, the store gate included. Write what actually ran
+The "Checked with" line is the outcome of step 8, the store gate included. Write what actually ran
 and what it showed, including a check that could not run. 
 
 Mention `allowUntrusted` only when it was set. Leaving it out is the normal case and needs no line in the description. 
@@ -301,7 +320,7 @@ request only on their go-ahead: a pushed branch and an opened pull request are v
 target's maintainers and cannot be taken back quietly. Apply any edits they ask for and show the
 result again.
 
-## 9. Follow the checks
+## 10. Follow the checks
 
 The pull request is not finished when it is opened. Wait for its checks and read any failure.
 Opening a red pull request and walking away hands the reviewer your homework.
@@ -333,7 +352,7 @@ Every failure falls into one of three buckets, and they are handled differently:
   author, a DCO needs `git commit -s`, secrets are unavailable to pull requests from forks by design)
   and tell the user, since most of these need a human.
 
-**A fix-up is confirmed like the pull request was.** The step 8 approval covered that diff, not the
+**A fix-up is confirmed like the pull request was.** The step 9 approval covered that diff, not the
 next one. Show the user each fix-up's diff and the failure it answers, and push only on their
 go-ahead. Add commits rather than force-pushing over what maintainers may already have read.
 
@@ -349,17 +368,19 @@ Report the final state plainly: green, or red with which bucket and why.
 - **Nothing is created in someone's tracker without them seeing it first.** An issue, a ticket, a
   fork, a branch or a commit pushed to a shared remote, anything the skill has to produce: show the
   content, offer to create it as written or to edit it, and wait. This holds for every such step,
-  not only the linked issue and the pull request in step 8.
+  not only the linked issue and the pull request in step 9.
 - **Existing infrastructure is never replaced silently.** Another remote cache or build event
-  backend means stop and ask (step 1).
+  backend means stop and ask (step 2).
 - **CI is detected by the provider's own environment variable**, not `CI`. Jenkins, TeamCity,
   Bamboo and GoCD do not set `CI`, so the samples' `CI` check leaves those builds looking local,
   uploading Build Scans in the background and never populating the cache. Conversely a developer
   who exports `CI` locally would look like CI.
 - **Writing to the remote cache requires CI *and* an access key.** Without the second condition a
   fork's CI build tries to push to a cache it cannot authenticate against, and every build logs the failure.
-- **We are assuming that reading from the remote cache stays on for everyone.** Only writing is gated. Bazel is the
-  exception: it fails the build on an unreachable cache, so its cache is on only with a key.
+- **We are assuming that reading from the remote cache stays on for everyone.** Only writing is gated.
+  On a server that denies anonymous reads, a build without a key warns and carries on, and simply
+  does not use the remote cache. Bazel is the exception: it fails the build on an unreachable or
+  unauthenticated cache, so its cache is on only with a key.
 - **A missing access key must never fail the build.** The Gradle plugin and Maven extension already
   warn and carry on; Bazel does not, hence `--bes_upload_mode=nowait_for_upload_complete` and the
   key-gated `remote-cache` config. Check this

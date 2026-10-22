@@ -23,8 +23,10 @@ ln -s "$(git rev-parse --show-toplevel)/agent-skills/develocity-onboarding" \
 Without cloning, download just the skill directory. Run it again to update:
 
 ```bash
-curl -sL https://codeload.github.com/gradle/develocity-build-config-samples/tar.gz/main \
-  | tar -xz -C ~/.claude/skills --strip-components=2 '*/agent-skills/develocity-onboarding'
+mkdir -p ~/.claude/skills && rm -rf ~/.claude/skills/develocity-onboarding && \
+  curl -sL https://codeload.github.com/gradle/develocity-build-config-samples/tar.gz/main \
+  | tar -xz -C ~/.claude/skills --strip-components=2 \
+    develocity-build-config-samples-main/agent-skills/develocity-onboarding
 ```
 
 ## Use
@@ -43,58 +45,62 @@ Onboard https://github.com/acme/widget to Develocity using https://develocity.ex
 
 Agents with slash commands can also call it by name, e.g. `/develocity-onboarding https://develocity.example.com` in Claude Code.
 
-It never asks for an access key and never writes one anywhere.
+The skill never asks for an access key and never writes one anywhere.
 
-| Input | Required | Default |
-| --- | --- | --- |
-| Develocity server URL | no | asks the user |
-| Repository | no | the current directory; a Git URL clones to a scratch dir |
-| Tracking reference | no | none; an issue or JIRA URL, for targets whose PR template demands one |
-| `allowUntrusted` | no | left out |
-| Local build cache | no | enabled |
-| Remote build cache | no | enabled |
-| CI provider | no | detected |
+You can give it the following; anything left out takes the default. The server URL is needed, but
+the skill asks for it when it is missing.
+
+| Input | Default |
+| --- | --- |
+| Develocity server URL | asks the user |
+| Repository | the current directory; a Git URL clones to a scratch dir |
+| Tracking reference | none; an issue or JIRA URL, for targets whose PR template demands one |
+| `allowUntrusted` | left out |
+| Local build cache | enabled |
+| Remote build cache | enabled |
+| CI provider | detected |
 
 ## What you get
 
 | Tool | Files |
 | --- | --- |
 | Maven | `.mvn/develocity.xml`, `.mvn/extensions.xml`, `.gitignore` |
-| Gradle | `settings.gradle(.kts)`, `gradle.properties` |
+| Gradle | `settings.gradle(.kts)` (the root `build.gradle(.kts)` on Gradle 5), `gradle.properties` |
 | sbt | `build.sbt`, `project/plugins.sbt` |
 | npm | `develocity.config.js`, `package.json`, the lockfile |
 | Bazel | `.bazelrc`, `.gitignore` |
 
-plus the pipeline change that exposes `DEVELOCITY_ACCESS_KEY` to the build, looked up in the vendor's
-own documentation at run time rather than from a list that goes stale.
+plus, when the CI pipeline is defined in the repository being onboarded, the pipeline change that
+exposes `DEVELOCITY_ACCESS_KEY` to the build, looked up in the vendor's own documentation at run
+time. When the pipeline lives elsewhere (a job configured on the CI server, a shared pipeline
+library), the pull request says what to change there instead.
 
 The configuration comes from the
 [official samples](https://github.com/gradle/develocity-build-config-samples), fetched when the skill
-runs, with versions resolved from Maven Central, the Gradle plugin portal and npm. Two things are
+runs, with versions resolved from Maven Central, the Gradle plugin portal and the npm public registry. Two things are
 added that the samples leave to you:
 
-- **CI is detected by the provider's own environment variable**, not `CI`, for the reasons in the
-  *Rules* of `SKILL.md`. `references/ci-providers.md` holds the mapping.
+- **Builds are recognised as CI through the provider's own environment variable** (`GITHUB_ACTIONS`,
+  `JENKINS_URL`, …) rather than the generic `CI`, which several providers do not set.
+  `references/ci-providers.md` holds the mapping.
 - **Writing to the remote cache needs CI *and* a non-empty `DEVELOCITY_ACCESS_KEY`**, so forks and
   local builds only read from it. Bazel fails on an unreachable cache, so there the cache is used
   only when a key is present.
 
-It stops and asks rather than overwrite a build that already uses another remote cache or build
+The skill stops and asks rather than overwrite a build that already uses another remote cache or build
 event backend, and migrates a Gradle Enterprise configuration instead of adding a second one.
 
 ## After the PR
 
-Add `DEVELOCITY_ACCESS_KEY` as a repository secret. Create a key on your Develocity server under
-*My settings → Access keys*; the secret's value depends on the tool:
+Add `DEVELOCITY_ACCESS_KEY` as a secret of the CI. Create a key on your Develocity server under
+*My settings → Access keys*, with an account allowed to publish Build Scans and write to the build
+cache. The secret's value depends on the tool, see its authentication docs:
 
-- Gradle, Maven, sbt, npm: `<server host>=<key>`, e.g. `develocity.example.com=abc123…`
-- Bazel: the key alone
+- [Gradle](https://docs.develocity.ai/gradle/current/gradle-plugin/#authenticating),
+  [Maven](https://docs.develocity.ai/maven/current/maven-extension/#authenticating),
+  [sbt](https://docs.develocity.ai/sbt/current/sbt-plugin/#authenticating),
+  [npm](https://docs.develocity.ai/npm/current/npm-agent/#authenticating-with-develocity):
+  `<server host>=<key>`, e.g. `develocity.example.com=abc123…`
+- [Bazel](https://docs.develocity.ai/bazel/current/bazel-config/#authenticating): the key alone
 
-Nothing publishes until it exists.
-
-## Adapting it
-
-Nothing is generated from code: the Markdown is the whole skill. `SKILL.md` holds the steps and the
-rules; each build tool's changes, merge rules and checks are in `references/<tool>.md`, so a run
-reads only the one it needs. `references/ci-providers.md` maps CI provider to identifying
-environment variable, and `references/gradle-enterprise-migration.md` covers older configurations.
+Unless the server allows anonymous publishing, nothing publishes until it exists.
