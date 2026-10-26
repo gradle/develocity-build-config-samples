@@ -1,0 +1,51 @@
+name: Get Develocity access token
+description: "Gets a GitHub OIDC token for Develocity workload identity and, optionally, exchanges it for a short-lived Develocity access token"
+
+inputs:
+  develocity-host:
+    description: "The Develocity server host to get the token for"
+    default: "ge.solutions-team.gradle.com"
+    required: false
+  exchange:
+    description: "Whether to exchange the OIDC token for a short-lived Develocity access token, for builds that read DEVELOCITY_ACCESS_KEY directly"
+    default: "false"
+    required: false
+  expires-in-hours:
+    description: "The lifetime of the exchanged access token in hours"
+    default: "2"
+    required: false
+
+outputs:
+  access-key:
+    description: "The OIDC token in host=token form, for the develocity-access-key input of setup-gradle and setup-maven. Empty if no GitHub OIDC token is available."
+    value: ${{ steps.get-token.outputs.access-key }}
+  token-access-key:
+    description: "The exchanged short-lived access token in host=token form, for DEVELOCITY_ACCESS_KEY. Only set when exchange is true."
+    value: ${{ steps.get-token.outputs.token-access-key }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Get Develocity access token
+      id: get-token
+      env:
+        DEVELOCITY_HOST: ${{ inputs.develocity-host }}
+        EXCHANGE: ${{ inputs.exchange }}
+        EXPIRES_IN_HOURS: ${{ inputs.expires-in-hours }}
+      run: |
+        if [ -z "$ACTIONS_ID_TOKEN_REQUEST_URL" ]; then
+          echo "::warning::No GitHub OIDC token available (e.g. PR from a fork), Develocity will not be authenticated"
+          exit 0
+        fi
+        token=$(curl -sSfG -H "Authorization: Bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
+          --data-urlencode "audience=https://${DEVELOCITY_HOST}" \
+          "$ACTIONS_ID_TOKEN_REQUEST_URL" | jq -r .value)
+        echo "::add-mask::$token"
+        echo "access-key=${DEVELOCITY_HOST}=$token" >> "$GITHUB_OUTPUT"
+        if [ "$EXCHANGE" = "true" ]; then
+          access_token=$(curl -sSf --retry 3 -X POST -H "Authorization: Bearer $token" \
+            "https://${DEVELOCITY_HOST}/api/auth/token?expiresInHours=${EXPIRES_IN_HOURS}")
+          echo "::add-mask::$access_token"
+          echo "token-access-key=${DEVELOCITY_HOST}=$access_token" >> "$GITHUB_OUTPUT"
+        fi
+      shell: bash

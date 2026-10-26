@@ -23,23 +23,18 @@ jobs:
     name: Verification
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout shared actions
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          sparse-checkout: .github/actions
       - name: Set up JDK 21
         uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6
         with:
           java-version: '21'
           distribution: 'temurin'
-      - name: Get GitHub OIDC token for setup-maven
+      - name: Get Develocity access token
         id: develocity-oidc
-        run: |
-          if [ -z "$ACTIONS_ID_TOKEN_REQUEST_URL" ]; then
-            echo "::warning::No GitHub OIDC token available (e.g. PR from a fork), Develocity will not be authenticated"
-            exit 0
-          fi
-          token=$(curl -sSfG -H "Authorization: Bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
-            --data-urlencode "audience=https://ge.solutions-team.gradle.com" \
-            "$ACTIONS_ID_TOKEN_REQUEST_URL" | jq -r .value)
-          echo "::add-mask::$token"
-          echo "access-key=ge.solutions-team.gradle.com=$token" >> "$GITHUB_OUTPUT"
+        uses: ./.github/actions/develocity-access-token
       - name: Set up Maven
         uses: gradle/develocity-actions/setup-maven@9d8792ab22712b19790c2abce53e9ebb2694c312 # v2.5
         with:
