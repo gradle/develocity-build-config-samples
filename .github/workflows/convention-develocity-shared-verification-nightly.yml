@@ -22,6 +22,11 @@ jobs:
         with:
           java-version: '21'
           distribution: 'temurin'
+      - name: Get Develocity access token
+        id: develocity-oidc
+        uses: ./.github/actions/develocity-access-token
+        with:
+          exchange: true
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@3f5f9adaf7d9fecd50b5935e54106014257a94e6 # v6
         with:
@@ -29,7 +34,7 @@ jobs:
           develocity-injection-enabled: true
           develocity-url: 'https://ge.solutions-team.gradle.com'
           develocity-plugin-version: '4.2.1'
-          develocity-access-key: ${{ secrets.DV_SOLUTIONS_ACCESS_KEY }}
+          develocity-access-key: ${{ steps.develocity-oidc.outputs.access-key }}
       - name: Configure Develocity Solutions instance
         working-directory: convention-develocity-shared/convention-develocity-common/src/main/java/com/myorg
         run: sed -i 's/develocity-samples.gradle.com/ge.solutions-team.gradle.com/g' DevelocityConventions.java
@@ -37,7 +42,7 @@ jobs:
         working-directory: convention-develocity-shared
         run: gradle build publishToMavenLocal
         env:
-          DEVELOCITY_ACCESS_KEY: ${{ secrets.DV_SOLUTIONS_ACCESS_KEY }}
+          DEVELOCITY_ACCESS_KEY: ${{ steps.develocity-oidc.outputs.token-access-key }}
       - name: Upload convention
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
@@ -70,12 +75,17 @@ jobs:
         with:
           name: convention-develocity-shared
           path: ~/.m2/repository/com/myorg
+      - name: Get Develocity access token
+        id: develocity-oidc
+        uses: ./.github/actions/develocity-access-token
+        with:
+          exchange: true
       - name: Verify example build
         id: build
         working-directory: convention-develocity-shared/examples/gradle_6.9_and_later
         run: gradle build "-Dscan.value.gradle-version=${{ matrix.gradle-version }}" "-Dscan.value.java-version=${{ matrix.java-version }}"
         env:
-          DEVELOCITY_ACCESS_KEY: ${{ secrets.DV_SOLUTIONS_ACCESS_KEY }}
+          DEVELOCITY_ACCESS_KEY: ${{ steps.develocity-oidc.outputs.token-access-key }}
       - name: Verify Build Scan published
         if: ${{ !steps.build.outputs.build-scan-url }}
         run: echo "::error ::No Build Scan published"; exit 1

@@ -2,6 +2,7 @@ name: Verify Convention Develocity Maven Extension
 
 permissions:
   contents: read
+  id-token: write
 
 on:
   push:
@@ -73,12 +74,17 @@ jobs:
         if: ${{ matrix.versions.maven-version != '(Current)' }}
         working-directory: convention-develocity-maven-extension/examples/maven_${{ matrix.versions.sample }}
         run: ./mvnw wrapper:wrapper -Dmaven=${{ matrix.versions.maven-version }} -Ddevelocity.scan.disabled
+      - name: Get Develocity access token
+        id: develocity-oidc
+        uses: ./.github/actions/develocity-access-token
+        with:
+          exchange: true
       - name: Verify example build
         id: build
         working-directory: convention-develocity-maven-extension/examples/maven_${{ matrix.versions.sample }}
         run: ./mvnw clean verify "-Dscan.value.maven-version=${{ matrix.versions.maven-version }}"
         env:
-          DEVELOCITY_ACCESS_KEY: ${{ secrets.DV_SOLUTIONS_ACCESS_KEY }}
+          DEVELOCITY_ACCESS_KEY: ${{ steps.develocity-oidc.outputs.token-access-key }}
       - name: Verify Build Scan published
         if: ${{ !steps.build.outputs.build-scan-url }}
         run: echo "::error ::No Build Scan published"; exit 1

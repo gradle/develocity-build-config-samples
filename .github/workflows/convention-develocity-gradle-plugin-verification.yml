@@ -2,6 +2,7 @@ name: Verify Convention Develocity Gradle Plugin
 
 permissions:
   contents: read
+  id-token: write
 
 on:
   push:
@@ -89,12 +90,17 @@ jobs:
         with:
           name: convention-develocity-gradle-plugin
           path: ~/.m2/repository/com/myorg
+      - name: Get Develocity access token
+        id: develocity-oidc
+        uses: ./.github/actions/develocity-access-token
+        with:
+          exchange: true
       - name: Verify example build
         id: build
         working-directory: convention-develocity-gradle-plugin/examples/gradle_${{ matrix.versions.sample }}
         run: gradle build "-Dscan.value.gradle-version=${{ matrix.gradle-version }}" "-Dscan.value.java-version=${{ matrix.java-version }}"
         env:
-          DEVELOCITY_ACCESS_KEY: ${{ secrets.DV_SOLUTIONS_ACCESS_KEY }}
+          DEVELOCITY_ACCESS_KEY: ${{ steps.develocity-oidc.outputs.token-access-key }}
       - name: Verify Build Scan published
         if: ${{ !steps.build.outputs.build-scan-url }}
         run: echo "::error ::No Build Scan published"; exit 1

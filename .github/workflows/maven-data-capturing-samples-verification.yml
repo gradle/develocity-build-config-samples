@@ -2,6 +2,7 @@ name: Verify Maven Data Capturing Samples
 
 permissions:
   contents: read
+  id-token: write
 
 on:
   push:
@@ -46,6 +47,11 @@ jobs:
         run: |
             # copy over sample script such that it gets pulled in by the Develocity extension
             cp build-data-capturing-maven-samples/${{ matrix.sample-file }} common-develocity-maven-configuration/.mvn/develocity-custom-user-data.groovy
+      - name: Get Develocity access token
+        id: develocity-oidc
+        uses: ./.github/actions/develocity-access-token
+        with:
+          exchange: true
       - name: Run Maven build
         id: mvn-build
         run: |
@@ -54,7 +60,7 @@ jobs:
           echo "$(mvn -f common-develocity-maven-configuration/pom.xml -Ddevelocity.url=https://ge.solutions-team.gradle.com -X -B clean validate)" >> $GITHUB_OUTPUT
           echo "${delimiter}" >> $GITHUB_OUTPUT
         env:
-          DEVELOCITY_ACCESS_KEY: ${{ secrets.DV_SOLUTIONS_ACCESS_KEY }}
+          DEVELOCITY_ACCESS_KEY: ${{ steps.develocity-oidc.outputs.token-access-key }}
       - name: Validate extension loaded
         # Asserting that extension was loaded checking a log entry
         run: exit 1

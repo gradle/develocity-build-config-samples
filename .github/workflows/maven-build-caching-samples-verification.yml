@@ -2,6 +2,7 @@ name: Verify Maven Build Caching Samples
 
 permissions:
   contents: read
+  id-token: write
 
 on:
   push:
@@ -22,15 +23,22 @@ jobs:
     name: Verification
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout shared actions
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          sparse-checkout: .github/actions
       - name: Set up JDK 21
         uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6
         with:
           java-version: '21'
           distribution: 'temurin'
+      - name: Get Develocity access token
+        id: develocity-oidc
+        uses: ./.github/actions/develocity-access-token
       - name: Set up Maven
         uses: gradle/develocity-actions/setup-maven@9d8792ab22712b19790c2abce53e9ebb2694c312 # v2.5
         with:
-          develocity-access-key: ${{ secrets.DV_SOLUTIONS_ACCESS_KEY }}
+          develocity-access-key: ${{ steps.develocity-oidc.outputs.access-key }}
       - name: Setup Node.js and Npm
         uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
         with:
