@@ -6,6 +6,10 @@ inputs:
     description: "The Develocity server host to get the token for"
     default: "ge.solutions-team.gradle.com"
     required: false
+  oidc-audience:
+    description: "The audience of the GitHub OIDC token, matching a workload identity rule on the server"
+    default: "https://solutions.develocity.cloud"
+    required: false
   exchange:
     description: "Whether to exchange the OIDC token for a short-lived Develocity access token, for builds that read DEVELOCITY_ACCESS_KEY directly"
     default: "false"
@@ -30,6 +34,7 @@ runs:
       id: get-token
       env:
         DEVELOCITY_HOST: ${{ inputs.develocity-host }}
+        OIDC_AUDIENCE: ${{ inputs.oidc-audience }}
         EXCHANGE: ${{ inputs.exchange }}
         EXPIRES_IN_HOURS: ${{ inputs.expires-in-hours }}
       run: |
@@ -38,7 +43,7 @@ runs:
           exit 0
         fi
         token=$(curl -sSfG -H "Authorization: Bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
-          --data-urlencode "audience=https://${DEVELOCITY_HOST}" \
+          --data-urlencode "audience=${OIDC_AUDIENCE}" \
           "$ACTIONS_ID_TOKEN_REQUEST_URL" | jq -r .value)
         echo "::add-mask::$token"
         echo "access-key=${DEVELOCITY_HOST}=$token" >> "$GITHUB_OUTPUT"
