@@ -32,7 +32,7 @@ jobs:
         run: ./gradlew build
       - name: Configure Develocity Solutions instance
         working-directory: convention-develocity-gradle-plugin/plugins/gradle-5-or-newer/src/main/java/com/myorg
-        run: sed -i 's/develocity-samples.gradle.com/solutions.develocity.cloud/g' ConventionDevelocityGradlePlugin.java
+        run: sed -i 's/develocity-samples.gradle.com/ge.solutions-team.gradle.com/g' ConventionDevelocityGradlePlugin.java
       - name: Build with Gradle - Gradle 5 or newer
         working-directory: convention-develocity-gradle-plugin/plugins/gradle-5-or-newer
         run: ./gradlew build publishToMavenLocal

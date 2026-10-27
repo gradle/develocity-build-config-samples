@@ -62,7 +62,7 @@ jobs:
           echo "apply from: file(\"../build-data-capturing-gradle-samples/${{matrix.sample-file}}\")" >> build.gradle
       - name: Run Gradle build using Groovy DSL
         working-directory: common-develocity-gradle-configuration-groovy
-        run: gradle tasks -Ddevelocity.url=https://solutions.develocity.cloud "-Dscan.value.gradle-version=${{ matrix.gradle-version }}" "-Dscan.value.java-version=${{ matrix.java-version }}"
+        run: gradle tasks -Ddevelocity.url=https://ge.solutions-team.gradle.com "-Dscan.value.gradle-version=${{ matrix.gradle-version }}" "-Dscan.value.java-version=${{ matrix.java-version }}"
       - name: Inject data capture script into Gradle build using Kotlin DSL
         working-directory: common-develocity-gradle-configuration-kotlin
         run: |
@@ -70,7 +70,7 @@ jobs:
           echo "apply(from = \"../build-data-capturing-gradle-samples/${{matrix.sample-file}}.kts\")" >> build.gradle.kts
       - name: Run Gradle build using Kotlin DSL
         working-directory: common-develocity-gradle-configuration-kotlin
-        run: gradle tasks -Ddevelocity.url=https://solutions.develocity.cloud "-Dscan.value.gradle-version=${{ matrix.gradle-version }}" "-Dscan.value.java-version=${{ matrix.java-version }}"
+        run: gradle tasks -Ddevelocity.url=https://ge.solutions-team.gradle.com "-Dscan.value.gradle-version=${{ matrix.gradle-version }}" "-Dscan.value.java-version=${{ matrix.java-version }}"
 
   failure-notification:
     name: Matrix failure notification
