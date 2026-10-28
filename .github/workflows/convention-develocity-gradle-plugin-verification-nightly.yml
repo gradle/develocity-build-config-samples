@@ -30,12 +30,12 @@ jobs:
         with:
           gradle-version: 'release-candidate'
           develocity-injection-enabled: true
-          develocity-url: 'https://ge.solutions-team.gradle.com'
+          develocity-url: 'https://solutions.develocity.cloud'
           develocity-plugin-version: '4.2.1'
           develocity-access-key: ${{ steps.develocity-oidc.outputs.access-key }}
       - name: Configure Develocity Solutions instance
         working-directory: convention-develocity-gradle-plugin/plugins/gradle-5-or-newer/src/main/java/com/myorg
-        run: sed -i 's/develocity-samples.gradle.com/ge.solutions-team.gradle.com/g' ConventionDevelocityGradlePlugin.java
+        run: sed -i 's/develocity-samples.gradle.com/solutions.develocity.cloud/g' ConventionDevelocityGradlePlugin.java
       - name: Build with Gradle - Gradle 5 or newer
         working-directory: convention-develocity-gradle-plugin/plugins/gradle-5-or-newer
         run: gradle build publishToMavenLocal
