@@ -4,7 +4,7 @@ description: "Gets a GitHub OIDC token for Develocity workload identity and, opt
 inputs:
   develocity-host:
     description: "The Develocity server host to get the token for"
-    default: "ge.solutions-team.gradle.com"
+    default: "solutions.develocity.cloud"
     required: false
   exchange:
     description: "Whether to exchange the OIDC token for a short-lived Develocity access token, for builds that read DEVELOCITY_ACCESS_KEY directly"
