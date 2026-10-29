@@ -27,7 +27,7 @@ jobs:
           distribution: 'temurin'
           cache: maven
       - name: Set up Maven
-        uses: gradle/develocity-actions/setup-maven@9d8792ab22712b19790c2abce53e9ebb2694c312 # v2.5
+        uses: gradle/develocity-actions/setup-maven@b8f7a85ff7bd4e08e804f3e5331e5c48b2e6eb17 # v2.6
       - name: Configure Develocity Solutions instance
         working-directory: convention-develocity-maven-extension/extension/src/main/java/com/myorg
         run: sed -i 's/develocity-samples.gradle.com/solutions.develocity.cloud/g' ConventionDevelocityListener.java
@@ -64,7 +64,7 @@ jobs:
           distribution: 'temurin'
           cache: maven
       - name: Set up Maven
-        uses: gradle/develocity-actions/setup-maven@9d8792ab22712b19790c2abce53e9ebb2694c312 # v2.5
+        uses: gradle/develocity-actions/setup-maven@b8f7a85ff7bd4e08e804f3e5331e5c48b2e6eb17 # v2.6
       - name: Download extension
         uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
         with:
