@@ -36,7 +36,7 @@ jobs:
         id: develocity-oidc
         uses: ./.github/actions/develocity-access-token
       - name: Set up Maven
-        uses: gradle/develocity-actions/setup-maven@9d8792ab22712b19790c2abce53e9ebb2694c312 # v2.5
+        uses: gradle/develocity-actions/setup-maven@b8f7a85ff7bd4e08e804f3e5331e5c48b2e6eb17 # v2.6
         with:
           develocity-access-key: ${{ steps.develocity-oidc.outputs.access-key }}
       - name: Setup Node.js and Npm

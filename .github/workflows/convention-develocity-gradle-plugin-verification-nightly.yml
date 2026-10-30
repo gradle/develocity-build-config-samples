@@ -26,7 +26,7 @@ jobs:
         id: develocity-oidc
         uses: ./.github/actions/develocity-access-token
       - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@3f5f9adaf7d9fecd50b5935e54106014257a94e6 # v6
+        uses: gradle/actions/setup-gradle@8da46b539cd8fe6ab27ca75128919a18d757604c # v6
         with:
           gradle-version: 'release-candidate'
           develocity-injection-enabled: true
@@ -63,7 +63,7 @@ jobs:
           java-version: '${{ matrix.java-version }}'
           distribution: 'temurin'
       - name: Set up Gradle ${{ matrix.gradle-version }}
-        uses: gradle/actions/setup-gradle@3f5f9adaf7d9fecd50b5935e54106014257a94e6 # v6
+        uses: gradle/actions/setup-gradle@8da46b539cd8fe6ab27ca75128919a18d757604c # v6
         with:
           gradle-version: ${{ matrix.gradle-version }}
       - name: Download plugin

@@ -26,7 +26,7 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
       - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@3f5f9adaf7d9fecd50b5935e54106014257a94e6 # v6
+        uses: gradle/actions/setup-gradle@8da46b539cd8fe6ab27ca75128919a18d757604c # v6
       - name: Configure Develocity Solutions instance
         working-directory: convention-develocity-shared/convention-develocity-common/src/main/java/com/myorg
         run: sed -i 's/develocity-samples.gradle.com/solutions.develocity.cloud/g' DevelocityConventions.java
@@ -77,7 +77,7 @@ jobs:
           java-version: ${{ matrix.versions.java-version }}
           distribution: 'temurin'
       - name: Set up Gradle ${{ matrix.versions.gradle-version }}
-        uses: gradle/actions/setup-gradle@3f5f9adaf7d9fecd50b5935e54106014257a94e6 # v6
+        uses: gradle/actions/setup-gradle@8da46b539cd8fe6ab27ca75128919a18d757604c # v6
         with:
           gradle-version: ${{ matrix.versions.gradle-version }}
       - name: Download plugin
@@ -124,7 +124,7 @@ jobs:
           distribution: 'temurin'
           cache: maven
       - name: Set up Maven ${{ matrix.versions.maven-version }}
-        uses: gradle/develocity-actions/setup-maven@9d8792ab22712b19790c2abce53e9ebb2694c312 # v2.5
+        uses: gradle/develocity-actions/setup-maven@b8f7a85ff7bd4e08e804f3e5331e5c48b2e6eb17 # v2.6
       - name: Download extension
         uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
         with:
