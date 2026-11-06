@@ -13,6 +13,7 @@
     <module>asciidoctor-project</module>
     <module>aspectj-project</module>
     <module>avro-project</module>
+    <module>checkstyle-project</module>
     <module>clojure-project</module>
     <module>duplicate-finder-project</module>
     <module>enforcer-project</module>
