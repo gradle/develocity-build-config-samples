@@ -10,7 +10,7 @@
 
 # Develocity Build Configuration Samples
 
-[![Revved up by Develocity](https://img.shields.io/badge/Revved%20up%20by-Develocity-06A0CE?logo=Gradle&labelColor=02303A)](https://ge.solutions-team.gradle.com/scans)
+[![Revved up by Develocity](https://img.shields.io/badge/Revved%20up%20by-Develocity-06A0CE?logo=Gradle&labelColor=02303A)](https://solutions.develocity.cloud/scans)
 
 This repository contains samples that demonstrate how to customize and optimize your Develocity build configuration using Gradle or Maven.
 
