@@ -26,16 +26,16 @@ jobs:
         id: develocity-oidc
         uses: ./.github/actions/develocity-access-token
       - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@3f5f9adaf7d9fecd50b5935e54106014257a94e6 # v6
+        uses: gradle/actions/setup-gradle@8da46b539cd8fe6ab27ca75128919a18d757604c # v6
         with:
           gradle-version: 'release-candidate'
           develocity-injection-enabled: true
-          develocity-url: 'https://ge.solutions-team.gradle.com'
+          develocity-url: 'https://solutions.develocity.cloud'
           develocity-plugin-version: '4.2.1'
           develocity-access-key: ${{ steps.develocity-oidc.outputs.access-key }}
       - name: Configure Develocity Solutions instance
         working-directory: convention-develocity-gradle-plugin/plugins/gradle-5-or-newer/src/main/java/com/myorg
-        run: sed -i 's/develocity-samples.gradle.com/ge.solutions-team.gradle.com/g' ConventionDevelocityGradlePlugin.java
+        run: sed -i 's/develocity-samples.gradle.com/solutions.develocity.cloud/g' ConventionDevelocityGradlePlugin.java
       - name: Build with Gradle - Gradle 5 or newer
         working-directory: convention-develocity-gradle-plugin/plugins/gradle-5-or-newer
         run: gradle build publishToMavenLocal
@@ -63,7 +63,7 @@ jobs:
           java-version: '${{ matrix.java-version }}'
           distribution: 'temurin'
       - name: Set up Gradle ${{ matrix.gradle-version }}
-        uses: gradle/actions/setup-gradle@3f5f9adaf7d9fecd50b5935e54106014257a94e6 # v6
+        uses: gradle/actions/setup-gradle@8da46b539cd8fe6ab27ca75128919a18d757604c # v6
         with:
           gradle-version: ${{ matrix.gradle-version }}
       - name: Download plugin

@@ -26,13 +26,13 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
       - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@3f5f9adaf7d9fecd50b5935e54106014257a94e6 # v6
+        uses: gradle/actions/setup-gradle@8da46b539cd8fe6ab27ca75128919a18d757604c # v6
       - name: Build with Gradle - Gradle 2 through 4
         working-directory: convention-develocity-gradle-plugin/plugins/gradle-2-through-4
         run: ./gradlew build
       - name: Configure Develocity Solutions instance
         working-directory: convention-develocity-gradle-plugin/plugins/gradle-5-or-newer/src/main/java/com/myorg
-        run: sed -i 's/develocity-samples.gradle.com/ge.solutions-team.gradle.com/g' ConventionDevelocityGradlePlugin.java
+        run: sed -i 's/develocity-samples.gradle.com/solutions.develocity.cloud/g' ConventionDevelocityGradlePlugin.java
       - name: Build with Gradle - Gradle 5 or newer
         working-directory: convention-develocity-gradle-plugin/plugins/gradle-5-or-newer
         run: ./gradlew build publishToMavenLocal
@@ -82,7 +82,7 @@ jobs:
           java-version: ${{ matrix.versions.java-version }}
           distribution: 'temurin'
       - name: Set up Gradle ${{ matrix.versions.gradle-version }}
-        uses: gradle/actions/setup-gradle@3f5f9adaf7d9fecd50b5935e54106014257a94e6 # v6
+        uses: gradle/actions/setup-gradle@8da46b539cd8fe6ab27ca75128919a18d757604c # v6
         with:
           gradle-version: ${{ matrix.versions.gradle-version }}
       - name: Download plugin
