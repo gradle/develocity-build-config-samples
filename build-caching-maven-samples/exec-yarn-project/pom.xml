@@ -104,6 +104,9 @@
                             <name>asyncDestroyOnShutdown</name>
                           </property>
                           <property>
+                            <name>classpathDependencyExcludes</name>
+                          </property>
+                          <property>
                             <name>classpathScope</name>
                           </property>
                           <property>
