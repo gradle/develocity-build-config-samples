@@ -19,7 +19,7 @@
 
     <properties>
         <aspectj.version>1.9.27</aspectj.version>
-        <aspectj-maven-plugin.version>1.16.1</aspectj-maven-plugin.version>
+        <aspectj-maven-plugin.version>1.17.0</aspectj-maven-plugin.version>
     </properties>
 
     <modules>
@@ -166,6 +166,9 @@
                                             <property>
                                                 <name>forceAjcCompile</name>
                                             </property>
+                                            <property>
+                                                <name>weaveOnly</name>
+                                            </property>
                                         </properties>
                                         <ignoredProperties>
                                             <ignore>additionalAspectPaths</ignore>
@@ -179,6 +182,7 @@
                                             <ignore>repeat</ignore>
                                             <ignore>XterminateAfterCompilation</ignore>
                                             <ignore>argumentFileName</ignore>
+                                            <ignore>argumentFileDirectory</ignore>
                                             <ignore>warn</ignore>
                                         </ignoredProperties>
                                     </inputs>
