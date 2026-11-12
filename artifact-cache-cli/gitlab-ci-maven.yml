@@ -2,6 +2,7 @@
 # Commit artifact-cache.sh to the repository root, and add a masked CI/CD variable ARTIFACT_CACHE_ACCESS_KEY that holds a
 # Develocity access key. The script hands the CLI its own DEVELOCITY_ACCESS_KEY entry for the Edge host, so it also
 # works next to the Develocity GitLab template for Maven, which reduces DEVELOCITY_ACCESS_KEY to the server entry.
+# Build Scans capture the cache activity only when the build applies the Common Custom User Data Maven extension.
 
 variables:
   DEVELOCITY_EDGE_URL: https://edge.example.com # adjust to your Develocity Edge

@@ -71,14 +71,16 @@ The script and the CLI work the same for both build tools, with these difference
   The CLI restores into and stores from `~/.m2`, honoring a `localRepository` in `~/.m2/settings.xml`.
   A build that moves the local repository otherwise, for example with `-Dmaven.repo.local`, needs `--maven-repository=<path>` on both operations.
   The Develocity Maven extension 2.4.0 or later keeps dependencies the build no longer uses out of the stored image.
+- **Build Scan data.**
+  After a restore, the Build Scan carries the `ARTIFACT_CACHE` and `SETUP_CACHE` tags, and the restore metrics as custom values.
+  Gradle builds get them with no further setup.
+  For Maven, the CLI leaves them in a Groovy script in `~/.m2/.develocity/custom-user-data`, which only the [Common Custom User Data Maven extension][ccud-maven] 2.1.0 or later evaluates, so apply it to see the cache activity in the Build Scan.
 - **Setup Cache.**
   The Setup Cache supports Gradle only, from version 8.1.
   The same `restore` and `store` cover it, with no configuration of its own.
   To also cache the compiled build logic of `buildSrc` and included builds, it needs the Develocity Gradle plugin 4.4.1 or later, a checkout before `restore`, and the same absolute checkout path in every job.
   If runners check out to varying paths, fix the path, on GitLab with `GIT_CLONE_PATH`.
   Without the Setup Cache entitlement, pass `--disable-setup-cache` to both operations to avoid a warning.
-
-After a restore, the Build Scan carries the `ARTIFACT_CACHE` and `SETUP_CACHE` tags, and the restore metrics as custom values.
 
 ### Verification
 
@@ -93,3 +95,4 @@ The GitLab examples are not run.
 [release-history]: https://docs.develocity.ai/artifact-cache/current/release-history/
 [download]: https://docs.develocity.ai/artifact-cache/current/download-the-cli/
 [gitlab-templates]: https://github.com/gradle/develocity-gitlab-templates
+[ccud-maven]: https://github.com/gradle/common-custom-user-data-maven-extension

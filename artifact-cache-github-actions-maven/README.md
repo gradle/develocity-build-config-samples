@@ -7,6 +7,7 @@ The Artifact Cache restores the Maven local repository and Maven wrapper distrib
 
 - Develocity 2026.3 or later, an Edge node at version 2.3.0 or later, and the Artifact Cache entitlement on the license
 - Maven 3.6.2 or later, and the Develocity Maven extension 2.4.0 or later to keep dependencies the build no longer uses out of the cache
+- The [Common Custom User Data Maven extension][ccud] 2.1.0 or later, as in [`extensions.xml`](.mvn/extensions.xml), to capture the cache activity in the Build Scan
 - A [workload identity rule][workload-identity] on Develocity that accepts the repository's GitHub OIDC tokens
 
 ### Workflow steps
@@ -45,6 +46,7 @@ Add these steps to a job, after `actions/checkout`, and grant the job the `id-to
 - The action uses its credential only for the cache. Builds that publish Build Scans need their own, for example through the `DEVELOCITY_ACCESS_KEY` environment variable of the build step.
 
 The cache activity shows in the job summary, and in the Build Scan through the `ARTIFACT_CACHE` tag and the restore metrics captured as custom values.
+The CLI leaves the restore metrics in a Groovy script in `~/.m2/.develocity/custom-user-data`, which only the Common Custom User Data Maven extension evaluates: without it, the Build Scan shows no cache activity.
 
 ### Verification
 
@@ -53,3 +55,4 @@ The [verification workflow](../.github/workflows/artifact-cache-github-actions-m
 [artifact-cache]: https://docs.develocity.ai/artifact-cache/current/
 [action]: https://github.com/gradle/develocity-artifact-cache-github-action
 [workload-identity]: https://develocity.ai/help/workload-identity
+[ccud]: https://github.com/gradle/common-custom-user-data-maven-extension
