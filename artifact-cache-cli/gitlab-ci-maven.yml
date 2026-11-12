@@ -1,0 +1,24 @@
+# Example .gitlab-ci.yml for a Maven build using the Develocity Artifact Cache.
+# Commit artifact-cache.sh to the repository root, and add a masked CI/CD variable ARTIFACT_CACHE_ACCESS_KEY that holds a
+# Develocity access key. The script hands the CLI its own DEVELOCITY_ACCESS_KEY entry for the Edge host, so it also
+# works next to the Develocity GitLab template for Maven, which reduces DEVELOCITY_ACCESS_KEY to the server entry.
+
+variables:
+  DEVELOCITY_EDGE_URL: https://edge.example.com # adjust to your Develocity Edge
+  # Images are named <project>~<job>~<branch>~<os>~<arch>. The project identifier is required: images of different
+  # projects with the same job and branch names would otherwise collide.
+  ARTIFACT_CACHE_PROJECT: $CI_PROJECT_PATH_SLUG
+  ARTIFACT_CACHE_JOB: $CI_JOB_NAME_SLUG
+  ARTIFACT_CACHE_BRANCH: $CI_COMMIT_REF_NAME
+
+build:
+  image: eclipse-temurin:21-jdk # the CLI needs Java 21 or later
+  # The CLI restores into and stores from ~/.m2. If the build moves the local repository, for example with
+  # -Dmaven.repo.local, pass --maven-repository=<path> to both restore and store, and drop any GitLab cache: entry for it.
+  before_script:
+    # Falls back to the image of the merge request's target branch, or of the default branch
+    - ARTIFACT_CACHE_BASE_BRANCH="${CI_MERGE_REQUEST_TARGET_BRANCH_NAME:-$CI_DEFAULT_BRANCH}" sh artifact-cache.sh restore
+  script:
+    - ./mvnw verify -B
+    # Last in script, so it runs only after a successful build
+    - sh artifact-cache.sh store

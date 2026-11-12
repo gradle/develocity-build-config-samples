@@ -1,0 +1,40 @@
+name: Verify README snippet
+description: "Fails unless the first YAML code block of a README, with its placeholders replaced, is a run of consecutive lines in a workflow"
+
+inputs:
+  readme:
+    description: "The README holding the snippet"
+    required: true
+  workflow:
+    description: "The workflow that runs the snippet"
+    required: true
+  placeholders:
+    description: "The placeholders in the snippet and the values the workflow uses instead, one placeholder=value pair per line"
+    required: false
+    default: ""
+
+runs:
+  using: "composite"
+  steps:
+    - name: Verify README snippet
+      env:
+        README: ${{ inputs.readme }}
+        WORKFLOW: ${{ inputs.workflow }}
+        PLACEHOLDERS: ${{ inputs.placeholders }}
+      run: |
+        snippet=$(awk '/^```yaml$/ { inside = 1; next } inside && /^```$/ { exit } inside' "$README")
+        if [ -z "$snippet" ]; then
+          echo "::error file=$README::No YAML code block found"
+          exit 1
+        fi
+        while IFS='=' read -r placeholder value; do
+          if [ -n "$placeholder" ]; then snippet=${snippet//"$placeholder"/"$value"}; fi
+        done <<< "$PLACEHOLDERS"
+        # The README references actions by major version, the workflow pins a commit followed by a version comment
+        workflow=$(sed -E 's/@[0-9a-f]{40} # (v[0-9]+)[^ ]*$/@\1/' "$WORKFLOW")
+        if [[ $'\n'"$workflow"$'\n' != *$'\n'"$snippet"$'\n'* ]]; then
+          echo "::error file=$README::The YAML snippet, with its placeholders replaced, is not part of $WORKFLOW. Keep both in sync."
+          exit 1
+        fi
+        echo "The YAML snippet in $README matches $WORKFLOW"
+      shell: bash
