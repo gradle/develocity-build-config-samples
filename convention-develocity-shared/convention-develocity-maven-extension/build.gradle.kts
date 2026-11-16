@@ -5,7 +5,7 @@ plugins {
 }
 
 dependencies {
-    compileOnly("org.apache.maven:maven-core:3.10.0")
+    compileOnly("org.apache.maven:maven-core:3.10.1")
     implementation("com.gradle:develocity-maven-extension:2.6.1")
     implementation("com.gradle:common-custom-user-data-maven-extension:2.4.0")
     implementation(project(":convention-develocity-common"))
