@@ -18,7 +18,7 @@ Actions and Jenkins; the other three are generated too.
 
 **Every other provider gets no generated name, in any version**: CircleCI, Azure Pipelines,
 Buildkite, Bitbucket Pipelines, Travis CI, Bitrise, GoCD and the rest always need explicit names
-(*Explicit names*, below).
+(*Explicit names*, below). The `artifact-cache-cli` sample script used on those providers writes them.
 
 ## CLI versions before 1.11.0
 
@@ -36,8 +36,14 @@ below). A pre-release does not count as 1.11.0.
 
 The workarounds below give explicit names of the same shape. Each carries a one-line comment in the
 pipeline saying why, and that it can go once the CLI is 1.11.0 or later. The pull request says so
-too, and that switching to generated names later costs one cold restore per image, since the names
-differ.
+too, and what removing it later costs (below).
+
+**What removing a workaround costs.** The CLI keys an explicit name exactly as it keys a generated
+one: any name with a character outside `A-Z`, `a-z`, `0-9` and `_` (every name here has `~`) is
+stored under the same hash of the string. So an explicit name that is character for character the
+string 1.11.0 generates keeps its image when the workaround goes; any other string starts cold once.
+The GitHub Actions and GitLab workarounds below are written to match; the Jenkins one is not, since
+its platform segment comes from the JVM.
 
 ### GitHub Actions
 
@@ -50,7 +56,15 @@ On the Action step:
             ${{ github.repository_id }}~${{ github.workflow }}~${{ github.job }}~refs/heads/${{ github.base_ref || github.event.repository.default_branch }}~${{ runner.os }}~${{ runner.arch }}
 ```
 
+Use `github.repository_id`, even where a sample or a sibling repository uses `github.repository`:
+the ID is what 1.11.0 generates from, and it survives a rename or transfer. Existing wiring that uses
+`github.repository` works; leave it, since switching now costs the same one cold restore as removing
+it later.
+
 ### GitLab
+
+Only for a pipeline that calls the CLI directly. The `artifact-cache-cli` sample script names its
+images itself, in every CLI version (`generic-ci.md`).
 
 ```sh
 # Artifact Cache CLI before 1.11.0 names images after the pipeline, not the job; remove the --image-name options once it is 1.11.0 or later
@@ -115,10 +129,25 @@ On GitHub Actions:
 GitLab's `CI_JOB_NAME` already includes the matrix values. Jenkins' declarative `matrix` does not:
 add the axis values to both names.
 
+## Reviewing existing names
+
+For wiring that is already there (step 5 of `SKILL.md`), check each job's names:
+
+- **No names, CLI below 1.11.0**, on GitHub Actions, GitLab or a Jenkins multibranch pipeline: add
+  the workaround above.
+- **Explicit names without a project segment** (`ccud-gradle-${{ matrix.gradle-version }}`, `build`):
+  repositories on the same Edge can share them. Replace them with the full shape, keeping any matrix
+  segment they had.
+- **A matrix job whose names lack an axis** that changes its downloads: add the segment.
+- **A primary name without a fallback**: add the fallback, or a new branch starts cold.
+
+A renamed image starts cold once; say so in the pull request.
+
 ## Explicit names
 
-For a provider without generated names, build the same shape from the provider's predefined
-variables, looked up in its own documentation at run time:
+The `artifact-cache-cli` sample script builds these names from its variables (`generic-ci.md`). For
+a provider without generated names that calls the CLI another way, build the same shape from the
+provider's predefined variables, looked up in its own documentation at run time:
 
 ```
 primary:  <project>~<job>~<branch>~<os>~<arch>

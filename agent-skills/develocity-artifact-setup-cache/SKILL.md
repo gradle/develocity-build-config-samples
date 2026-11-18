@@ -17,6 +17,21 @@ job's tools download: dependencies, wrapper distributions, browsers, Docker imag
 Cache** holds Gradle's build initialization: compiled scripts, `buildSrc`, included builds. On any
 cache error the CLI logs and exits 0, so it never fails a build.
 
+The CI wiring comes from the `artifact-cache-*` samples in the same repository as this skill,
+[develocity-build-config-samples](https://github.com/gradle/develocity-build-config-samples),
+fetched from `main` at run time, so it is always their most up-to-date, verified version:
+
+| Sample | Used for |
+| --- | --- |
+| `artifact-cache-github-actions-gradle`, `artifact-cache-github-actions-maven` | the Action's steps (`references/github-actions.md`) |
+| `artifact-cache-cli` | `artifact-cache.sh` and the GitLab examples, for every other CI (`references/generic-ci.md`) |
+
+```
+https://raw.githubusercontent.com/gradle/develocity-build-config-samples/main/<sample>/<file>
+```
+
+If a sample cannot be fetched, the reference files hold what the wiring must do.
+
 What drifts (CLI and Action versions, inputs, requirements) is read from the docs at run time, not
 assumed. Every page is served as Markdown at
 `https://docs.develocity.ai/artifact-cache/current/<page>/index.md` (`https://docs.develocity.ai/llms.txt`
@@ -75,13 +90,20 @@ server URL from it.
   every floor in step 4. Ask: migrate to Develocity first (`develocity-onboarding` does it), or go
   on with caches whose results will not show in Build Scans.
 - **The cache is already wired** (`gradle/develocity-artifact-cache-github-action`,
-  `withDevelocityArtifactCache`, `develocity-artifact-cache-cli` in a pipeline): report which jobs
-  have it and ask whether to extend it to the others or stop.
+  `withDevelocityArtifactCache`, `develocity-artifact-cache-cli` or `artifact-cache.sh` in a
+  pipeline): report which jobs have it, review that wiring (*Existing wiring* in step 5), and ask
+  whether to fix what the review finds, extend the cache to the other jobs, both, or stop. A review
+  with nothing to fix and no job to add ends here, with the findings.
 
-Then find how CI gets the key: the secret, variable or credential that becomes
-`DEVELOCITY_ACCESS_KEY`, its value format (`<server host>=<key>`, or the bare key for Bazel), and
-which jobs see it. Step 5 reuses it. When no job gets a key (a server that accepts anonymous Build
-Scans), the cache still needs one: the pull request asks for it, and step 8 waits for it.
+Then find how CI authenticates to Develocity, which the cache reuses (step 5):
+
+- **An access key**: the secret, variable or credential that becomes `DEVELOCITY_ACCESS_KEY`, its
+  value format (`<server host>=<key>`, or the bare key for Bazel), and which jobs see it.
+- **Workload identity**: a step that exchanges the CI's OIDC token for Develocity (on GitHub, one
+  that requests a token from `ACTIONS_ID_TOKEN_REQUEST_URL` with an `audience`). Note the audience
+  it requests: the cache's token needs the same one. There is no key to route.
+- **Neither** (a server that accepts anonymous Build Scans): the cache still needs a credential. The
+  pull request asks for it, and step 8 waits for it.
 
 ## 2. Find the CI jobs
 
@@ -125,7 +147,7 @@ where they differ.
 | License entitlements `Artifact Cache` and `Setup Cache` | that cache only warns |
 | The CI key's user may "Read and write Build Cache data" | restores and stores are refused |
 | With project-level access control: **Allow data without an associated project** enabled | the CLI stores and restores nothing |
-| Edge maximum artifact size of about 1 GiB, when jobs use Playwright, Cypress, Docker or Gradle-provisioned JDKs | the default 100 MiB rejects those entries without an error |
+| Edge maximum artifact size of about 1 GiB, when jobs use Playwright, Cypress, Docker or Gradle-provisioned JDKs. Ask for the actual value: step 5 needs it | the default 100 MiB rejects those entries without an error |
 | Runners: 2 CPUs, 4 GiB memory, 3000 IOPS, Java 21 for the CLI | the CLI is slow or cannot start |
 | Runners reach the server over HTTP/1 and the Edge over HTTP/2; proxies on the way support HTTP/2 | restores fail |
 
@@ -139,12 +161,13 @@ Ask which Edge serves the chosen runners:
 - **a dedicated Edge**: its URL, passed as `--dv-edge`
 - **Develocity's built-in Edge**: the server URL, passed as `--dv-edge`
 - **Edge discovery**: the server URL, passed as `--dv-server`; the CLI asks the server for the
-  Edge location set on the CI key's user
+  Edge location set on the CI key's user. Only with an access key, and only through the GitHub
+  Action or the Jenkins plugin: workload identity tokens and the `artifact-cache-cli` sample script
+  need an Edge URL.
 
-`--dv-edge` needs a `DEVELOCITY_ACCESS_KEY` entry for the Edge host. With the built-in Edge or
-discovery, that is the server host the existing secret already covers. A dedicated Edge on its own
-host takes an entry derived from the existing secret (each provider reference shows how), not a
-second secret.
+`--dv-edge` needs a credential for the Edge host. With the built-in Edge, that is the server host
+the existing secret already covers. For a dedicated Edge on its own host, each provider reference
+says how the credential gets there; never as a second copy of the key in a new secret.
 
 ### Topology
 
@@ -164,9 +187,16 @@ only what is below its floor:
 | Component | Floor | Needed for |
 | --- | --- | --- |
 | Develocity Gradle plugin | 4.4.1 | Setup Cache for `buildSrc` and included builds; 4.4.0 for measurement |
-| Common Custom User Data Gradle plugin | 2.1.0 | Artifact Cache and Setup Cache values and tags in Build Scans |
-| Common Custom User Data Maven extension | any | the same, for Maven |
+| Common Custom User Data Maven extension | 2.1.0 | any cache activity in Maven Build Scans (below) |
 | Develocity Maven extension | 2.4.0 | measurement, and smart cleanup of the image |
+
+Gradle Build Scans get the `ARTIFACT_CACHE` and `SETUP_CACHE` tags and the restore metrics with no
+further setup. Maven's do not: the CLI leaves them as a Groovy script in
+`~/.m2/.develocity/custom-user-data`, which only the Common Custom User Data Maven extension
+evaluates. A Maven job without it shows no cache activity in its Build Scans at all, so add it to
+`.mvn/extensions.xml`, as the `artifact-cache-github-actions-maven` sample does, and name it in the
+pull request. It also adds CI and Git values to every Build Scan; if the user declines, step 8
+relies on CI output alone.
 
 Resolve the version to bump to:
 
@@ -179,9 +209,6 @@ curl -s https://repo1.maven.org/maven2/com/gradle/common-custom-user-data-maven-
 
 Take `<release>` from each rather than `<latest>`, which can be a pre-release, and skip any `-rc` or
 `-milestone` version.
-
-When the Common Custom User Data plugin or extension is absent, ask whether to add it: it adds CI and
-Git values to every Build Scan, not just the cache's. Without it, step 8 relies on CI output alone.
 
 Never upgrade Gradle or Maven here. A tool below its minimum in `references/tools.md` gets nothing
 cached; say so for each job it affects.
@@ -203,17 +230,47 @@ them:
   (each reference lists them) and name each removal in the pull request. Caches of anything else stay.
 - **A cache turned off** in the inputs: `--disable-artifact-cache` or `--disable-setup-cache`, on
   both commands.
-- **Docker.** Docker images are cached by default since CLI 1.9 whenever `docker` is on the `PATH`.
-  If a chosen job uses Docker, ask: keep it, or pass `--no-autodetect=DOCKER`. Keeping it adds Edge
-  storage, runner-to-Edge traffic and, with replication on, a copy of every layer in Develocity's
-  object storage; each layer is one entry, so the Edge's maximum artifact size must fit the largest.
-  When kept, add `--docker-exclude` for images tagged per build (a `*-SNAPSHOT` image from
-  `bootBuildImage`, `*:pr-*`); see the Docker Image Caching page.
+- **Docker.** Docker images are cached by default since CLI 1.9 whenever a Docker daemon answers,
+  whatever pulled them. A job uses Docker when its pipeline runs `docker` or when its build pulls
+  images itself: Testcontainers, Quarkus Dev Services and native container builds, image builds
+  from Gradle or Maven (`references/tools.md`). GitHub-hosted Linux runners always have a daemon, so
+  check the build, not only the pipeline. For each job that uses Docker:
+  - **An image layer larger than the Edge's maximum artifact size** (step 3) is rejected without an
+    error, and an image with a rejected layer is never restored: its layers are uploaded on every
+    store for nothing. Native-image builder, full JDK and browser images can have single layers of
+    several hundred MiB. When the limit is below them, or unknown and the job pulls such images, pass
+    `--no-autodetect=DOCKER`, or `--docker-exclude` for just those images, with a comment naming the
+    reason.
+  - Otherwise ask: keep it, or pass `--no-autodetect=DOCKER`. Keeping it adds Edge storage,
+    runner-to-Edge traffic and, with replication on, a copy of every layer in Develocity's object
+    storage.
+  - When kept, add `--docker-exclude` for images tagged per build (a `*-SNAPSHOT` image from
+    `bootBuildImage`, `*:pr-*`); see the Docker Image Caching page.
 - **Tool homes** are auto-detected. Override them only where the build moves them
   (`references/tools.md`).
 - **CLI version.** Determine the version that will actually run (each reference says how) and the
   latest release (the first entry of the Release History; skip pre-releases). The version
   decides the image naming.
+- **Credential.** Reuse what step 1 found: the access key, or workload identity with the same
+  audience. Never add a second secret holding the same key.
+
+### Existing wiring
+
+When step 1 found the cache already wired, review each wired job against the same rules before
+adding anything, and list the findings:
+
+- **Image names** (`references/image-names.md`, *Reviewing existing names*): the workaround missing
+  below CLI 1.11.0, names without a project segment, a matrix axis missing, no fallback.
+- **CLI version**: a pinned version (`cli-version`, `cliVersion`, a version in a script) below the
+  latest release. Propose removing the pin, or raising it, and say what the pinned version lacks.
+- **Docker**: kept, while a pulled image has a layer above the Edge's maximum artifact size.
+- **Conflicting caches** still on, and **tool homes** the CLI does not see.
+- **Store** that also runs after failed builds; a **cache problem** that can fail the job.
+- **Build-side floors** (step 4), the CCUD Maven extension on Maven jobs above all.
+
+Fix only what the user picks; leave choices that hold (an existing `cache-read-only` expression, a
+`github.repository` segment) as they are. Each fix goes in the pull request with the finding it
+answers.
 
 ## 6. Check locally
 
@@ -259,6 +316,9 @@ issue, write a closing keyword: `Fixes #123`.
 
 Keep the description short:
 
+For a review of existing wiring, the first line says what was fixed instead, and each finding is
+one bullet.
+
 ```
 Turns on the Develocity Artifact Cache <and Setup Cache> for <jobs>, served by <the Edge at <URL> | Develocity's built-in Edge | Edge discovery>.
 
@@ -267,7 +327,7 @@ Turns on the Develocity Artifact Cache <and Setup Cache> for <jobs>, served by <
 - <each cache removed, and the directory the CLI now covers instead>
 - <image names: generated, or explicit with the reason, see image-names.md for the wording>
 - <Docker images: cached, left out (--no-autodetect=DOCKER), or excluded patterns>
-- <each build-side bump>
+- <each build-side bump or addition, such as the CCUD Maven extension>
 
 Checked with <commands>: <results>. The caches are verified on this pull request's own CI runs.
 

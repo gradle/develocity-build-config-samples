@@ -58,7 +58,7 @@ The skill never asks for an access key: it routes the one CI already has from on
 | --- | --- |
 | Repository | the current directory; a Git URL clones to a scratch dir |
 | Pull request target | the repository and its default branch |
-| Edge | asks: a dedicated Edge, Develocity's built-in Edge, or Edge discovery |
+| Edge | asks: a dedicated Edge, Develocity's built-in Edge, or Edge discovery (access key with the GitHub Action or Jenkins plugin only) |
 | Artifact Cache | enabled |
 | Setup Cache | enabled |
 | Docker images | asks when a job uses Docker |
@@ -87,15 +87,24 @@ for the full list.
 | --- | --- |
 | GitHub Actions | a `gradle/develocity-artifact-cache-github-action` step in each chosen job |
 | Jenkins Pipeline | the build steps wrapped in `withDevelocityArtifactCache` |
-| Any other CI, Jenkins Freestyle | a download of the CLI, a restore before the build and a store after it |
+| Any other CI, Jenkins Freestyle | the `artifact-cache-cli` sample's `artifact-cache.sh`, run before the build to restore and after it to store |
 
 plus the removal of the CI's own caching of the directories the CLI now covers (each named in the
-pull request), the image names the CLI version needs, and any build-side version bump the cache
-values in Build Scans depend on.
+pull request), the image names the CLI version needs, and any build-side change the cache values in
+Build Scans depend on: the Common Custom User Data Maven extension for Maven builds.
+
+The wiring follows the `artifact-cache-*` samples in this repository, fetched when the skill runs.
+It reuses the credential CI already has for Develocity: the access key secret, or workload identity
+with the audience the workflow already requests.
 
 Until the Artifact Cache CLI 1.11.0, generated image names are wrong on GitHub Actions, GitLab and
 Jenkins multibranch pipelines, so the skill writes explicit names there, marked to be removed once
-the CLI is 1.11.0 or later.
+the CLI is 1.11.0 or later. On GitHub Actions and GitLab they are the exact names 1.11.0 generates,
+so removing them keeps the cache.
+
+On a repository where the cache is already wired, the skill reviews that wiring instead (image names,
+a pinned CLI version, Docker layers above the Edge's size limit, conflicting caches) and offers to
+fix what it finds, and to extend the cache to the jobs that lack it.
 
 After the pull request opens, the skill watches its checks and, with your go-ahead, re-runs a job
 to show the second run restoring what the first one stored: entries and size from CI, and the cache

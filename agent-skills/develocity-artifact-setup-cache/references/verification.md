@@ -19,7 +19,7 @@ Where to read the store:
 | --- | --- |
 | GitHub Action | the job summary's *Store* row, on the run page. `gh` cannot read summaries: use a browser tool when one is available, else ask the user what the row shows. The step logs carry the CLI's output only when a phase warns. |
 | Jenkins plugin | the *Store* row of the cache summary on the build page |
-| Manual flow | the CLI output in the job log, and the store metrics file kept as a job artifact |
+| Manual flow | the script's and the CLI's output in the job log, and the store metrics file kept as a job artifact |
 
 A Build Scan cannot show the store: it is published before the store runs.
 
@@ -37,8 +37,9 @@ Expect the restore to hit the image run 1 stored. Evidence, per job:
 
 - **from CI**: the tools detected, the entries and size restored, the duration; read from the same
   places as the store, the *Restore* row on GitHub Actions and Jenkins
-- **from the Build Scan**, for Gradle and Maven with the Common Custom User Data plugin or
-  extension: the Artifact Cache and Setup Cache custom values, which report the restore: artifacts
+- **from the Build Scan**, for Gradle, and for Maven with the Common Custom User Data Maven
+  extension 2.1.0 or later (without it, Maven scans show no cache activity): the Artifact Cache and
+  Setup Cache custom values, which report the restore: artifacts
   restored and their size, **Failed artifacts 0**, **Missing artifacts 0**, and the Setup Cache's
   values; the `ARTIFACT_CACHE` and `SETUP_CACHE` tags. The *Network activity* view under
   *Performance* shows far fewer repository downloads than run 1's scan.

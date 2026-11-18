@@ -4,6 +4,17 @@ Use the official Action, `gradle/develocity-artifact-cache-github-action`. It do
 the CLI, restores in its own step, and stores in a post step when the job succeeded. Read its
 `action.yml` and README at the ref you pin for the current inputs.
 
+Take the steps from the samples, which are verified against a real Edge:
+
+```
+https://raw.githubusercontent.com/gradle/develocity-build-config-samples/main/artifact-cache-github-actions-gradle/README.md
+https://raw.githubusercontent.com/gradle/develocity-build-config-samples/main/artifact-cache-github-actions-maven/README.md
+```
+
+Their *Workflow steps* snippet is the shape to adapt: step order, inputs, comments. Image names
+come from `image-names.md`, which may differ from the sample's. If the samples cannot be fetched, this
+file holds what the steps must do.
+
 Use the manual flow (`generic-ci.md`) instead only where the Action cannot run: an organization
 policy that does not allow it (the first run fails with "not allowed"), or a runner it does not
 support. It supports GitHub-hosted Linux, macOS and Windows runners and self-hosted Linux x64.
@@ -51,42 +62,39 @@ pass the secret (`secrets: inherit` or an explicit mapping).
 
 ## Endpoint and credentials
 
+Use the credential the workflow already uses for Develocity (step 1 of `SKILL.md`).
+
+**Workload identity.** The workflow already exchanges a GitHub OIDC token for Develocity: a step
+that requests one from `ACTIONS_ID_TOKEN_REQUEST_URL` with an `audience`, or an action that does. The
+Action requests its own token, so add no secret:
+
+| Edge (step 3) | Inputs |
+| --- | --- |
+| Dedicated Edge | `develocity-edge-url: <Edge URL>`, `develocity-auth: workload-identity`, `develocity-oidc-audience:` the `audience` the existing step requests |
+| Built-in Edge | `develocity-edge-url: <server URL>`, `develocity-auth: workload-identity`, no `develocity-oidc-audience` |
+
+Workload identity needs `develocity-edge-url`: discovery through `develocity-url` rejects its token.
+The job needs `id-token: write` in its `permissions`, which a job that already requests OIDC tokens
+has. The rule must grant cache read and write; list it under *Before merging* if that is not
+confirmed. Keep the existing token step: the Action's token serves only the cache, and the build
+still needs its own for Build Scans.
+
+**Access key.** `develocity-access-key` takes `<host>=<key>` entries only, and the Action uses the one
+for the endpoint's host. It reads no other key source, so this input is the whole wiring: pass the
+secret the workflows already pass as `DEVELOCITY_ACCESS_KEY`, and add none. The Action exchanges the
+key for a short-lived token and exports nothing to other steps.
+
 | Edge (step 3) | Inputs |
 | --- | --- |
 | Discovery | `develocity-url: <server URL>`, `develocity-access-key:` the existing secret |
 | Built-in Edge | `develocity-edge-url: <server URL>`, the existing secret |
-| Dedicated Edge | `develocity-edge-url: <Edge URL>`, an Edge entry derived from the existing secret (below) |
-| The repository already authenticates with workload identity (OIDC) | `develocity-edge-url`, `develocity-auth: workload-identity`, `id-token: write` in the job's `permissions`; `develocity-oidc-audience` when the identity rule's audience is not the endpoint's origin |
+| Dedicated Edge | `develocity-edge-url: <Edge URL>`, the existing secret, which needs an entry for the Edge host |
 
-`develocity-access-key` takes `<host>=<key>` entries only, and the Action uses the one for the
-endpoint's host. It reads no other key source, so this input is the whole wiring: reuse the secret
-the workflows already pass as `DEVELOCITY_ACCESS_KEY`, and add none. The Action exchanges the key for
-a short-lived token and exports nothing to other steps. With workload identity, the rule must grant
-cache read and write; list it under *Before merging* if that is not confirmed.
-
-A dedicated Edge on its own host needs an entry for that host. Derive it from the existing secret
-in a step before the Action:
-
-```yaml
-      - name: Derive the Develocity Edge access key
-        shell: bash
-        env:
-          DEVELOCITY_ACCESS_KEY: ${{ secrets.DEVELOCITY_ACCESS_KEY }}
-        run: |
-          key=$(printf '%s' "$DEVELOCITY_ACCESS_KEY" | tr ';' '\n' | sed -n 's/^<server host>=//p')
-          if [ -n "$key" ]; then
-            echo "::add-mask::$key"
-            echo "AC_ACCESS_KEY=<edge host>=$key" >> "$GITHUB_ENV"
-          fi
-      - uses: gradle/develocity-artifact-cache-github-action@<ref>
-        with:
-          develocity-edge-url: https://<edge host>
-          develocity-access-key: ${{ env.AC_ACCESS_KEY }}
-```
-
-`::add-mask::` is not optional: GitHub masks the secret's whole value, not the key inside it.
-`AC_ACCESS_KEY` is visible to the job's later steps, as a job-level `env:` would be; say so in the
-pull request. Without the secret (forks), the step writes nothing and the Action skips.
+A secret holding only `<server host>=<key>` does not cover a dedicated Edge on its own host. Do not
+derive the entry in a step: anything a step writes to `$GITHUB_ENV` is visible to every later step,
+which undoes the Action's isolation of the key. Put under *Before merging*: append
+`;<edge host>=<the same key>` to the secret's value. Until then the Action warns and skips, and the
+build runs as before.
 
 ## Conflicting caches
 
@@ -98,7 +106,10 @@ Remove these, and name each in the pull request:
   the CLI covers: `~/.gradle`, `~/.m2`, `~/.npm`, `~/.cache/pip`, `~/.sonar`, `~/.cache/ms-playwright`,
   `~/.cache/Cypress`, or a moved home of those tools
 - `setup-gradle`'s own caching: `cache-provider: external` on `gradle/actions` 6.4.0 or later, else
-  `cache-disabled: true`. Read the version from the `uses:` ref, or its comment when pinned by SHA.
+  `cache-disabled: true`. Read the version from the `uses:` ref. A commit SHA, or a major tag such as
+  `@v6` or `# v6`, does not say which release it is: resolve it with
+  `git ls-remote https://github.com/gradle/actions 'refs/tags/v*'` and take the release tag on that
+  commit (`refs/tags/v6.4.1^{}` for the commit `@v6` points at, say).
 
 `node_modules`, yarn and pnpm stores, build outputs and anything else stay cached as before.
 
@@ -113,6 +124,9 @@ Remove these, and name each in the pull request:
   pulls.
 - `cache-read-only`: leave it off. Each branch and pull request stores to its own image, and only
   default-branch builds write the image others fall back to.
+- `cli-version`: leave it unset in new wiring. In existing wiring, a pin below the version the
+  Action would pick is a review finding (step 5): propose removing it, and check what the pinned
+  version lacks in the Release History (the generated fallback name needs 1.9.0, Docker caching 1.9.0).
 
 ## Runners
 

@@ -13,7 +13,7 @@ versions.
 | Cypress | `CYPRESS` | `cypress run`, `cypress install`, `cypress` in `package.json` | 3.0 | Artifact Cache |
 | Playwright | `PLAYWRIGHT` | `playwright install`, `@playwright/test` | 1.9 | Artifact Cache |
 | SonarScanner | `SONAR` | `sonar-scanner`, a `sonar` Gradle task or Maven goal, `pysonar`, SonarSource's scan actions | any | Artifact Cache |
-| Docker | `DOCKER` | `docker`, `docker compose`, Testcontainers, `docker/build-push-action`, service containers | Engine 25 | Artifact Cache |
+| Docker | `DOCKER` | `docker`, `docker compose`, `docker/build-push-action`, service containers, and what the build pulls itself (below) | Engine 25 | Artifact Cache |
 
 Nothing else is cached: not yarn's or pnpm's stores, sbt's Coursier cache, Bazel's repository
 cache, Go modules or Cargo. A job whose only tools are those has nothing to gain.
@@ -59,4 +59,16 @@ side of the mount as the override, or leave the job out.
 - **Playwright**: `PLAYWRIGHT_SKIP_BROWSER_GC` stops Playwright's own pruning; the image then keeps
   old browser revisions until a refresh.
 - **SonarScanner**: each analyzer version adds roughly 50 to 100 MB to the image.
-- **Docker**: see *Docker* in step 5 of `SKILL.md`, and the Docker Image Caching page.
+- **Docker**: the CLI caches the images in the daemon whenever a Docker Engine 25 or later answers,
+  whatever pulled them. GitHub-hosted Linux runners always have one, and so do many self-hosted
+  ones, so a job uses Docker as soon as its build pulls an image, with no `docker` command in the
+  pipeline. Look in the build as well as the pipeline:
+  - Testcontainers, in the dependencies or test sources
+  - Quarkus Dev Services (`quarkus-*` extensions with a database, broker or Keycloak in tests),
+    and native builds in a container (`quarkus.native.container-build`, `-Dnative`,
+    `quarkus.container-image.*`)
+  - Spring Boot `bootBuildImage` or `spring-boot:build-image`, `jibDockerBuild` or `jib:dockerBuild`
+  - Docker plugins for Gradle or Maven (`com.bmuschko.docker-*`, `io.fabric8:docker-maven-plugin`,
+    `com.palantir.docker`), and `docker-compose` plugins that start services for tests
+
+  Then see *Docker* in step 5 of `SKILL.md`, and the Docker Image Caching page.
