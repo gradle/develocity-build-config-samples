@@ -60,7 +60,8 @@ Take only those files. The samples are working projects, so they also carry othe
 Look for Develocity, Gradle Enterprise or other build infrastructure the build already relies on:
 
 - **Already onboarded**: an existing `develocity` block or `.mvn/develocity.xml`. Report what is
-  configured and stop rather than opening a PR.
+  configured and stop rather than opening a PR. For Gradle and Maven, a usual next step is the
+  `develocity-predictive-test-selection` skill: mention it.
 - **Gradle Enterprise**: `com.gradle.enterprise`, `com.gradle.build-scan`,
   `gradle-enterprise-maven-extension`, `.mvn/gradle-enterprise.xml` or `sbt-gradle-enterprise`. This is
   a migration: follow `references/gradle-enterprise-migration.md`.

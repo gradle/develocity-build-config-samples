@@ -25,9 +25,11 @@ The samples can be grouped into the following categories:
  - Template projects for Gradle and Maven when using Develocity
  - Scripts and code to apply and reuse Develocity across multiple projects and build tools
 
-## Onboarding agent skill
+## Agent skills
 
 [`develocity-onboarding`](agent-skills/develocity-onboarding) is an [agent skill][agent-skills] that opens a pull request to onboard a repository to Develocity. See its [README](agent-skills/develocity-onboarding/README.md) for installation and usage.
+
+[`develocity-predictive-test-selection`](agent-skills/develocity-predictive-test-selection) is an [agent skill][agent-skills] that gets a Gradle or Maven repository already onboarded to Develocity ready for Predictive Test Selection, tells from the PTS Simulator's numbers when it is ready, and opens a pull request that turns it on for local and pull request builds. See its [README](agent-skills/develocity-predictive-test-selection/README.md) for installation and usage.
 
 ## Learn more
 
