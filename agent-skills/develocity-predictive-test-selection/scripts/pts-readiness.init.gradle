@@ -1,0 +1,94 @@
+// Reports, for every Test task, what Predictive Test Selection needs. It prints and changes nothing.
+//
+//   ./gradlew help -q --no-scan --no-configuration-cache -I <path to this file>
+//
+// One line per Test task, plus one for the build:
+//   PTS-READINESS build fileFingerprints=<true|false|default|unknown>   (default = on; unknown = no develocity extension in settings)
+//   PTS-READINESS task=<path> build=<root|included> framework=<junit-platform|junit4|testng> engines=<...>
+//     unsupportedEngines=<...> ignoreFailures=<...> ptsEnabled=<...> supported=<yes|no> reason=<...>
+
+import java.util.jar.JarFile
+
+def knownEngines = [
+    'org.junit.jupiter.engine.JupiterTestEngine'                   : 'junit-jupiter',
+    'org.junit.vintage.engine.VintageTestEngine'                   : 'junit-vintage',
+    'org.junit.support.testng.engine.TestNGTestEngine'             : 'testng',
+    'org.spockframework.runtime.SpockEngine'                       : 'spock',
+    'net.jqwik.engine.JqwikTestEngine'                             : 'jqwik',
+    'com.tngtech.archunit.junit.ArchUnitTestEngine'                : 'archunit',
+    'co.helmethair.scalatest.ScalatestEngine'                      : 'scalatest',
+    'io.kotest.runner.junit.platform.KotestJunitPlatformTestEngine': 'kotest',
+    'io.cucumber.junit.platform.engine.CucumberTestEngine'         : 'cucumber',
+]
+
+static boolean kotestBelow56(String version) {
+    def (major, minor) = version.tokenize('.')*.toInteger()
+    major < 5 || (major == 5 && minor < 6)
+}
+
+settingsEvaluated { settings ->
+    if (settings.gradle.parent != null) return
+    def fingerprints = 'unknown'
+    try {
+        def develocity = settings.extensions.findByName('develocity')
+        if (develocity != null) {
+            def value = develocity.buildScan.capture.fileFingerprints.getOrNull()
+            fingerprints = value == null ? 'default' : value.toString()
+        }
+    } catch (Exception ignored) {
+    }
+    println "PTS-READINESS build fileFingerprints=${fingerprints}"
+}
+
+gradle.projectsEvaluated { g ->
+    def buildKind = g.parent == null ? 'root' : 'included'
+    g.rootProject.allprojects { p ->
+        p.tasks.withType(Test).each { t ->
+            def options = t.options
+            def framework = options instanceof org.gradle.api.tasks.testing.junitplatform.JUnitPlatformOptions ? 'junit-platform'
+                : options instanceof org.gradle.api.tasks.testing.testng.TestNGOptions ? 'testng' : 'junit4'
+
+            Set<String> engines = new TreeSet<>()
+            Set<String> unsupported = new TreeSet<>()
+            String kotestVersion = null
+            String problem = null
+            try {
+                t.classpath.files.findAll { it.isFile() && it.name.endsWith('.jar') }.each { jar ->
+                    def m = jar.name =~ /^kotest-runner-junit5(?:-jvm)?-(\d+)\.(\d+)/
+                    if (m.find()) kotestVersion = "${m.group(1)}.${m.group(2)}"
+                    new JarFile(jar).withCloseable { j ->
+                        def entry = j.getEntry('META-INF/services/org.junit.platform.engine.TestEngine')
+                        if (entry != null) {
+                            j.getInputStream(entry).text.readLines()*.trim()
+                                .findAll { it && !it.startsWith('#') }
+                                .each { cls -> knownEngines[cls] ? engines << knownEngines[cls] : unsupported << cls }
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                problem = "classpath not resolvable (${e.class.simpleName})"
+            }
+
+            def ptsEnabled = 'unknown'
+            try {
+                def value = t.extensions.findByName('develocity')?.predictiveTestSelection?.enabled?.getOrNull()
+                ptsEnabled = value == null ? 'false' : value.toString()
+            } catch (Exception ignored) {
+            }
+
+            String reason
+            if (buildKind != 'root') reason = 'tests in buildSrc and included builds are not supported'
+            else if (problem != null) reason = problem
+            else if (framework != 'junit-platform') reason = 'not on JUnit Platform'
+            else if (engines.isEmpty() && unsupported.isEmpty()) reason = 'no test engine on the classpath'
+            else if (!unsupported.isEmpty()) reason = 'unsupported test engine'
+            else if (engines.contains('cucumber') && !p.plugins.hasPlugin('com.gradle.cucumber.companion')) reason = 'Cucumber needs the Cucumber Companion plugin'
+            else if (engines.contains('kotest') && kotestVersion != null && kotestBelow56(kotestVersion)) reason = "Kotest ${kotestVersion} is below 5.6"
+            else reason = ''
+
+            println "PTS-READINESS task=${t.path} build=${buildKind} framework=${framework} engines=${engines.join(',')} " +
+                "unsupportedEngines=${unsupported.join(',')} ignoreFailures=${t.ignoreFailures} ptsEnabled=${ptsEnabled} " +
+                "supported=${reason ? 'no' : 'yes'} reason=${reason}"
+        }
+    }
+}
