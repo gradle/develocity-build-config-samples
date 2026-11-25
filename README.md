@@ -25,9 +25,11 @@ The samples can be grouped into the following categories:
  - Template projects for Gradle and Maven when using Develocity
  - Scripts and code to apply and reuse Develocity across multiple projects and build tools
 
-## Onboarding agent skill
+## Agent skills
 
 [`develocity-onboarding`](agent-skills/develocity-onboarding) is an [agent skill][agent-skills] that opens a pull request to onboard a repository to Develocity. See its [README](agent-skills/develocity-onboarding/README.md) for installation and usage.
+
+[`develocity-onboarding-test-distribution`](agent-skills/develocity-onboarding-test-distribution) enables Test Distribution on a Gradle or Maven project already connected to Develocity, and opens a pull request. See its [README](agent-skills/develocity-onboarding-test-distribution/README.md).
 
 ## Learn more
 
