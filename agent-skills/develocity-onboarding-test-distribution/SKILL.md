@@ -115,15 +115,16 @@ Quarkus below 3.31.1 is not supported: make its `@QuarkusTest` classes `localOnl
 
 ### 5.3 Verify
 
-Skip this when verification is skipped.
+Skip this when verification is skipped, or when TD was enabled on no task of this iteration (go to 5.4).
+The checks below only cover the tasks TD was enabled on in this iteration, and in previous ones for the time comparison.
 
 1. Run the verification build tagged `td-exp<n>`, with `n` the iteration number. 
 2. Take the Build Scan ID from the output and read the test performance (`references/<tool>.md`).
-   No agent ran the tests when `usageStatus` is `enabled` and `remoteTestClassesCount` is 0 or null on every task of the iteration, or when the output shows a TD error (authentication, missing "Use Test Distribution" permission, WebSocket connection). Then:
+   No agent ran the tests when `usageStatus` is `enabled` and `remoteTestClassesCount` is 0 or null on every task TD was enabled on in this iteration, or when the output shows a TD error (authentication, missing "Use Test Distribution" permission, WebSocket connection). Then:
    - Tell the user that no agent ran the tests and provide possible reasons (e.g., no connected agents, missing capabilities, TD errors).
    - Inspect the TD agent configuration (`references/develocity.md`) and share with the user the available agents and their capabilities.
    - Skip verification from now on; the scope stays as it is. TD stays on the tasks of this iteration, unverified; the rest of the scope is enabled in one more iteration.
-3. A task with `usageStatus` `disabled` has a configuration problem, `unavailable` an old plugin or extension or an error in the output, and `enabled` with no remote test class a requirement no agent matches: fix it and run again. If it cannot be fixed, revert TD on the task (skipped).
+3. Among those tasks, one with `usageStatus` `disabled` has a configuration problem, `unavailable` an old plugin or extension or an error in the output, and `enabled` with no remote test class a requirement no agent matches: fix it and run again. If it cannot be fixed, revert TD on the task (skipped).
 4. If a test fails, fix it using the [troubleshooting guide](https://docs.develocity.ai/test-distribution/#dealing_with_common_problems), mainly [classes sharing static state](https://docs.develocity.ai/test-distribution/#classes-sharing-static-state) and [tests reading files from `src/test/resources`](https://docs.develocity.ai/test-distribution/#tests_reading_files_from_src_test_resources), or your best judgement. If it cannot be fixed, add the class to the task's `localOnly` patterns. If most of a task's classes end up `localOnly`, revert TD on it (skipped). Run again.
 5. Read the test performance as in step 5.3.2. For each task the skill enabled TD on, those of previous iterations included, compare `wallClockExecutionTime` with the baseline: the difference in %. If no time is saved on a task, revert all changes made on it, tell the user, and stop the iterations.
 

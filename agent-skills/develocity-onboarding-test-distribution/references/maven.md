@@ -27,7 +27,7 @@ https://docs.develocity.ai/2026.3/miscellaneous/compatibility/#maven_extension_d
 
 ## Keys file
 
-`~/.m2/.develocity/keys.properties`
+`$HOME/.m2/.develocity/keys.properties`
 
 ## Test goals
 

@@ -27,7 +27,7 @@ https://docs.develocity.ai/2026.3/miscellaneous/compatibility/#gradle_plugin_dev
 
 ## Keys file
 
-`~/.gradle/develocity/keys.properties`
+`$HOME/.gradle/develocity/keys.properties`
 
 ## Test tasks
 
