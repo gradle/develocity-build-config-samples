@@ -104,3 +104,6 @@ cache. The secret's value depends on the tool, see its authentication docs:
 - [Bazel](https://docs.develocity.ai/bazel/current/bazel-config/#authenticating): the key alone
 
 Unless the server allows anonymous publishing, nothing publishes until it exists.
+
+Once Build Scans arrive, [`develocity-predictive-test-selection`](../develocity-predictive-test-selection)
+checks when the repository is ready for Predictive Test Selection and turns it on.
