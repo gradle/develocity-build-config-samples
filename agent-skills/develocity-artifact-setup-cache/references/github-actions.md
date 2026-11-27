@@ -17,7 +17,9 @@ file holds what the steps must do.
 
 Use the manual flow (`generic-ci.md`) instead only where the Action cannot run: an organization
 policy that does not allow it (the first run fails with "not allowed"), or a runner it does not
-support. It supports GitHub-hosted Linux, macOS and Windows runners and self-hosted Linux x64.
+support. Its README's *Supported runners* table lists Linux x64, macOS x64 and ARM64, Windows x64,
+and self-hosted Linux x64. Check the table at the ref you pin: an ARM64 Linux or Windows runner,
+GitHub-hosted or not, that it does not list goes to the manual flow.
 
 ## Version and pin
 
@@ -71,7 +73,7 @@ Action requests its own token, so add no secret:
 | Edge (step 3) | Inputs |
 | --- | --- |
 | Dedicated Edge | `develocity-edge-url: <Edge URL>`, `develocity-auth: workload-identity`, `develocity-oidc-audience:` the `audience` the existing step requests |
-| Built-in Edge | `develocity-edge-url: <server URL>`, `develocity-auth: workload-identity`, no `develocity-oidc-audience` |
+| Built-in Edge | `develocity-edge-url: <server URL>`, `develocity-auth: workload-identity`, `develocity-oidc-audience:` the `audience` the existing step requests, left out only when it is exactly the server URL's origin |
 
 Workload identity needs `develocity-edge-url`: discovery through `develocity-url` rejects its token.
 The job needs `id-token: write` in its `permissions`, which a job that already requests OIDC tokens
@@ -83,6 +85,11 @@ still needs its own for Build Scans.
 for the endpoint's host. It reads no other key source, so this input is the whole wiring: pass the
 secret the workflows already pass as `DEVELOCITY_ACCESS_KEY`, and add none. The Action exchanges the
 key for a short-lived token and exports nothing to other steps.
+
+The Action does not accept a bare key: it warns and skips. A bare-key secret (Bazel's) cannot be
+rewritten, since the build sends it as is. Build the entry inside the input instead, with the
+endpoint's host (the server host for discovery and the built-in Edge, the Edge host for a dedicated
+Edge): `develocity-access-key: <host>=${{ secrets.DEVELOCITY_ACCESS_KEY }}`.
 
 | Edge (step 3) | Inputs |
 | --- | --- |
@@ -100,11 +107,14 @@ build runs as before.
 
 Remove these, and name each in the pull request:
 
-- the `cache:` input of `actions/setup-java`, of `actions/setup-node` when it is `npm`, of
-  `actions/setup-python` when it is `pip`
-- `actions/cache` (and `actions/cache/restore`, `actions/cache/save`) steps whose paths are a home
-  the CLI covers: `~/.gradle`, `~/.m2`, `~/.npm`, `~/.cache/pip`, `~/.sonar`, `~/.cache/ms-playwright`,
-  `~/.cache/Cypress`, or a moved home of those tools
+- the `cache:` input of `actions/setup-java` when it is `gradle` or `maven`, of `actions/setup-node`
+  when it is `npm`, of `actions/setup-python` when it is `pip`
+- on `actions/setup-node` v5 or later, its automatic npm cache too: set
+  `package-manager-cache: false` when `package.json` names npm in `packageManager` or
+  `devEngines.packageManager`
+- `actions/cache` (and `actions/cache/restore`, `actions/cache/save`) steps whose paths are, or are
+  inside, a home the CLI covers: `~/.gradle`, `~/.m2`, `~/.npm`, `~/.cache/pip`, `~/.sonar`,
+  `~/.cache/ms-playwright`, `~/.cache/Cypress`, or a moved home of those tools
 - `setup-gradle`'s own caching: `cache-provider: external` on `gradle/actions` 6.4.0 or later, else
   `cache-disabled: true`. Read the version from the `uses:` ref. A commit SHA, or a major tag such as
   `@v6` or `# v6`, does not say which release it is: resolve it with
@@ -126,7 +136,8 @@ Remove these, and name each in the pull request:
   default-branch builds write the image others fall back to.
 - `cli-version`: leave it unset in new wiring. In existing wiring, a pin below the version the
   Action would pick is a review finding (step 5): propose removing it, and check what the pinned
-  version lacks in the Release History (the generated fallback name needs 1.9.0, Docker caching 1.9.0).
+  version lacks: Docker caching needs 1.9.0 (Release History), and so does the generated fallback
+  name (Configuring GitHub Actions).
 
 ## Runners
 
@@ -142,12 +153,29 @@ Remove these, and name each in the pull request:
   ```
   Self-hosted runners also need a runner version that runs Node 24 actions; the Configuring GitHub
   Actions page gives the minimum.
-- **Self-hosted macOS, Windows or ARM64**: not supported by the Action: use the manual flow.
+- **Self-hosted macOS, Windows or ARM64**, and runners the *Supported runners* table does not list:
+  not supported by the Action: use the manual flow.
 
 ## Forks
 
 Pull requests from forks get neither secrets nor OIDC tokens, so the Action warns and skips both
-phases. Nothing to add. Verification then moves to the default branch (`verification.md`).
+phases. Verification then moves to the default branch (`verification.md`).
+
+Those builds still read the provider caches removed above, from the base branch. Removing them
+leaves fork pull requests with no cache at all. When the repository takes them (step 2), ask: remove
+the cache anyway, or keep it for fork pull requests only, by making the input conditional:
+
+```yaml
+          # setup-gradle 6.4.0 or later ('enhanced' is the default; use the value the job had, if any)
+          cache-provider: ${{ github.event.pull_request.head.repo.fork && 'enhanced' || 'external' }}
+          # setup-gradle before 6.4.0
+          cache-disabled: ${{ !github.event.pull_request.head.repo.fork }}
+          # setup-java
+          cache: ${{ github.event.pull_request.head.repo.fork && 'gradle' || '' }}
+```
+
+`actions/cache` steps take `if: github.event.pull_request.head.repo.fork`. Name the choice in the
+pull request.
 
 ## Results
 

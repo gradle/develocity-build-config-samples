@@ -39,7 +39,9 @@ stage('Build') {
 
 The `options { withDevelocityArtifactCache(...) }` form covers all stages, but only on the pipeline's
 top-level agent: it fails under `agent none` and skips stages with an agent of their own. Prefer the
-block form in each stage that builds.
+block form, in the one stage that builds. Image names carry no stage, so several wrapped stages
+would share one image and overwrite each other's store: when more than one stage needs the cache,
+give each explicit `imageNames` with `env.STAGE_NAME` in both names (*Image names*).
 
 ## Endpoint and credentials
 
@@ -59,18 +61,20 @@ block form in each stage that builds.
 ## CLI version
 
 The version that runs is `cliVersion` when set, else the one the installed plugin bundles: the
-Jenkins Plugin Release History lists it per release ("Uses Artifact Cache CLI … by default"). When
-the bundled CLI is older than something a chosen job needs (the Release History says when each tool
-arrived: pip in 1.5.0, Playwright and Cypress in 1.6.0, Docker in 1.9.0), set `cliVersion` to the latest release,
-with `cliSha256` from the release's published `.sha256` when the plugin does not know that version.
-Check the release's compatibility line against the server and Edge versions from step 3.
+Jenkins Plugin Release History lists it per release ("Uses Artifact Cache CLI … by default"). Read
+the CLI Release History from the bundled version to the latest for tools and fixes a chosen job
+needs: pip arrived in 1.5.0, Playwright and Cypress in 1.6.0, Docker in 1.9.0, and 1.7.1 fixed store
+for Gradle composite builds that nest or share included builds, and Maven on Windows. When one
+applies, set `cliVersion` to the latest release, with `cliSha256` from the release's published
+`.sha256` when the plugin does not know that version. Check the release's compatibility line against
+the server and Edge versions from step 3.
 
 ## Image names
 
 The CLI generates names from `JOB_NAME`, and the plugin sets the branch and base branch from a
 multibranch pipeline's `BRANCH_NAME` and `CHANGE_TARGET`. Below CLI 1.11.0, a multibranch pipeline
 needs explicit `imageNames`: see `image-names.md`. A declarative `matrix` needs its axes in the names
-in every version.
+in every version, and several wrapped stages need `env.STAGE_NAME`.
 
 ## Other options
 

@@ -122,6 +122,10 @@ For every job that builds, record:
 - the caching it already does: `actions/cache`, a `cache:` input on a setup action, GitLab `cache:`, the Jenkins Job Cacher
 - whether it uses Docker, and whether the build runs inside a container the job starts
 
+And for the repository: whether it takes pull requests from forks (on GitHub,
+`gh pr list --repo <owner>/<name> --state all --limit 50 --json isCrossRepository`). Those builds get
+no credential, so the cache skips them (step 5).
+
 Show this as a table and recommend jobs that run **both on pull requests and on the default branch**:
 default-branch builds fill the image that pull requests fall back to, and the pull request's own run
 proves the wiring (step 8). Leave out by default, and say why:
@@ -144,15 +148,16 @@ where they differ.
 | Requirement | Without it |
 | --- | --- |
 | Develocity 2026.3.0 or later, and Edge 2.3.0 or later | the current CLI is rejected |
-| License entitlements `Artifact Cache` and `Setup Cache` | that cache only warns |
+| License entitlements `Artifact Cache` and `Setup Cache` | that cache warns on every run |
 | The CI key's user may "Read and write Build Cache data" | restores and stores are refused |
 | With project-level access control: **Allow data without an associated project** enabled | the CLI stores and restores nothing |
 | Edge maximum artifact size of about 1 GiB, when jobs use Playwright, Cypress, Docker or Gradle-provisioned JDKs. Ask for the actual value: step 5 needs it | the default 100 MiB rejects those entries without an error |
 | Runners: 2 CPUs, 4 GiB memory, 3000 IOPS, Java 21 for the CLI | the CLI is slow or cannot start |
 | Runners reach the server over HTTP/1 and the Edge over HTTP/2; proxies on the way support HTTP/2 | restores fail |
 
-A **no** on the versions or both entitlements: stop and report what is missing. An **unknown**: go
-on, list it under *Before merging* in the pull request; step 8 shows whether it holds.
+A **no** on the versions or both entitlements: stop and report what is missing. A **no** on one
+entitlement: turn that cache off (step 5). An **unknown**: go on, list it under *Before merging* in
+the pull request; step 8 shows whether it holds.
 
 ### The Edge
 
@@ -202,7 +207,6 @@ Resolve the version to bump to:
 
 ```
 curl -s https://plugins.gradle.org/m2/com/gradle/develocity/com.gradle.develocity.gradle.plugin/maven-metadata.xml
-curl -s https://plugins.gradle.org/m2/com/gradle/common-custom-user-data-gradle-plugin/com.gradle.common-custom-user-data-gradle-plugin.gradle.plugin/maven-metadata.xml
 curl -s https://repo1.maven.org/maven2/com/gradle/develocity-maven-extension/maven-metadata.xml
 curl -s https://repo1.maven.org/maven2/com/gradle/common-custom-user-data-maven-extension/maven-metadata.xml
 ```
@@ -228,8 +232,12 @@ them:
   unreachable Edge: log it and carry on.
 - **One cache per directory.** Remove the provider's own caching of the directories the CLI covers
   (each reference lists them) and name each removal in the pull request. Caches of anything else stay.
-- **A cache turned off** in the inputs: `--disable-artifact-cache` or `--disable-setup-cache`, on
-  both commands.
+  Builds that get no credential (fork pull requests, GitLab merge requests without the protected
+  variable) then have no cache at all: when the repository has them, ask whether to keep the
+  provider's cache for those builds only (`references/github-actions.md`, *Forks*), and name the
+  choice.
+- **A cache turned off**, in the inputs or by a missing entitlement (step 3):
+  `--disable-artifact-cache` or `--disable-setup-cache`, on both commands.
 - **Docker.** Docker images are cached by default since CLI 1.9 whenever a Docker daemon answers,
   whatever pulled them. A job uses Docker when its pipeline runs `docker` or when its build pulls
   images itself: Testcontainers, Quarkus Dev Services and native container builds, image builds
@@ -316,9 +324,6 @@ issue, write a closing keyword: `Fixes #123`.
 
 Keep the description short:
 
-For a review of existing wiring, the first line says what was fixed instead, and each finding is
-one bullet.
-
 ```
 Turns on the Develocity Artifact Cache <and Setup Cache> for <jobs>, served by <the Edge at <URL> | Develocity's built-in Edge | Edge discovery>.
 
@@ -329,11 +334,14 @@ Turns on the Develocity Artifact Cache <and Setup Cache> for <jobs>, served by <
 - <Docker images: cached, left out (--no-autodetect=DOCKER), or excluded patterns>
 - <each build-side bump or addition, such as the CCUD Maven extension>
 
-Checked with <commands>: <results>. The caches are verified on this pull request's own CI runs.
+Checked with <commands>: <results>. <The caches are to be verified on this pull request's own CI runs. | The caches cannot be verified on this pull request (<a fork without secrets | the job does not run on pull requests>); they are verified on the default branch after the merge.>
 
 Before merging:
 - <each prerequisite from step 3 not confirmed, as the action someone has to take>
 ```
+
+For a review of existing wiring, the first line says what was fixed instead, and each finding is
+one bullet.
 
 Add anything that was guessed, and nothing else.
 
@@ -392,7 +400,9 @@ add the results to the pull request description, and update it only on the user'
 - **Nothing is created in someone's tracker or CI without them seeing it first**: an issue, a fork,
   a pushed branch, a pull request, a re-run, an edit to the pull request. Show it, and wait.
 - **A cache problem never fails a build.** The CLI exits 0 on cache errors; everything this skill
-  adds around it (the download, the key derivation, the store) must degrade the same way.
+  adds around it (the download, the key derivation, the store) must degrade the same way. The one
+  exception is a downloaded CLI that does not match its pinned SHA-256: that stops the job, as the
+  GitHub Action's does, by design. Never weaken that check.
 - **Store only after a successful build**, and only from the jobs the user chose.
 - **Existing caching is removed only for the directories the CLI covers**, and each removal is named
   in the pull request.

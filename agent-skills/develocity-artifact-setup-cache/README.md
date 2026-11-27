@@ -75,7 +75,8 @@ request lists any that are not confirmed:
 - the `Artifact Cache` and `Setup Cache` entitlements on the license
 - a CI access key whose user may read and write Build Cache data and, with project-level access
   control, **Allow data without an associated project** enabled
-- an Edge maximum artifact size of about 1 GiB when jobs use Playwright, Cypress or Docker
+- an Edge maximum artifact size of about 1 GiB when jobs use Playwright, Cypress, Docker or
+  Gradle-provisioned JDKs
 - on Jenkins, the Develocity Artifact Cache plugin, installed from its `.hpi` by an administrator
 
 See the [System Requirements](https://docs.develocity.ai/artifact-cache/current/reference/requirements/)
@@ -99,8 +100,8 @@ with the audience the workflow already requests.
 
 Until the Artifact Cache CLI 1.11.0, generated image names are wrong on GitHub Actions, GitLab and
 Jenkins multibranch pipelines, so the skill writes explicit names there, marked to be removed once
-the CLI is 1.11.0 or later. On GitHub Actions and GitLab they are the exact names 1.11.0 generates,
-so removing them keeps the cache.
+the CLI is 1.11.0 or later. On GitHub Actions and GitLab they are written to match the names 1.11.0
+is to generate, so removing them should keep the cache, and at worst starts it cold once.
 
 On a repository where the cache is already wired, the skill reviews that wiring instead (image names,
 a pinned CLI version, Docker layers above the Edge's size limit, conflicting caches) and offers to

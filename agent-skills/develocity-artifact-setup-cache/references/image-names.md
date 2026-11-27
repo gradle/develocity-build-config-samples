@@ -25,13 +25,14 @@ Buildkite, Bitbucket Pipelines, Travis CI, Bitrise, GoCD and the rest always nee
 Every released CLI up to 1.10.0 generates wrong names on three providers; 1.11.0 fixes them. Find the
 CLI version that will run (the provider reference says how). **Below 1.11.0, apply the workaround
 for the provider; at 1.11.0 or later, use the generated names** (unless a matrix needs explicit ones,
-below). A pre-release does not count as 1.11.0.
+below). A pre-release does not count as 1.11.0, and neither does a release whose Release History
+entry does not list the naming fix: read the entry before dropping a workaround.
 
 | Provider | Before 1.11.0 | What 1.11.0 generates from |
 | --- | --- | --- |
 | GitHub Actions | Names leave out the repository: repositories sharing an Edge whose workflows have the same `name:` and job id share, and overwrite, one image | `GITHUB_REPOSITORY_ID`, `GITHUB_WORKFLOW`, `GITHUB_JOB`, `GITHUB_REF` (fallback: `refs/heads/` + `GITHUB_BASE_REF`, or `DEVELOCITY_ARTIFACT_CACHE_BASE_BRANCH_NAME`), `RUNNER_OS`, `RUNNER_ARCH` |
-| GitLab | Names come from the pipeline, not the job, so jobs share one image; merge requests do not fall back to their target branch | `CI_PROJECT_PATH_SLUG`, `CI_JOB_NAME`, `CI_COMMIT_REF_NAME` (fallback: `CI_MERGE_REQUEST_TARGET_BRANCH_NAME`, else `CI_DEFAULT_BRANCH`), `CI_RUNNER_EXECUTABLE_ARCH` |
-| Jenkins multibranch | Names come from the branch job, so the fallback never matches | project: `JOB_NAME` without `/${JOB_BASE_NAME}` when `BRANCH_NAME` is set; a change request (`CHANGE_ID` set) keeps the full `JOB_NAME`; fallback `<project>~${CHANGE_TARGET}~<os>~<arch>` |
+| GitLab | Names hold `CI_PIPELINE_ID`, not the job: every pipeline starts cold, the jobs of one pipeline share one image, and merge requests do not fall back to their target branch | `CI_PROJECT_PATH_SLUG`, `CI_JOB_NAME`, `CI_COMMIT_REF_NAME` (fallback: `CI_MERGE_REQUEST_TARGET_BRANCH_NAME`, else `CI_DEFAULT_BRANCH`), `CI_RUNNER_EXECUTABLE_ARCH` |
+| Jenkins multibranch | Names come from the branch job, so the fallback never matches | project: `JOB_NAME` without `/${JOB_BASE_NAME}` when `BRANCH_NAME` is set. A change request (`CHANGE_ID` set) keeps the full `JOB_NAME` in its own name only; its fallback, `<project>~${CHANGE_TARGET}~<os>~<arch>`, uses the shortened project, so it matches the target branch's image |
 | TeamCity, Bamboo | Correct | unchanged |
 
 The workarounds below give explicit names of the same shape. Each carries a one-line comment in the
@@ -42,8 +43,10 @@ too, and what removing it later costs (below).
 one: any name with a character outside `A-Z`, `a-z`, `0-9` and `_` (every name here has `~`) is
 stored under the same hash of the string. So an explicit name that is character for character the
 string 1.11.0 generates keeps its image when the workaround goes; any other string starts cold once.
-The GitHub Actions and GitLab workarounds below are written to match; the Jenkins one is not, since
-its platform segment comes from the JVM.
+The GitHub Actions and GitLab workarounds below are written to match the segments in the table; the
+Jenkins one is not, since its platform segment comes from the JVM. Until a released 1.11.0 is in the
+Release History with the naming fix, write in the pull request that removing a workaround should keep
+the cache and at worst starts it cold once, not that it will.
 
 ### GitHub Actions
 
@@ -83,7 +86,8 @@ With the plugin, around the existing build steps:
 ```groovy
 script {
     // Artifact Cache CLI before 1.11.0 names multibranch images after the branch job, so branches never fall back; remove imageNames once it is 1.11.0 or later
-    def project = env.JOB_NAME.substring(0, env.JOB_NAME.lastIndexOf('/'))
+    def slash = env.JOB_NAME.lastIndexOf('/')
+    def project = slash > 0 ? env.JOB_NAME.substring(0, slash) : env.JOB_NAME
     def platform = isUnix() ? sh(script: 'echo "$(uname -s)~$(uname -m)"', returnStdout: true).trim() : 'Windows~' + env.PROCESSOR_ARCHITECTURE
     def base = env.CHANGE_TARGET ?: '<default branch>'
     withDevelocityArtifactCache(
@@ -97,7 +101,13 @@ script {
 ```
 
 `BRANCH_NAME` is `PR-<n>` on a change request, so each pull request keeps its own image and falls
-back to its target. In the manual flow, the same in shell:
+back to its target. The fallback serves only Artifact Cache content: each branch builds in its own
+workspace, and the Setup Cache needs the same absolute checkout path (`tools.md`), so expect Setup
+Cache misses on a first pull request build unless the job pins `customWorkspace`.
+
+Only for a pipeline that calls the CLI directly, the same in shell. The `artifact-cache-cli` sample
+script names its images itself, from variables `generic-ci.md` sets from `JOB_NAME`, `BRANCH_NAME`
+and `CHANGE_TARGET`; a second `--image-name` makes its store fail.
 
 ```sh
 AC_PROJECT="${JOB_NAME%/*}"

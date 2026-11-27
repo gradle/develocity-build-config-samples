@@ -56,7 +56,7 @@ read, ask for or use a key to get there.
 | --- | --- | --- |
 | Both phases skipped, a credential warning | no key in that job, or no entry for the endpoint's host | the key wiring in the provider reference |
 | A 401 or 403 | the key's user cannot write cache data, an entitlement is off, or project-level access control blocks data without a project | the gate in step 3 |
-| Store warns about some entries | entries above the Edge's maximum artifact size: Gradle-provisioned JDKs, browsers, Docker layers | raise the limit; an administrator's task |
+| Run 2 restores fewer entries than run 1 stored, or Docker images are never restored, with no error | entries above the Edge's maximum artifact size, rejected silently: Gradle-provisioned JDKs, browsers, Docker layers | raise the limit; an administrator's task |
 | Run 2 restores nothing | the image name differs between the runs (a segment that changes per run), or run 1's store did not run | compare the names in both logs |
 | Failed artifacts above 0 | transfer errors | the CLI log |
 | Missing artifacts above 0 | entries evicted on the Edge | Edge storage, an administrator's task |
@@ -79,5 +79,6 @@ fall back to from then on.
 Report hits as confirmed only with run 2's numbers: entries and size restored, or the scan's
 restored artifacts with failed and missing at 0. Without them, write "not verified" and why. For
 measurement over time, point to the "Dependency Caching" dashboard in Develocity Reporting and
-Visualization, filtered to the Develocity Artifact Cache (the `ARTIFACT_CACHE` tag on older
-versions). Savings are not this skill's claim.
+Visualization, filtered to the Develocity Artifact Cache. That filter needs the Develocity Gradle
+plugin 4.6.0 or Maven extension 2.6.0; below them, artifacts show as "Unknown", so filter by the
+`ARTIFACT_CACHE` tag instead. Savings are not this skill's claim.

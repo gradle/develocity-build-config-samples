@@ -27,8 +27,9 @@ the sample says. Per run, it:
 4. runs the CLI against the Edge, passing any further arguments through
 
 A cache problem warns and exits 0. Two things exit with an error: missing configuration, and a CLI
-that fails its checksum. The checksum failure is meant to stop the job, as the GitHub Action's does.
-Missing configuration is not, so guard every call (below).
+that fails its checksum, which includes an image with no checksum tool (below). The checksum failure
+is meant to stop the job, as the GitHub Action's does. Missing configuration is not, so guard every
+call (below).
 
 The CLI version is the one pinned in the script, and the script names every image itself, in every
 CLI version: `image-names.md` has nothing to add for it, and nothing to remove at 1.11.0.
@@ -41,7 +42,7 @@ same exit behaviour, and the CLI version and SHA-256 from the Download the CLI p
 | Variable | Value |
 | --- | --- |
 | `DEVELOCITY_EDGE_URL` | the Edge from step 3; the server URL for the built-in Edge. Edge discovery is not available here. |
-| `ARTIFACT_CACHE_ACCESS_KEY` | the bare key, derived from the existing secret (below) |
+| `ARTIFACT_CACHE_ACCESS_KEY` | the bare key, derived from the existing secret and passed on each call (below) |
 | `ARTIFACT_CACHE_PROJECT` | the repository's slug or id. Required: without it, repositories on one Edge share images. |
 | `ARTIFACT_CACHE_JOB` | the job name as the pipeline declares it; add the matrix values where the provider's job name lacks them |
 | `ARTIFACT_CACHE_BRANCH` | the branch being built; on a pull request build, something unique to it (its source branch or number) |
@@ -54,23 +55,49 @@ Take the values from the provider's predefined variables, looked up in its docum
 ## The key
 
 The onboarding secret reaches the build as `DEVELOCITY_ACCESS_KEY=<server host>=<key>`. The script
-takes the bare key. Derive it in the same shell, rather than adding a second secret, and never print
-it or run these lines under `set -x`:
+takes the bare key. Derive it rather than adding a second secret, with `<server host>` replaced by
+the real host, and never print it:
 
 ```sh
-ARTIFACT_CACHE_ACCESS_KEY=$(printf '%s' "${DEVELOCITY_ACCESS_KEY:-}" | tr ';' '\n' | sed -n 's/^<server host>=//p')
-export ARTIFACT_CACHE_ACCESS_KEY
+set +x # Jenkins runs shell steps with -x, which would print the derived key
+ac_key=$(printf '%s' "${DEVELOCITY_ACCESS_KEY:-}" | tr ';' '\n' | sed -n 's/^<server host>=//p')
 ```
 
-A bare-key secret (Bazel's) is the key itself. With a dedicated Edge, the key's user must be allowed
-on that Edge; the host in the secret does not matter, since the script builds the Edge entry itself.
+- **`set +x` first, always.** Jenkins runs *Execute shell* and Pipeline `sh` steps with `sh -xe`, so
+  without it the trace prints the bare key. Credentials Binding masks only the whole `host=key`
+  value, never the bare key inside it.
+- **A bare-key secret** (Bazel's) is the key itself: `ac_key=${DEVELOCITY_ACCESS_KEY:-}`, no `sed`.
+- **In every shell that calls the script**: the variable does not survive into another shell. Each
+  Jenkins Freestyle *Execute shell* step is its own shell, and so is GitLab's `after_script`.
+- **Mask it** where the provider can: `echo "::add-mask::$ac_key"` on GitHub Actions,
+  `echo "##vso[task.setsecret]$ac_key"` on Azure Pipelines.
+- **Do not export it.** Pass it to the script only (below), so the build never sees the bare key.
 
-The script stops with an error when `ARTIFACT_CACHE_ACCESS_KEY` is empty, which is every build without
-the secret: forks, and on GitLab a merge request from an unprotected branch when the variable is
-*Protected*. Guard each call, so those builds skip the cache instead of failing:
+With a dedicated Edge, the key's user must be allowed on that Edge; the host in the secret does not
+matter, since the script builds the Edge entry itself.
+
+**Workload identity** has no key to derive. Request the CI's OIDC token with the audience the
+existing Develocity step requests, exchange it at
+`$DEVELOCITY_EDGE_URL/api/auth/token?expiresInHours=2` (`POST`, the OIDC token as
+`Authorization: Bearer`), mask the result, and use it as `ac_key`. Ask for
+two hours: the script exchanges the token again for one. The sample's verification workflow
+(`.github/workflows/artifact-cache-cli-verification.yml`) does this on GitHub Actions. A failed
+exchange leaves `ac_key` empty, so the guard below skips the cache. If it is not confirmed that the
+Edge's workload identity rule accepts that CI's tokens, leave the job out and say so.
+
+The script stops with an error when the key or the branch is empty. The key is empty in every build
+without the secret: forks, and on GitLab a merge request from an unprotected branch when the
+variable is *Protected*. The branch is empty when the provider's variable is unset for that event
+(CircleCI's `CIRCLE_BRANCH` and Bitbucket's `BITBUCKET_BRANCH` on tag builds, Jenkins' `BRANCH_NAME`
+outside multibranch). Give the Edge, project and job literals or variables that are always set, and
+guard each call on the other two, so those builds skip the cache instead of failing:
 
 ```sh
-if [ -n "$ARTIFACT_CACHE_ACCESS_KEY" ]; then sh artifact-cache.sh restore; else echo "Artifact Cache: no access key, skipping restore"; fi
+if [ -n "$ac_key" ] && [ -n "${ARTIFACT_CACHE_BRANCH:-}" ]; then
+  ARTIFACT_CACHE_ACCESS_KEY="$ac_key" sh artifact-cache.sh restore
+else
+  echo "Artifact Cache: no access key or branch, skipping restore"
+fi
 ```
 
 ## Restore, build, store
@@ -92,18 +119,24 @@ if [ -n "$ARTIFACT_CACHE_ACCESS_KEY" ]; then sh artifact-cache.sh restore; else 
   `--no-autodetect=DOCKER`, home overrides. `--docker-exclude` matters only to `store`.
 - **Java**: the CLI runs where the job's script runs. In a job inside a container image (GitLab's
   `image:`, a CircleCI Docker executor), that image needs Java 21, `curl`, and `sha256sum` or
-  `shasum`. Without them the job still passes, uncached; say so rather than switch the image unasked.
+  `shasum`. Without Java or `curl` the script skips the cache and the job passes. Without either
+  checksum tool the job **fails**, with an error that the CLI does not match its SHA-256. Check the
+  image before wiring the job. When a tool is missing, say so, and leave the job out rather than
+  switch the image unasked.
 - **Results**: keep the two metrics files and the CLI log (`~/.develocity/artifact-cache/` by
   default) as job artifacts, also when the job fails. They are written outside the checkout so a
-  build that checks for a clean working tree is not affected; copy them in at the end of the job when
-  the provider only collects artifacts from there. Step 8 reads them.
+  build that checks for a clean working tree is not affected. Where the provider only collects
+  artifacts from the checkout, copy them in from a step that also runs after failures: on GitLab,
+  `after_script`, with `artifacts: when: always`. Step 8 reads them.
 
 ## GitLab
 
 Start from the sample's `gitlab-ci-gradle.yml` or `gitlab-ci-maven.yml`, and fit it into the job:
 
-- Remove `cache:` entries whose paths are a home the CLI covers (`.gradle/`, `.m2/repository/`,
-  `.npm/`, `.cache/pip/`), and keep the variables that point the tools there
+- Drop the sample's header comment that asks for a separate `ARTIFACT_CACHE_ACCESS_KEY` variable,
+  and wrap its calls in the derivation and guard above.
+- Remove `cache:` entries whose paths are, or are inside, a home the CLI covers (`.gradle/`,
+  `.m2/repository/`, `.npm/`, `.cache/pip/`), and keep the variables that point the tools there
   (`GRADLE_USER_HOME: $CI_PROJECT_DIR/.gradle`).
 - A Maven repository moved through `MAVEN_OPTS` (`-Dmaven.repo.local=…`) is invisible to the CLI:
   pass the same path as `--maven-repository` to both commands.
@@ -114,10 +147,11 @@ Start from the sample's `gitlab-ci-gradle.yml` or `gitlab-ci-maven.yml`, and fit
 
 ## Jenkins Freestyle, and Pipelines without the plugin
 
-Run the script in *Execute shell* steps, with the key from a Secret text credential bound as
-`DEVELOCITY_ACCESS_KEY`, and the store in a step that runs only on success. Project and job:
-`JOB_NAME` (without `/${JOB_BASE_NAME}` in a multibranch pipeline); branch and base branch:
-`BRANCH_NAME` and `CHANGE_TARGET` in a multibranch pipeline, elsewhere the branch the job builds.
+Run the script in *Execute shell* steps (Pipeline `sh` steps), with the key from a Secret text
+credential bound as `DEVELOCITY_ACCESS_KEY`, and the store in a step that runs only on success. Each
+step starts with `set +x` and derives the key again (*The key*). Project and job: `JOB_NAME`
+(without `/${JOB_BASE_NAME}` in a multibranch pipeline); branch and base branch: `BRANCH_NAME` and
+`CHANGE_TARGET` in a multibranch pipeline, elsewhere the branch the job builds, as a literal.
 
 ## Existing manual wiring
 
