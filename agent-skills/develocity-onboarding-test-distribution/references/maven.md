@@ -75,6 +75,7 @@ If a `<properties>` block already exists, add `<distribution>` to it.
         <enabled>${td.enabled}</enabled>
         <maxLocalExecutors>2</maxLocalExecutors>      <!-- only when given -->
         <maxRemoteExecutors>4</maxRemoteExecutors>    <!-- only when given -->
+        <remoteExecutionPreferred>true</remoteExecutionPreferred> <!-- only while verifying -->
         <requirements>                                <!-- only when given -->
           <requirement>os=linux</requirement>
         </requirements>

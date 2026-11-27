@@ -33,6 +33,7 @@ All optional. The skill shows the values it will use and lets you change them be
 | Verification task                    | `check` (Gradle), `verify` (Maven)                                | 'integrationTest'                                                  |
 | Tasks                                | the `<ELIGIBLE_TASKS>` tasks of the baseline, else all test tasks | a given list of tasks or all test tasks                            |
 | Skip verification                    | no                                                                | yes (enables TD without capturing a baseline or running any build) |
+| Non-interactive                      | no                                                                | yes (never asks, see Non-interactive mode)                         |
 | Local executors                      | not limited                                                       | N (applies globally)                                               |
 | Remote executors                     | not limited                                                       | N (applies globally)                                               |
 | Enable condition                     | `true`                                                            | `only on CI` (applies globally)                                    |
@@ -50,8 +51,10 @@ All optional. The skill shows the values it will use and lets you change them be
 4. Iterate on the tasks, `<TASKS_TO_INTEGRATE_PER_ITERATION>` at a time, up to `<MAX_ITERATIONS>`. Each iteration:
    - shows its tasks; you can change them or stop
    - enables Test Distribution on them
-   - runs the verification build, fixes failing tests or makes them `localOnly`, and compares each task to the baseline. A task with no time saved is reverted and the iterations stop. If no agent runs the tests, verification is skipped from then on
+   - runs the verification build preferring agents for the tests (until the pull request), stopped when it runs over 3 times the baseline, fixes failing tests or makes them `localOnly`, and compares each task to the baseline. A task with no time saved is reverted and the iterations stop. If no agent runs the tests, verification is skipped from then on
    - shows the results so far: status, wall clock time and difference with the baseline
+
+When nothing is left to change, e.g. the only task was reverted because no time was saved, the skill says so and prepares no pull request.
 
 With verification skipped, no build runs: a single iteration enables Test Distribution on the Tasks input, else all test tasks.
 

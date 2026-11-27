@@ -23,10 +23,14 @@ printf 'Authorization: Bearer %s\n' "$KEY" | curl -s -H @- "$SERVER$ENDPOINT"
 
 The header goes through stdin, so the key does not show in the command or the process list.
 
+When the request has `with-localhost-develocity=<url>`, make every API call to `<url>` with a plain `curl -s "<url>$ENDPOINT"`, without a key.
+When a build prints no Build Scan link, use its tag (e.g. `td-baseline`, `td-exp1`) as its Build Scan ID.
+The builds cannot connect TD to that server: ignore the related errors, and tell whether agents ran the tests from the API only.
+
 ## Verify the API can be accessed
 
 Call `/api/builds?maxBuilds=1`, adding `-o /dev/null -w '%{http_code}\n'` to `curl`.
-Access is granted when the status code is 200.
+Access is granted when the status code is 200. A 404 can also mean the key lacks the permission to access build data via the API.
 
 ## Inspect the TD agent configuration
 

@@ -77,6 +77,7 @@ tasks.named<Test>("test").configure {
         enabled.set(true)                                   // or providers.environmentVariable("CI").map { true }.orElse(false)
         maxLocalExecutors.set(2)                            // only when given
         maxRemoteExecutors.set(4)                           // only when given
+        remoteExecutionPreferred.set(true)                  // only while verifying
         requirements.set(setOf("os=linux"))                 // only when given
         localOnly {
             includeClasses.addAll("com.example.FooTest")    // only when given or needed
@@ -92,6 +93,7 @@ tasks.named('test', Test).configure {
         enabled = true
         maxLocalExecutors = 2
         maxRemoteExecutors = 4
+        remoteExecutionPreferred = true
         requirements = ['os=linux']
         localOnly {
             includeClasses = ['com.example.FooTest']
@@ -101,7 +103,7 @@ tasks.named('test', Test).configure {
 }
 ```
 
-When every test task has a similar configuration, move the common part to the convention plugin applied to every project, if there is one, with `tasks.withType<Test>().configureEach`. Otherwise in the root build file:
+When every test task has a similar configuration, move the common part to the convention plugin that configures the test tasks, if there is one, with `tasks.withType<Test>().configureEach`. The test tasks of projects that do not apply it keep their configuration in their own build file. Without such a plugin, use the root build file:
 
 ```kotlin
 subprojects {

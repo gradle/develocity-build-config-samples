@@ -23,6 +23,7 @@ The snippets in `references/` are examples: never copy their comments into the p
 | Verification task                    | `check` (Gradle), `verify` (Maven)                                | 'integrationTest'                                                  |
 | Tasks                                | the `<ELIGIBLE_TASKS>` tasks of the baseline, else all test tasks | a given list of tasks or all test tasks                            |
 | Skip verification                    | no                                                                | yes (enables TD without capturing a baseline or running any build) |
+| Non-interactive                      | no                                                                | yes (never asks, see Non-interactive mode)                         |
 | Local executors                      | not limited                                                       | N (applies globally)                                               |
 | Remote executors                     | not limited                                                       | N (applies globally)                                               |
 | Enable condition                     | `true`                                                            | `only on CI` (applies globally)                                    |
@@ -35,6 +36,18 @@ The snippets in `references/` are examples: never copy their comments into the p
 "Task" below means a Gradle test task or a Maven Surefire/Failsafe goal execution.
 The verification build runs the verification task with the build cache disabled, as shown in `references/<tool>.md`.
 The scope is the set of tasks considered for Test Distribution. Without a baseline, it falls back to the Tasks input, else all test tasks.
+
+## Non-interactive mode
+
+When non-interactive, never ask the user or wait for an answer. Wherever the steps below ask or let the user choose, do this instead:
+
+- Step 2: upgrade only when the request gives the Develocity server version, else keep the current version (stop if it is below the minimum).
+- Run builds and API calls without waiting for agreement.
+- Step 3.3: fall back to the Tasks input, else all test tasks, and skip verification from now on.
+- Step 3.4: when the scope is empty, go to step 6 with the preparation only.
+- Steps 4 and 5.1: go on with the values shown.
+- Rules: when local executors is 0, add no `localOnly` entry. Leave out the `localOnly` patterns input, and revert TD on a task that would need one (skipped). Say so in the pull request.
+- Step 6: commit on a new local branch, with the pull request title as the commit subject and the description as its body. Show the diff, branch, title and description, then stop: push nothing and create no pull request.
 
 ## 1. Check the project requirements
 
@@ -117,10 +130,11 @@ Quarkus below 3.31.1 is not supported: make its `@QuarkusTest` classes `localOnl
 
 Skip this when verification is skipped, or when TD was enabled on no task of this iteration (go to 5.4).
 The checks below only cover the tasks TD was enabled on in this iteration, and in previous ones for the time comparison.
+To run the tests on agents whenever there are some, set `remoteExecutionPreferred` to `true` on these tasks while verifying (`references/<tool>.md`). Step 6 removes it.
 
-1. Run the verification build tagged `td-exp<n>`, with `n` the iteration number. 
+1. Run the verification build tagged `td-exp<n>`, with `n` the iteration number. If it runs longer than 3 times the baseline build, stop it and do not run it again: no agent ran the tests (see 5.3.2).
 2. Take the Build Scan ID from the output and read the test performance (`references/<tool>.md`).
-   No agent ran the tests when `usageStatus` is `enabled` and `remoteTestClassesCount` is 0 or null on every task TD was enabled on in this iteration, or when the output shows a TD error (authentication, missing "Use Test Distribution" permission, WebSocket connection). Then:
+   No agent ran the tests when `usageStatus` is `enabled` and `remoteTestClassesCount` is 0 or null on every task TD was enabled on in this iteration, or when the output shows a TD error (authentication, missing "Use Test Distribution" permission, WebSocket connection, no executor available), or when the build was stopped for running too long. Then:
    - Tell the user that no agent ran the tests and provide possible reasons (e.g., no connected agents, missing capabilities, TD errors).
    - Inspect the TD agent configuration (`references/develocity.md`) and share with the user the available agents and their capabilities.
    - Skip verification from now on; the scope stays as it is. TD stays on the tasks of this iteration, unverified; the rest of the scope is enabled in one more iteration.
@@ -134,7 +148,9 @@ Show every task processed so far, across all iterations: status (TD enabled, not
 
 ## 6. Pull request
 
-Replace `enabled` = `true` with the enable condition, when one was given. When TD ended up on every test task with a similar configuration, move the common part to the shared place shown in `references/<tool>.md`, and keep what differs in the project or module of the task. Then run the load check from `references/<tool>.md`.
+When nothing is left to change, e.g. the only task was reverted because no time was saved, tell the user that nothing was changed and why, and stop without a pull request.
+
+Remove `remoteExecutionPreferred` from every task. Replace `enabled` = `true` with the enable condition, when one was given. When TD ended up on every test task with a similar configuration, move the common part to the shared place shown in `references/<tool>.md`, and keep what differs in the project or module of the task. Then run the load check from `references/<tool>.md`.
 Never commit on the default branch. Follow the target's pull request template and `CONTRIBUTING.md`.
 
 The description has:
