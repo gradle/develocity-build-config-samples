@@ -8,7 +8,7 @@ The plugin and the extension print one line per test task or goal. None of these
 Predictive Test Selection: 34 of 37 test classes selected with profile 'Standard' (saving 4.097s serial time)
 ```
 
-The task is **ready** when it names fewer selected classes than it has. The numbers from a dry run are
+The server is **predicting** for the task when it names fewer selected classes than it has. The numbers from a dry run are
 not representative: the dry-run flag is itself an input PTS sees as a change. The Simulator gives the
 savings.
 
@@ -38,7 +38,7 @@ selection decisions, not readiness problems.
 | --- | --- | --- |
 | `Insufficient change history available for task/goal.` | the server has never seen this task with input data | make CI publish Build Scans for it, with file fingerprints on; then wait 14 days |
 | `Client not authorized to use Predictive Test Selection.` | no key, an expired key, or a key without the "Use Predictive Test Selection" permission | the user provisions their own key (`./gradlew provisionDevelocityAccessKey`, `./mvnw com.gradle:develocity-maven-extension:provision-access-key`) or asks an admin for the permission; the skill never handles the key |
-| `Predictive Test Selection extension disabled on Develocity license.` | neither PTS nor the Simulator is enabled on the server | the Develocity admin or the customer's SE enables it |
+| `Predictive Test Selection extension disabled on Develocity license.` | neither PTS nor the Simulator is enabled on the server | your Develocity administrator or Solutions Engineer enables it |
 | `Recent test executions have not been processed.` | the server is more than 30 minutes behind on this task | retry later; if it persists, the admin checks server memory and the background processor |
 | `Test selection request took too long to process.` | the server did not answer in time | retry; if it persists, as above |
 | `Build was unable to contact Develocity server.` | network or proxy | check the server URL and proxy; plugin below 3.17.4 or extension below 1.21.3 ignore proxy settings |

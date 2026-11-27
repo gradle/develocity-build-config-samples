@@ -9,9 +9,11 @@ Gradle as part of this skill.
 | Component | Floor | Below it |
 | --- | --- | --- |
 | Gradle | 5.4 | PTS does not support the build: report and stop |
-| Gradle | 8.2 | a PTS-enabled `Test` task is never cached nor up-to-date: `enforce` stops and asks (SKILL.md step E1) |
+| Gradle | 6.2 | no `providers.gradleProperty`: the enforce configuration reads the switch with `gradle.startParameter.projectProperties.containsKey("ptsOnCi")` |
+| Gradle | 6.6 | no `--no-configuration-cache`: leave it out of the inventory command |
+| Gradle | 7.6 | no per-task `--rerun`: use `--rerun-tasks` wherever this reference says `--rerun` |
+| Gradle | 8.2 | a PTS-enabled `Test` task is never cached nor up-to-date: `enforce` stops and asks (SKILL.md step 7) |
 | Gradle | 8.3 | no `--test-dry-run`: the server check runs the tests for real |
-| Develocity plugin | 3.15 | no `pts.enabled` system property, which the checks and the kill switch use |
 | Develocity plugin | 3.17.4 | the plugin ignores the JVM's proxy settings for PTS requests |
 
 Bump the plugin to the latest release when it is below a floor:
@@ -63,7 +65,8 @@ curl -s https://plugins.gradle.org/m2/com/gradle/cucumber/companion/com.gradle.c
 ```
 
 **File fingerprints.** Remove `fileFingerprints = false` from the `develocity { buildScan { capture { } } }`
-block, and `-Dscan.capture-file-fingerprints=false` from CI commands and `gradle.properties`.
+block, `-Dscan.capture-file-fingerprints=false` from CI commands and `GRADLE_OPTS`, and
+`systemProp.scan.capture-file-fingerprints=false` from `gradle.properties`.
 
 **After any engine change, compare test counts.** Adding Jupiter where vintage was needed discovers
 zero tests and passes. Run the affected tasks before and after the change, with PTS off:
@@ -96,19 +99,22 @@ grep -E 'Predictive Test Selection|fewer than fourteen days|fewer than fifty exe
 
 ## enforce: the configuration
 
-Put it in the settings file, after the `develocity {}` block and next to the CI check onboarding
-added (`isCI`). When the build has a convention plugin that already configures `Test` tasks, put it
-there instead, as the same `tasks.withType<Test>().configureEach { }` body.
+Put it in the settings file, after the `develocity {}` block. When the build has a convention plugin
+that already configures `Test` tasks, put it there instead, as the same
+`tasks.withType<Test>().configureEach { }` body with `ptsOnCi` and `onAnyCI` defined next to it.
 
 Kotlin DSL:
 
 ```kotlin
 val ptsOnCi = providers.gradleProperty("ptsOnCi").isPresent
+val onAnyCI = listOf("CI", "GITHUB_ACTIONS", "GITLAB_CI", "JENKINS_URL", "HUDSON_URL", "TEAMCITY_VERSION",
+    "CIRCLE_BUILD_URL", "bamboo_resultsUrl", "TRAVIS_JOB_ID", "BITRISE_BUILD_URL", "GO_SERVER_URL",
+    "TF_BUILD", "BUILDKITE", "BITBUCKET_BUILD_NUMBER").any { System.getenv(it) != null }
 gradle.allprojects {
     tasks.withType<Test>().configureEach {
         val inScope = name == "test"
         extensions.getByType<com.gradle.develocity.agent.gradle.test.DevelocityTestConfiguration>().predictiveTestSelection {
-            enabled.set(provider { inScope && options is JUnitPlatformOptions && (!isCI || ptsOnCi) })
+            enabled.set(provider { inScope && options is JUnitPlatformOptions && (!onAnyCI || ptsOnCi) })
         }
     }
 }
@@ -118,11 +124,14 @@ Groovy DSL:
 
 ```groovy
 def ptsOnCi = providers.gradleProperty('ptsOnCi').present
+def onAnyCI = ['CI', 'GITHUB_ACTIONS', 'GITLAB_CI', 'JENKINS_URL', 'HUDSON_URL', 'TEAMCITY_VERSION',
+    'CIRCLE_BUILD_URL', 'bamboo_resultsUrl', 'TRAVIS_JOB_ID', 'BITRISE_BUILD_URL', 'GO_SERVER_URL',
+    'TF_BUILD', 'BUILDKITE', 'BITBUCKET_BUILD_NUMBER'].any { System.getenv(it) != null }
 gradle.allprojects {
     tasks.withType(Test).configureEach { task ->
         def inScope = task.name == 'test'
         task.develocity.predictiveTestSelection {
-            enabled = provider { inScope && task.options instanceof JUnitPlatformOptions && (!isCI || ptsOnCi) }
+            enabled = provider { inScope && task.options instanceof JUnitPlatformOptions && (!onAnyCI || ptsOnCi) }
         }
     }
 }
@@ -135,11 +144,14 @@ gradle.allprojects {
 - The `options is JUnitPlatformOptions` check is lazy, so it sees what the project's build script set
   later. It keeps PTS off a task that is not on JUnit Platform, which would otherwise fail the build.
 - `gradle.allprojects`, not `gradle.lifecycle.beforeProject`: an isolated `beforeProject` action
-  cannot reference the settings script's `isCI`, and fails the build.
-- `isCI` is onboarding's variable. When the settings file has none, define it with the CI provider's
-  variable (onboarding's `references/ci-providers.md` lists them), testing for presence.
+  cannot reference the settings script's variables, and fails the build.
+- `onAnyCI`, not onboarding's `isCI`: `isCI` names only the providers the repository shows, for
+  cache push. PTS must stay off on every CI, including a main, nightly or release job defined on a CI
+  server the repository does not mention, so `onAnyCI` lists `CI` and every variable in onboarding's
+  `references/ci-providers.md`. A developer who exports `CI` gets no PTS locally, the safe side. Add
+  the variable of any provider step 7 finds that the list lacks.
 - Gradle 5: the same body in the root `build.gradle(.kts)`, as `allprojects { }`, after the
-  `develocity {}` block.
+  `develocity {}` block. Below Gradle 6.2, read the switch as in *Versions*.
 
 CI pull request jobs add `-PptsOnCi` to their Gradle command.
 
@@ -150,7 +162,7 @@ All with `--rerun --test-dry-run --no-scan` on one in-scope task (plain `--rerun
 | Run | Expect |
 | --- | --- |
 | no extra flags | a `Predictive Test Selection` line |
-| `<CI_VAR>=true` | no `Predictive Test Selection` line |
+| `<CI_VAR>=true`, for each provider that builds the repository | no `Predictive Test Selection` line |
 | `<CI_VAR>=true` and `-PptsOnCi` | a `Predictive Test Selection` line |
 | an excluded task, with `-PptsOnCi` | no line for that task |
 | `-Dpts.enabled=false` | no line (the kill switch) |

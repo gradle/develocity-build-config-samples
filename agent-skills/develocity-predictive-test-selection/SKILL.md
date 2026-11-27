@@ -114,6 +114,8 @@ uses the user's own credentials and publishes nothing. Classify each task with
 | **never seen** | `Insufficient change history available for task/goal.`: CI does not publish scans for this task yet |
 | **blocked** | not authorized, extension disabled, unreachable, or another reason in the second table |
 
+A task that matches both **predicting** and **not yet** is **not yet**.
+
 When the dry run cannot run here (no Java, no network to the server, the build does not compile
 locally), say so and go on with step 5 alone.
 
@@ -126,9 +128,10 @@ task's duration, the savings, the share of insufficient data, and a verdict: **r
 little to gain**, **review**, **not yet** or **blocked**. The reference says what to do when the
 endpoint cannot be reached, and how to handle a **review**.
 
-A task's verdict for the report is the worse of steps 4 and 5: a task the dry run calls **not yet**
-is not ready, whatever the 28-day window says. When only one of the two could run, use it and say
-which one is missing.
+A task's verdict for the report is the worse of steps 4 and 5, from worst: **blocked**, **not yet**
+(step 4's **never seen** counts as not yet), **review**, **ready, little to gain**, **ready**. Step 4's
+**predicting** adds nothing to step 5. So a task the dry run calls **not yet** is not ready, whatever
+the 28-day window says. When only one of the two could run, use it and say which one is missing.
 
 ## 6. Report
 
@@ -138,12 +141,13 @@ One table, one row per task in scope:
 | --- | --- | --- | --- | --- |
 | `:app:test` | junit-jupiter | predicting | <builds> builds, <caught>/<failures> task failures caught (need <band>), <savings> saved, <insufficient> insufficient data | **ready** |
 
-The verdict is **ready**, **review** (with the missed runs to look at), **not yet** (with what is
-missing and the date to rerun simulate), **blocked** (with who has to do what), or **out of scope**
-(with the reason). Under the table:
+The verdict is **ready**, **ready, little to gain** (with the savings), **review** (with the missed
+runs to look at, or the note that no task failure was seen), **not yet** (with what is missing and
+the date to rerun simulate), **blocked** (with who has to do what), or **out of scope** (with the
+reason). Under the table:
 
 - the Simulator link for the project (`references/simulator.md`), for the user to look at themselves
-- with any savings figure: live savings have come in at about 30 to 60% of the Simulator's projection
+- with any savings figure: the Simulator replays past builds, so live savings will differ
 - what the server side needs that the skill cannot check: the Simulator or PTS entitlement; on a
   self-hosted server, enough memory for PTS (at least 4608 MiB of application heap, the background
   processor on busy instances)
@@ -155,8 +159,9 @@ request for the fixes.
 
 ## 7. enforce: choose the builds
 
-Start from step 1 to 5 again; the numbers may have moved since the last report. Enforce only the
-tasks whose verdict is **ready**, and show the user the ones left out. On Gradle below 8.2, stop and
+Rerun steps 1 to 5 first; the numbers may have moved since the last report. Enforce the tasks whose
+verdict is **ready**, and the **review** or **ready, little to gain** ones the user accepts after
+seeing their numbers; show the user the ones left out. On Gradle below 8.2, stop and
 explain that a PTS-enabled test task is never cached nor up-to-date there; continue only if the user
 accepts that.
 
@@ -170,6 +175,18 @@ Read every CI job that builds, and its triggers:
 | main or default branch, merge queue | off: they run the full suite, and they fill the build cache (test results from a run where PTS skipped tests are never stored) |
 | nightly, scheduled | off |
 | release, publish, deploy | off |
+
+A job that runs on pull requests and on anything else (a push to the default branch, a merge queue,
+a schedule) gets the switch for the pull request event only: on GitHub Actions
+`${{ github.event_name == 'pull_request' && '-PptsOnCi' || '' }}` (Maven:
+`-DptsEnabled=${{ github.event_name == 'pull_request' }}`), on GitLab only when
+`$CI_PIPELINE_SOURCE == "merge_request_event"` and `$CI_MERGE_REQUEST_EVENT_TYPE != "merge_train"`.
+Where the CI cannot tell the events apart, split the job.
+
+Ask which CI systems run builds the repository does not define (main, nightly, release or deploy
+jobs on a Jenkins or TeamCity server, for example). The configuration keeps PTS off on CI by its
+environment variables; a system that sets none of them needs its variable added (the tool's
+reference, *enforce: the configuration*).
 
 Ask the user when a job's role is unclear, and show them this table for their jobs before changing
 anything.
@@ -279,7 +296,8 @@ unrelated or flaky, check the base branch's recent runs of the same job.
 
 For enforce, read the pull request job's log: it shows `Predictive Test Selection: N of M test
 classes selected`, or the reason PTS did not run (`references/selection-reasons.md`). Report that line
-per task.
+per task. Then confirm that no job running on the default branch, a merge queue or a schedule passes
+the switch.
 
 ## Rules
 
@@ -290,7 +308,8 @@ per task.
   pushed branch, a pull request. Show it, and wait.
 - **PTS is never enabled on main-branch, nightly, release or deploy builds**, and never on a task that
   is not on JUnit Platform.
-- **No enforce without a ready verdict** from the data in steps 4 and 5, for each task enforced.
+- **No enforce without a ready verdict** from the data in steps 4 and 5, or a **review** or **ready,
+  little to gain** one the user accepted, for each task enforced.
 - **Never change test code.** A framework change beyond adding an engine is reported, not done.
 - **A PTS problem never fails a build.** Server errors already degrade to running every test; the
   configuration must keep PTS off where it cannot run.

@@ -28,7 +28,7 @@ def band(mean_ms):
   | (if .buildsWithPTSSimulated == 0 then "not yet: no simulated builds"
      elif .targetExecutionsWithInputCaptureIssues > 0 then "blocked: input capture issues in \(.targetExecutionsWithInputCaptureIssues) runs"
      elif ($insufficient // 1) > 0.10 then "not yet: too much insufficient data"
-     elif .totalTaskFailures == 0 then "not yet: no failures in the window, so prediction quality is unknown"
+     elif .totalTaskFailures == 0 then "review: no task failures in the window, so prediction quality is unknown"
      elif $taskPredicted < $need then "review: task failures predicted below \($need | pct)"
      elif (.serialTimeSavingsPercent // 0) < 0.10 then "ready, little to gain"
      else "ready" end) as $verdict

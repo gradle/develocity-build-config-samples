@@ -8,10 +8,9 @@ upgrade Maven as part of this skill.
 
 | Component | Floor | Below it |
 | --- | --- | --- |
-| Develocity Maven extension | 1.19.2 | no `pts.enabled` system property, which the checks and the kill switch use |
-| Develocity Maven extension | 1.21 | no `fallbackToRegularExecutionOnMissingPrerequisites` (1.20 calls it `...OnMissingJUnitPlatform`) |
 | Develocity Maven extension | 1.21.3 | the extension ignores the JVM's proxy settings for PTS requests |
 | Surefire, Failsafe | 2.22.2 | PTS cannot run on that goal |
+| JUnit Platform (`org.junit.platform:*` in the test dependencies) | 1.10 | no `junit.platform.execution.dryRun.enabled`: the server check and the enforce checks run the selected tests for real; say so and ask before running them |
 
 Bump the extension to the latest release when it is below a floor:
 
@@ -26,8 +25,11 @@ and say so in the pull request: it changes how every test runs.
 
 ```
 ./mvnw -B -ntp help:effective-pom -Doutput=<scratch>/effective-pom.xml
-./mvnw -B -ntp dependency:list -DincludeScope=test -DoutputFile=<scratch>/deps-<module>.txt -DappendOutput=false
+./mvnw -B -ntp dependency:list -DincludeScope=test -DoutputFile=target/pts-deps.txt -DappendOutput=false
 ```
+
+The relative `outputFile` resolves against each module, so every module gets its own
+`target/pts-deps.txt`; read them all.
 
 From the effective POM, per module: each `maven-surefire-plugin` and `maven-failsafe-plugin`
 execution (its id, version, `<includes>`, `<groups>`), an existing `<predictiveSelection>` block
@@ -44,6 +46,7 @@ Platform engine is on its test classpath:
 | `org.spockframework:spock-core` 2.x | Spock, supported |
 | `io.kotest:kotest-runner-junit5*` 5.6 or later | Kotest, supported |
 | `net.jqwik:jqwik-engine`, `com.tngtech.archunit:archunit-junit5-engine` | supported |
+| `org.junit.platform:junit-platform-suite-engine` | `@Suite` classes, supported; the Cucumber Companion needs it |
 | `io.cucumber:cucumber-junit-platform-engine` | needs the Cucumber Companion plugin |
 | `junit:junit` with no JUnit Platform engine | JUnit 4 provider: not on JUnit Platform |
 | `org.testng:testng` with no `testng-engine` | TestNG provider: not on JUnit Platform |
@@ -64,10 +67,12 @@ release. Report instead of changing when Surefire is configured with `<groups>`,
 **File fingerprints.** Remove `<fileFingerprints>false</fileFingerprints>` from `.mvn/develocity.xml`,
 and `-Ddevelocity.scan.captureFileFingerprints=false` from CI commands and `.mvn/maven.config`.
 
-**After any engine change, compare test counts.** Run before and after, with PTS off:
+**After any engine change, compare test counts.** Run before and after, with PTS off. `clean`
+matters: Surefire leaves old reports in place, and a change that discovers zero tests would still
+count them:
 
 ```
-./mvnw -B -ntp test -Dpts.enabled=false -Ddevelocity.scan.disabled=true
+./mvnw -B -ntp clean test -Dpts.enabled=false -Ddevelocity.scan.disabled=true
 find . -path '*/target/surefire-reports/*' -name 'TEST-*.xml' -exec grep -o '<testcase ' {} + | wc -l
 ```
 
@@ -82,7 +87,8 @@ A different count is a broken change: revert it and report.
 - `verify` instead of `test` when Failsafe goals are in scope.
 - `-pl <modules>` to limit it to the modules the inventory marked supported: `-Dpts.enabled=true`
   turns PTS on for every Surefire and Failsafe goal, and a goal that is not on JUnit Platform fails
-  unless the fallback below is set.
+  unless the fallback below is set. When those modules depend on other modules of the build, install
+  them first, with PTS off: `./mvnw -B -ntp install -DskipTests -Ddevelocity.scan.disabled=true -pl <modules> -am`.
 - `-Ddevelocity.scan.disabled=true` keeps the run out of the history the Simulator and the model learn from.
 - Per-class reasons are logged at debug level: add `-X` and filter, it is long.
 
@@ -113,8 +119,9 @@ usually the parent POM's `<pluginManagement>`:
 
 A Surefire `<properties>` block that already exists is extended, never replaced.
 
-In the same POM, the property and one profile per CI provider variable, so a build on any of them
-turns PTS off:
+In the same POM, the property and one profile per CI variable, so a build on any CI turns PTS off:
+one for `CI`, and one for the variable of every CI provider that builds the repository (onboarding's
+`references/ci-providers.md`), including the ones step 7 finds running jobs defined outside it.
 
 ```xml
 <properties>
@@ -136,8 +143,12 @@ turns PTS off:
 </profiles>
 ```
 
-- A profile activates on the presence of its variable, matching onboarding's CI check. Maven allows
-  one property per activation, hence one profile per variable.
+- A profile activates on the presence of its variable. Maven allows one property per activation,
+  hence one profile per variable. `CI` covers most providers; one that sets neither `CI` nor a
+  variable with a profile here runs PTS on every job, main and release included.
+- Activating any profile in a POM turns off that POM's `<activeByDefault>` profiles. If the POM has
+  one, put the property and the profiles in a POM above it that has none; if there is no such POM
+  the build owns, stop and report.
 - `-DptsEnabled=true` on the command line beats the profile: CI pull request jobs add it.
 - The fallback keeps a module that is not on JUnit Platform running its tests normally, with a
   warning, instead of failing.
@@ -157,3 +168,4 @@ in-scope module:
 | `<CI_VAR>=true` and `-DptsEnabled=true` | `Predictive Test Selection enabled` |
 | `-Dpts.enabled=false` | no `Predictive Test Selection` line (the kill switch) |
 | `help:effective-pom` with `<CI_VAR>=true` | `<enabled>false</enabled>` in the in-scope executions |
+| `help:active-profiles` with `<CI_VAR>=true`, before and after the change | the same profiles, plus the PTS one |

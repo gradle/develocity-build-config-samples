@@ -5,11 +5,12 @@
 #
 # An empty <project> ("") returns every project the key may see.
 #
-# The access key is taken from DEVELOCITY_ACCESS_KEY (host=key entries separated by ';') or from the
-# Gradle or Maven keys.properties for the server's host, and goes only into the request header,
-# through stdin. It is never printed. Without a key the request is anonymous.
+# The access key is taken from DEVELOCITY_ACCESS_KEY (host=key or host1,host2=key entries separated
+# by ';') or from the Gradle or Maven keys.properties for the server's host, and goes only into the
+# request header, through stdin. It is never printed. Without a key the request is anonymous.
 #
-# Prints the response body on stdout and "HTTP <status>" on stderr. Exits 1 unless the status is 200.
+# Prints the response body on stdout and "HTTP <status>" on stderr (000 when the server cannot be reached).
+# Exits 1 unless the status is 200.
 set -euo pipefail
 
 if [[ $# -lt 2 ]]; then
@@ -27,25 +28,32 @@ host="${server#*://}"
 host="${host%%/*}"
 host="${host%%:*}"
 
-key_for_host() {
-  local entry file
-  if [[ -n "${DEVELOCITY_ACCESS_KEY:-}" ]]; then
-    local IFS=';'
-    for entry in $DEVELOCITY_ACCESS_KEY; do
-      if [[ "${entry%%=*}" == "$host" ]]; then
-        printf '%s' "${entry#*=}"
-        return
+# Reads "host1,host2=key" lines on stdin and prints the key of the first line that names $host.
+key_in() {
+  local line h
+  local -a hosts
+  while IFS= read -r line; do
+    [[ "$line" == *=* && "$line" != \#* ]] || continue
+    IFS=',' read -ra hosts <<< "${line%%=*}"
+    for h in "${hosts[@]}"; do
+      if [[ "${h// /}" == "$host" ]]; then
+        printf '%s' "${line#*=}"
+        return 0
       fi
     done
+  done
+  return 1
+}
+
+key_for_host() {
+  local file
+  if [[ -n "${DEVELOCITY_ACCESS_KEY:-}" ]] && tr ';' '\n' <<< "$DEVELOCITY_ACCESS_KEY" | key_in; then
+    return
   fi
   for file in "${GRADLE_USER_HOME:-$HOME/.gradle}/develocity/keys.properties" "$HOME/.m2/.develocity/keys.properties"; do
-    [[ -f "$file" ]] || continue
-    entry="$(grep -m1 -F "${host}=" "$file" | grep "^${host//./\\.}=" || true)"
-    if [[ -n "$entry" ]]; then
-      printf '%s' "${entry#*=}"
-      return
-    fi
+    [[ -f "$file" ]] && key_in < "$file" && return
   done
+  return 0
 }
 
 iso_days_ago() {
@@ -73,10 +81,10 @@ trap 'rm -f "$body"' EXIT
 key="$(key_for_host)"
 if [[ -n "$key" ]]; then
   status="$(printf 'Authorization: Bearer %s\n' "$key" | curl -sS -G -H @- -o "$body" -w '%{http_code}' \
-    "${params[@]}" "${server}/predictive-test-selection/info/simulation-performance")"
+    "${params[@]}" "${server}/predictive-test-selection/info/simulation-performance" || true)"
 else
   status="$(curl -sS -G -o "$body" -w '%{http_code}' \
-    "${params[@]}" "${server}/predictive-test-selection/info/simulation-performance")"
+    "${params[@]}" "${server}/predictive-test-selection/info/simulation-performance" || true)"
 fi
 unset key
 

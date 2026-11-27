@@ -63,12 +63,15 @@ The server URL comes from the repository's Develocity configuration.
   Companion, file fingerprint capture turned off, a plugin or extension too old
 - asks the server, with a dry run that publishes nothing, whether it can predict each task yet
 - reads the Simulator's numbers for the last 28 days and gives each task a verdict: **ready**,
-  **review**, **not yet** (and when to check again) or **blocked** (and who has to act)
+  **ready, little to gain**, **review**, **not yet** (and when to check again) or **blocked** (and who
+  has to act)
 
 A task is ready when the Simulator has enough data for it (at most 10% of its test time without
 enough history), it failed at least once in the window, PTS would have caught its failing runs at
-the rate its duration calls for (99% for tasks under a minute, down to 90% for tasks over ten), and
-the server confirms it can predict it.
+the rate its duration calls for (99% for tasks under a minute, down to 90% for tasks over ten), PTS
+would save at least 10% of its test time, and the server confirms it can predict it. Under 10% it is
+**ready, little to gain**; with no failure in the window, or a catch rate under its band, it is
+**review**. You decide on those two.
 
 **enforce** opens a pull request for the ready tasks:
 
