@@ -23,9 +23,6 @@ printf 'Authorization: Bearer %s\n' "$KEY" | curl -s -H @- "$SERVER$ENDPOINT"
 
 The header goes through stdin, so the key does not show in the command or the process list.
 
-When the request has `with-localhost-develocity=<url>`, make every API call to `<url>` with a plain `curl -s "<url>$ENDPOINT"`, without a key.
-When a build prints no Build Scan link, use its tag (e.g. `td-baseline`, `td-exp1`) as its Build Scan ID.
-The builds cannot connect TD to that server: ignore the related errors, and tell whether agents ran the tests from the API only.
 
 ## Verify the API can be accessed
 
@@ -41,3 +38,10 @@ Needs admin access: tell the user first. Call the API as shown above.
 3. Check that a pool has the capabilities given in the requirements input and `connectedAgents > 0`. Tell the user if agents should be provisioned.
 
 If access is rejected, skip the check and say so.
+
+## Test with a local server
+
+Only used to test this skill against a local stand-in for the API: when the request has `with-localhost-develocity=<url>`,
+- make every API call to `<url>` with a plain `curl -s "<url>$ENDPOINT"`, without a key
+- when a build prints no Build Scan link, use its tag (e.g. `td-baseline`, `td-exp1`) as its Build Scan ID
+- the builds cannot connect TD to that server: ignore the related errors, and tell whether agents ran the tests from the API only

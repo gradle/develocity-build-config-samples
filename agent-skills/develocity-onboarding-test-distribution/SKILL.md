@@ -12,7 +12,7 @@ Enable Test Distribution (TD) on a project and hand the result over as a pull re
 Manual: https://docs.develocity.ai/test-distribution/
 
 Build tool specifics live in `references/<tool>.md` (`gradle.md`, `maven.md`). Read only the one the project needs.
-Develocity API access lives in `references/develocity.md`: make every API call as shown in its "Call the API" section.
+Develocity API access lives in `references/develocity.md`: make every API call as shown in its "Call the API" section, or its "Test with a local server" section when the request has `with-localhost-develocity`.
 The snippets in `references/` are examples: never copy their comments into the project.
 
 ## Inputs
@@ -130,7 +130,7 @@ Quarkus below 3.31.1 is not supported: make its `@QuarkusTest` classes `localOnl
 
 Skip this when verification is skipped, or when TD was enabled on no task of this iteration (go to 5.4).
 The checks below only cover the tasks TD was enabled on in this iteration, and in previous ones for the time comparison.
-To run the tests on agents whenever there are some, set `remoteExecutionPreferred` to `true` on these tasks while verifying (`references/<tool>.md`). Step 6 removes it.
+To run the tests on agents whenever there are some, set `remoteExecutionPreferred` to `true` on these tasks while verifying (`references/<tool>.md`), unless they already set it. Step 6 removes it.
 
 1. Run the verification build tagged `td-exp<n>`, with `n` the iteration number. If it runs longer than 3 times the baseline build, stop it and do not run it again: no agent ran the tests (see 5.3.2).
 2. Take the Build Scan ID from the output and read the test performance (`references/<tool>.md`).
@@ -150,7 +150,7 @@ Show every task processed so far, across all iterations: status (TD enabled, not
 
 When nothing is left to change, e.g. the only task was reverted because no time was saved, tell the user that nothing was changed and why, and stop without a pull request.
 
-Remove `remoteExecutionPreferred` from every task. Replace `enabled` = `true` with the enable condition, when one was given. When TD ended up on every test task with a similar configuration, move the common part to the shared place shown in `references/<tool>.md`, and keep what differs in the project or module of the task. Then run the load check from `references/<tool>.md`.
+Remove the `remoteExecutionPreferred` settings added in step 5.3. Replace `enabled` = `true` with the enable condition, when one was given. When TD ended up on every test task with a similar configuration, move the common part to the shared place shown in `references/<tool>.md`, and keep what differs in the project or module of the task. Then run the load check from `references/<tool>.md`.
 Never commit on the default branch. Follow the target's pull request template and `CONTRIBUTING.md`.
 
 The description has:
