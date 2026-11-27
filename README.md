@@ -25,9 +25,11 @@ The samples can be grouped into the following categories:
  - Template projects for Gradle and Maven when using Develocity
  - Scripts and code to apply and reuse Develocity across multiple projects and build tools
 
-## Onboarding agent skill
+## Agent skills
 
 [`develocity-onboarding`](agent-skills/develocity-onboarding) is an [agent skill][agent-skills] that opens a pull request to onboard a repository to Develocity. See its [README](agent-skills/develocity-onboarding/README.md) for installation and usage.
+
+[`develocity-artifact-setup-cache`](agent-skills/develocity-artifact-setup-cache) is an [agent skill][agent-skills] that opens a pull request to turn on the Develocity Artifact Cache and Setup Cache in CI for a repository already onboarded to Develocity, and verifies that the caches are populated and hit. See its [README](agent-skills/develocity-artifact-setup-cache/README.md) for installation and usage.
 
 ## Learn more
 
